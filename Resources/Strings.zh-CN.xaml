@@ -44,6 +44,29 @@
     <sys:String x:Key="IconStyleSimple">简约</sys:String>
     <sys:String x:Key="IconStyleRealistic">写实</sys:String>
 
+    <!-- 应用图标 -->
+    <sys:String x:Key="AppIconLabel">应用图标</sys:String>
+    <sys:String x:Key="AppIconDesc">点击预览更换应用图标</sys:String>
+    <sys:String x:Key="AppIconTooltip">点击更换图标</sys:String>
+
+    <!-- 图标选择窗口 -->
+    <sys:String x:Key="IconPickerTitle">选择应用图标</sys:String>
+    <sys:String x:Key="IconPickerCategoryBlock">方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryBlockAll">全部方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryBuildingBlock">建筑方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryColoredBlock">染色方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryFunctionalBlock">功能方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryNaturalBlock">自然方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryRedstoneBlock">红石方块</sys:String>
+    <sys:String x:Key="IconPickerCategoryItem">物品</sys:String>
+    <sys:String x:Key="IconPickerCategoryItemAll">全部物品</sys:String>
+    <sys:String x:Key="IconPickerCategoryCombat">战斗</sys:String>
+    <sys:String x:Key="IconPickerCategoryFood">食物饮料</sys:String>
+    <sys:String x:Key="IconPickerCategoryIngredient">材料</sys:String>
+    <sys:String x:Key="IconPickerCategorySpawnEgg">生成蛋</sys:String>
+    <sys:String x:Key="IconPickerCategoryTool">工具</sys:String>
+    <sys:String x:Key="IconPickerLoading">加载中...</sys:String>
+
     <!-- HUD 设置面板 -->
     <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
     <sys:String x:Key="HudPanelDesc">自定义快捷栏上显示的 HUD 元素</sys:String>

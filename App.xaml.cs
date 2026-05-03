@@ -36,11 +36,15 @@ namespace CraftSharp
             // 初始化字体
             FontService.Instance.Initialize(_appSettings?.Font ?? "微软雅黑");
 
-            // 创建系统托盘
-            CreateNotifyIcon();
-
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow();
+
+            // 创建系统托盘图标
+            CreateNotifyIcon();
+
+            // 初始化图标服务
+            IconService.Instance.Initialize(_appSettings?.AppIconPath ?? "minecraft/textures/block/block/glass.png", _notifyIcon!, _settingsWindow);
+
             _settingsWindow.Show();
 
             // 设置窗口关闭时最小化到托盘
@@ -50,8 +54,6 @@ namespace CraftSharp
                 {
                     e.Cancel = true;
                     _settingsWindow.Hide();
-                    var msg = FindResource("TrayMinimized") as string ?? "程序已最小化到系统托盘";
-                    _notifyIcon.ShowBalloonTip(2000, "Craft#", msg, System.Windows.Forms.ToolTipIcon.Info);
                 }
             };
 
@@ -95,20 +97,9 @@ namespace CraftSharp
         /// </summary>
         private void CreateNotifyIcon()
         {
-            // 加载自定义图标
-            Icon? appIcon = null;
-            var iconPath = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Assets", "icon.ico");
-
-            if (System.IO.File.Exists(iconPath))
-            {
-                appIcon = new Icon(iconPath);
-            }
-
             _notifyIcon = new System.Windows.Forms.NotifyIcon
             {
-                Icon = appIcon ?? SystemIcons.Application,
+                Icon = SystemIcons.Application, // 默认图标，由IconService更新
                 Text = "Craft#",
                 Visible = true
             };
@@ -205,24 +196,6 @@ namespace CraftSharp
             Resources.Add("TextTertiaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66)));
             Resources.Add("DividerBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40)));
             Resources.Add("HoverBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A)));
-        }
-
-        /// <summary>
-        /// 加载主题设置
-        /// </summary>
-        private string LoadThemeSetting()
-        {
-            if (System.IO.File.Exists(_settingsPath))
-            {
-                try
-                {
-                    var json = System.IO.File.ReadAllText(_settingsPath);
-                    var settings = JsonConvert.DeserializeObject<Models.AppSettings>(json);
-                    return settings?.Theme ?? "跟随系统";
-                }
-                catch { }
-            }
-            return "跟随系统";
         }
     }
 }

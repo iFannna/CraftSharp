@@ -7,6 +7,30 @@
         <TextBlock Text="{DynamicResource AppearancePanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
+        <!-- 应用图标卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource AppIconLabel}" FontWeight="Medium"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AppIconDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Width="48" Height="48" CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        Cursor="Hand" MouseLeftButtonDown="AppIconPreview_Click"
+                        x:Name="AppIconPreviewBorder"
+                        ToolTip="{DynamicResource AppIconTooltip}">
+                    <Image x:Name="AppIconPreview" Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </Border>
+            </Grid>
+        </ui:Card>
+
         <!-- 主题卡片 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
             <Grid>
@@ -53,31 +77,6 @@
                     <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>
                     <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="kaiti"/>
                     <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="pixel"/>
-                </ComboBox>
-            </Grid>
-        </ui:Card>
-
-        <!-- 图标风格卡片 -->
-        <ui:Card Margin="0,0,0,12" Padding="16">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{DynamicResource IconStyleLabel}" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </StackPanel>
-                    <TextBlock Text="{DynamicResource IconStyleDesc}" Margin="0,8,0,0"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                </StackPanel>
-                <ComboBox Grid.Column="1" Width="160" x:Name="IconStyleComboBox"
-                          SelectedIndex="0" SelectionChanged="IconStyleComboBox_SelectionChanged">
-                    <ComboBoxItem Content="{DynamicResource IconStyleDefault}" Tag="default"/>
-                    <ComboBoxItem Content="{DynamicResource IconStylePixel}" Tag="pixel"/>
-                    <ComboBoxItem Content="{DynamicResource IconStyleSimple}" Tag="simple"/>
-                    <ComboBoxItem Content="{DynamicResource IconStyleRealistic}" Tag="realistic"/>
                 </ComboBox>
             </Grid>
         </ui:Card>

@@ -12,7 +12,7 @@
 
     <!-- 背景图片 -->
     <Grid x:Name="RootGrid">
-        <Image Source="/Assets/inventory/inventory.png"
+        <Image Source="/Assets/minecraft/textures/gui/sprites/inventory/inventory.png"
                Stretch="Fill"
                RenderOptions.BitmapScalingMode="NearestNeighbor"
                UseLayoutRounding="True"

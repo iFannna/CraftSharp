@@ -34,6 +34,11 @@ namespace CraftSharp.Models
         /// </summary>
         public string IconStyle { get; set; } = "默认";
 
+        /// <summary>
+        /// 应用图标路径（相对于Assets目录）
+        /// </summary>
+        public string AppIconPath { get; set; } = "minecraft/textures/block/block/glass.png";
+
         // ==================== HUD 设置 ====================
         /// <summary>
         /// HUD 元素配置列表

@@ -27,6 +27,7 @@ namespace CraftSharp.Windows
             // 创建各个面板并添加到容器
             _panelSystem = new SystemPanel(_settings);
             _panelAppearance = new AppearancePanel(_settings);
+            _panelAppearance.SetParentWindow(this);
             _panelHud = new HudPanel(_settings);
             _panelHotkey = new HotkeyPanel(_settings);
             _panelAbout = new AboutPanel();

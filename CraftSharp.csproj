@@ -8,7 +8,6 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>CraftSharp</AssemblyName>
-    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\**\*" Exclude="Assets\icon.ico" />
-    <Content Include="Assets\icon.ico">
+    <Content Include="Assets\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\zpix.ttf" />

@@ -44,6 +44,29 @@
     <sys:String x:Key="IconStyleSimple">Simple</sys:String>
     <sys:String x:Key="IconStyleRealistic">Realistic</sys:String>
 
+    <!-- App Icon -->
+    <sys:String x:Key="AppIconLabel">App Icon</sys:String>
+    <sys:String x:Key="AppIconDesc">Click preview to change app icon</sys:String>
+    <sys:String x:Key="AppIconTooltip">Click to change icon</sys:String>
+
+    <!-- Icon Picker Window -->
+    <sys:String x:Key="IconPickerTitle">Select App Icon</sys:String>
+    <sys:String x:Key="IconPickerCategoryBlock">Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryBlockAll">All Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryBuildingBlock">Building Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryColoredBlock">Colored Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryFunctionalBlock">Functional Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryNaturalBlock">Natural Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryRedstoneBlock">Redstone Blocks</sys:String>
+    <sys:String x:Key="IconPickerCategoryItem">Items</sys:String>
+    <sys:String x:Key="IconPickerCategoryItemAll">All Items</sys:String>
+    <sys:String x:Key="IconPickerCategoryCombat">Combat</sys:String>
+    <sys:String x:Key="IconPickerCategoryFood">Food &amp; Drink</sys:String>
+    <sys:String x:Key="IconPickerCategoryIngredient">Ingredients</sys:String>
+    <sys:String x:Key="IconPickerCategorySpawnEgg">Spawn Eggs</sys:String>
+    <sys:String x:Key="IconPickerCategoryTool">Tools</sys:String>
+    <sys:String x:Key="IconPickerLoading">Loading...</sys:String>
+
     <!-- HUD Settings Panel -->
     <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
     <sys:String x:Key="HudPanelDesc">Customize HUD elements displayed on hotbar</sys:String>

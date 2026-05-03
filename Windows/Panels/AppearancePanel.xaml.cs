@@ -1,30 +1,50 @@
 using CraftSharp.Models;
 using CraftSharp.Services;
+using CraftSharp.Windows;
+using Newtonsoft.Json;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using IOPath = System.IO.Path;
 
 namespace CraftSharp.Windows.Panels
 {
     public partial class AppearancePanel : System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
+        private System.Windows.Window? _parentWindow;
+        private string _settingsPath;
 
         public AppearancePanel(AppSettings settings)
         {
             InitializeComponent();
             _settings = settings;
+            _settingsPath = IOPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
             InitializeControls();
+        }
+
+        public void SetParentWindow(System.Windows.Window parent)
+        {
+            _parentWindow = parent;
         }
 
         private void InitializeControls()
         {
             ThemeComboBox.SelectedIndex = GetThemeIndex(_settings.Theme);
             FontComboBox.SelectedIndex = GetFontIndex(_settings.Font);
-            IconStyleComboBox.SelectedIndex = GetIconStyleIndex(_settings.IconStyle);
+            LoadAppIconPreview();
+        }
+
+        private void LoadAppIconPreview()
+        {
+            var preview = IconService.Instance.GetIconPreview(_settings.AppIconPath);
+            if (preview != null)
+            {
+                AppIconPreview.Source = preview;
+            }
         }
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
         private static int GetFontIndex(string font) => font switch { "宋体" => 1, "黑体" => 2, "楷体" => 3, "像素字体" => 4, _ => 0 };
-        private static int GetIconStyleIndex(string style) => style switch { "像素" => 1, "简约" => 2, "写实" => 3, _ => 0 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -68,21 +88,35 @@ namespace CraftSharp.Windows.Panels
             }
         }
 
-        private void IconStyleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AppIconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (_settings == null) return;
-            if (IconStyleComboBox.SelectedItem is ComboBoxItem item)
+            var picker = new IconPickerWindow();
+            picker.Owner = _parentWindow;
+
+            if (picker.ShowDialog() == true && picker.SelectedIconPath != null)
             {
-                var tag = item.Tag?.ToString() ?? "default";
-                var styleValue = tag switch
-                {
-                    "pixel" => "像素",
-                    "simple" => "简约",
-                    "realistic" => "写实",
-                    _ => "默认"
-                };
-                _settings.IconStyle = styleValue;
+                // 更新设置
+                _settings.AppIconPath = picker.SelectedIconPath;
+
+                // 更新图标
+                IconService.Instance.SetAppIcon(picker.SelectedIconPath);
+
+                // 更新预览
+                LoadAppIconPreview();
+
+                // 保存设置到配置文件
+                SaveSettings();
             }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(_settings, Formatting.Indented);
+                System.IO.File.WriteAllText(_settingsPath, json);
+            }
+            catch { }
         }
     }
 }
