@@ -4,6 +4,7 @@ using System.Windows.Media;
 using CraftSharp.Windows;
 using CraftSharp.Services;
 using Newtonsoft.Json;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace CraftSharp
 {
@@ -12,7 +13,13 @@ namespace CraftSharp
         private HotbarWindow? _hotbarWindow;
         private InventoryWindow? _inventoryWindow;
         private SettingsWindow? _settingsWindow;
-        private System.Windows.Forms.NotifyIcon? _notifyIcon;
+        private TaskbarIcon? _taskbarIcon;
+        private System.Windows.Controls.ContextMenu? _trayContextMenu;
+        private System.Windows.Controls.MenuItem? _showMainItem;
+        private System.Windows.Controls.MenuItem? _showHotbarItem;
+        private System.Windows.Controls.MenuItem? _hideHotbarItem;
+        private System.Windows.Controls.MenuItem? _openInventoryItem;
+        private System.Windows.Controls.MenuItem? _exitItem;
         private string _settingsPath = "";
         private Models.AppSettings? _appSettings;
 
@@ -39,24 +46,6 @@ namespace CraftSharp
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow();
 
-            // 创建系统托盘图标
-            CreateNotifyIcon();
-
-            // 初始化图标服务
-            IconService.Instance.Initialize(_appSettings?.AppIconPath ?? "minecraft/textures/block/block/glass.png", _notifyIcon!, _settingsWindow);
-
-            _settingsWindow.Show();
-
-            // 设置窗口关闭时最小化到托盘
-            _settingsWindow.Closing += (s, e) =>
-            {
-                if (_notifyIcon != null && _notifyIcon.Visible)
-                {
-                    e.Cancel = true;
-                    _settingsWindow.Hide();
-                }
-            };
-
             // 创建快捷栏窗口
             _hotbarWindow = new HotbarWindow();
             _hotbarWindow.Show();
@@ -65,11 +54,26 @@ namespace CraftSharp
             _inventoryWindow = new InventoryWindow();
             _inventoryWindow.Hide();
 
+            // 创建系统托盘图标（使用纯 WPF 实现）
+            CreateTaskbarIcon();
+
+            // 监听语言切换事件
+            LocalizationService.Instance.LanguageChanged += UpdateTrayMenuTexts;
+
+            _settingsWindow.Show();
+
+            // 设置窗口关闭时最小化到托盘
+            _settingsWindow.Closing += (s, e) =>
+            {
+                if (_taskbarIcon != null)
+                {
+                    e.Cancel = true;
+                    _settingsWindow.Hide();
+                }
+            };
+
             // 注册全局快捷键
             RegisterHotkeys();
-
-            // 监听语言变化，更新托盘菜单
-            LocalizationService.Instance.LanguageChanged += UpdateTrayMenu;
         }
 
         /// <summary>
@@ -93,54 +97,129 @@ namespace CraftSharp
         }
 
         /// <summary>
-        /// 创建系统托盘图标
+        /// 创建系统托盘图标（使用纯 WPF 实现）
         /// </summary>
-        private void CreateNotifyIcon()
+        private void CreateTaskbarIcon()
         {
-            _notifyIcon = new System.Windows.Forms.NotifyIcon
+            _taskbarIcon = new TaskbarIcon
             {
-                Icon = SystemIcons.Application, // 默认图标，由IconService更新
-                Text = "Craft#",
-                Visible = true
+                IconSource = new System.Drawing.Icon(SystemIcons.Application, 16, 16).ToImageSource(),
+                ToolTipText = "Craft#"
             };
 
             // 双击显示设置窗口
-            _notifyIcon.DoubleClick += (s, e) =>
+            _taskbarIcon.TrayMouseDoubleClick += (s, e) =>
             {
-                if (_settingsWindow != null)
-                {
-                    _settingsWindow.Show();
-                    _settingsWindow.Activate();
-                }
+                _settingsWindow?.Show();
+                _settingsWindow?.Activate();
             };
 
-            // 创建右键菜单
-            UpdateTrayMenu();
+            // 创建 Fluent Design 风格的 ContextMenu
+            var contextMenu = CreateTrayContextMenu();
+            _taskbarIcon.ContextMenu = contextMenu;
+
+            // 初始化图标服务（动态加载图标）
+            IconService.Instance.InitializeForTaskbarIcon(
+                _appSettings?.AppIconPath ?? "minecraft/textures/block/block/glass.png",
+                _taskbarIcon,
+                _settingsWindow);
         }
 
         /// <summary>
-        /// 更新托盘菜单（支持多语言）
+        /// 创建托盘右键菜单（Fluent Design 风格）
         /// </summary>
-        private void UpdateTrayMenu()
+        private System.Windows.Controls.ContextMenu CreateTrayContextMenu()
         {
-            if (_notifyIcon == null) return;
+            _trayContextMenu = new System.Windows.Controls.ContextMenu
+            {
+                Style = (Style)FindResource("WpfUiContextMenuStyle"),
+                Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint
+            };
 
-            var contextMenu = new System.Windows.Forms.ContextMenuStrip();
+            // 显示主窗口
+            _showMainItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _showMainItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                _settingsWindow?.Show();
+                _settingsWindow?.Activate();
+            };
+            _trayContextMenu.Items.Add(_showMainItem);
 
-            var showMainText = FindResource("TrayShowMain") as string ?? "显示主窗口";
-            var showHotbarText = FindResource("TrayShowHotbar") as string ?? "显示快捷栏";
-            var hideHotbarText = FindResource("TrayHideHotbar") as string ?? "隐藏快捷栏";
-            var openInventoryText = FindResource("TrayOpenInventory") as string ?? "打开背包";
-            var exitText = FindResource("TrayExit") as string ?? "退出";
+            // 显示快捷栏
+            _showHotbarItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayShowHotbar") as string ?? "显示快捷栏",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _showHotbarItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                _hotbarWindow?.Show();
+            };
+            _trayContextMenu.Items.Add(_showHotbarItem);
 
-            contextMenu.Items.Add(showMainText, null, (s, e) => { _settingsWindow?.Show(); _settingsWindow?.Activate(); });
-            contextMenu.Items.Add(showHotbarText, null, (s, e) => _hotbarWindow?.Show());
-            contextMenu.Items.Add(hideHotbarText, null, (s, e) => _hotbarWindow?.Hide());
-            contextMenu.Items.Add(openInventoryText, null, (s, e) => _inventoryWindow?.Show());
-            contextMenu.Items.Add("-");
-            contextMenu.Items.Add(exitText, null, (s, e) => Shutdown());
+            // 隐藏快捷栏
+            _hideHotbarItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayHideHotbar") as string ?? "隐藏快捷栏",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _hideHotbarItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                _hotbarWindow?.Hide();
+            };
+            _trayContextMenu.Items.Add(_hideHotbarItem);
 
-            _notifyIcon.ContextMenuStrip = contextMenu;
+            // 打开背包
+            _openInventoryItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayOpenInventory") as string ?? "打开背包",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _openInventoryItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                _inventoryWindow?.Show();
+            };
+            _trayContextMenu.Items.Add(_openInventoryItem);
+
+            // 退出
+            _exitItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayExit") as string ?? "退出",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _exitItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                Shutdown();
+            };
+            _trayContextMenu.Items.Add(_exitItem);
+
+            return _trayContextMenu;
+        }
+
+        /// <summary>
+        /// 更新托盘菜单文本（语言切换时调用）
+        /// </summary>
+        private void UpdateTrayMenuTexts()
+        {
+            if (_showMainItem != null)
+                _showMainItem.Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口";
+            if (_showHotbarItem != null)
+                _showHotbarItem.Header = TryFindResource("TrayShowHotbar") as string ?? "显示快捷栏";
+            if (_hideHotbarItem != null)
+                _hideHotbarItem.Header = TryFindResource("TrayHideHotbar") as string ?? "隐藏快捷栏";
+            if (_openInventoryItem != null)
+                _openInventoryItem.Header = TryFindResource("TrayOpenInventory") as string ?? "打开背包";
+            if (_exitItem != null)
+                _exitItem.Header = TryFindResource("TrayExit") as string ?? "退出";
         }
 
         /// <summary>
@@ -179,7 +258,7 @@ namespace CraftSharp
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _notifyIcon?.Dispose();
+            _taskbarIcon?.Dispose();
             base.OnExit(e);
         }
 

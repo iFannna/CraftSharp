@@ -75,5 +75,26 @@ namespace CraftSharp.Services
                 return null;
             }
         }
+
+        /// <summary>
+        /// 扩展方法：将 Icon 转换为 ImageSource
+        /// </summary>
+        public static ImageSource ToImageSource(this Icon icon)
+        {
+            using var bitmap = icon.ToBitmap();
+            using var memoryStream = new MemoryStream();
+
+            bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            memoryStream.Position = 0;
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            return bitmapImage;
+        }
     }
 }

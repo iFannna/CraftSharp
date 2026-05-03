@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace CraftSharp.Services
 {
@@ -16,16 +17,16 @@ namespace CraftSharp.Services
         public static IconService Instance => _instance ??= new IconService();
 
         private string? _currentIconPath;
-        private System.Windows.Forms.NotifyIcon? _notifyIcon;
+        private TaskbarIcon? _taskbarIcon;
         private Window? _settingsWindow;
         private System.Drawing.Bitmap? _trayBitmap; // 保持托盘图标bitmap不被GC回收
 
         /// <summary>
-        /// 初始化图标服务
+        /// 初始化图标服务（使用 TaskbarIcon）
         /// </summary>
-        public void Initialize(string iconPath, System.Windows.Forms.NotifyIcon notifyIcon, Window settingsWindow)
+        public void InitializeForTaskbarIcon(string iconPath, TaskbarIcon taskbarIcon, Window settingsWindow)
         {
-            _notifyIcon = notifyIcon;
+            _taskbarIcon = taskbarIcon;
             _settingsWindow = settingsWindow;
             SetAppIcon(iconPath);
         }
@@ -122,12 +123,13 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 更新托盘图标
+        /// 更新托盘图标（使用 TaskbarIcon）
         /// </summary>
         private void UpdateNotifyIcon(Icon icon)
         {
-            if (_notifyIcon == null) return;
-            _notifyIcon.Icon = icon;
+            if (_taskbarIcon == null) return;
+            // TaskbarIcon 使用 ImageSource
+            _taskbarIcon.IconSource = icon.ToImageSource();
         }
 
         /// <summary>
