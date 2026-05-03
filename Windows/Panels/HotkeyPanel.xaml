@@ -4,11 +4,11 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="快捷键设置" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
-                   Foreground="{StaticResource TextPrimaryBrush}"/>
+        <TextBlock Text="{DynamicResource HotkeyPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-        <TextBlock Text="点击按钮后按下新的快捷键进行设置" Margin="0,0,0,16"
-                   Foreground="{StaticResource TextSecondaryBrush}"/>
+        <TextBlock Text="{DynamicResource HotkeyPanelDesc}" Margin="0,0,0,16"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
 
         <!-- 打开背包 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
@@ -19,11 +19,11 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="打开背包" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource HotkeyInventoryLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="显示/隐藏背包窗口（27格扩展槽位）" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeyInventoryDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="E"
                            x:Name="InventoryHotkeyBtn" Click="HotkeyButton_Click"/>
@@ -39,11 +39,11 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="打开设置" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource HotkeySettingsLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="快速打开此设置面板" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeySettingsDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="Ctrl+S"
                            x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"/>
@@ -59,13 +59,13 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="显示/隐藏快捷栏" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource HotkeyHotbarLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="快速切换快捷栏窗口可见性" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeyHotbarDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="未设置"
+                <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="{DynamicResource HotkeyNotSet}"
                            x:Name="HotbarToggleHotkeyBtn" Click="HotkeyButton_Click"/>
             </Grid>
         </ui:Card>

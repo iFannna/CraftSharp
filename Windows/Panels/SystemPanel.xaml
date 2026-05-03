@@ -4,8 +4,8 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="系统设置" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
-                   Foreground="{StaticResource TextPrimaryBrush}"/>
+        <TextBlock Text="{DynamicResource SystemPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <!-- 语言设置卡片 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
@@ -16,16 +16,16 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="语言 / Language" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource LanguageLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="选择界面显示语言" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource LanguageDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="LanguageComboBox"
                           SelectedIndex="0" SelectionChanged="LanguageComboBox_SelectionChanged">
-                    <ComboBoxItem Content="简体中文"/>
-                    <ComboBoxItem Content="English"/>
+                    <ComboBoxItem Content="{DynamicResource LangZhCN}" Tag="zh-CN"/>
+                    <ComboBoxItem Content="{DynamicResource LangEnUS}" Tag="en-US"/>
                 </ComboBox>
             </Grid>
         </ui:Card>
@@ -39,11 +39,11 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="开机自启动" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource AutoStartLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="系统启动时自动运行 Craft#" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AutoStartDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ui:ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsChecked="True"
                                  Click="AutoStartToggle_Click"/>

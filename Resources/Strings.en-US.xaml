@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Window Title -->
+    <sys:String x:Key="AppTitle">Craft#</sys:String>
+    <sys:String x:Key="SettingsTitle">Craft# Settings</sys:String>
+
+    <!-- Navigation Menu -->
+    <sys:String x:Key="NavSystem">System</sys:String>
+    <sys:String x:Key="NavAppearance">Appearance</sys:String>
+    <sys:String x:Key="NavHud">HUD</sys:String>
+    <sys:String x:Key="NavHotkey">Hotkeys</sys:String>
+    <sys:String x:Key="NavAbout">About</sys:String>
+
+    <!-- System Settings Panel -->
+    <sys:String x:Key="SystemPanelTitle">System Settings</sys:String>
+    <sys:String x:Key="LanguageLabel">Language / 语言</sys:String>
+    <sys:String x:Key="LanguageDesc">Select interface display language</sys:String>
+    <sys:String x:Key="LangZhCN">简体中文</sys:String>
+    <sys:String x:Key="LangEnUS">English</sys:String>
+    <sys:String x:Key="AutoStartLabel">Auto Start</sys:String>
+    <sys:String x:Key="AutoStartDesc">Run Craft# automatically when system starts</sys:String>
+
+    <!-- Appearance Settings Panel -->
+    <sys:String x:Key="AppearancePanelTitle">Appearance Settings</sys:String>
+    <sys:String x:Key="ThemeLabel">Theme</sys:String>
+    <sys:String x:Key="ThemeDesc">Select interface display style</sys:String>
+    <sys:String x:Key="ThemeSystem">Follow System</sys:String>
+    <sys:String x:Key="ThemeDark">Dark</sys:String>
+    <sys:String x:Key="ThemeLight">Light</sys:String>
+    <sys:String x:Key="FontLabel">Font</sys:String>
+    <sys:String x:Key="FontDesc">Select interface display font</sys:String>
+    <sys:String x:Key="FontDefault">Follow System</sys:String>
+    <sys:String x:Key="FontYaHei">Microsoft YaHei</sys:String>
+    <sys:String x:Key="FontSongTi">SimSun</sys:String>
+    <sys:String x:Key="FontHeiTi">SimHei</sys:String>
+    <sys:String x:Key="FontKaiTi">KaiTi</sys:String>
+    <sys:String x:Key="IconStyleLabel">Icon Style</sys:String>
+    <sys:String x:Key="IconStyleDesc">Select interface icon style</sys:String>
+    <sys:String x:Key="IconStylePixel">Pixel Style</sys:String>
+    <sys:String x:Key="IconStyleSimple">Simple Style</sys:String>
+    <sys:String x:Key="IconStyleRealistic">Realistic Style</sys:String>
+
+    <!-- HUD Settings Panel -->
+    <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
+    <sys:String x:Key="HudPanelDesc">Customize HUD elements displayed on hotbar</sys:String>
+
+    <!-- Hotkey Settings Panel -->
+    <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
+    <sys:String x:Key="HotkeyPanelDesc">Click button then press new key to set</sys:String>
+    <sys:String x:Key="HotkeyInventoryLabel">Open Inventory</sys:String>
+    <sys:String x:Key="HotkeyInventoryDesc">Show/Hide inventory window (27 slots)</sys:String>
+    <sys:String x:Key="HotkeySettingsLabel">Open Settings</sys:String>
+    <sys:String x:Key="HotkeySettingsDesc">Quickly open this settings panel</sys:String>
+    <sys:String x:Key="HotkeyHotbarLabel">Show/Hide Hotbar</sys:String>
+    <sys:String x:Key="HotkeyHotbarDesc">Toggle hotbar window visibility</sys:String>
+    <sys:String x:Key="HotkeyNotSet">Not Set</sys:String>
+
+    <!-- About Panel -->
+    <sys:String x:Key="AboutPanelTitle">About</sys:String>
+    <sys:String x:Key="AboutDesc">Minecraft style desktop launcher tool</sys:String>
+    <sys:String x:Key="AboutAuthor">Author</sys:String>
+    <sys:String x:Key="AboutLicense">License</sys:String>
+    <sys:String x:Key="AboutProjectUrl">Project URL</sys:String>
+    <sys:String x:Key="AboutCheckUpdate">Check Update</sys:String>
+    <sys:String x:Key="AboutFeedback">Feedback</sys:String>
+
+    <!-- Tray Menu -->
+    <sys:String x:Key="TrayShowMain">Show Main Window</sys:String>
+    <sys:String x:Key="TrayShowHotbar">Show Hotbar</sys:String>
+    <sys:String x:Key="TrayHideHotbar">Hide Hotbar</sys:String>
+    <sys:String x:Key="TrayOpenInventory">Open Inventory</sys:String>
+    <sys:String x:Key="TrayExit">Exit</sys:String>
+    <sys:String x:Key="TrayMinimized">Application minimized to system tray</sys:String>
+
+</ResourceDictionary>

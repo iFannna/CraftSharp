@@ -4,11 +4,11 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="HUD 设置" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
-                   Foreground="{StaticResource TextPrimaryBrush}"/>
+        <TextBlock Text="{DynamicResource HudPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-        <TextBlock Text="自定义快捷栏上显示的 HUD 元素" Margin="0,0,0,16"
-                   Foreground="{StaticResource TextSecondaryBrush}"/>
+        <TextBlock Text="{DynamicResource HudPanelDesc}" Margin="0,0,0,16"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
 
         <StackPanel x:Name="HudAccordionContainer"/>
     </StackPanel>

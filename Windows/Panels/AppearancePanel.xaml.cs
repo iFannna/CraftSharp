@@ -1,4 +1,5 @@
 using CraftSharp.Models;
+using CraftSharp.Services;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Panels
@@ -29,7 +30,20 @@ namespace CraftSharp.Windows.Panels
         {
             if (_settings == null) return;
             if (ThemeComboBox.SelectedItem is ComboBoxItem item)
-                _settings.Theme = item.Content.ToString() ?? "跟随系统";
+            {
+                // 根据 Tag 获取实际的主题值
+                var tag = item.Tag?.ToString() ?? "system";
+                var themeValue = tag switch
+                {
+                    "dark" => "暗色",
+                    "light" => "亮色",
+                    _ => "跟随系统"
+                };
+                _settings.Theme = themeValue;
+
+                // 使用新的 SetThemeMode 方法切换主题模式
+                ThemeService.Instance.SetThemeMode(themeValue);
+            }
         }
 
         private void FontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

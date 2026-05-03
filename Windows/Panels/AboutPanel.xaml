@@ -4,48 +4,48 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="关于" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
-                   Foreground="{StaticResource TextPrimaryBrush}"/>
+        <TextBlock Text="{DynamicResource AboutPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <ui:Card Padding="24">
             <StackPanel>
                 <!-- Logo and Title -->
                 <StackPanel Margin="0,0,0,16" VerticalAlignment="Center">
                     <TextBlock Text="Craft#" FontSize="24" FontWeight="Bold"
-                               Foreground="{StaticResource TextPrimaryBrush}"/>
-                    <TextBlock Text="v1.0.0" Foreground="{StaticResource TextSecondaryBrush}" FontSize="14"/>
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="v1.0.0" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="14"/>
                 </StackPanel>
 
-                <TextBlock Text="Minecraft 风格的桌面快捷启动工具" Margin="0,0,0,24"
-                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                <TextBlock Text="{DynamicResource AboutDesc}" Margin="0,0,0,24"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-                <Separator Margin="0,0,0,16" Background="{StaticResource DividerBrush}"/>
+                <Separator Margin="0,0,0,16" Background="{DynamicResource DividerBrush}"/>
 
                 <!-- Info Grid -->
                 <Grid Margin="0,0,0,8">
-                    <TextBlock Text="作者" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AboutAuthor}" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <TextBlock Text="SAu" HorizontalAlignment="Right"
-                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </Grid>
                 <Grid Margin="0,0,0,8">
-                    <TextBlock Text="许可证" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AboutLicense}" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <TextBlock Text="MIT License" HorizontalAlignment="Right"
-                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </Grid>
                 <Grid Margin="0,0,0,16">
-                    <TextBlock Text="项目地址" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource AboutProjectUrl}" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Cursor="Hand"
                                 MouseLeftButtonDown="GitHubLink_Click">
-                        <TextBlock Text="GitHub" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="GitHub" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
 
-                <Separator Margin="0,0,0,16" Background="{StaticResource DividerBrush}"/>
+                <Separator Margin="0,0,0,16" Background="{DynamicResource DividerBrush}"/>
 
                 <!-- Action Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <ui:Button Appearance="Secondary" Content="检查更新" Click="CheckUpdate_Click" Width="120"/>
-                    <ui:Button Appearance="Secondary" Content="反馈问题" Margin="16,0,0,0" Click="Feedback_Click" Width="120"/>
+                    <ui:Button Appearance="Secondary" Content="{DynamicResource AboutCheckUpdate}" Click="CheckUpdate_Click" Width="120"/>
+                    <ui:Button Appearance="Secondary" Content="{DynamicResource AboutFeedback}" Margin="16,0,0,0" Click="Feedback_Click" Width="120"/>
                 </StackPanel>
             </StackPanel>
         </ui:Card>

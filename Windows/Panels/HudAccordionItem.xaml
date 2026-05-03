@@ -12,10 +12,10 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="TitleText" FontWeight="Medium"
-                           Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
 
                 <ui:SymbolIcon x:Name="ArrowIcon" Grid.Column="1" Symbol="ChevronDown20"
-                               FontSize="16" Foreground="{StaticResource TextSecondaryBrush}"
+                               FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}"
                                VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                     <ui:SymbolIcon.RenderTransform>
                         <RotateTransform x:Name="ArrowRotate" Angle="0"/>

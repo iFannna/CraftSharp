@@ -1,4 +1,5 @@
 using CraftSharp.Models;
+using CraftSharp.Services;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Panels
@@ -24,7 +25,14 @@ namespace CraftSharp.Windows.Panels
         {
             if (_settings == null) return;
             if (LanguageComboBox.SelectedItem is ComboBoxItem item)
-                _settings.Language = item.Content.ToString() ?? "简体中文";
+            {
+                // 使用显示名称作为设置值
+                var language = item.Content.ToString() ?? "简体中文";
+                _settings.Language = language;
+
+                // 切换语言
+                LocalizationService.Instance.SetLanguage(language);
+            }
         }
 
         private void AutoStartToggle_Click(object sender, System.Windows.RoutedEventArgs e)

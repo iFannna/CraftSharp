@@ -10,14 +10,7 @@
                 <wpfui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- 基础颜色定义 -->
-            <SolidColorBrush x:Key="ApplicationBackgroundBrush" Color="#202020"/>
-            <SolidColorBrush x:Key="CardBackgroundBrush" Color="#2D2D2D"/>
-            <SolidColorBrush x:Key="AccentBrush" Color="#0078D4"/>
-            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#999999"/>
-            <SolidColorBrush x:Key="TextTertiaryBrush" Color="#666666"/>
-            <SolidColorBrush x:Key="DividerBrush" Color="#404040"/>
+            <!-- 基础颜色定义将在 App.xaml.cs 中动态创建，以支持主题切换 -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- 窗口标题 -->
+    <sys:String x:Key="AppTitle">Craft#</sys:String>
+    <sys:String x:Key="SettingsTitle">Craft# 设置</sys:String>
+
+    <!-- 导航菜单 -->
+    <sys:String x:Key="NavSystem">系统</sys:String>
+    <sys:String x:Key="NavAppearance">外观</sys:String>
+    <sys:String x:Key="NavHud">HUD</sys:String>
+    <sys:String x:Key="NavHotkey">快捷键</sys:String>
+    <sys:String x:Key="NavAbout">关于</sys:String>
+
+    <!-- 系统设置面板 -->
+    <sys:String x:Key="SystemPanelTitle">系统设置</sys:String>
+    <sys:String x:Key="LanguageLabel">语言 / Language</sys:String>
+    <sys:String x:Key="LanguageDesc">选择界面显示语言</sys:String>
+    <sys:String x:Key="LangZhCN">简体中文</sys:String>
+    <sys:String x:Key="LangEnUS">English</sys:String>
+    <sys:String x:Key="AutoStartLabel">开机自启动</sys:String>
+    <sys:String x:Key="AutoStartDesc">系统启动时自动运行 Craft#</sys:String>
+
+    <!-- 外观设置面板 -->
+    <sys:String x:Key="AppearancePanelTitle">外观设置</sys:String>
+    <sys:String x:Key="ThemeLabel">主题</sys:String>
+    <sys:String x:Key="ThemeDesc">选择界面显示风格</sys:String>
+    <sys:String x:Key="ThemeSystem">跟随系统</sys:String>
+    <sys:String x:Key="ThemeDark">暗色</sys:String>
+    <sys:String x:Key="ThemeLight">亮色</sys:String>
+    <sys:String x:Key="FontLabel">字体</sys:String>
+    <sys:String x:Key="FontDesc">选择界面显示字体</sys:String>
+    <sys:String x:Key="FontDefault">跟随系统</sys:String>
+    <sys:String x:Key="FontYaHei">微软雅黑</sys:String>
+    <sys:String x:Key="FontSongTi">宋体</sys:String>
+    <sys:String x:Key="FontHeiTi">黑体</sys:String>
+    <sys:String x:Key="FontKaiTi">楷体</sys:String>
+    <sys:String x:Key="IconStyleLabel">图标风格</sys:String>
+    <sys:String x:Key="IconStyleDesc">选择界面图标风格</sys:String>
+    <sys:String x:Key="IconStylePixel">像素风格</sys:String>
+    <sys:String x:Key="IconStyleSimple">简约风格</sys:String>
+    <sys:String x:Key="IconStyleRealistic">写实风格</sys:String>
+
+    <!-- HUD 设置面板 -->
+    <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
+    <sys:String x:Key="HudPanelDesc">自定义快捷栏上显示的 HUD 元素</sys:String>
+
+    <!-- 快捷键设置面板 -->
+    <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
+    <sys:String x:Key="HotkeyPanelDesc">点击按钮后按下新的快捷键进行设置</sys:String>
+    <sys:String x:Key="HotkeyInventoryLabel">打开背包</sys:String>
+    <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏背包窗口（27格扩展槽位）</sys:String>
+    <sys:String x:Key="HotkeySettingsLabel">打开设置</sys:String>
+    <sys:String x:Key="HotkeySettingsDesc">快速打开此设置面板</sys:String>
+    <sys:String x:Key="HotkeyHotbarLabel">显示/隐藏快捷栏</sys:String>
+    <sys:String x:Key="HotkeyHotbarDesc">快速切换快捷栏窗口可见性</sys:String>
+    <sys:String x:Key="HotkeyNotSet">未设置</sys:String>
+
+    <!-- 关于面板 -->
+    <sys:String x:Key="AboutPanelTitle">关于</sys:String>
+    <sys:String x:Key="AboutDesc">Minecraft 风格的桌面快捷启动工具</sys:String>
+    <sys:String x:Key="AboutAuthor">作者</sys:String>
+    <sys:String x:Key="AboutLicense">许可证</sys:String>
+    <sys:String x:Key="AboutProjectUrl">项目地址</sys:String>
+    <sys:String x:Key="AboutCheckUpdate">检查更新</sys:String>
+    <sys:String x:Key="AboutFeedback">反馈问题</sys:String>
+
+    <!-- 托盘菜单 -->
+    <sys:String x:Key="TrayShowMain">显示主窗口</sys:String>
+    <sys:String x:Key="TrayShowHotbar">显示快捷栏</sys:String>
+    <sys:String x:Key="TrayHideHotbar">隐藏快捷栏</sys:String>
+    <sys:String x:Key="TrayOpenInventory">打开背包</sys:String>
+    <sys:String x:Key="TrayExit">退出</sys:String>
+    <sys:String x:Key="TrayMinimized">程序已最小化到系统托盘</sys:String>
+
+</ResourceDictionary>

@@ -4,8 +4,8 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="外观设置" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
-                   Foreground="{StaticResource TextPrimaryBrush}"/>
+        <TextBlock Text="{DynamicResource AppearancePanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <!-- 主题卡片 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
@@ -16,17 +16,17 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="主题" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource ThemeLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="选择界面显示风格" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource ThemeDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="ThemeComboBox"
                           SelectedIndex="0" SelectionChanged="ThemeComboBox_SelectionChanged">
-                    <ComboBoxItem Content="跟随系统"/>
-                    <ComboBoxItem Content="暗色"/>
-                    <ComboBoxItem Content="亮色"/>
+                    <ComboBoxItem Content="{DynamicResource ThemeSystem}" Tag="system"/>
+                    <ComboBoxItem Content="{DynamicResource ThemeDark}" Tag="dark"/>
+                    <ComboBoxItem Content="{DynamicResource ThemeLight}" Tag="light"/>
                 </ComboBox>
             </Grid>
         </ui:Card>
@@ -40,19 +40,19 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="字体" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource FontLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="选择界面显示字体" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource FontDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="FontComboBox"
                           SelectedIndex="0" SelectionChanged="FontComboBox_SelectionChanged">
-                    <ComboBoxItem Content="跟随系统"/>
-                    <ComboBoxItem Content="微软雅黑"/>
-                    <ComboBoxItem Content="宋体"/>
-                    <ComboBoxItem Content="黑体"/>
-                    <ComboBoxItem Content="楷体"/>
+                    <ComboBoxItem Content="{DynamicResource FontDefault}"/>
+                    <ComboBoxItem Content="{DynamicResource FontYaHei}"/>
+                    <ComboBoxItem Content="{DynamicResource FontSongTi}"/>
+                    <ComboBoxItem Content="{DynamicResource FontHeiTi}"/>
+                    <ComboBoxItem Content="{DynamicResource FontKaiTi}"/>
                 </ComboBox>
             </Grid>
         </ui:Card>
@@ -66,18 +66,18 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="图标风格" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{DynamicResource IconStyleLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                     </StackPanel>
-                    <TextBlock Text="选择界面图标风格" Margin="0,8,0,0"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{DynamicResource IconStyleDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="IconStyleComboBox"
                           SelectedIndex="0" SelectionChanged="IconStyleComboBox_SelectionChanged">
-                    <ComboBoxItem Content="跟随系统"/>
-                    <ComboBoxItem Content="像素风格"/>
-                    <ComboBoxItem Content="简约风格"/>
-                    <ComboBoxItem Content="写实风格"/>
+                    <ComboBoxItem Content="{DynamicResource FontDefault}"/>
+                    <ComboBoxItem Content="{DynamicResource IconStylePixel}"/>
+                    <ComboBoxItem Content="{DynamicResource IconStyleSimple}"/>
+                    <ComboBoxItem Content="{DynamicResource IconStyleRealistic}"/>
                 </ComboBox>
             </Grid>
         </ui:Card>

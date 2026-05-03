@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Drawing;
+using System.Windows.Media;
 using CraftSharp.Windows;
+using CraftSharp.Services;
+using Newtonsoft.Json;
 
 namespace CraftSharp
 {
@@ -11,10 +13,25 @@ namespace CraftSharp
         private InventoryWindow? _inventoryWindow;
         private SettingsWindow? _settingsWindow;
         private System.Windows.Forms.NotifyIcon? _notifyIcon;
+        private string _settingsPath = "";
+        private Models.AppSettings? _appSettings;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // 初始化自定义颜色画刷（必须在窗口创建之前）
+            InitializeBrushes();
+
+            // 加载设置
+            _settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+            LoadSettings();
+
+            // 初始化语言
+            LocalizationService.Instance.Initialize(_appSettings?.Language ?? "简体中文");
+
+            // 初始化主题
+            ThemeService.Instance.Initialize(_appSettings?.Theme ?? "跟随系统");
 
             // 创建系统托盘
             CreateNotifyIcon();
@@ -30,7 +47,8 @@ namespace CraftSharp
                 {
                     e.Cancel = true;
                     _settingsWindow.Hide();
-                    _notifyIcon.ShowBalloonTip(2000, "Craft#", "程序已最小化到系统托盘", System.Windows.Forms.ToolTipIcon.Info);
+                    var msg = FindResource("TrayMinimized") as string ?? "程序已最小化到系统托盘";
+                    _notifyIcon.ShowBalloonTip(2000, "Craft#", msg, System.Windows.Forms.ToolTipIcon.Info);
                 }
             };
 
@@ -44,6 +62,29 @@ namespace CraftSharp
 
             // 注册全局快捷键
             RegisterHotkeys();
+
+            // 监听语言变化，更新托盘菜单
+            LocalizationService.Instance.LanguageChanged += UpdateTrayMenu;
+        }
+
+        /// <summary>
+        /// 加载设置
+        /// </summary>
+        private void LoadSettings()
+        {
+            if (System.IO.File.Exists(_settingsPath))
+            {
+                try
+                {
+                    var json = System.IO.File.ReadAllText(_settingsPath);
+                    _appSettings = JsonConvert.DeserializeObject<Models.AppSettings>(json);
+                }
+                catch { _appSettings = new Models.AppSettings(); }
+            }
+            else
+            {
+                _appSettings = new Models.AppSettings();
+            }
         }
 
         /// <summary>
@@ -79,14 +120,31 @@ namespace CraftSharp
                 }
             };
 
-            // 右键菜单
+            // 创建右键菜单
+            UpdateTrayMenu();
+        }
+
+        /// <summary>
+        /// 更新托盘菜单（支持多语言）
+        /// </summary>
+        private void UpdateTrayMenu()
+        {
+            if (_notifyIcon == null) return;
+
             var contextMenu = new System.Windows.Forms.ContextMenuStrip();
-            contextMenu.Items.Add("显示主窗口", null, (s, e) => { _settingsWindow?.Show(); _settingsWindow?.Activate(); });
-            contextMenu.Items.Add("显示快捷栏", null, (s, e) => _hotbarWindow?.Show());
-            contextMenu.Items.Add("隐藏快捷栏", null, (s, e) => _hotbarWindow?.Hide());
-            contextMenu.Items.Add("打开背包", null, (s, e) => _inventoryWindow?.Show());
+
+            var showMainText = FindResource("TrayShowMain") as string ?? "显示主窗口";
+            var showHotbarText = FindResource("TrayShowHotbar") as string ?? "显示快捷栏";
+            var hideHotbarText = FindResource("TrayHideHotbar") as string ?? "隐藏快捷栏";
+            var openInventoryText = FindResource("TrayOpenInventory") as string ?? "打开背包";
+            var exitText = FindResource("TrayExit") as string ?? "退出";
+
+            contextMenu.Items.Add(showMainText, null, (s, e) => { _settingsWindow?.Show(); _settingsWindow?.Activate(); });
+            contextMenu.Items.Add(showHotbarText, null, (s, e) => _hotbarWindow?.Show());
+            contextMenu.Items.Add(hideHotbarText, null, (s, e) => _hotbarWindow?.Hide());
+            contextMenu.Items.Add(openInventoryText, null, (s, e) => _inventoryWindow?.Show());
             contextMenu.Items.Add("-");
-            contextMenu.Items.Add("退出", null, (s, e) => Shutdown());
+            contextMenu.Items.Add(exitText, null, (s, e) => Shutdown());
 
             _notifyIcon.ContextMenuStrip = contextMenu;
         }
@@ -129,6 +187,39 @@ namespace CraftSharp
         {
             _notifyIcon?.Dispose();
             base.OnExit(e);
+        }
+
+        /// <summary>
+        /// 初始化自定义颜色画刷
+        /// </summary>
+        private void InitializeBrushes()
+        {
+            Resources.Add("ApplicationBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x20, 0x20, 0x20)));
+            Resources.Add("CardBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2D, 0x2D, 0x2D)));
+            Resources.Add("AccentBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x78, 0xD4)));
+            Resources.Add("TextPrimaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF)));
+            Resources.Add("TextSecondaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x99, 0x99, 0x99)));
+            Resources.Add("TextTertiaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66)));
+            Resources.Add("DividerBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40)));
+            Resources.Add("HoverBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A)));
+        }
+
+        /// <summary>
+        /// 加载主题设置
+        /// </summary>
+        private string LoadThemeSetting()
+        {
+            if (System.IO.File.Exists(_settingsPath))
+            {
+                try
+                {
+                    var json = System.IO.File.ReadAllText(_settingsPath);
+                    var settings = JsonConvert.DeserializeObject<Models.AppSettings>(json);
+                    return settings?.Theme ?? "跟随系统";
+                }
+                catch { }
+            }
+            return "跟随系统";
         }
     }
 }
