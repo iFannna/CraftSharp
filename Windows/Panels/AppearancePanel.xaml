@@ -74,10 +74,10 @@
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="IconStyleComboBox"
                           SelectedIndex="0" SelectionChanged="IconStyleComboBox_SelectionChanged">
-                    <ComboBoxItem Content="{DynamicResource FontDefault}"/>
-                    <ComboBoxItem Content="{DynamicResource IconStylePixel}"/>
-                    <ComboBoxItem Content="{DynamicResource IconStyleSimple}"/>
-                    <ComboBoxItem Content="{DynamicResource IconStyleRealistic}"/>
+                    <ComboBoxItem Content="{DynamicResource IconStyleDefault}" Tag="default"/>
+                    <ComboBoxItem Content="{DynamicResource IconStylePixel}" Tag="pixel"/>
+                    <ComboBoxItem Content="{DynamicResource IconStyleSimple}" Tag="simple"/>
+                    <ComboBoxItem Content="{DynamicResource IconStyleRealistic}" Tag="realistic"/>
                 </ComboBox>
             </Grid>
         </ui:Card>

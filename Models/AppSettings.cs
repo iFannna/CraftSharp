@@ -30,9 +30,9 @@ namespace CraftSharp.Models
         public string Font { get; set; } = "微软雅黑";
 
         /// <summary>
-        /// 图标风格
+        /// 图标样式
         /// </summary>
-        public string IconStyle { get; set; } = "跟随系统";
+        public string IconStyle { get; set; } = "默认";
 
         // ==================== HUD 设置 ====================
         /// <summary>

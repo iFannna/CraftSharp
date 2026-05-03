@@ -24,7 +24,7 @@ namespace CraftSharp.Windows.Panels
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
         private static int GetFontIndex(string font) => font switch { "宋体" => 1, "黑体" => 2, "楷体" => 3, "像素字体" => 4, _ => 0 };
-        private static int GetIconStyleIndex(string style) => style switch { "像素风格" => 1, "简约风格" => 2, "写实风格" => 3, _ => 0 };
+        private static int GetIconStyleIndex(string style) => style switch { "像素" => 1, "简约" => 2, "写实" => 3, _ => 0 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -72,7 +72,17 @@ namespace CraftSharp.Windows.Panels
         {
             if (_settings == null) return;
             if (IconStyleComboBox.SelectedItem is ComboBoxItem item)
-                _settings.IconStyle = item.Content.ToString() ?? "跟随系统";
+            {
+                var tag = item.Tag?.ToString() ?? "default";
+                var styleValue = tag switch
+                {
+                    "pixel" => "像素",
+                    "simple" => "简约",
+                    "realistic" => "写实",
+                    _ => "默认"
+                };
+                _settings.IconStyle = styleValue;
+            }
         }
     }
 }

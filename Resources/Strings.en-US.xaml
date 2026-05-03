@@ -37,11 +37,12 @@
     <sys:String x:Key="FontHeiTi">SimHei</sys:String>
     <sys:String x:Key="FontKaiTi">KaiTi</sys:String>
     <sys:String x:Key="FontPixel">Pixel Font</sys:String>
-    <sys:String x:Key="IconStyleLabel">Icon Style</sys:String>
+    <sys:String x:Key="IconStyleLabel">Icon</sys:String>
     <sys:String x:Key="IconStyleDesc">Select interface icon style</sys:String>
-    <sys:String x:Key="IconStylePixel">Pixel Style</sys:String>
-    <sys:String x:Key="IconStyleSimple">Simple Style</sys:String>
-    <sys:String x:Key="IconStyleRealistic">Realistic Style</sys:String>
+    <sys:String x:Key="IconStyleDefault">Default</sys:String>
+    <sys:String x:Key="IconStylePixel">Pixel</sys:String>
+    <sys:String x:Key="IconStyleSimple">Simple</sys:String>
+    <sys:String x:Key="IconStyleRealistic">Realistic</sys:String>
 
     <!-- HUD Settings Panel -->
     <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
