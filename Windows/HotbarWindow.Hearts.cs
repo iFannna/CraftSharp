@@ -23,24 +23,28 @@ namespace CraftSharp.Windows
         private void LoadHeartDimensions()
         {
             // heart/full.png（用于获取心形整体尺寸）
-            var uri = new Uri(AssetPaths.HeartFull, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartFull);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalHeartWidth = frame.PixelWidth;
-                _originalHeartHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalHeartWidth = frame.PixelWidth;
+                    _originalHeartHeight = frame.PixelHeight;
+                }
             }
 
             // heart/half.png（半颗心图片，只需宽度）
-            uri = new Uri(AssetPaths.HeartHalf, UriKind.Relative);
-            stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartHalf);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalHalfHeartWidth = frame.PixelWidth;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalHalfHeartWidth = frame.PixelWidth;
+                }
             }
         }
 
@@ -71,7 +75,7 @@ namespace CraftSharp.Windows
                 var containerImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainer{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.HeartContainer, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.HeartContainer),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -87,7 +91,7 @@ namespace CraftSharp.Windows
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartHalf{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.HeartHalf, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.HeartHalf),
                     Width = halfWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -103,7 +107,7 @@ namespace CraftSharp.Windows
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartFull{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.HeartFull, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.HeartFull),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,

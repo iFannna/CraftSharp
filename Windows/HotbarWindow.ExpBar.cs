@@ -19,14 +19,16 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadExpBarDimensions()
         {
-            var uri = new Uri(AssetPaths.ExperienceBarBackground, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.ExperienceBarBackground);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalExpBarWidth = frame.PixelWidth;
-                _originalExpBarHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalExpBarWidth = frame.PixelWidth;
+                    _originalExpBarHeight = frame.PixelHeight;
+                }
             }
         }
 
@@ -37,6 +39,9 @@ namespace CraftSharp.Windows
         {
             double expBarWidth = _originalExpBarWidth * _scaleFactor;
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
+
+            ExperienceBarBackground.Source = LoadBitmapImage(AssetPaths.ExperienceBarBackground);
+            ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.ExperienceBarProgress);
 
             ExperienceBarGrid.Width = expBarWidth;
             ExperienceBarGrid.Height = expBarHeight;

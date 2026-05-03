@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
 
@@ -65,6 +66,21 @@ namespace CraftSharp.Windows
 
             // 启动电量更新定时器
             StartBatteryTimer();
+        }
+
+        /// <summary>
+        /// 从文件路径加载 BitmapImage（用于 Content 配置的资源）
+        /// </summary>
+        protected static BitmapImage LoadBitmapImage(string relativePath)
+        {
+            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
 
         /// <summary>

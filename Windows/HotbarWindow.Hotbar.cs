@@ -31,15 +31,16 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadHotbarDimensions()
         {
-            // hotbar.png
-            var uri = new Uri(AssetPaths.Hotbar, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Hotbar);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalHotbarWidth = frame.PixelWidth;
-                _originalHotbarHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalHotbarWidth = frame.PixelWidth;
+                    _originalHotbarHeight = frame.PixelHeight;
+                }
             }
         }
 
@@ -48,15 +49,16 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadOffhandDimensions()
         {
-            // hotbar_offhand.png
-            var uri = new Uri(AssetPaths.HotbarOffhand, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HotbarOffhand);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalOffhandWidth = frame.PixelWidth;
-                _originalOffhandHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalOffhandWidth = frame.PixelWidth;
+                    _originalOffhandHeight = frame.PixelHeight;
+                }
             }
         }
 
@@ -68,6 +70,7 @@ namespace CraftSharp.Windows
             double hotbarWidth = _originalHotbarWidth * _scaleFactor;
             double hotbarHeight = _originalHotbarHeight * _scaleFactor;
 
+            HotbarImage.Source = LoadBitmapImage(AssetPaths.Hotbar);
             HotbarImage.Width = hotbarWidth;
             HotbarImage.Height = hotbarHeight;
 
@@ -99,6 +102,7 @@ namespace CraftSharp.Windows
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
             double offhandHeight = _originalOffhandHeight * _scaleFactor;
 
+            OffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
             OffhandImage.Width = offhandWidth;
             OffhandImage.Height = offhandHeight;
 

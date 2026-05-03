@@ -21,23 +21,27 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadFoodDimensions()
         {
-            var uri = new Uri(AssetPaths.FoodFull, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.FoodFull);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalFoodWidth = frame.PixelWidth;
-                _originalFoodHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalFoodWidth = frame.PixelWidth;
+                    _originalFoodHeight = frame.PixelHeight;
+                }
             }
 
-            uri = new Uri(AssetPaths.FoodHalf, UriKind.Relative);
-            stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.FoodHalf);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalHalfFoodWidth = frame.PixelWidth;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalHalfFoodWidth = frame.PixelWidth;
+                }
             }
         }
 
@@ -67,7 +71,7 @@ namespace CraftSharp.Windows
                 var emptyImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodEmpty{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.FoodEmpty, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.FoodEmpty),
                     Width = foodWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,
@@ -82,7 +86,7 @@ namespace CraftSharp.Windows
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodHalf{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.FoodHalf, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.FoodHalf),
                     Width = halfWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,
@@ -97,7 +101,7 @@ namespace CraftSharp.Windows
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodFull{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.FoodFull, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.FoodFull),
                     Width = foodWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,

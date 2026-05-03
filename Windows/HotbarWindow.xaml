@@ -36,14 +36,12 @@
             <Grid x:Name="ExperienceBarGrid">
                 <!-- 背景 -->
                 <Image x:Name="ExperienceBarBackground"
-                       Source="/Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_background.png"
                        Stretch="Fill"
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        UseLayoutRounding="True"
                        SnapsToDevicePixels="True"/>
                 <!-- 进度（宽度根据电量动态设置） -->
                 <Image x:Name="ExperienceBarProgress"
-                       Source="/Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_progress.png"
                        Stretch="Fill"
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        UseLayoutRounding="True"
@@ -52,8 +50,7 @@
             </Grid>
 
             <!-- 副手槽背景 -->
-            <Image Source="/Assets/minecraft/textures/gui/sprites/hotbar/hotbar_offhand.png"
-                   Stretch="Fill"
+            <Image Stretch="Fill"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                    UseLayoutRounding="True"
                    SnapsToDevicePixels="True"
@@ -65,8 +62,7 @@
             </Image>
 
             <!-- 快捷栏背景 -->
-            <Image Source="/Assets/minecraft/textures/gui/sprites/hotbar/hotbar.png"
-                   Stretch="Fill"
+            <Image Stretch="Fill"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                    UseLayoutRounding="True"
                    SnapsToDevicePixels="True"

@@ -28,23 +28,27 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadAbsorbingDimensions()
         {
-            var uri = new Uri(AssetPaths.AbsorbingFull, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.AbsorbingFull);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalAbsorbingFullWidth = frame.PixelWidth;
-                _originalAbsorbingFullHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalAbsorbingFullWidth = frame.PixelWidth;
+                    _originalAbsorbingFullHeight = frame.PixelHeight;
+                }
             }
 
-            uri = new Uri(AssetPaths.AbsorbingHalf, UriKind.Relative);
-            stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.AbsorbingHalf);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalAbsorbingHalfWidth = frame.PixelWidth;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalAbsorbingHalfWidth = frame.PixelWidth;
+                }
             }
         }
 
@@ -108,7 +112,7 @@ namespace CraftSharp.Windows
                     var containerImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingContainer{globalIndex}",
-                        Source = new BitmapImage(new Uri(AssetPaths.HeartContainer, UriKind.Relative)),
+                        Source = LoadBitmapImage(AssetPaths.HeartContainer),
                         Width = absorbingWidth,
                         Height = absorbingHeight,
                         Stretch = Stretch.Uniform,
@@ -123,7 +127,7 @@ namespace CraftSharp.Windows
                     var halfImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingHalf{globalIndex}",
-                        Source = new BitmapImage(new Uri(AssetPaths.AbsorbingHalf, UriKind.Relative)),
+                        Source = LoadBitmapImage(AssetPaths.AbsorbingHalf),
                         Width = halfWidth,
                         Height = absorbingHeight,
                         Stretch = Stretch.Uniform,
@@ -138,7 +142,7 @@ namespace CraftSharp.Windows
                     var fullImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingFull{globalIndex}",
-                        Source = new BitmapImage(new Uri(AssetPaths.AbsorbingFull, UriKind.Relative)),
+                        Source = LoadBitmapImage(AssetPaths.AbsorbingFull),
                         Width = absorbingWidth,
                         Height = absorbingHeight,
                         Stretch = Stretch.Uniform,

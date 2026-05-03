@@ -43,6 +43,9 @@ namespace CraftSharp.Windows
             // 获取原始图片尺寸
             GetOriginalImageSize();
 
+            // 加载背景图片
+            InventoryImage.Source = LoadBitmapImage(AssetPaths.Inventory);
+
             // 计算缩放比例
             CalculateScale();
 
@@ -61,15 +64,32 @@ namespace CraftSharp.Windows
         /// </summary>
         private void GetOriginalImageSize()
         {
-            var uri = new Uri(AssetPaths.Inventory, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Inventory);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalImageWidth = frame.PixelWidth;
-                _originalImageHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalImageWidth = frame.PixelWidth;
+                    _originalImageHeight = frame.PixelHeight;
+                }
             }
+        }
+
+        /// <summary>
+        /// 加载位图图片
+        /// </summary>
+        protected static BitmapImage LoadBitmapImage(string relativePath)
+        {
+            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
 
         /// <summary>

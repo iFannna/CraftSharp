@@ -22,23 +22,27 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadAirDimensions()
         {
-            var uri = new Uri(AssetPaths.Air, UriKind.Relative);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Air);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalAirWidth = frame.PixelWidth;
-                _originalAirHeight = frame.PixelHeight;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalAirWidth = frame.PixelWidth;
+                    _originalAirHeight = frame.PixelHeight;
+                }
             }
 
-            uri = new Uri(AssetPaths.AirBursting, UriKind.Relative);
-            stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream != null)
+            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.AirBursting);
+            if (System.IO.File.Exists(path))
             {
-                var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                var frame = decoder.Frames[0];
-                _originalAirBurstingWidth = frame.PixelWidth;
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalAirBurstingWidth = frame.PixelWidth;
+                }
             }
         }
 
@@ -71,7 +75,7 @@ namespace CraftSharp.Windows
                 var airImage = new System.Windows.Controls.Image
                 {
                     Name = $"Air{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.Air, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.Air),
                     Width = airWidth,
                     Height = airHeight,
                     Stretch = Stretch.Uniform,
@@ -86,7 +90,7 @@ namespace CraftSharp.Windows
                 var burstingImage = new System.Windows.Controls.Image
                 {
                     Name = $"AirBursting{i}",
-                    Source = new BitmapImage(new Uri(AssetPaths.AirBursting, UriKind.Relative)),
+                    Source = LoadBitmapImage(AssetPaths.AirBursting),
                     Width = burstingWidth,
                     Height = airHeight,
                     Stretch = Stretch.Uniform,
