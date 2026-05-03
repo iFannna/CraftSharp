@@ -36,6 +36,7 @@
     <sys:String x:Key="FontSongTi">宋体</sys:String>
     <sys:String x:Key="FontHeiTi">黑体</sys:String>
     <sys:String x:Key="FontKaiTi">楷体</sys:String>
+    <sys:String x:Key="FontPixel">像素字体</sys:String>
     <sys:String x:Key="IconStyleLabel">图标风格</sys:String>
     <sys:String x:Key="IconStyleDesc">选择界面图标风格</sys:String>
     <sys:String x:Key="IconStylePixel">像素风格</sys:String>

@@ -36,6 +36,7 @@
     <sys:String x:Key="FontSongTi">SimSun</sys:String>
     <sys:String x:Key="FontHeiTi">SimHei</sys:String>
     <sys:String x:Key="FontKaiTi">KaiTi</sys:String>
+    <sys:String x:Key="FontPixel">Pixel Font</sys:String>
     <sys:String x:Key="IconStyleLabel">Icon Style</sys:String>
     <sys:String x:Key="IconStyleDesc">Select interface icon style</sys:String>
     <sys:String x:Key="IconStylePixel">Pixel Style</sys:String>

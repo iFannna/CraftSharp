@@ -10,6 +10,14 @@
                 <wpfui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- 全局字体资源 -->
+            <FontFamily x:Key="GlobalFontFamily">Segoe UI</FontFamily>
+
+            <!-- 全局样式：将字体应用到所有 TextBlock -->
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{DynamicResource GlobalFontFamily}"/>
+            </Style>
+
             <!-- 基础颜色定义将在 App.xaml.cs 中动态创建，以支持主题切换 -->
         </ResourceDictionary>
     </Application.Resources>

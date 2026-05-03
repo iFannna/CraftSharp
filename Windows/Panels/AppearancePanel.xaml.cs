@@ -23,7 +23,7 @@ namespace CraftSharp.Windows.Panels
         }
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
-        private static int GetFontIndex(string font) => font switch { "微软雅黑" => 1, "宋体" => 2, "黑体" => 3, "楷体" => 4, _ => 0 };
+        private static int GetFontIndex(string font) => font switch { "微软雅黑" => 1, "宋体" => 2, "黑体" => 3, "楷体" => 4, "像素字体" => 5, _ => 0 };
         private static int GetIconStyleIndex(string style) => style switch { "像素风格" => 1, "简约风格" => 2, "写实风格" => 3, _ => 0 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -50,7 +50,23 @@ namespace CraftSharp.Windows.Panels
         {
             if (_settings == null) return;
             if (FontComboBox.SelectedItem is ComboBoxItem item)
-                _settings.Font = item.Content.ToString() ?? "跟随系统";
+            {
+                // 根据 Tag 获取实际的字体值
+                var tag = item.Tag?.ToString() ?? "system";
+                var fontValue = tag switch
+                {
+                    "yahei" => "微软雅黑",
+                    "songti" => "宋体",
+                    "heiti" => "黑体",
+                    "kaiti" => "楷体",
+                    "pixel" => "像素字体",
+                    _ => "跟随系统"
+                };
+                _settings.Font = fontValue;
+
+                // 切换字体
+                FontService.Instance.SetFont(fontValue);
+            }
         }
 
         private void IconStyleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
