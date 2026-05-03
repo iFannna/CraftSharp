@@ -22,7 +22,8 @@ namespace CraftSharp.Windows.Panels
         {
             InventoryHotkeyBtn.Content = _settings.InventoryHotkey;
             SettingsHotkeyBtn.Content = _settings.SettingsHotkey;
-            HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.HotbarToggleHotkey) ? "未设置" : _settings.HotbarToggleHotkey;
+            var notSetText = System.Windows.Application.Current.TryFindResource("HotkeyNotSet") as string ?? "未设置";
+            HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.HotbarToggleHotkey) ? notSetText : _settings.HotbarToggleHotkey;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)

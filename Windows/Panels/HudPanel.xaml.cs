@@ -1,4 +1,6 @@
 using CraftSharp.Models;
+using CraftSharp.Services;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Panels
@@ -12,23 +14,34 @@ namespace CraftSharp.Windows.Panels
             InitializeComponent();
             _settings = settings;
             InitializeHudAccordion();
+
+            // 监听语言变化，重新构建内容
+            LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void OnLanguageChanged()
+        {
+            // 清空并重新构建
+            HudAccordionContainer.Children.Clear();
+            InitializeHudAccordion();
         }
 
         private void InitializeHudAccordion()
         {
             var hudElements = new[]
             {
-                ("hotbar", "快捷栏", "#3b82f6"),
-                ("health", "生命值", "#ef4444"),
-                ("food", "饥饿值", "#eab308"),
-                ("expbar", "经验条", "#22c55e"),
-                ("air", "空气值", "#06b6d4"),
-                ("armor", "护甲值", "#6b7280"),
-                ("absorbing", "伤害吸收值", "#f97316"),
+                ("hotbar", "HudElementHotbar", "#3b82f6"),
+                ("health", "HudElementHealth", "#ef4444"),
+                ("food", "HudElementFood", "#eab308"),
+                ("expbar", "HudElementExpbar", "#22c55e"),
+                ("air", "HudElementAir", "#06b6d4"),
+                ("armor", "HudElementArmor", "#6b7280"),
+                ("absorbing", "HudElementAbsorbing", "#f97316"),
             };
 
-            foreach (var (id, name, color) in hudElements)
+            foreach (var (id, resourceKey, color) in hudElements)
             {
+                var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name, color);
                 HudAccordionContainer.Children.Add(item);
             }

@@ -70,6 +70,31 @@
     <!-- HUD 设置面板 -->
     <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
     <sys:String x:Key="HudPanelDesc">自定义快捷栏上显示的 HUD 元素</sys:String>
+    <sys:String x:Key="HudElementHotbar">快捷栏</sys:String>
+    <sys:String x:Key="HudElementHealth">生命值</sys:String>
+    <sys:String x:Key="HudElementFood">饥饿值</sys:String>
+    <sys:String x:Key="HudElementExpbar">经验条</sys:String>
+    <sys:String x:Key="HudElementAir">空气值</sys:String>
+    <sys:String x:Key="HudElementArmor">护甲值</sys:String>
+    <sys:String x:Key="HudElementAbsorbing">伤害吸收值</sys:String>
+
+    <!-- HUD 选项 -->
+    <sys:String x:Key="HudOptionShowHotbar">显示快捷栏</sys:String>
+    <sys:String x:Key="HudOptionShowHotbarDesc">在桌面显示快捷栏窗口</sys:String>
+    <sys:String x:Key="HudOptionLockPosition">锁定位置</sys:String>
+    <sys:String x:Key="HudOptionLockPositionDesc">防止快捷栏被意外拖动</sys:String>
+    <sys:String x:Key="HudOptionLeftOffhand">左副手槽</sys:String>
+    <sys:String x:Key="HudOptionLeftOffhandDesc">在快捷栏左侧显示副手槽位</sys:String>
+    <sys:String x:Key="HudOptionRightOffhand">右副手槽</sys:String>
+    <sys:String x:Key="HudOptionRightOffhandDesc">在快捷栏右侧显示副手槽位</sys:String>
+    <sys:String x:Key="HudOptionShowElement">显示元素</sys:String>
+    <sys:String x:Key="HudOptionShowElementDesc">在快捷栏上显示此 HUD 元素</sys:String>
+    <sys:String x:Key="HudOptionRegenAnim">恢复动画</sys:String>
+    <sys:String x:Key="HudOptionRegenAnimDesc">生命值恢复时显示动画效果</sys:String>
+    <sys:String x:Key="HudOptionDataMapping">数据映射</sys:String>
+    <sys:String x:Key="HudOptionDataMappingDesc">开启后选择映射的系统数据</sys:String>
+    <sys:String x:Key="HudOptionCustomValue">自定义数值</sys:String>
+    <sys:String x:Key="HudOptionCustomValueDesc">开启后手动设置数值</sys:String>
 
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
