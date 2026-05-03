@@ -14,7 +14,7 @@ namespace CraftSharp.Services
         /// <summary>
         /// 当前字体设置
         /// </summary>
-        public string CurrentFont { get; private set; } = "跟随系统";
+        public string CurrentFont { get; private set; } = "微软雅黑";
 
         /// <summary>
         /// 字体变化事件
@@ -46,8 +46,8 @@ namespace CraftSharp.Services
             // 像素字体使用嵌入资源
             if (displayName == "像素字体")
             {
-                // 加载嵌入的像素字体
-                fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/PressStart2P-Regular.ttf#Press Start 2P");
+                // 加载嵌入的像素字体 Zpix
+                fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/zpix.ttf#Zpix");
             }
             else
             {
@@ -76,7 +76,7 @@ namespace CraftSharp.Services
                 "宋体" => "SimSun",
                 "黑体" => "SimHei",
                 "楷体" => "KaiTi",
-                _ => "Segoe UI"
+                _ => "Microsoft YaHei"
             };
         }
 

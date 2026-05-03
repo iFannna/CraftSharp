@@ -48,7 +48,6 @@
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="FontComboBox"
                           SelectedIndex="0" SelectionChanged="FontComboBox_SelectionChanged">
-                    <ComboBoxItem Content="{DynamicResource FontDefault}" Tag="system"/>
                     <ComboBoxItem Content="{DynamicResource FontYaHei}" Tag="yahei"/>
                     <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="songti"/>
                     <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>

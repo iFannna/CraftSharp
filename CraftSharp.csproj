@@ -22,7 +22,7 @@
     <Content Include="Assets\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Fonts\PressStart2P-Regular.ttf" />
+    <Resource Include="Fonts\zpix.ttf" />
   </ItemGroup>
 
 </Project>

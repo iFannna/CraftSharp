@@ -11,7 +11,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- 全局字体资源 -->
-            <FontFamily x:Key="GlobalFontFamily">Segoe UI</FontFamily>
+            <FontFamily x:Key="GlobalFontFamily">Microsoft YaHei</FontFamily>
 
             <!-- 全局样式：将字体应用到所有 TextBlock -->
             <Style TargetType="TextBlock">

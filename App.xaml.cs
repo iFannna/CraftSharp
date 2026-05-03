@@ -34,7 +34,7 @@ namespace CraftSharp
             ThemeService.Instance.Initialize(_appSettings?.Theme ?? "跟随系统");
 
             // 初始化字体
-            FontService.Instance.Initialize(_appSettings?.Font ?? "跟随系统");
+            FontService.Instance.Initialize(_appSettings?.Font ?? "微软雅黑");
 
             // 创建系统托盘
             CreateNotifyIcon();

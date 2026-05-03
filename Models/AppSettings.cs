@@ -27,7 +27,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 字体
         /// </summary>
-        public string Font { get; set; } = "跟随系统";
+        public string Font { get; set; } = "微软雅黑";
 
         /// <summary>
         /// 图标风格
