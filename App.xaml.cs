@@ -48,7 +48,23 @@ namespace CraftSharp
 
             // 创建快捷栏窗口
             _statusBarWindow = new StatusBarWindow();
-            _statusBarWindow.Show();
+
+            // 初始化状态栏服务
+            StatusBarService.Instance.Initialize(_statusBarWindow);
+
+            // 根据设置决定是否显示状态栏
+            if (_appSettings?.StatusBarVisible ?? true)
+                _statusBarWindow.Show();
+            else
+                _statusBarWindow.Hide();
+
+            // 如果启用了记住位置，恢复状态栏位置
+            if (_appSettings?.StatusBarRememberPosition ?? false)
+            {
+                StatusBarService.Instance.RestorePosition(
+                    _appSettings.StatusBarPositionX,
+                    _appSettings.StatusBarPositionY);
+            }
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow();

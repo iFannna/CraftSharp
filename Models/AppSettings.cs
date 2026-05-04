@@ -41,6 +41,31 @@ namespace CraftSharp.Models
 
         // ==================== HUD 设置 ====================
         /// <summary>
+        /// 显示状态栏
+        /// </summary>
+        public bool StatusBarVisible { get; set; } = true;
+
+        /// <summary>
+        /// 锁定状态栏位置
+        /// </summary>
+        public bool StatusBarLocked { get; set; } = false;
+
+        /// <summary>
+        /// 记住状态栏位置
+        /// </summary>
+        public bool StatusBarRememberPosition { get; set; } = false;
+
+        /// <summary>
+        /// 状态栏窗口 X 坐标
+        /// </summary>
+        public double StatusBarPositionX { get; set; } = 0;
+
+        /// <summary>
+        /// 状态栏窗口 Y 坐标
+        /// </summary>
+        public double StatusBarPositionY { get; set; } = 0;
+
+        /// <summary>
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; } = new();

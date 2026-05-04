@@ -17,6 +17,7 @@ namespace CraftSharp.Windows
 
         private double _scaleFactor;
         private DispatcherTimer? _batteryTimer;
+        private bool _isLocked = false;
 
         public StatusBarWindow()
         {
@@ -227,6 +228,25 @@ namespace CraftSharp.Windows
             // 窗口顶部位置：正常情况下在屏幕底部，如果窗口高度超过屏幕则从顶部开始
             double desiredTop = screenHeight - Height - 10 * _scaleFactor;
             Top = Math.Max(0, desiredTop);
+        }
+
+        /// <summary>
+        /// 设置窗口锁定状态
+        /// </summary>
+        public void SetLocked(bool locked)
+        {
+            _isLocked = locked;
+        }
+
+        /// <summary>
+        /// 根Grid鼠标按下事件 - 实现窗口拖动
+        /// </summary>
+        private void RootGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (!_isLocked)
+            {
+                this.DragMove();
+            }
         }
     }
 }

@@ -113,9 +113,15 @@ namespace CraftSharp.Windows.Panels
         {
             if (id == "statusbar")
             {
-                AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", true);
-                AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", false);
-                AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", false);
+                var showToggle = AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", _settings.StatusBarVisible);
+                showToggle.Checked += (s, e) => StatusBarService.Instance.SetVisible(true);
+                showToggle.Unchecked += (s, e) => StatusBarService.Instance.SetVisible(false);
+
+                var lockToggle = AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", _settings.StatusBarLocked);
+                lockToggle.Checked += (s, e) => StatusBarService.Instance.SetLocked(true);
+                lockToggle.Unchecked += (s, e) => StatusBarService.Instance.SetLocked(false);
+
+                AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBarRememberPosition);
             }
             else if (id == "hotbar")
             {
@@ -133,7 +139,7 @@ namespace CraftSharp.Windows.Panels
             }
         }
 
-        private void AddToggleRow(string labelKey, string descKey, bool defaultVal)
+        private ToggleSwitch AddToggleRow(string labelKey, string descKey, bool defaultVal)
         {
             var grid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -161,6 +167,8 @@ namespace CraftSharp.Windows.Panels
             Grid.SetColumn(toggle, 1);
 
             ContentPanel.Children.Add(grid);
+
+            return toggle;
         }
 
         private void AddMappingRow()

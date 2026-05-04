@@ -10,7 +10,7 @@
         ResizeMode="NoResize"
         RenderOptions.BitmapScalingMode="NearestNeighbor">
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown">
         <Canvas x:Name="MainCanvas">
             <!-- 心形生命值容器 -->
             <Canvas x:Name="HeartCanvas">
