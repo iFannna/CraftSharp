@@ -7,9 +7,9 @@ using CraftSharp.Helpers;
 namespace CraftSharp.Windows
 {
     /// <summary>
-    /// 快捷栏窗口主文件 - 构造函数、缩放、布局核心逻辑
+    /// 状态栏窗口主文件 - 构造函数、缩放、布局核心逻辑
     /// </summary>
-    public partial class HotbarWindow : Window
+    public partial class StatusBarWindow : Window
     {
         // 基准分辨率：2560下放大6倍
         private const double BaseScreenWidth = 2560;
@@ -18,7 +18,7 @@ namespace CraftSharp.Windows
         private double _scaleFactor;
         private DispatcherTimer? _batteryTimer;
 
-        public HotbarWindow()
+        public StatusBarWindow()
         {
             InitializeComponent();
 

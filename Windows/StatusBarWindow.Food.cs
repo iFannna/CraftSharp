@@ -9,7 +9,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 饥饿值功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private double _originalFoodWidth;
         private double _originalFoodHeight;

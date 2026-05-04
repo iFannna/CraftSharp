@@ -9,7 +9,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 空气值功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private double _originalAirWidth;
         private double _originalAirHeight;

@@ -14,7 +14,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 快捷栏和格子功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private readonly SlotDataService _slotService;
         private readonly string[] _slotIds = { "hotbar_offhand", "hotbar_0", "hotbar_1", "hotbar_2", "hotbar_3", "hotbar_4", "hotbar_5", "hotbar_6", "hotbar_7", "hotbar_8" };

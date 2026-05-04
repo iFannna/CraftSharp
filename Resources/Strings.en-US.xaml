@@ -118,8 +118,8 @@
 
     <!-- Tray Menu -->
     <sys:String x:Key="TrayShowMain">Show Main Window</sys:String>
-    <sys:String x:Key="TrayShowHotbar">Show Hotbar</sys:String>
-    <sys:String x:Key="TrayHideHotbar">Hide Hotbar</sys:String>
+    <sys:String x:Key="TrayShowStatusBar">Show Status Bar</sys:String>
+    <sys:String x:Key="TrayHideStatusBar">Hide Status Bar</sys:String>
     <sys:String x:Key="TrayOpenInventory">Open Inventory</sys:String>
     <sys:String x:Key="TrayExit">Exit</sys:String>
     <sys:String x:Key="TrayMinimized">Application minimized to system tray</sys:String>

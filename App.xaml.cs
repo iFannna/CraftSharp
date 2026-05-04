@@ -10,14 +10,14 @@ namespace CraftSharp
 {
     public partial class App : System.Windows.Application
     {
-        private HotbarWindow? _hotbarWindow;
+        private StatusBarWindow? _statusBarWindow;
         private InventoryWindow? _inventoryWindow;
         private SettingsWindow? _settingsWindow;
         private TaskbarIcon? _taskbarIcon;
         private System.Windows.Controls.ContextMenu? _trayContextMenu;
         private System.Windows.Controls.MenuItem? _showMainItem;
-        private System.Windows.Controls.MenuItem? _showHotbarItem;
-        private System.Windows.Controls.MenuItem? _hideHotbarItem;
+        private System.Windows.Controls.MenuItem? _showStatusBarItem;
+        private System.Windows.Controls.MenuItem? _hideStatusBarItem;
         private System.Windows.Controls.MenuItem? _openInventoryItem;
         private System.Windows.Controls.MenuItem? _exitItem;
         private string _settingsPath = "";
@@ -47,8 +47,8 @@ namespace CraftSharp
             _settingsWindow = new SettingsWindow();
 
             // 创建快捷栏窗口
-            _hotbarWindow = new HotbarWindow();
-            _hotbarWindow.Show();
+            _statusBarWindow = new StatusBarWindow();
+            _statusBarWindow.Show();
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow();
@@ -150,31 +150,31 @@ namespace CraftSharp
             };
             _trayContextMenu.Items.Add(_showMainItem);
 
-            // 显示快捷栏
-            _showHotbarItem = new System.Windows.Controls.MenuItem
+            // 显示状态栏
+            _showStatusBarItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayShowHotbar") as string ?? "显示快捷栏",
+                Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _showHotbarItem.Click += (s, e) =>
+            _showStatusBarItem.Click += (s, e) =>
             {
                 _trayContextMenu.IsOpen = false;
-                _hotbarWindow?.Show();
+                _statusBarWindow?.Show();
             };
-            _trayContextMenu.Items.Add(_showHotbarItem);
+            _trayContextMenu.Items.Add(_showStatusBarItem);
 
-            // 隐藏快捷栏
-            _hideHotbarItem = new System.Windows.Controls.MenuItem
+            // 隐藏状态栏
+            _hideStatusBarItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayHideHotbar") as string ?? "隐藏快捷栏",
+                Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _hideHotbarItem.Click += (s, e) =>
+            _hideStatusBarItem.Click += (s, e) =>
             {
                 _trayContextMenu.IsOpen = false;
-                _hotbarWindow?.Hide();
+                _statusBarWindow?.Hide();
             };
-            _trayContextMenu.Items.Add(_hideHotbarItem);
+            _trayContextMenu.Items.Add(_hideStatusBarItem);
 
             // 打开背包
             _openInventoryItem = new System.Windows.Controls.MenuItem
@@ -212,10 +212,10 @@ namespace CraftSharp
         {
             if (_showMainItem != null)
                 _showMainItem.Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口";
-            if (_showHotbarItem != null)
-                _showHotbarItem.Header = TryFindResource("TrayShowHotbar") as string ?? "显示快捷栏";
-            if (_hideHotbarItem != null)
-                _hideHotbarItem.Header = TryFindResource("TrayHideHotbar") as string ?? "隐藏快捷栏";
+            if (_showStatusBarItem != null)
+                _showStatusBarItem.Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏";
+            if (_hideStatusBarItem != null)
+                _hideStatusBarItem.Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏";
             if (_openInventoryItem != null)
                 _openInventoryItem.Header = TryFindResource("TrayOpenInventory") as string ?? "打开背包";
             if (_exitItem != null)

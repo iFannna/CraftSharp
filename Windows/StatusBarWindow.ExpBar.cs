@@ -8,7 +8,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 经验条功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private double _originalExpBarWidth;
         private double _originalExpBarHeight;

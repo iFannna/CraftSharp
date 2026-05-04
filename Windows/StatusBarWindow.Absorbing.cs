@@ -9,7 +9,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 伤害吸收值功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private double _originalAbsorbingFullWidth;
         private double _originalAbsorbingFullHeight;

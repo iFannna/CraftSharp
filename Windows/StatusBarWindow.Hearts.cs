@@ -9,7 +9,7 @@ namespace CraftSharp.Windows
     /// <summary>
     /// 心形生命值功能
     /// </summary>
-    public partial class HotbarWindow
+    public partial class StatusBarWindow
     {
         private double _originalHeartWidth;
         private double _originalHeartHeight;
