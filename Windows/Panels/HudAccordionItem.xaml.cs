@@ -111,10 +111,15 @@ namespace CraftSharp.Windows.Panels
 
         private void AddHudContent(string id)
         {
-            if (id == "hotbar")
+            if (id == "statusbar")
+            {
+                AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", true);
+                AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", false);
+                AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", false);
+            }
+            else if (id == "hotbar")
             {
                 AddToggleRow("HudOptionShowHotbar", "HudOptionShowHotbarDesc", true);
-                AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", false);
                 AddToggleRow("HudOptionLeftOffhand", "HudOptionLeftOffhandDesc", false);
                 AddToggleRow("HudOptionRightOffhand", "HudOptionRightOffhandDesc", false);
             }

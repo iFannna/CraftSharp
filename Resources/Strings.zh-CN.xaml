@@ -69,7 +69,8 @@
 
     <!-- HUD 设置面板 -->
     <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
-    <sys:String x:Key="HudPanelDesc">自定义快捷栏上显示的 HUD 元素</sys:String>
+    <sys:String x:Key="HudStatusBarSettings">状态栏设置</sys:String>
+    <sys:String x:Key="HudElementStatusBar">状态栏</sys:String>
     <sys:String x:Key="HudElementHotbar">快捷栏</sys:String>
     <sys:String x:Key="HudElementHealth">生命值</sys:String>
     <sys:String x:Key="HudElementFood">饥饿值</sys:String>
@@ -79,6 +80,10 @@
     <sys:String x:Key="HudElementAbsorbing">伤害吸收值</sys:String>
 
     <!-- HUD 选项 -->
+    <sys:String x:Key="HudOptionShowStatusBar">显示状态栏</sys:String>
+    <sys:String x:Key="HudOptionShowStatusBarDesc">在桌面显示状态栏窗口</sys:String>
+    <sys:String x:Key="HudOptionRememberPosition">记住位置</sys:String>
+    <sys:String x:Key="HudOptionRememberPositionDesc">下次启动时恢复状态栏窗口位置</sys:String>
     <sys:String x:Key="HudOptionShowHotbar">显示快捷栏</sys:String>
     <sys:String x:Key="HudOptionShowHotbarDesc">在桌面显示快捷栏窗口</sys:String>
     <sys:String x:Key="HudOptionLockPosition">锁定位置</sys:String>

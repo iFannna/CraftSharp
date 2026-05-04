@@ -69,7 +69,8 @@
 
     <!-- HUD Settings Panel -->
     <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
-    <sys:String x:Key="HudPanelDesc">Customize HUD elements displayed on hotbar</sys:String>
+    <sys:String x:Key="HudStatusBarSettings">Status Bar Settings</sys:String>
+    <sys:String x:Key="HudElementStatusBar">Status Bar</sys:String>
     <sys:String x:Key="HudElementHotbar">Hotbar</sys:String>
     <sys:String x:Key="HudElementHealth">Health</sys:String>
     <sys:String x:Key="HudElementFood">Food</sys:String>
@@ -79,6 +80,10 @@
     <sys:String x:Key="HudElementAbsorbing">Absorption</sys:String>
 
     <!-- HUD Options -->
+    <sys:String x:Key="HudOptionShowStatusBar">Show Status Bar</sys:String>
+    <sys:String x:Key="HudOptionShowStatusBarDesc">Display status bar window on desktop</sys:String>
+    <sys:String x:Key="HudOptionRememberPosition">Remember Position</sys:String>
+    <sys:String x:Key="HudOptionRememberPositionDesc">Restore status bar window position on next launch</sys:String>
     <sys:String x:Key="HudOptionShowHotbar">Show Hotbar</sys:String>
     <sys:String x:Key="HudOptionShowHotbarDesc">Display hotbar window on desktop</sys:String>
     <sys:String x:Key="HudOptionLockPosition">Lock Position</sys:String>

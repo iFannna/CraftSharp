@@ -30,7 +30,8 @@ namespace CraftSharp.Windows.Panels
         {
             var hudElements = new[]
             {
-                ("hotbar", "HudElementHotbar", "#3b82f6"),
+                ("statusbar", "HudElementStatusBar", "#3b82f6"),
+                ("hotbar", "HudElementHotbar", "#f59e0b"),
                 ("health", "HudElementHealth", "#ef4444"),
                 ("food", "HudElementFood", "#eab308"),
                 ("expbar", "HudElementExpbar", "#22c55e"),
