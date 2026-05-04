@@ -7,6 +7,7 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 经验条功能
+    /// 经验条居中于快捷栏，在快捷栏上方1px
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -33,7 +34,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置经验条（和快捷栏一样水平居中）
+        /// 设置经验条（居中于快捷栏，在快捷栏上方1px）
         /// </summary>
         private void SetupExperienceBar()
         {
@@ -51,14 +52,14 @@ namespace CraftSharp.Windows
 
             ExperienceBarProgress.Height = expBarHeight;
 
+            // 经验条居中于快捷栏
+            double hotbarLeft = GetHotbarLeft();
             double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
+            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
 
-            double hotbarLeftInWindow = _offhandOnRight ? 0 : offhandWidth + spacing;
             double expBarTopOffset = GetExpBarTopOffset();
 
-            System.Windows.Controls.Canvas.SetLeft(ExperienceBarGrid, hotbarLeftInWindow + (hotbarWidth - expBarWidth) / 2);
+            System.Windows.Controls.Canvas.SetLeft(ExperienceBarGrid, expBarLeft);
             System.Windows.Controls.Canvas.SetTop(ExperienceBarGrid, expBarTopOffset);
 
             UpdateBatteryLevel();

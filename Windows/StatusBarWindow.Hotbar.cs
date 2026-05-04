@@ -17,14 +17,13 @@ namespace CraftSharp.Windows
     public partial class StatusBarWindow
     {
         private readonly SlotDataService _slotService;
-        private readonly string[] _slotIds = { "hotbar_offhand", "hotbar_0", "hotbar_1", "hotbar_2", "hotbar_3", "hotbar_4", "hotbar_5", "hotbar_6", "hotbar_7", "hotbar_8" };
+        private readonly string[] _slotIds = { "hotbar_left_offhand", "hotbar_right_offhand", "hotbar_0", "hotbar_1", "hotbar_2", "hotbar_3", "hotbar_4", "hotbar_5", "hotbar_6", "hotbar_7", "hotbar_8" };
 
         private double _originalHotbarWidth;
         private double _originalHotbarHeight;
         private double _originalOffhandWidth;
         private double _originalOffhandHeight;
-        private bool _offhandOnRight = false; // 副手槽位置配置：默认左边
-        private double _offhandSpacing = 7; // 副手槽与快捷栏之间的间距（像素）
+        private double _offhandSpacing = 6; // 副手槽与快捷栏之间的间距（像素）
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -64,6 +63,7 @@ namespace CraftSharp.Windows
 
         /// <summary>
         /// 设置快捷栏位置（在最底部）
+        /// 快捷栏是水平位置的基准点
         /// </summary>
         private void SetupHotbar()
         {
@@ -74,37 +74,26 @@ namespace CraftSharp.Windows
             HotbarImage.Width = hotbarWidth;
             HotbarImage.Height = hotbarHeight;
 
-            // 快捷栏Y位置 = 经验条Y + 经验条高度 + 经验条与快捷栏间距
+            // 快捷栏Y位置 = 窗口底部
             double expBarTopOffset = GetExpBarTopOffset();
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
             double expBarSpacing = _spacing * _scaleFactor;
             double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
 
-            // 快捷栏位置根据副手槽位置决定
-            if (_offhandOnRight)
-            {
-                // 副手槽在右边，快捷栏在左边
-                Canvas.SetLeft(HotbarImage, 0);
-            }
-            else
-            {
-                // 副手槽在左边（默认），快捷栏在右边
-                Canvas.SetLeft(HotbarImage, (_originalOffhandWidth + _offhandSpacing) * _scaleFactor);
-            }
+            // 快捷栏左边位置
+            double hotbarLeft = GetHotbarLeft();
+            Canvas.SetLeft(HotbarImage, hotbarLeft);
             Canvas.SetTop(HotbarImage, hotbarTopOffset);
         }
 
         /// <summary>
-        /// 设置副手槽位置（与快捷栏同一行）
+        /// 设置副手槽位置（浮动在快捷栏左右两侧）
         /// </summary>
-        private void SetupOffhandSlot()
+        private void SetupOffhandSlots()
         {
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
             double offhandHeight = _originalOffhandHeight * _scaleFactor;
-
-            OffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
-            OffhandImage.Width = offhandWidth;
-            OffhandImage.Height = offhandHeight;
+            double spacing = _offhandSpacing * _scaleFactor;
 
             // 副手槽Y位置 = 与快捷栏同一行
             double expBarTopOffset = GetExpBarTopOffset();
@@ -112,74 +101,112 @@ namespace CraftSharp.Windows
             double expBarSpacing = _spacing * _scaleFactor;
             double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
 
-            // 根据配置设置副手槽位置和翻转
-            if (_offhandOnRight)
+            // 快捷栏左边位置（基准点）
+            double hotbarLeft = GetHotbarLeft();
+            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+
+            // 左副手槽：在快捷栏左边，间距6px
+            LeftOffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
+            LeftOffhandImage.Width = offhandWidth;
+            LeftOffhandImage.Height = offhandHeight;
+
+            if (_leftOffhandEnabled)
             {
-                // 副手槽在右边，图片翻转
-                OffhandScaleTransform.ScaleX = -1;
-                Canvas.SetLeft(OffhandImage, (_originalOffhandWidth + _offhandSpacing + _originalHotbarWidth) * _scaleFactor);
+                LeftOffhandImage.Visibility = Visibility.Visible;
+                Canvas.SetLeft(LeftOffhandImage, hotbarLeft - spacing - offhandWidth);
+                Canvas.SetTop(LeftOffhandImage, hotbarTopOffset);
             }
             else
             {
-                // 副手槽在左边（默认），图片正常
-                OffhandScaleTransform.ScaleX = 1;
-                Canvas.SetLeft(OffhandImage, 0);
+                LeftOffhandImage.Visibility = Visibility.Collapsed;
             }
-            Canvas.SetTop(OffhandImage, hotbarTopOffset);
+
+            // 右副手槽：在快捷栏右边，间距6px，图片翻转
+            RightOffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
+            RightOffhandImage.Width = offhandWidth;
+            RightOffhandImage.Height = offhandHeight;
+            RightOffhandScaleTransform.ScaleX = -1;
+
+            if (_rightOffhandEnabled)
+            {
+                RightOffhandImage.Visibility = Visibility.Visible;
+                Canvas.SetLeft(RightOffhandImage, hotbarLeft + hotbarWidth + spacing);
+                Canvas.SetTop(RightOffhandImage, hotbarTopOffset);
+            }
+            else
+            {
+                RightOffhandImage.Visibility = Visibility.Collapsed;
+            }
         }
 
         /// <summary>
-        /// 动态设置格子位置和大小（与快捷栏同一行）
+        /// 设置格子位置和大小
         /// </summary>
         private void SetupSlots()
         {
-            // 格子Y位置 = 与快捷栏同一行
             double expBarTopOffset = GetExpBarTopOffset();
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
             double expBarSpacing = _spacing * _scaleFactor;
             double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
 
-            // 副手格子
-            double offhandSlotWidth = _originalOffhandWidth * _scaleFactor;
+            double hotbarLeft = GetHotbarLeft();
+            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+            double offhandWidth = _originalOffhandWidth * _scaleFactor;
+            double spacing = _offhandSpacing * _scaleFactor;
+
+            // 副手格子尺寸
+            double offhandSlotWidth = offhandWidth;
             double offhandSlotHeight = _originalOffhandHeight * _scaleFactor;
             double offhandIconSize = _originalOffhandHeight * 0.73 * _scaleFactor;
 
-            var offhandBorder = GetSlotBorder("Offhand");
-            var offhandIcon = GetIconImage("Offhand");
-            if (offhandBorder != null && offhandIcon != null)
+            // 左副手格子
+            var leftOffhandBorder = GetSlotBorder("LeftOffhand");
+            var leftOffhandIcon = GetIconImage("LeftOffhand");
+            if (leftOffhandBorder != null && leftOffhandIcon != null)
             {
-                offhandBorder.Width = offhandSlotWidth;
-                offhandBorder.Height = offhandSlotHeight;
-                offhandIcon.Width = offhandIconSize;
-                offhandIcon.Height = offhandIconSize;
+                leftOffhandBorder.Width = offhandSlotWidth;
+                leftOffhandBorder.Height = offhandSlotHeight;
+                leftOffhandIcon.Width = offhandIconSize;
+                leftOffhandIcon.Height = offhandIconSize;
 
-                // 副手格子位置根据配置决定
-                if (_offhandOnRight)
+                if (_leftOffhandEnabled)
                 {
-                    Canvas.SetLeft(offhandBorder, (_originalOffhandWidth + _offhandSpacing + _originalHotbarWidth) * _scaleFactor);
+                    leftOffhandBorder.Visibility = Visibility.Visible;
+                    Canvas.SetLeft(leftOffhandBorder, hotbarLeft - spacing - offhandWidth);
+                    Canvas.SetTop(leftOffhandBorder, hotbarTopOffset);
                 }
                 else
                 {
-                    Canvas.SetLeft(offhandBorder, 0);
+                    leftOffhandBorder.Visibility = Visibility.Collapsed;
                 }
-                Canvas.SetTop(offhandBorder, hotbarTopOffset);
+            }
+
+            // 右副手格子
+            var rightOffhandBorder = GetSlotBorder("RightOffhand");
+            var rightOffhandIcon = GetIconImage("RightOffhand");
+            if (rightOffhandBorder != null && rightOffhandIcon != null)
+            {
+                rightOffhandBorder.Width = offhandSlotWidth;
+                rightOffhandBorder.Height = offhandSlotHeight;
+                rightOffhandIcon.Width = offhandIconSize;
+                rightOffhandIcon.Height = offhandIconSize;
+
+                if (_rightOffhandEnabled)
+                {
+                    rightOffhandBorder.Visibility = Visibility.Visible;
+                    Canvas.SetLeft(rightOffhandBorder, hotbarLeft + hotbarWidth + spacing);
+                    Canvas.SetTop(rightOffhandBorder, hotbarTopOffset);
+                }
+                else
+                {
+                    rightOffhandBorder.Visibility = Visibility.Collapsed;
+                }
             }
 
             // 主快捷栏格子 (9个)
-            double slotWidth = _originalHotbarWidth / 9.0 * _scaleFactor;
+            double slotWidth = hotbarWidth / 9.0;
             double slotHeight = _originalHotbarHeight * _scaleFactor;
             double iconSize = _originalHotbarHeight * 0.73 * _scaleFactor;
-
-            // 快捷栏格子位置根据副手槽位置决定
-            double hotbarLeft;
-            if (_offhandOnRight)
-            {
-                hotbarLeft = 0;
-            }
-            else
-            {
-                hotbarLeft = (_originalOffhandWidth + _offhandSpacing) * _scaleFactor;
-            }
 
             for (int i = 0; i < 9; i++)
             {
@@ -190,7 +217,6 @@ namespace CraftSharp.Windows
                 {
                     border.Width = slotWidth;
                     border.Height = slotHeight;
-
                     icon.Width = iconSize;
                     icon.Height = iconSize;
 
@@ -205,22 +231,29 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadSlots()
         {
-            // 加载副手格子
-            var offhandItem = _slotService.GetSlot(_slotIds[0]);
-            if (!offhandItem.IsEmpty)
+            // 加载左副手格子
+            var leftOffhandItem = _slotService.GetSlot(_slotIds[0]);
+            if (!leftOffhandItem.IsEmpty && _leftOffhandEnabled)
             {
-                SetSlotIcon("Offhand", offhandItem.FilePath);
+                SetSlotIcon("LeftOffhand", leftOffhandItem.FilePath);
+            }
+
+            // 加载右副手格子
+            var rightOffhandItem = _slotService.GetSlot(_slotIds[1]);
+            if (!rightOffhandItem.IsEmpty && _rightOffhandEnabled)
+            {
+                SetSlotIcon("RightOffhand", rightOffhandItem.FilePath);
             }
 
             // 加载主快捷栏格子
-            for (int i = 1; i <= 9; i++)
+            for (int i = 2; i <= 10; i++)
             {
                 var slotId = _slotIds[i];
                 var item = _slotService.GetSlot(slotId);
 
                 if (!item.IsEmpty)
                 {
-                    SetSlotIcon(i - 1, item.FilePath);
+                    SetSlotIcon(i - 2, item.FilePath);
                 }
             }
         }
@@ -307,15 +340,16 @@ namespace CraftSharp.Windows
         /// </summary>
         private int GetSlotIndex(Border border)
         {
-            // 副手槽
-            if (GetSlotBorder("Offhand") == border)
+            if (GetSlotBorder("LeftOffhand") == border)
                 return 0;
 
-            // 主快捷栏格子
+            if (GetSlotBorder("RightOffhand") == border)
+                return 1;
+
             for (int i = 0; i < 9; i++)
             {
                 if (GetSlotBorder(i) == border)
-                    return i + 1;
+                    return i + 2;
             }
 
             return -1;
@@ -367,17 +401,17 @@ namespace CraftSharp.Windows
                 {
                     var filePath = files[0];
 
-                    // 保存数据
                     _slotService.SetSlot(_slotIds[slotIndex], new SlotItem
                     {
                         FilePath = filePath
                     });
 
-                    // 显示图标
                     if (slotIndex == 0)
-                        SetSlotIcon("Offhand", filePath);
+                        SetSlotIcon("LeftOffhand", filePath);
+                    else if (slotIndex == 1)
+                        SetSlotIcon("RightOffhand", filePath);
                     else
-                        SetSlotIcon(slotIndex - 1, filePath);
+                        SetSlotIcon(slotIndex - 2, filePath);
                 }
             }
         }
@@ -392,15 +426,35 @@ namespace CraftSharp.Windows
                 _slotService.ClearSlot(_slotIds[index]);
                 if (index == 0)
                 {
-                    GetIconImage("Offhand").Source = null;
-                    GetIconImage("Offhand").Visibility = Visibility.Collapsed;
+                    GetIconImage("LeftOffhand").Source = null;
+                    GetIconImage("LeftOffhand").Visibility = Visibility.Collapsed;
+                }
+                else if (index == 1)
+                {
+                    GetIconImage("RightOffhand").Source = null;
+                    GetIconImage("RightOffhand").Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    GetIconImage(index - 1).Source = null;
-                    GetIconImage(index - 1).Visibility = Visibility.Collapsed;
+                    GetIconImage(index - 2).Source = null;
+                    GetIconImage(index - 2).Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        /// <summary>
+        /// 设置副手槽启用状态
+        /// 窗口尺寸和位置固定不变，只切换副手槽的显示/隐藏
+        /// </summary>
+        public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
+        {
+            _leftOffhandEnabled = leftEnabled;
+            _rightOffhandEnabled = rightEnabled;
+
+            // 只更新副手槽显示，窗口尺寸和位置不变
+            SetupOffhandSlots();
+            SetupSlots();
+            LoadSlots();
         }
     }
 }

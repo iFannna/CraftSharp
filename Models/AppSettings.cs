@@ -66,6 +66,16 @@ namespace CraftSharp.Models
         public double StatusBarPositionY { get; set; } = 0;
 
         /// <summary>
+        /// 左副手槽
+        /// </summary>
+        public bool HotbarLeftOffhand { get; set; } = false;
+
+        /// <summary>
+        /// 右副手槽
+        /// </summary>
+        public bool HotbarRightOffhand { get; set; } = false;
+
+        /// <summary>
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; } = new();

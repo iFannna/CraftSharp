@@ -8,6 +8,7 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 伤害吸收值功能
+    /// 伤害吸收值左对齐快捷栏，在生命值上方
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -76,7 +77,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置伤害吸收值（左对齐经验条）
+        /// 设置伤害吸收值（左对齐快捷栏，在生命值上方）
         /// </summary>
         private void SetupAbsorbing()
         {
@@ -84,13 +85,13 @@ namespace CraftSharp.Windows
             double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
             double halfWidth = _originalAbsorbingHalfWidth * _scaleFactor;
 
+            // 伤害吸收值左对齐快捷栏
+            double hotbarLeft = GetHotbarLeft();
             double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
-
-            double hotbarLeftInWindow = _offhandOnRight ? 0 : offhandWidth + spacing;
             double expBarWidth = _originalExpBarWidth * _scaleFactor;
-            double expBarLeft = hotbarLeftInWindow + (hotbarWidth - expBarWidth) / 2;
+
+            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
+            double absorbingLeft = expBarLeft;
 
             double absorbingGap = _absorbingGap * _scaleFactor;
             double rowSpacing = _absorbingRowSpacing * _scaleFactor;
@@ -107,7 +108,7 @@ namespace CraftSharp.Windows
                 for (int i = 0; i < 10; i++)
                 {
                     int globalIndex = row * 10 + i;
-                    double iconLeft = expBarLeft + i * (absorbingWidth + absorbingGap);
+                    double iconLeft = absorbingLeft + i * (absorbingWidth + absorbingGap);
 
                     var containerImage = new System.Windows.Controls.Image
                     {

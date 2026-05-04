@@ -13,34 +13,24 @@
     <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown">
         <Canvas x:Name="MainCanvas">
             <!-- 心形生命值容器 -->
-            <Canvas x:Name="HeartCanvas">
-                <!-- 10个心形图片将在代码中动态创建 -->
-            </Canvas>
+            <Canvas x:Name="HeartCanvas"/>
 
             <!-- 饥饿值容器 -->
-            <Canvas x:Name="FoodCanvas">
-                <!-- 10个饥饿值图片将在代码中动态创建 -->
-            </Canvas>
+            <Canvas x:Name="FoodCanvas"/>
 
             <!-- 空气值容器 -->
-            <Canvas x:Name="AirCanvas">
-                <!-- 10个空气值图片将在代码中动态创建 -->
-            </Canvas>
+            <Canvas x:Name="AirCanvas"/>
 
             <!-- 伤害吸收值容器 -->
-            <Canvas x:Name="AbsorbingCanvas">
-                <!-- 伤害吸收值图片将在代码中动态创建（每行10个，最多6行） -->
-            </Canvas>
+            <Canvas x:Name="AbsorbingCanvas"/>
 
             <!-- 经验条 -->
             <Grid x:Name="ExperienceBarGrid">
-                <!-- 背景 -->
                 <Image x:Name="ExperienceBarBackground"
                        Stretch="Fill"
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        UseLayoutRounding="True"
                        SnapsToDevicePixels="True"/>
-                <!-- 进度（宽度根据电量动态设置） -->
                 <Image x:Name="ExperienceBarProgress"
                        Stretch="Fill"
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -49,15 +39,22 @@
                        HorizontalAlignment="Left"/>
             </Grid>
 
-            <!-- 副手槽背景 -->
+            <!-- 左副手槽背景 -->
             <Image Stretch="Fill"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                    UseLayoutRounding="True"
                    SnapsToDevicePixels="True"
-                   x:Name="OffhandImage"
+                   x:Name="LeftOffhandImage"/>
+
+            <!-- 右副手槽背景 -->
+            <Image Stretch="Fill"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   UseLayoutRounding="True"
+                   SnapsToDevicePixels="True"
+                   x:Name="RightOffhandImage"
                    RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
-                    <ScaleTransform x:Name="OffhandScaleTransform" ScaleX="1"/>
+                    <ScaleTransform x:Name="RightOffhandScaleTransform" ScaleX="-1"/>
                 </Image.RenderTransform>
             </Image>
 
@@ -68,13 +65,20 @@
                    SnapsToDevicePixels="True"
                    x:Name="HotbarImage"/>
 
-            <!-- 格子容器 - 位置在代码中动态设置 -->
+            <!-- 格子容器 -->
             <Canvas x:Name="SlotCanvas">
-                <!-- 副手格子 -->
-                <Border x:Name="SlotOffhand" Background="Transparent"
+                <!-- 左副手格子 -->
+                <Border x:Name="SlotLeftOffhand" Background="Transparent"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="IconOffhand" Stretch="Uniform" Visibility="Collapsed"/>
+                    <Image x:Name="IconLeftOffhand" Stretch="Uniform" Visibility="Collapsed"/>
+                </Border>
+
+                <!-- 右副手格子 -->
+                <Border x:Name="SlotRightOffhand" Background="Transparent"
+                        MouseLeftButtonDown="Slot_Click"
+                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
+                    <Image x:Name="IconRightOffhand" Stretch="Uniform" Visibility="Collapsed"/>
                 </Border>
 
                 <!-- 主快捷栏格子 (9个) -->

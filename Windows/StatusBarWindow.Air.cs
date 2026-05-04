@@ -8,6 +8,7 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 空气值功能
+    /// 空气值右对齐快捷栏，在饥饿值上方
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -47,7 +48,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置空气值（右对齐经验条，在饥饿值上方）
+        /// 设置空气值（右对齐快捷栏，在饥饿值上方）
         /// </summary>
         private void SetupAir()
         {
@@ -59,18 +60,19 @@ namespace CraftSharp.Windows
             double airSpacing = _airSpacing * _scaleFactor;
             double airTopOffset = heartY - airSpacing - airHeight;
 
+            // 空气值右对齐快捷栏
+            double hotbarLeft = GetHotbarLeft();
             double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
-
-            double hotbarLeftInWindow = _offhandOnRight ? 0 : offhandWidth + spacing;
             double expBarWidth = _originalExpBarWidth * _scaleFactor;
-            double expBarRight = hotbarLeftInWindow + (hotbarWidth + expBarWidth) / 2;
+
+            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
+            double expBarRight = expBarLeft + expBarWidth;
+
             double airGap = _airGap * _scaleFactor;
 
             for (int i = 0; i < 10; i++)
             {
-                double airLeft = expBarRight - (i + 1) * (airWidth + airGap) + airGap;
+                double iconLeft = expBarRight - (i + 1) * (airWidth + airGap) + airGap;
 
                 var airImage = new System.Windows.Controls.Image
                 {
@@ -83,7 +85,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(airImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(airImage, airLeft);
+                System.Windows.Controls.Canvas.SetLeft(airImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(airImage, airTopOffset);
                 AirCanvas.Children.Add(airImage);
 
@@ -98,7 +100,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(burstingImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(burstingImage, airLeft + airWidth - burstingWidth);
+                System.Windows.Controls.Canvas.SetLeft(burstingImage, iconLeft + airWidth - burstingWidth);
                 System.Windows.Controls.Canvas.SetTop(burstingImage, airTopOffset);
                 AirCanvas.Children.Add(burstingImage);
             }
@@ -114,7 +116,6 @@ namespace CraftSharp.Windows
             var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
             var batteryPercent = powerStatus.BatteryLifePercent;
 
-            // 向上取整到最近的5
             int percent = (int)Math.Ceiling(batteryPercent * 100);
             int roundedPercent = ((percent + 4) / 5) * 5;
             if (roundedPercent > 100) roundedPercent = 100;

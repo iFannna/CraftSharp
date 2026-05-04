@@ -52,6 +52,11 @@ namespace CraftSharp
             // 初始化状态栏服务
             StatusBarService.Instance.Initialize(_statusBarWindow);
 
+            // 初始化副手槽配置
+            StatusBarService.Instance.SetOffhandConfig(
+                _appSettings?.HotbarLeftOffhand ?? false,
+                _appSettings?.HotbarRightOffhand ?? false);
+
             // 根据设置决定是否显示状态栏
             if (_appSettings?.StatusBarVisible ?? true)
                 _statusBarWindow.Show();

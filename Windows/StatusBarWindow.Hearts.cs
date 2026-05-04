@@ -8,6 +8,7 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 心形生命值功能
+    /// 生命值左对齐快捷栏
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -22,7 +23,6 @@ namespace CraftSharp.Windows
         /// </summary>
         private void LoadHeartDimensions()
         {
-            // heart/full.png（用于获取心形整体尺寸）
             var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartFull);
             if (System.IO.File.Exists(path))
             {
@@ -35,7 +35,6 @@ namespace CraftSharp.Windows
                 }
             }
 
-            // heart/half.png（半颗心图片，只需宽度）
             path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartHalf);
             if (System.IO.File.Exists(path))
             {
@@ -49,7 +48,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置心形生命值（左对齐经验条）
+        /// 设置心形生命值（左对齐快捷栏）
         /// </summary>
         private void SetupHearts()
         {
@@ -58,20 +57,21 @@ namespace CraftSharp.Windows
             double halfWidth = _originalHalfHeartWidth * _scaleFactor;
             double heartTopOffset = GetHeartY();
 
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
-
-            double hotbarLeftInWindow = _offhandOnRight ? 0 : offhandWidth + spacing;
+            // 生命值左对齐快捷栏
+            double hotbarLeft = GetHotbarLeft();
             double expBarWidth = _originalExpBarWidth * _scaleFactor;
-            double expBarLeft = hotbarLeftInWindow + (hotbarWidth - expBarWidth) / 2;
+            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+
+            // 经验条居中于快捷栏，生命值左对齐经验条左边界
+            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
+            double heartLeft = expBarLeft;
+
             double heartGap = _heartGap * _scaleFactor;
 
             for (int i = 0; i < 10; i++)
             {
-                double heartLeft = expBarLeft + i * (heartWidth + heartGap);
+                double iconLeft = heartLeft + i * (heartWidth + heartGap);
 
-                // 背景：container.png
                 var containerImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainer{i}",
@@ -83,11 +83,10 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(containerImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(containerImage, heartLeft);
+                System.Windows.Controls.Canvas.SetLeft(containerImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(containerImage, heartTopOffset);
                 HeartCanvas.Children.Add(containerImage);
 
-                // 半心：half.png
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartHalf{i}",
@@ -99,11 +98,10 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(halfImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(halfImage, heartLeft);
+                System.Windows.Controls.Canvas.SetLeft(halfImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(halfImage, heartTopOffset);
                 HeartCanvas.Children.Add(halfImage);
 
-                // 完整心：full.png
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartFull{i}",
@@ -115,7 +113,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(fullImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(fullImage, heartLeft);
+                System.Windows.Controls.Canvas.SetLeft(fullImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(fullImage, heartTopOffset);
                 HeartCanvas.Children.Add(fullImage);
             }

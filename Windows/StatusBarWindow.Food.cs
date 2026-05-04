@@ -8,6 +8,7 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 饥饿值功能
+    /// 饥饿值右对齐快捷栏
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -46,7 +47,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置饥饿值（右对齐经验条）
+        /// 设置饥饿值（右对齐快捷栏）
         /// </summary>
         private void SetupFood()
         {
@@ -55,18 +56,20 @@ namespace CraftSharp.Windows
             double halfWidth = _originalHalfFoodWidth * _scaleFactor;
             double foodTopOffset = GetHeartY();
 
+            // 饥饿值右对齐快捷栏
+            double hotbarLeft = GetHotbarLeft();
             double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
-
-            double hotbarLeftInWindow = _offhandOnRight ? 0 : offhandWidth + spacing;
             double expBarWidth = _originalExpBarWidth * _scaleFactor;
-            double expBarRight = hotbarLeftInWindow + (hotbarWidth + expBarWidth) / 2;
+
+            // 经验条居中于快捷栏，饥饿值右对齐经验条右边界
+            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
+            double expBarRight = expBarLeft + expBarWidth;
+
             double foodGap = _foodGap * _scaleFactor;
 
             for (int i = 0; i < 10; i++)
             {
-                double foodLeft = expBarRight - (i + 1) * (foodWidth + foodGap) + foodGap;
+                double iconLeft = expBarRight - (i + 1) * (foodWidth + foodGap) + foodGap;
 
                 var emptyImage = new System.Windows.Controls.Image
                 {
@@ -79,7 +82,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(emptyImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(emptyImage, foodLeft);
+                System.Windows.Controls.Canvas.SetLeft(emptyImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(emptyImage, foodTopOffset);
                 FoodCanvas.Children.Add(emptyImage);
 
@@ -94,7 +97,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(halfImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(halfImage, foodLeft + foodWidth - halfWidth);
+                System.Windows.Controls.Canvas.SetLeft(halfImage, iconLeft + foodWidth - halfWidth);
                 System.Windows.Controls.Canvas.SetTop(halfImage, foodTopOffset);
                 FoodCanvas.Children.Add(halfImage);
 
@@ -109,7 +112,7 @@ namespace CraftSharp.Windows
                     SnapsToDevicePixels = true
                 };
                 RenderOptions.SetBitmapScalingMode(fullImage, BitmapScalingMode.NearestNeighbor);
-                System.Windows.Controls.Canvas.SetLeft(fullImage, foodLeft);
+                System.Windows.Controls.Canvas.SetLeft(fullImage, iconLeft);
                 System.Windows.Controls.Canvas.SetTop(fullImage, foodTopOffset);
                 FoodCanvas.Children.Add(fullImage);
             }
@@ -125,7 +128,6 @@ namespace CraftSharp.Windows
             var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
             var batteryPercent = powerStatus.BatteryLifePercent;
 
-            // 向上取整到最近的5
             int percent = (int)Math.Ceiling(batteryPercent * 100);
             int roundedPercent = ((percent + 4) / 5) * 5;
             if (roundedPercent > 100) roundedPercent = 100;

@@ -82,5 +82,14 @@ namespace CraftSharp.Services
             _statusBarWindow.Left = x;
             _statusBarWindow.Top = y;
         }
+
+        /// <summary>
+        /// 设置副手槽启用状态
+        /// </summary>
+        public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetOffhandConfig(leftEnabled, rightEnabled);
+        }
     }
 }
