@@ -15,7 +15,7 @@ namespace CraftSharp.Windows.Panels
         private bool _isExpanded = false;
         private bool _isAnimating = false;
 
-        public HudAccordionItem(AppSettings settings, string id, string name, string iconColor)
+        public HudAccordionItem(AppSettings settings, string id, string name)
         {
             InitializeComponent();
             _settings = settings;

@@ -30,20 +30,20 @@ namespace CraftSharp.Windows.Panels
         {
             var hudElements = new[]
             {
-                ("statusbar", "HudElementStatusBar", "#3b82f6"),
-                ("hotbar", "HudElementHotbar", "#f59e0b"),
-                ("health", "HudElementHealth", "#ef4444"),
-                ("food", "HudElementFood", "#eab308"),
-                ("expbar", "HudElementExpbar", "#22c55e"),
-                ("air", "HudElementAir", "#06b6d4"),
-                ("armor", "HudElementArmor", "#6b7280"),
-                ("absorbing", "HudElementAbsorbing", "#f97316"),
+                ("statusbar", "HudElementStatusBar"),
+                ("hotbar", "HudElementHotbar"),
+                ("health", "HudElementHealth"),
+                ("food", "HudElementFood"),
+                ("expbar", "HudElementExpbar"),
+                ("air", "HudElementAir"),
+                ("armor", "HudElementArmor"),
+                ("absorbing", "HudElementAbsorbing"),
             };
 
-            foreach (var (id, resourceKey, color) in hudElements)
+            foreach (var (id, resourceKey) in hudElements)
             {
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
-                var item = new HudAccordionItem(_settings, id, name, color);
+                var item = new HudAccordionItem(_settings, id, name);
                 HudAccordionContainer.Children.Add(item);
             }
         }
