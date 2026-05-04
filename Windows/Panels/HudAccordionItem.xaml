@@ -4,7 +4,12 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel Margin="0,0,0,8">
         <!-- Header -->
-        <ui:Card x:Name="HeaderCard" Padding="16" MouseLeftButtonDown="Header_Click" Cursor="Hand">
+        <Border x:Name="HeaderBorder"
+                Background="{DynamicResource CardBackgroundBrush}"
+                CornerRadius="8"
+                Padding="16"
+                MouseLeftButtonDown="Header_Click"
+                Cursor="Hand">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -14,19 +19,28 @@
                 <TextBlock x:Name="TitleText" FontWeight="Medium"
                            Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
 
-                <ui:SymbolIcon x:Name="ArrowIcon" Grid.Column="1" Symbol="ChevronDown20"
-                               FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}"
-                               VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
-                    <ui:SymbolIcon.RenderTransform>
-                        <RotateTransform x:Name="ArrowRotate" Angle="0"/>
-                    </ui:SymbolIcon.RenderTransform>
-                </ui:SymbolIcon>
+                <Path x:Name="ArrowPath" Grid.Column="1"
+                      Data="M 0 0 L 4 4 L 8 0"
+                      Stroke="{DynamicResource TextSecondaryBrush}"
+                      StrokeThickness="2"
+                      Width="12" Height="8"
+                      Stretch="Uniform"
+                      VerticalAlignment="Center"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <RotateTransform x:Name="ArrowRotate" Angle="-90"/>
+                    </Path.RenderTransform>
+                </Path>
             </Grid>
-        </ui:Card>
+        </Border>
 
         <!-- Content -->
-        <ui:Card x:Name="ContentCard" Margin="0,8,0,0" Padding="16" Visibility="Collapsed">
+        <Border x:Name="ContentBorder" Margin="0,8,0,0"
+                Height="0" ClipToBounds="True"
+                Background="{DynamicResource CardBackgroundBrush}"
+                CornerRadius="8"
+                Padding="16">
             <StackPanel x:Name="ContentPanel"/>
-        </ui:Card>
+        </Border>
     </StackPanel>
 </UserControl>

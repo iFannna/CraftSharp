@@ -2,15 +2,18 @@ using CraftSharp.Models;
 using CraftSharp.Services;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Panels
 {
     public partial class HudAccordionItem : System.Windows.Controls.UserControl
     {
-        private bool _isExpanded = false;
         private AppSettings _settings;
         private string _hudId;
+        private bool _isExpanded = false;
+        private bool _isAnimating = false;
 
         public HudAccordionItem(AppSettings settings, string id, string name, string iconColor)
         {
@@ -33,9 +36,72 @@ namespace CraftSharp.Windows.Panels
 
         private void Header_Click(object sender, RoutedEventArgs e)
         {
+            if (_isAnimating) return;
+
             _isExpanded = !_isExpanded;
-            ContentCard.Visibility = _isExpanded ? Visibility.Visible : Visibility.Collapsed;
-            ArrowRotate.Angle = _isExpanded ? 180 : 0;
+
+            if (_isExpanded)
+                AnimateExpand();
+            else
+                AnimateCollapse();
+
+            // 箭头旋转动画
+            var arrowAnimation = new DoubleAnimation
+            {
+                To = _isExpanded ? 0 : -90,
+                Duration = TimeSpan.FromMilliseconds(_isExpanded ? 200 : 150),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+            };
+            ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
+        }
+
+        private void AnimateExpand()
+        {
+            _isAnimating = true;
+
+            // 计算内容实际高度
+            ContentPanel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            double targetHeight = ContentPanel.DesiredSize.Height + 32; // 加上 Padding
+
+            var animation = new DoubleAnimation
+            {
+                From = 0,
+                To = targetHeight,
+                Duration = TimeSpan.FromMilliseconds(200),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            animation.Completed += (s, e) =>
+            {
+                ContentBorder.Height = double.NaN; // 恢复为 Auto
+                _isAnimating = false;
+            };
+
+            ContentBorder.Height = 0;
+            ContentBorder.BeginAnimation(FrameworkElement.HeightProperty, animation);
+        }
+
+        private void AnimateCollapse()
+        {
+            _isAnimating = true;
+
+            double currentHeight = ContentBorder.ActualHeight;
+
+            var animation = new DoubleAnimation
+            {
+                From = currentHeight,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(150),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+
+            animation.Completed += (s, e) =>
+            {
+                ContentBorder.Height = 0;
+                _isAnimating = false;
+            };
+
+            ContentBorder.BeginAnimation(FrameworkElement.HeightProperty, animation);
         }
 
         private string GetResourceString(string key)
