@@ -57,6 +57,9 @@ namespace CraftSharp
                 _appSettings?.HotbarLeftOffhand ?? false,
                 _appSettings?.HotbarRightOffhand ?? false);
 
+            // 初始化快捷栏可见性
+            StatusBarService.Instance.SetHotbarVisible(_appSettings?.HotbarVisible ?? true);
+
             // 根据设置决定是否显示状态栏
             if (_appSettings?.StatusBarVisible ?? true)
                 _statusBarWindow.Show();

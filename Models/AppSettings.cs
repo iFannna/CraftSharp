@@ -76,6 +76,11 @@ namespace CraftSharp.Models
         public bool HotbarRightOffhand { get; set; } = false;
 
         /// <summary>
+        /// 显示快捷栏（包括格子、副手槽）
+        /// </summary>
+        public bool HotbarVisible { get; set; } = true;
+
+        /// <summary>
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; } = new();

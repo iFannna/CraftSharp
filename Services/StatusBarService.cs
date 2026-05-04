@@ -91,5 +91,14 @@ namespace CraftSharp.Services
             if (_statusBarWindow == null) return;
             _statusBarWindow.SetOffhandConfig(leftEnabled, rightEnabled);
         }
+
+        /// <summary>
+        /// 设置快捷栏可见性（包括格子、副手槽）
+        /// </summary>
+        public void SetHotbarVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetHotbarVisible(visible);
+        }
     }
 }

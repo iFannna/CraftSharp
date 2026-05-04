@@ -129,8 +129,23 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
+        /// 获取底部偏移量（快捷栏可见时返回快捷栏高度+间距，否则返回0）
+        /// 用于重力布局：组件根据此偏移量决定Y位置
+        /// </summary>
+        private double GetBottomOffset()
+        {
+            if (_hotbarVisible)
+            {
+                double hotbarHeight = _originalHotbarHeight * _scaleFactor;
+                double spacing = _spacing * _scaleFactor;
+                return hotbarHeight + spacing;
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// 设置窗口尺寸
-        /// 窗口尺寸固定，包含所有副手槽的空间（透明区域）
+        /// 窗口宽度固定，高度根据组件可见性动态调整（重力布局）
         /// </summary>
         private void SetWindowSize()
         {
@@ -146,23 +161,39 @@ namespace CraftSharp.Windows
             // 窗口高度从下往上计算（重力布局）
             double height = 0;
 
-            // 最底层：快捷栏高度
-            height += _originalHotbarHeight;
+            // 底层：快捷栏或副手槽（至少一个可见时）
+            bool hasBottomRow = _hotbarVisible || _leftOffhandEnabled || _rightOffhandEnabled;
+            if (hasBottomRow)
+            {
+                // 底层高度取快捷栏和副手槽的最大值
+                double hotbarHeight = _originalHotbarHeight * _scaleFactor;
+                double offhandHeight = _originalOffhandHeight * _scaleFactor;
+                height += Math.Max(hotbarHeight, offhandHeight);
+            }
 
-            // 经验条：快捷栏上方1px
-            height += _spacing + _originalExpBarHeight;
+            // 经验条：底层上方1px（如果有底层），否则在最底部
+            if (hasBottomRow)
+            {
+                height += _spacing * _scaleFactor;
+            }
+            height += _originalExpBarHeight * _scaleFactor;
 
             // 生命值/饥饿值：经验条上方1px
-            height += _heartSpacing + _originalHeartHeight;
+            height += _heartSpacing * _scaleFactor + _originalHeartHeight * _scaleFactor;
 
             // 伤害吸收值/空气值：生命值/饥饿值上方1px
             int absorbingRows = GetMaxAbsorbingRows();
             int extraAbsorbingRows = Math.Max(0, absorbingRows - 1);
-            double absorbingExtent = extraAbsorbingRows * (_originalAbsorbingFullHeight + _absorbingRowSpacing) + _originalAbsorbingFullHeight + _absorbingToHeartSpacing;
-            double airExtent = _originalAirHeight + _airSpacing;
+            double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
+            double rowSpacing = _absorbingRowSpacing * _scaleFactor;
+            double absorbingToHeartSpacing = _absorbingToHeartSpacing * _scaleFactor;
+            double airHeight = _originalAirHeight * _scaleFactor;
+            double airSpacing = _airSpacing * _scaleFactor;
+            double absorbingExtent = extraAbsorbingRows * (absorbingHeight + rowSpacing) + absorbingHeight + absorbingToHeartSpacing;
+            double airExtent = airHeight + airSpacing;
             height += Math.Max(absorbingExtent, airExtent);
 
-            Height = height * _scaleFactor;
+            Height = height;
         }
 
         /// <summary>

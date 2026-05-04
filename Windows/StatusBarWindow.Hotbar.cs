@@ -24,6 +24,7 @@ namespace CraftSharp.Windows
         private double _originalOffhandWidth;
         private double _originalOffhandHeight;
         private double _offhandSpacing = 6; // 副手槽与快捷栏之间的间距（像素）
+        private bool _hotbarVisible = true; // 快捷栏可见性（不影响副手槽）
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -73,6 +74,7 @@ namespace CraftSharp.Windows
             HotbarImage.Source = LoadBitmapImage(AssetPaths.Hotbar);
             HotbarImage.Width = hotbarWidth;
             HotbarImage.Height = hotbarHeight;
+            HotbarImage.Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed;
 
             // 快捷栏Y位置 = 窗口底部
             double expBarTopOffset = GetExpBarTopOffset();
@@ -222,6 +224,9 @@ namespace CraftSharp.Windows
 
                     Canvas.SetLeft(border, hotbarLeft + i * slotWidth);
                     Canvas.SetTop(border, hotbarTopOffset);
+
+                    // 快捷栏可见性控制
+                    border.Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }
@@ -444,17 +449,58 @@ namespace CraftSharp.Windows
 
         /// <summary>
         /// 设置副手槽启用状态
-        /// 窗口尺寸和位置固定不变，只切换副手槽的显示/隐藏
+        /// 窗口高度动态调整（根据副手槽是否显示），底部位置不变
         /// </summary>
         public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
         {
+            // 记录旧的底部位置
+            double oldBottom = Top + Height;
+
             _leftOffhandEnabled = leftEnabled;
             _rightOffhandEnabled = rightEnabled;
 
-            // 只更新副手槽显示，窗口尺寸和位置不变
+            // 更新副手槽显示
             SetupOffhandSlots();
             SetupSlots();
             LoadSlots();
+
+            // 重新计算窗口大小（重力布局）
+            SetWindowSize();
+
+            // 调整Top使底部位置不变
+            Top = oldBottom - Height;
+        }
+
+        /// <summary>
+        /// 设置快捷栏可见性（只控制快捷栏本身，不影响副手槽）
+        /// 窗口高度动态调整，其他组件自动下移填补空位（重力布局）
+        /// 窗口位置保持不变（底部位置不变）
+        /// </summary>
+        public void SetHotbarVisible(bool visible)
+        {
+            _hotbarVisible = visible;
+
+            // 记录旧的底部位置
+            double oldBottom = Top + Height;
+
+            // 控制快捷栏背景显示
+            HotbarImage.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            // 控制主快捷栏格子（9个）显示
+            for (int i = 0; i < 9; i++)
+            {
+                var border = GetSlotBorder(i);
+                if (border != null)
+                {
+                    border.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            // 重新计算窗口大小（重力布局）
+            SetWindowSize();
+
+            // 调整Top使底部位置不变
+            Top = oldBottom - Height;
         }
     }
 }
