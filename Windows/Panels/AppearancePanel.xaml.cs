@@ -1,10 +1,7 @@
 using CraftSharp.Models;
 using CraftSharp.Services;
 using CraftSharp.Windows;
-using Newtonsoft.Json;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using IOPath = System.IO.Path;
 
 namespace CraftSharp.Windows.Panels
 {
@@ -12,13 +9,11 @@ namespace CraftSharp.Windows.Panels
     {
         private AppSettings _settings;
         private System.Windows.Window? _parentWindow;
-        private string _settingsPath;
 
         public AppearancePanel(AppSettings settings)
         {
             InitializeComponent();
             _settings = settings;
-            _settingsPath = IOPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
             InitializeControls();
         }
 
@@ -63,6 +58,9 @@ namespace CraftSharp.Windows.Panels
 
                 // 使用新的 SetThemeMode 方法切换主题模式
                 ThemeService.Instance.SetThemeMode(themeValue);
+
+                // 即时保存设置
+                SaveSettings();
             }
         }
 
@@ -85,6 +83,9 @@ namespace CraftSharp.Windows.Panels
 
                 // 切换字体
                 FontService.Instance.SetFont(fontValue);
+
+                // 即时保存设置
+                SaveSettings();
             }
         }
 
@@ -104,19 +105,17 @@ namespace CraftSharp.Windows.Panels
                 // 更新预览
                 LoadAppIconPreview();
 
-                // 保存设置到配置文件
+                // 即时保存设置
                 SaveSettings();
             }
         }
 
         private void SaveSettings()
         {
-            try
+            if (System.Windows.Application.Current is App app)
             {
-                var json = JsonConvert.SerializeObject(_settings, Formatting.Indented);
-                System.IO.File.WriteAllText(_settingsPath, json);
+                app.SaveSettings();
             }
-            catch { }
         }
     }
 }

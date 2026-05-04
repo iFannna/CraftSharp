@@ -44,7 +44,7 @@ namespace CraftSharp
             FontService.Instance.Initialize(_appSettings?.Font ?? "微软雅黑");
 
             // 创建设置窗口（主窗口）
-            _settingsWindow = new SettingsWindow();
+            _settingsWindow = new SettingsWindow(_appSettings!);
 
             // 创建快捷栏窗口
             _statusBarWindow = new StatusBarWindow();
@@ -274,8 +274,33 @@ namespace CraftSharp
 
         protected override void OnExit(ExitEventArgs e)
         {
+            // 如果启用了记住位置，保存状态栏位置
+            if (_appSettings?.StatusBarRememberPosition ?? false)
+            {
+                _appSettings.StatusBarPositionX = _statusBarWindow?.Left ?? 0;
+                _appSettings.StatusBarPositionY = _statusBarWindow?.Top ?? 0;
+            }
+
+            // 退出时始终保存所有设置到文件
+            SaveSettings();
+
             _taskbarIcon?.Dispose();
             base.OnExit(e);
+        }
+
+        /// <summary>
+        /// 保存设置到文件（公开方法，供其他组件调用）
+        /// </summary>
+        public void SaveSettings()
+        {
+            if (_appSettings == null) return;
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(_appSettings, Formatting.Indented);
+                System.IO.File.WriteAllText(_settingsPath, json);
+            }
+            catch { }
         }
 
         /// <summary>

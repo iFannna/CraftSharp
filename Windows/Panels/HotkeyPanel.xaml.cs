@@ -66,6 +66,17 @@ namespace CraftSharp.Windows.Panels
             if (btn == InventoryHotkeyBtn) _settings.InventoryHotkey = hotkey;
             else if (btn == SettingsHotkeyBtn) _settings.SettingsHotkey = hotkey;
             else if (btn == HotbarToggleHotkeyBtn) _settings.HotbarToggleHotkey = hotkey;
+
+            // 即时保存设置
+            SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
         }
     }
 }

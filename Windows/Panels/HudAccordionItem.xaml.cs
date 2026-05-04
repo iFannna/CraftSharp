@@ -109,19 +109,29 @@ namespace CraftSharp.Windows.Panels
             return System.Windows.Application.Current.TryFindResource(key) as string ?? key;
         }
 
+        private void SaveSettings()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
+        }
+
         private void AddHudContent(string id)
         {
             if (id == "statusbar")
             {
                 var showToggle = AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", _settings.StatusBarVisible);
-                showToggle.Checked += (s, e) => StatusBarService.Instance.SetVisible(true);
-                showToggle.Unchecked += (s, e) => StatusBarService.Instance.SetVisible(false);
+                showToggle.Checked += (s, e) => { _settings.StatusBarVisible = true; StatusBarService.Instance.SetVisible(true); SaveSettings(); };
+                showToggle.Unchecked += (s, e) => { _settings.StatusBarVisible = false; StatusBarService.Instance.SetVisible(false); SaveSettings(); };
 
                 var lockToggle = AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", _settings.StatusBarLocked);
-                lockToggle.Checked += (s, e) => StatusBarService.Instance.SetLocked(true);
-                lockToggle.Unchecked += (s, e) => StatusBarService.Instance.SetLocked(false);
+                lockToggle.Checked += (s, e) => { _settings.StatusBarLocked = true; StatusBarService.Instance.SetLocked(true); SaveSettings(); };
+                lockToggle.Unchecked += (s, e) => { _settings.StatusBarLocked = false; StatusBarService.Instance.SetLocked(false); SaveSettings(); };
 
-                AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBarRememberPosition);
+                var rememberToggle = AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBarRememberPosition);
+                rememberToggle.Checked += (s, e) => { _settings.StatusBarRememberPosition = true; SaveSettings(); };
+                rememberToggle.Unchecked += (s, e) => { _settings.StatusBarRememberPosition = false; SaveSettings(); };
             }
             else if (id == "hotbar")
             {

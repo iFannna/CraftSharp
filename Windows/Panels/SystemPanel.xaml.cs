@@ -32,13 +32,28 @@ namespace CraftSharp.Windows.Panels
 
                 // 切换语言
                 LocalizationService.Instance.SetLanguage(language);
+
+                // 即时保存设置
+                SaveSettings();
             }
         }
 
         private void AutoStartToggle_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
                 _settings.AutoStart = toggle.IsChecked ?? false;
+                // 即时保存设置
+                SaveSettings();
+            }
+        }
+
+        private void SaveSettings()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
         }
     }
 }
