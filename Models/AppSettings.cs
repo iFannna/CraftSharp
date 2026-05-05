@@ -7,6 +7,20 @@ namespace CraftSharp.Models
     /// </summary>
     public class AppSettings
     {
+        public AppSettings()
+        {
+            // 初始化每个HUD元素的默认配置
+            HudElements = new ObservableCollection<HudElementSettings>
+            {
+                new HudElementSettings { Id = "expbar", IsVisible = true, DataMappingEnabled = false, CustomValueEnabled = false },
+                new HudElementSettings { Id = "health", IsVisible = true, RegenAnimation = false, DataMappingEnabled = false, CustomValueEnabled = false },
+                new HudElementSettings { Id = "food", IsVisible = true, DataMappingEnabled = false, CustomValueEnabled = false },
+                new HudElementSettings { Id = "air", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
+                new HudElementSettings { Id = "armor", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
+                new HudElementSettings { Id = "absorbing", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
+            };
+        }
+
         // ==================== 系统设置 ====================
         /// <summary>
         /// 界面语言
@@ -37,7 +51,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 应用图标路径（相对于Assets目录）
         /// </summary>
-        public string AppIconPath { get; set; } = "minecraft/textures/block/block/glass.png";
+        public string AppIconPath { get; set; } = "minecraft/textures/block/block/debug.png";
 
         // ==================== HUD 设置 ====================
         /// <summary>
@@ -83,7 +97,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// HUD 元素配置列表
         /// </summary>
-        public ObservableCollection<HudElementSettings> HudElements { get; set; } = new();
+        public ObservableCollection<HudElementSettings> HudElements { get; set; }
 
         // ==================== 快捷键设置 ====================
         /// <summary>
@@ -117,26 +131,13 @@ namespace CraftSharp.Models
         /// 元素标识
         /// </summary>
         public string Id { get; set; } = "";
-
-        /// <summary>
-        /// 元素名称
-        /// </summary>
-        public string Name { get; set; } = "";
-
-        /// <summary>
-        /// 图标颜色（用于UI显示）
-        /// </summary>
-        public string IconColor { get; set; } = "#3B82F6";
+        
 
         /// <summary>
         /// 显示元素
         /// </summary>
         public bool IsVisible { get; set; } = true;
 
-        /// <summary>
-        /// 图标样式
-        /// </summary>
-        public string IconType { get; set; } = "经典";
 
         /// <summary>
         /// 锁定位置（仅快捷栏）

@@ -32,12 +32,12 @@ namespace CraftSharp.Windows.Panels
             {
                 ("statusbar", "HudElementStatusBar"),
                 ("hotbar", "HudElementHotbar"),
+                ("expbar", "HudElementExpbar"),
                 ("health", "HudElementHealth"),
                 ("food", "HudElementFood"),
-                ("expbar", "HudElementExpbar"),
                 ("air", "HudElementAir"),
-                ("armor", "HudElementArmor"),
                 ("absorbing", "HudElementAbsorbing"),
+                ("armor", "HudElementArmor"),
             };
 
             foreach (var (id, resourceKey) in hudElements)

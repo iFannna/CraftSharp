@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(taskkill /F /IM CraftSharp.exe)",
+      "Bash(cmd //c \"taskkill /F /IM CraftSharp.exe\")"
+    ]
+  }
+}

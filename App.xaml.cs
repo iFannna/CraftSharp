@@ -77,6 +77,9 @@ namespace CraftSharp
             // 初始化快捷栏可见性
             StatusBarService.Instance.SetHotbarVisible(_appSettings?.HotbarVisible ?? true);
 
+            // 初始化HUD元素可见性
+            InitializeHudElementsVisibility();
+
             // 状态栏位置定位：在窗口 Loaded 后定位（此时尺寸已计算好）
             _statusBarWindow.Loaded += (s, e) =>
             {
@@ -335,6 +338,38 @@ namespace CraftSharp
                 System.IO.File.WriteAllText(_settingsPath, json);
             }
             catch { }
+        }
+
+        /// <summary>
+        /// 初始化HUD元素可见性（根据配置文件）
+        /// </summary>
+        private void InitializeHudElementsVisibility()
+        {
+            if (_appSettings == null) return;
+
+            // 经验条
+            var expBarSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "expbar");
+            StatusBarService.Instance.SetExpBarVisible(expBarSettings?.IsVisible ?? true);
+
+            // 生命值
+            var healthSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "health");
+            StatusBarService.Instance.SetHealthVisible(healthSettings?.IsVisible ?? true);
+
+            // 饥饿值
+            var foodSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "food");
+            StatusBarService.Instance.SetFoodVisible(foodSettings?.IsVisible ?? true);
+
+            // 空气值
+            var airSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "air");
+            StatusBarService.Instance.SetAirVisible(airSettings?.IsVisible ?? true);
+
+            // 护甲值
+            var armorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "armor");
+            StatusBarService.Instance.SetArmorVisible(armorSettings?.IsVisible ?? true);
+
+            // 伤害吸收值
+            var absorbingSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "absorbing");
+            StatusBarService.Instance.SetAbsorbingVisible(absorbingSettings?.IsVisible ?? true);
         }
 
         /// <summary>
