@@ -52,7 +52,11 @@ namespace CraftSharp.Windows
                 try
                 {
                     var json = File.ReadAllText(configPath);
-                    _categoryConfig = JsonSerializer.Deserialize<IconCategoriesConfig>(json);
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    _categoryConfig = JsonSerializer.Deserialize<IconCategoriesConfig>(json, options);
                 }
                 catch { }
             }

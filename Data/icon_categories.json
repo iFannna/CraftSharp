@@ -2590,7 +2590,6 @@
     "acacia_hanging_sign.png": [],
     "acacia_sign.png": [],
     "allay_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "amethyst_shard.png": [
@@ -2605,7 +2604,6 @@
       "ingredient"
     ],
     "armadillo_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "armor_stand.png": [],
@@ -2617,7 +2615,6 @@
       "tool_and_utility"
     ],
     "axolotl_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "baked_potato.png": [
@@ -2633,7 +2630,6 @@
     "bamboo_sign.png": [],
     "barrier.png": [],
     "bat_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "beef.png": [
@@ -2649,7 +2645,6 @@
       "food_and_drink"
     ],
     "bee_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "bell.png": [],
@@ -2672,7 +2667,6 @@
       "ingredient"
     ],
     "blaze_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "blue_bundle.png": [],
@@ -2680,12 +2674,9 @@
     "blue_bundle_open_front.png": [],
     "blue_candle.png": [],
     "blue_dye.png": [],
-    "blue_egg.png": [
-      "food_and_drink"
-    ],
+    "blue_egg.png": [],
     "blue_harness.png": [],
     "bogged_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "bolt_armor_trim_smithing_template.png": [],
@@ -2711,7 +2702,6 @@
       "ingredient"
     ],
     "breeze_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "brewer_pottery_sherd.png": [],
@@ -2724,9 +2714,7 @@
     "brown_bundle_open_front.png": [],
     "brown_candle.png": [],
     "brown_dye.png": [],
-    "brown_egg.png": [
-      "food_and_drink"
-    ],
+    "brown_egg.png": [],
     "brown_harness.png": [],
     "brush.png": [
       "tool_and_utility"
@@ -2742,11 +2730,9 @@
       "food_and_drink"
     ],
     "camel_husk_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "camel_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "campfire.png": [],
@@ -2759,12 +2745,10 @@
       "tool_and_utility"
     ],
     "cat_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "cauldron.png": [],
     "cave_spider_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "chainmail_boots.png": [
@@ -3143,7 +3127,6 @@
     ],
     "copper_door.png": [],
     "copper_golem_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "copper_helmet.png": [
@@ -3178,16 +3161,13 @@
       "combat"
     ],
     "cow_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "creaking_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "creeper_banner_pattern.png": [],
     "creeper_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "crimson_door.png": [],
@@ -3264,11 +3244,9 @@
       "ingredient"
     ],
     "dolphin_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "donkey_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "dragon_breath.png": [
@@ -3279,7 +3257,6 @@
       "ingredient"
     ],
     "drowned_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "dune_armor_trim_smithing_template.png": [],
@@ -3290,7 +3267,6 @@
       "food_and_drink"
     ],
     "elder_guardian_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "elytra.png": [
@@ -3307,15 +3283,12 @@
       "ingredient"
     ],
     "enderman_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "endermite_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ender_dragon_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ender_eye.png": [
@@ -3326,7 +3299,6 @@
     ],
     "end_crystal.png": [],
     "evoker_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "experience_bottle.png": [
@@ -3385,17 +3357,14 @@
     "flow_banner_pattern.png": [],
     "flow_pottery_sherd.png": [],
     "fox_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "friend_pottery_sherd.png": [],
     "frog_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "furnace_minecart.png": [],
     "ghast_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ghast_tear.png": [
@@ -3415,7 +3384,6 @@
     "glow_ink_sac.png": [],
     "glow_item_frame.png": [],
     "glow_squid_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "goat_horn.png": [
@@ -3423,7 +3391,6 @@
       "tool_and_utility"
     ],
     "goat_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "golden_apple.png": [
@@ -3484,7 +3451,6 @@
     "green_dye.png": [],
     "green_harness.png": [],
     "guardian_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "gunpowder.png": [
@@ -3493,7 +3459,6 @@
     "guster_banner_pattern.png": [],
     "guster_pottery_sherd.png": [],
     "happy_ghast_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "heartbreak_pottery_sherd.png": [],
@@ -3502,7 +3467,6 @@
     ],
     "heart_pottery_sherd.png": [],
     "hoglin_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "honeycomb.png": [
@@ -3515,13 +3479,11 @@
     "hopper.png": [],
     "hopper_minecart.png": [],
     "horse_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "host_armor_trim_smithing_template.png": [],
     "howl_pottery_sherd.png": [],
     "husk_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ink_sac.png": [],
@@ -3537,7 +3499,6 @@
     ],
     "iron_door.png": [],
     "iron_golem_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "iron_helmet.png": [
@@ -3675,7 +3636,6 @@
       "food_and_drink"
     ],
     "llama_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "mace.png": [
@@ -3691,7 +3651,6 @@
       "ingredient"
     ],
     "magma_cube_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "mangrove_boat.png": [],
@@ -3717,12 +3676,10 @@
     "miner_pottery_sherd.png": [],
     "mojang_banner_pattern.png": [],
     "mooshroom_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "mourner_pottery_sherd.png": [],
     "mule_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "mushroom_stew.png": [
@@ -3761,7 +3718,6 @@
       "ingredient"
     ],
     "nautilus_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "netherite_axe.png": [
@@ -3818,7 +3774,6 @@
     "oak_hanging_sign.png": [],
     "oak_sign.png": [],
     "ocelot_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ominous_bottle.png": [
@@ -3843,18 +3798,15 @@
     "pale_oak_hanging_sign.png": [],
     "pale_oak_sign.png": [],
     "panda_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "paper.png": [
       "ingredient"
     ],
     "parched_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "parrot_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "phantom_membrane.png": [
@@ -3862,24 +3814,19 @@
       "ingredient"
     ],
     "phantom_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "piglin_banner_pattern.png": [],
     "piglin_brute_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "piglin_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "pig_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "pillager_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "pink_bundle.png": [],
@@ -3897,7 +3844,6 @@
       "food_and_drink"
     ],
     "polar_bear_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "popped_chorus_fruit.png": [
@@ -3970,7 +3916,6 @@
     ],
     "raiser_armor_trim_smithing_template.png": [],
     "ravager_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "raw_copper.png": [
@@ -4154,7 +4099,6 @@
       "tool_and_utility"
     ],
     "sheep_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "shelter_pottery_sherd.png": [],
@@ -4162,7 +4106,6 @@
       "ingredient"
     ],
     "shulker_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "silence_armor_trim_smithing_template.png": [],
@@ -4171,11 +4114,9 @@
       "spawn_egg"
     ],
     "skeleton_horse_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "skeleton_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "skull_banner_pattern.png": [],
@@ -4184,21 +4125,18 @@
       "ingredient"
     ],
     "slime_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "sniffer_egg.png": [
       "food_and_drink"
     ],
     "sniffer_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "snort_pottery_sherd.png": [],
     "snout_armor_trim_smithing_template.png": [],
     "snowball.png": [],
     "snow_golem_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "soul_campfire.png": [],
@@ -4210,7 +4148,6 @@
       "food_and_drink"
     ],
     "spider_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "spire_armor_trim_smithing_template.png": [],
@@ -4229,7 +4166,6 @@
       "tool_and_utility"
     ],
     "squid_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "stick.png": [
@@ -4253,11 +4189,9 @@
       "combat"
     ],
     "stray_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "strider_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "string.png": [
@@ -4282,7 +4216,6 @@
       "tool_and_utility"
     ],
     "tadpole_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "tide_armor_trim_smithing_template.png": [],
@@ -4298,7 +4231,6 @@
     ],
     "totem_of_undying.png": [],
     "trader_llama_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "trial_key.png": [
@@ -4328,28 +4260,22 @@
       "ingredient"
     ],
     "turtle_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "vex_armor_trim_smithing_template.png": [],
     "vex_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "villager_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "vindicator_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "wandering_trader_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "warden_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "ward_armor_trim_smithing_template.png": [],
@@ -4387,15 +4313,12 @@
       "tool_and_utility"
     ],
     "witch_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "wither_skeleton_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "wither_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "wolf_armor.png": [
@@ -4405,7 +4328,6 @@
       "combat"
     ],
     "wolf_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "wooden_axe.png": [
@@ -4438,27 +4360,21 @@
     "yellow_dye.png": [],
     "yellow_harness.png": [],
     "zoglin_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "zombie_horse_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "zombie_nautilus_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "zombie_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "zombie_villager_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ],
     "zombified_piglin_spawn_egg.png": [
-      "food_and_drink",
       "spawn_egg"
     ]
   }

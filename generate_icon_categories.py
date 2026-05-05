@@ -221,7 +221,7 @@ ITEM_RULES = {
         r"dried_kelp",
         r"bamboo$",
         r"cactus$",
-        r"egg$",  # 普通蛋，非 spawn_egg
+        r"^egg$",  # 只匹配 egg.png，排除 spawn_egg
         r"turtle_egg",
         r"sniffer_egg",
         r"bread",
