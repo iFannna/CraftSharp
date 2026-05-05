@@ -459,29 +459,23 @@ namespace CraftSharp.Windows
 
         /// <summary>
         /// 设置副手槽启用状态
+        /// 窗口宽度固定，只改变副手槽Grid的可见性，位置不变
         /// </summary>
         public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
         {
             _leftOffhandEnabled = leftEnabled;
             _rightOffhandEnabled = rightEnabled;
 
-            // 更新副手槽显示
+            // 更新副手槽显示（只改变可见性，不改变布局）
+            LeftOffhandGrid.Visibility = leftEnabled ? Visibility.Visible : Visibility.Collapsed;
+            RightOffhandGrid.Visibility = rightEnabled ? Visibility.Visible : Visibility.Collapsed;
+
             SetupOffhandSlots();
             SetupSlots();
             LoadSlots();
 
-            // 更新间距列可见性
-            if (LeftOffhandSpacingGrid != null)
-                LeftOffhandSpacingGrid.Visibility = leftEnabled ? Visibility.Visible : Visibility.Collapsed;
-            if (RightOffhandSpacingGrid != null)
-                RightOffhandSpacingGrid.Visibility = rightEnabled ? Visibility.Visible : Visibility.Collapsed;
-
-            // 重新设置窗口大小（会更新间距列宽度）
-            SetWindowSize();
-
-            // 更新布局并重新定位
+            // 更新布局（窗口位置不变）
             UpdateLayout();
-            PositionWindow();
         }
     }
 }

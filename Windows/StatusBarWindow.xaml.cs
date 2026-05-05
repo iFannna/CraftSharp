@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
@@ -150,7 +151,7 @@ namespace CraftSharp.Windows
 
         /// <summary>
         /// 设置窗口尺寸
-        /// 窗口宽度固定 = 核心容器宽度 + 左副手槽空间 + 右副手槽空间 + 间距
+        /// 使用固定列宽度，避免Collapsed时列收缩导致位置偏移
         /// </summary>
         private void SetWindowSize()
         {
@@ -160,27 +161,30 @@ namespace CraftSharp.Windows
 
             // 副手槽宽度和间距
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
+            double offhandHeight = _originalOffhandHeight * _scaleFactor;
             double offhandSpacing = BaseOffhandSpacing * _scaleFactor; // 42px基准间距
+
+            // 设置各列的固定宽度（使用GridLength）
+            LeftOffhandColumn.Width = new GridLength(offhandWidth);
+            LeftSpacingColumn.Width = new GridLength(offhandSpacing);
+            CoreContainerColumn.Width = new GridLength(coreWidth);
+            RightSpacingColumn.Width = new GridLength(offhandSpacing);
+            RightOffhandColumn.Width = new GridLength(offhandWidth);
 
             // 设置副手槽尺寸
             LeftOffhandGrid.Width = offhandWidth;
-            LeftOffhandGrid.Height = _originalOffhandHeight * _scaleFactor;
+            LeftOffhandGrid.Height = offhandHeight;
             RightOffhandGrid.Width = offhandWidth;
-            RightOffhandGrid.Height = _originalOffhandHeight * _scaleFactor;
+            RightOffhandGrid.Height = offhandHeight;
 
-            // 设置间距列宽度
-            LeftOffhandSpacingGrid.Width = offhandSpacing;
-            RightOffhandSpacingGrid.Width = offhandSpacing;
+            // 设置副手槽可见性
+            LeftOffhandGrid.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
+            RightOffhandGrid.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-            // 设置间距列可见性（随副手槽显示）
-            LeftOffhandSpacingGrid.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
-            RightOffhandSpacingGrid.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
-
-            // 窗口宽度自动适应（Grid会根据列宽自动计算）
-            Width = double.NaN; // 自动宽度
+            // 窗口宽度 = 所有列宽度之和（固定宽度，不随副手槽可见性变化）
+            Width = offhandWidth + offhandSpacing + coreWidth + offhandSpacing + offhandWidth;
 
             // 窗口高度：根据可见组件动态计算
-            // 由于使用StackPanel + Collapsed，高度自动适应
             Height = double.NaN; // 自动高度
         }
 
@@ -204,7 +208,8 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 定位窗口到屏幕底部，状态栏水平居中
+        /// 定位窗口到屏幕底部，窗口水平居中
+        /// 窗口宽度固定（包含两侧副手槽空间），核心容器居中于窗口
         /// </summary>
         private void PositionWindow()
         {
@@ -214,7 +219,7 @@ namespace CraftSharp.Windows
             // 先让窗口计算实际尺寸
             UpdateLayout();
 
-            // 状态栏水平居中
+            // 窗口水平居中（窗口宽度已固定，包含两侧副手槽空间）
             double actualWidth = ActualWidth > 0 ? ActualWidth : Width;
             if (actualWidth > 0 && !double.IsNaN(actualWidth))
             {
@@ -222,10 +227,11 @@ namespace CraftSharp.Windows
             }
             else
             {
-                // 窗口还没计算好尺寸，使用核心容器宽度作为基准估算
-                double estimatedWidth = GetCoreContainerWidth() +
-                    (_leftOffhandEnabled ? (_originalOffhandWidth + BaseOffhandSpacing) * _scaleFactor : 0) +
-                    (_rightOffhandEnabled ? (_originalOffhandWidth + BaseOffhandSpacing) * _scaleFactor : 0);
+                // 窗口还没计算好尺寸，使用估算宽度
+                double coreWidth = GetCoreContainerWidth();
+                double offhandWidth = _originalOffhandWidth * _scaleFactor;
+                double offhandSpacing = BaseOffhandSpacing * _scaleFactor;
+                double estimatedWidth = coreWidth + (offhandWidth + offhandSpacing) * 2;
                 Left = (screenWidth - estimatedWidth) / 2;
             }
 
@@ -237,7 +243,7 @@ namespace CraftSharp.Windows
             }
             else
             {
-                // 估算高度（快捷栏高度 + 经验条高度 + 状态组高度 + 间距）
+                // 估算高度
                 Top = screenHeight - 200 * _scaleFactor;
             }
             Top = Math.Max(0, Top);

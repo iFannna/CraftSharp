@@ -17,13 +17,14 @@
 
         <!-- 主容器Grid：包含副手槽和核心容器 -->
         <!-- 使用五列布局：左副手槽 | 左间距 | 核心容器 | 右间距 | 右副手槽 -->
+        <!-- 所有列使用固定宽度，避免Collapsed时列收缩导致位置偏移 -->
         <Grid x:Name="MainContainerGrid" VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/> <!-- 左副手槽列 -->
-                <ColumnDefinition Width="Auto"/> <!-- 左间距列 -->
-                <ColumnDefinition Width="Auto"/> <!-- 核心容器列 -->
-                <ColumnDefinition Width="Auto"/> <!-- 右间距列 -->
-                <ColumnDefinition Width="Auto"/> <!-- 右副手槽列 -->
+                <ColumnDefinition Width="*" x:Name="LeftOffhandColumn"/> <!-- 左副手槽列（固定宽度） -->
+                <ColumnDefinition Width="*" x:Name="LeftSpacingColumn"/> <!-- 左间距列（固定宽度） -->
+                <ColumnDefinition Width="*" x:Name="CoreContainerColumn"/> <!-- 核心容器列（固定宽度） -->
+                <ColumnDefinition Width="*" x:Name="RightSpacingColumn"/> <!-- 右间距列（固定宽度） -->
+                <ColumnDefinition Width="*" x:Name="RightOffhandColumn"/> <!-- 右副手槽列（固定宽度） -->
             </Grid.ColumnDefinitions>
 
             <!-- ===== 左副手槽（Column=0） ===== -->
