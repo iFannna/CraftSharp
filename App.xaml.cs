@@ -46,11 +46,28 @@ namespace CraftSharp
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow(_appSettings!);
 
+            // 如果开启"记住位置"，在创建窗口前设置跳过默认定位
+            if (_appSettings?.StatusBarRememberPosition ?? false)
+            {
+                CraftSharp.Windows.StatusBarWindow.ShouldSkipDefaultPositioning = true;
+            }
+
             // 创建快捷栏窗口
             _statusBarWindow = new StatusBarWindow();
 
             // 初始化状态栏服务
             StatusBarService.Instance.Initialize(_statusBarWindow);
+
+            // 监听状态栏位置变化（即时保存到配置文件）
+            _statusBarWindow.PositionChanged += (s, e) =>
+            {
+                if (_appSettings?.StatusBarRememberPosition ?? false)
+                {
+                    _appSettings.StatusBarPositionX = _statusBarWindow.Left;
+                    _appSettings.StatusBarPositionY = _statusBarWindow.Top;
+                    SaveSettings();
+                }
+            };
 
             // 初始化副手槽配置
             StatusBarService.Instance.SetOffhandConfig(
@@ -60,19 +77,28 @@ namespace CraftSharp
             // 初始化快捷栏可见性
             StatusBarService.Instance.SetHotbarVisible(_appSettings?.HotbarVisible ?? true);
 
+            // 状态栏位置定位：在窗口 Loaded 后定位（此时尺寸已计算好）
+            _statusBarWindow.Loaded += (s, e) =>
+            {
+                if (_appSettings?.StatusBarRememberPosition ?? false)
+                {
+                    // 记住位置开启 → 使用保存的位置
+                    StatusBarService.Instance.RestorePosition(
+                        _appSettings.StatusBarPositionX,
+                        _appSettings.StatusBarPositionY);
+                }
+                else
+                {
+                    // 记住位置关闭 → 定位到屏幕底部水平居中
+                    StatusBarService.Instance.PositionToScreenBottomCenter();
+                }
+            };
+
             // 根据设置决定是否显示状态栏
             if (_appSettings?.StatusBarVisible ?? true)
                 _statusBarWindow.Show();
             else
                 _statusBarWindow.Hide();
-
-            // 如果启用了记住位置，恢复状态栏位置
-            if (_appSettings?.StatusBarRememberPosition ?? false)
-            {
-                StatusBarService.Instance.RestorePosition(
-                    _appSettings.StatusBarPositionX,
-                    _appSettings.StatusBarPositionY);
-            }
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow();

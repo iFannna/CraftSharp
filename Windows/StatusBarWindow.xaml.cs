@@ -44,12 +44,33 @@ namespace CraftSharp.Windows
         private bool _armorVisible = true;
         private bool _absorbingVisible = true;
 
+        // 标记：是否跳过构造函数中的默认定位（用于"记住位置"功能）
+        private bool _skipDefaultPositioning = false;
+
+        /// <summary>
+        /// 设置跳过默认定位（必须在构造函数之前通过静态方式设置）
+        /// </summary>
+        public static bool ShouldSkipDefaultPositioning { get; set; } = false;
+
+        /// <summary>
+        /// 窗口位置变化事件（用于即时保存位置）
+        /// </summary>
+        public event EventHandler? PositionChanged;
+
         public StatusBarWindow()
         {
+            // 从静态属性读取是否跳过默认定位
+            _skipDefaultPositioning = ShouldSkipDefaultPositioning;
+            // 重置静态属性（避免影响下次创建）
+            ShouldSkipDefaultPositioning = false;
+
             InitializeComponent();
 
             // 设置窗口到桌面层级
             SourceInitialized += (s, e) => DesktopWindowHelper.SetWindowToDesktopLevel(this);
+
+            // 监听窗口位置变化（用于即时保存位置）
+            LocationChanged += OnLocationChanged;
 
             // 初始化槽位数据服务
             _slotService = new Services.SlotDataService();
@@ -96,10 +117,32 @@ namespace CraftSharp.Windows
             SetupSlots();
 
             LoadSlots();
-            PositionWindow();
+
+            // 默认定位到屏幕底部居中（如果未跳过）
+            if (!_skipDefaultPositioning)
+            {
+                // 窗口尺寸在 Loaded 事件后才完全计算好，所以延迟定位
+                Loaded += (s, e) => PositionWindow();
+            }
 
             // 启动电量更新定时器
             StartBatteryTimer();
+        }
+
+        /// <summary>
+        /// 设置跳过默认定位（实例方法，供外部调用）
+        /// </summary>
+        public void SetSkipDefaultPositioning(bool skip)
+        {
+            _skipDefaultPositioning = skip;
+        }
+
+        /// <summary>
+        /// 窗口位置变化事件处理
+        /// </summary>
+        private void OnLocationChanged(object? sender, EventArgs e)
+        {
+            PositionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -213,14 +256,24 @@ namespace CraftSharp.Windows
         /// </summary>
         private void PositionWindow()
         {
-            var screenWidth = SystemParameters.PrimaryScreenWidth;
-            var screenHeight = SystemParameters.PrimaryScreenHeight;
-
             // 先让窗口计算实际尺寸
             UpdateLayout();
 
-            // 窗口水平居中（窗口宽度已固定，包含两侧副手槽空间）
+            // 窗口水平居中
+            CenterWindowHorizontally();
+
+            // 状态栏垂直定位到屏幕底部（贴着任务栏上方）
+            PositionWindowToBottom();
+        }
+
+        /// <summary>
+        /// 窗口水平居中
+        /// </summary>
+        private void CenterWindowHorizontally()
+        {
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
             double actualWidth = ActualWidth > 0 ? ActualWidth : Width;
+
             if (actualWidth > 0 && !double.IsNaN(actualWidth))
             {
                 Left = (screenWidth - actualWidth) / 2;
@@ -234,19 +287,46 @@ namespace CraftSharp.Windows
                 double estimatedWidth = coreWidth + (offhandWidth + offhandSpacing) * 2;
                 Left = (screenWidth - estimatedWidth) / 2;
             }
+        }
 
-            // 状态栏垂直紧贴窗口底部（留10*scaleFactor的边距）
+        /// <summary>
+        /// 窗口垂直定位到屏幕底部（贴着任务栏上方）
+        /// </summary>
+        private void PositionWindowToBottom()
+        {
+            var screenHeight = SystemParameters.PrimaryScreenHeight;
+            var workingAreaHeight = SystemParameters.WorkArea.Height; // 工作区高度（排除任务栏）
+            var workingAreaTop = SystemParameters.WorkArea.Top;       // 工作区顶部Y坐标
+
             double actualHeight = ActualHeight > 0 ? ActualHeight : Height;
+
+            // 计算窗口底部应该贴着工作区底部（即任务栏上方）
+            // 工作区底部Y坐标 = workingAreaTop + workingAreaHeight
+            // 窗口Top = 工作区底部Y - 窗口高度 - 边距
+            
+
             if (actualHeight > 0 && !double.IsNaN(actualHeight))
             {
-                Top = screenHeight - actualHeight - 10 * _scaleFactor;
+                Top = workingAreaTop + workingAreaHeight - actualHeight ;
             }
             else
             {
                 // 估算高度
-                Top = screenHeight - 200 * _scaleFactor;
+                Top = workingAreaTop + workingAreaHeight - 200 * _scaleFactor;
             }
-            Top = Math.Max(0, Top);
+
+            Top = Math.Max(workingAreaTop, Top);
+        }
+
+        /// <summary>
+        /// 公开方法：定位到屏幕底部水平居中（供 StatusBarService 调用）
+        /// </summary>
+        public void PositionToScreenBottomCenter()
+        {
+            // 确保尺寸已计算
+            UpdateLayout();
+            CenterWindowHorizontally();
+            PositionWindowToBottom();
         }
 
         /// <summary>

@@ -84,6 +84,15 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
+        /// 定位状态栏到屏幕底部水平居中（贴着任务栏上方）
+        /// </summary>
+        public void PositionToScreenBottomCenter()
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.PositionToScreenBottomCenter();
+        }
+
+        /// <summary>
         /// 设置副手槽启用状态
         /// </summary>
         public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
