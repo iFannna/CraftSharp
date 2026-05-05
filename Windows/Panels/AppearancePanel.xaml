@@ -75,8 +75,9 @@
                     <ComboBoxItem Content="{DynamicResource FontYaHei}" Tag="yahei"/>
                     <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="pixel"/>
                     <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="songti"/>
-                    <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>
                     <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="kaiti"/>
+                    <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>
+                    
                 </ComboBox>
             </Grid>
         </ui:Card>
