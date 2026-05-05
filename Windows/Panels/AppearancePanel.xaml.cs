@@ -40,7 +40,7 @@ namespace CraftSharp.Windows.Panels
         }
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
-        private static int GetFontIndex(string font) => font switch {  "像素字体"=> 1,  "宋体"=> 2, "楷体" => 3, "黑体" => 4, _ => 0 };
+        private static int GetFontIndex(string font) => font switch { "像素字体" => 1, "宋体" => 2, "楷体" => 3, "黑体" => 4, _ => 0 };
         private static int GetFontSizeIndex(int fontSize) => fontSize switch { 10 => 0, 12 => 1, 16 => 3, 18 => 4, 20 => 5, _ => 2 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

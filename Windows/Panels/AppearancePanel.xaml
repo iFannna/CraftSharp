@@ -71,13 +71,42 @@
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="FontComboBox"
-                          SelectedIndex="0" SelectionChanged="FontComboBox_SelectionChanged">
-                    <ComboBoxItem Content="{DynamicResource FontYaHei}" Tag="yahei"/>
-                    <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="pixel"/>
-                    <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="songti"/>
-                    <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="kaiti"/>
-                    <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>
-
+                          SelectionChanged="FontComboBox_SelectionChanged">
+                    <ComboBoxItem Content="微软雅黑" Tag="yahei">
+                        <ComboBoxItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="Microsoft YaHei" Style="{x:Null}"/>
+                            </DataTemplate>
+                        </ComboBoxItem.ContentTemplate>
+                    </ComboBoxItem>
+                    <ComboBoxItem Content="像素字体" Tag="pixel">
+                        <ComboBoxItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="pack://application:,,,/Fonts/zpix.ttf#Zpix" Style="{x:Null}"/>
+                            </DataTemplate>
+                        </ComboBoxItem.ContentTemplate>
+                    </ComboBoxItem>
+                    <ComboBoxItem Content="宋体" Tag="songti">
+                        <ComboBoxItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="SimSun" Style="{x:Null}"/>
+                            </DataTemplate>
+                        </ComboBoxItem.ContentTemplate>
+                    </ComboBoxItem>
+                    <ComboBoxItem Content="楷体" Tag="kaiti">
+                        <ComboBoxItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="KaiTi" Style="{x:Null}"/>
+                            </DataTemplate>
+                        </ComboBoxItem.ContentTemplate>
+                    </ComboBoxItem>
+                    <ComboBoxItem Content="黑体" Tag="heiti">
+                        <ComboBoxItem.ContentTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontFamily="SimHei" Style="{x:Null}"/>
+                            </DataTemplate>
+                        </ComboBoxItem.ContentTemplate>
+                    </ComboBoxItem>
                 </ComboBox>
             </Grid>
         </ui:Card>
