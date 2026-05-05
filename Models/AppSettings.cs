@@ -9,16 +9,9 @@ namespace CraftSharp.Models
     {
         public AppSettings()
         {
-            // 初始化每个HUD元素的默认配置
-            HudElements = new ObservableCollection<HudElementSettings>
-            {
-                new HudElementSettings { Id = "expbar", IsVisible = true, DataMappingEnabled = false, CustomValueEnabled = false },
-                new HudElementSettings { Id = "health", IsVisible = true, RegenAnimation = false, DataMappingEnabled = false, CustomValueEnabled = false },
-                new HudElementSettings { Id = "food", IsVisible = true, DataMappingEnabled = false, CustomValueEnabled = false },
-                new HudElementSettings { Id = "air", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
-                new HudElementSettings { Id = "armor", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
-                new HudElementSettings { Id = "absorbing", IsVisible = false, DataMappingEnabled = false, CustomValueEnabled = false },
-            };
+            // 不在构造函数中初始化默认元素，避免 JSON 反序列化时产生重复
+            // 默认元素由 App.xaml.cs 的 EnsureAllHudElementsExist 方法添加
+            HudElements = new ObservableCollection<HudElementSettings>();
         }
 
         // ==================== 系统设置 ====================

@@ -140,12 +140,64 @@ namespace CraftSharp
                 {
                     var json = System.IO.File.ReadAllText(_settingsPath);
                     _appSettings = JsonConvert.DeserializeObject<Models.AppSettings>(json);
+
+                    // 清理重复的HudElements（只保留每个ID的第一个）
+                    if (_appSettings?.HudElements != null && _appSettings.HudElements.Count > 0)
+                    {
+                        var uniqueElements = _appSettings.HudElements
+                            .GroupBy(h => h.Id)
+                            .Select(g => g.First())
+                            .ToList();
+
+                        _appSettings.HudElements.Clear();
+                        foreach (var element in uniqueElements)
+                        {
+                            _appSettings.HudElements.Add(element);
+                        }
+                    }
+
+                    // 确保所有HUD元素都存在（不存在则添加默认配置）
+                    EnsureAllHudElementsExist();
                 }
                 catch { _appSettings = new Models.AppSettings(); }
             }
             else
             {
                 _appSettings = new Models.AppSettings();
+                // 首次运行时添加默认HUD元素配置
+                EnsureAllHudElementsExist();
+            }
+        }
+
+        /// <summary>
+        /// 确保所有HUD元素都存在（不存在则添加默认配置）
+        /// </summary>
+        private void EnsureAllHudElementsExist()
+        {
+            if (_appSettings == null) return;
+
+            var defaultConfigs = new Dictionary<string, (bool isVisible, bool regenAnim)>
+            {
+                { "expbar", (true, false) },
+                { "health", (true, false) },
+                { "food", (true, false) },
+                { "air", (false, false) },
+                { "armor", (false, false) },
+                { "absorbing", (false, false) },
+            };
+
+            foreach (var kvp in defaultConfigs)
+            {
+                if (!_appSettings.HudElements.Any(h => h.Id == kvp.Key))
+                {
+                    var newElement = new Models.HudElementSettings
+                    {
+                        Id = kvp.Key,
+                        IsVisible = kvp.Value.isVisible,
+                        RegenAnimation = kvp.Value.regenAnim,
+                    };
+                    _appSettings.HudElements.Add(newElement);
+                }
             }
         }
 
