@@ -37,6 +37,11 @@ namespace CraftSharp.Models
         public string Font { get; set; } = "微软雅黑";
 
         /// <summary>
+        /// 字体大小
+        /// </summary>
+        public int FontSize { get; set; } = 14;
+
+        /// <summary>
         /// 图标样式
         /// </summary>
         public string IconStyle { get; set; } = "默认";

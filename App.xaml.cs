@@ -40,8 +40,8 @@ namespace CraftSharp
             // 初始化主题
             ThemeService.Instance.Initialize(_appSettings?.Theme ?? "跟随系统");
 
-            // 初始化字体
-            FontService.Instance.Initialize(_appSettings?.Font ?? "微软雅黑");
+            // 初始化字体（字体名称和大小）
+            FontService.Instance.Initialize(_appSettings?.Font ?? "微软雅黑", _appSettings?.FontSize ?? 14);
 
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow(_appSettings!);

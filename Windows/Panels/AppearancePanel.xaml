@@ -77,7 +77,34 @@
                     <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="songti"/>
                     <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="kaiti"/>
                     <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti"/>
-                    
+
+                </ComboBox>
+            </Grid>
+        </ui:Card>
+
+        <!-- 字体大小卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource FontSizeLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource FontSizeDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ComboBox Grid.Column="1" Width="160" x:Name="FontSizeComboBox"
+                          SelectedIndex="2" SelectionChanged="FontSizeComboBox_SelectionChanged">
+                    <ComboBoxItem Content="10" Tag="10"/>
+                    <ComboBoxItem Content="12" Tag="12"/>
+                    <ComboBoxItem Content="14" Tag="14"/>
+                    <ComboBoxItem Content="16" Tag="16"/>
+                    <ComboBoxItem Content="18" Tag="18"/>
+                    <ComboBoxItem Content="20" Tag="20"/>
                 </ComboBox>
             </Grid>
         </ui:Card>

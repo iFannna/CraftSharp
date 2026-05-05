@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
@@ -13,10 +14,12 @@
 
             <!-- 全局字体资源 -->
             <FontFamily x:Key="GlobalFontFamily">Microsoft YaHei</FontFamily>
+            <sys:Double x:Key="GlobalFontSize">14</sys:Double>
 
             <!-- 全局样式：将字体应用到所有 TextBlock -->
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="{DynamicResource GlobalFontFamily}"/>
+                <Setter Property="FontSize" Value="{DynamicResource GlobalFontSize}"/>
             </Style>
 
             <!-- Fluent Design ContextMenu 样式 -->
@@ -27,7 +30,7 @@
                 <Setter Property="Padding" Value="6"/>
                 <Setter Property="HasDropShadow" Value="True"/>
                 <Setter Property="FontFamily" Value="{DynamicResource GlobalFontFamily}"/>
-                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontSize" Value="{DynamicResource GlobalFontSize}"/>
                 <Setter Property="MinWidth" Value="160"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -53,7 +56,7 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                 <Setter Property="Padding" Value="12,10"/>
-                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontSize" Value="{DynamicResource GlobalFontSize}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="Margin" Value="0,2"/>
                 <Setter Property="Template">

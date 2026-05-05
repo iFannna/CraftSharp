@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Media;
 
 namespace CraftSharp.Services
@@ -17,6 +16,11 @@ namespace CraftSharp.Services
         public string CurrentFont { get; private set; } = "微软雅黑";
 
         /// <summary>
+        /// 当前字体大小
+        /// </summary>
+        public double CurrentFontSize { get; private set; } = 14;
+
+        /// <summary>
         /// 字体变化事件
         /// </summary>
         public event Action? FontChanged;
@@ -29,14 +33,26 @@ namespace CraftSharp.Services
             if (displayName == CurrentFont) return;
 
             CurrentFont = displayName;
-            ApplyFont(displayName);
+            ApplyFont();
+            FontChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 设置字体大小
+        /// </summary>
+        public void SetFontSize(double size)
+        {
+            if (size == CurrentFontSize) return;
+
+            CurrentFontSize = size;
+            ApplyFontSize();
             FontChanged?.Invoke();
         }
 
         /// <summary>
         /// 应用字体
         /// </summary>
-        private void ApplyFont(string displayName)
+        private void ApplyFont()
         {
             var app = System.Windows.Application.Current;
             if (app == null) return;
@@ -44,14 +60,14 @@ namespace CraftSharp.Services
             System.Windows.Media.FontFamily fontFamily;
 
             // 像素字体使用嵌入资源
-            if (displayName == "像素字体")
+            if (CurrentFont == "像素字体")
             {
                 // 加载嵌入的像素字体 Zpix
                 fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/zpix.ttf#Zpix");
             }
             else
             {
-                var fontFamilyName = GetSystemFontName(displayName);
+                var fontFamilyName = GetSystemFontName(CurrentFont);
                 fontFamily = new System.Windows.Media.FontFamily(fontFamilyName);
             }
 
@@ -62,6 +78,24 @@ namespace CraftSharp.Services
             else
             {
                 app.Resources.Add("GlobalFontFamily", fontFamily);
+            }
+        }
+
+        /// <summary>
+        /// 应用字体大小
+        /// </summary>
+        private void ApplyFontSize()
+        {
+            var app = System.Windows.Application.Current;
+            if (app == null) return;
+
+            if (app.Resources.Contains("GlobalFontSize"))
+            {
+                app.Resources["GlobalFontSize"] = CurrentFontSize;
+            }
+            else
+            {
+                app.Resources.Add("GlobalFontSize", CurrentFontSize);
             }
         }
 
@@ -81,12 +115,14 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 初始化字体
+        /// 初始化字体（字体名称和大小）
         /// </summary>
-        public void Initialize(string savedFont)
+        public void Initialize(string savedFont, double savedFontSize = 14)
         {
             CurrentFont = savedFont;
-            ApplyFont(savedFont);
+            CurrentFontSize = savedFontSize;
+            ApplyFont();
+            ApplyFontSize();
         }
     }
 }

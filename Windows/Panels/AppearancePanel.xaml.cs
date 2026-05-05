@@ -26,6 +26,7 @@ namespace CraftSharp.Windows.Panels
         {
             ThemeComboBox.SelectedIndex = GetThemeIndex(_settings.Theme);
             FontComboBox.SelectedIndex = GetFontIndex(_settings.Font);
+            FontSizeComboBox.SelectedIndex = GetFontSizeIndex(_settings.FontSize);
             LoadAppIconPreview();
         }
 
@@ -40,6 +41,7 @@ namespace CraftSharp.Windows.Panels
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
         private static int GetFontIndex(string font) => font switch {  "像素字体"=> 1,  "宋体"=> 2, "楷体" => 3, "黑体" => 4, _ => 0 };
+        private static int GetFontSizeIndex(int fontSize) => fontSize switch { 10 => 0, 12 => 1, 16 => 3, 18 => 4, 20 => 5, _ => 2 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -86,6 +88,26 @@ namespace CraftSharp.Windows.Panels
 
                 // 即时保存设置
                 SaveSettings();
+            }
+        }
+
+        private void FontSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_settings == null) return;
+            if (FontSizeComboBox.SelectedItem is ComboBoxItem item)
+            {
+                // 根据 Tag 获取实际的字体大小值
+                var tag = item.Tag?.ToString() ?? "14";
+                if (int.TryParse(tag, out var fontSize))
+                {
+                    _settings.FontSize = fontSize;
+
+                    // 切换字体大小
+                    FontService.Instance.SetFontSize(fontSize);
+
+                    // 即时保存设置
+                    SaveSettings();
+                }
             }
         }
 
