@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CraftSharp.Services;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows
@@ -31,8 +32,20 @@ namespace CraftSharp.Windows
             InitializeComponent();
             _assetsBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
 
+            // 设置窗口图标（使用当前应用图标）
+            SetWindowIcon();
+
             // 手动触发加载"全部方块"
             LoadIconsForTagAsync("block_all");
+        }
+
+        private void SetWindowIcon()
+        {
+            var icon = IconService.Instance.GetWindowIcon();
+            if (icon != null)
+            {
+                this.Icon = icon;
+            }
         }
 
         private void CategoryTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
