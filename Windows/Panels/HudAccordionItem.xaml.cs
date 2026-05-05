@@ -147,11 +147,137 @@ namespace CraftSharp.Windows.Panels
                 rightOffhandToggle.Checked += (s, e) => { _settings.HotbarRightOffhand = true; StatusBarService.Instance.SetOffhandConfig(_settings.HotbarLeftOffhand, true); SaveSettings(); };
                 rightOffhandToggle.Unchecked += (s, e) => { _settings.HotbarRightOffhand = false; StatusBarService.Instance.SetOffhandConfig(_settings.HotbarLeftOffhand, false); SaveSettings(); };
             }
-            else
+            else if (id == "expbar")
             {
-                AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", true);
-                if (id == "health")
-                    AddToggleRow("HudOptionRegenAnim", "HudOptionRegenAnimDesc", false);
+                // 获取经验条的设置（从HudElements列表中查找）
+                var expBarSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "expbar");
+                bool isVisible = expBarSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (expBarSettings != null) expBarSettings.IsVisible = true;
+                    StatusBarService.Instance.SetExpBarVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (expBarSettings != null) expBarSettings.IsVisible = false;
+                    StatusBarService.Instance.SetExpBarVisible(false);
+                    SaveSettings();
+                };
+
+                AddMappingRow();
+                AddCustomValueRow();
+            }
+            else if (id == "health")
+            {
+                var healthSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "health");
+                bool isVisible = healthSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (healthSettings != null) healthSettings.IsVisible = true;
+                    StatusBarService.Instance.SetHealthVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (healthSettings != null) healthSettings.IsVisible = false;
+                    StatusBarService.Instance.SetHealthVisible(false);
+                    SaveSettings();
+                };
+
+                AddToggleRow("HudOptionRegenAnim", "HudOptionRegenAnimDesc", false);
+                AddMappingRow();
+                AddCustomValueRow();
+            }
+            else if (id == "food")
+            {
+                var foodSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "food");
+                bool isVisible = foodSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (foodSettings != null) foodSettings.IsVisible = true;
+                    StatusBarService.Instance.SetFoodVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (foodSettings != null) foodSettings.IsVisible = false;
+                    StatusBarService.Instance.SetFoodVisible(false);
+                    SaveSettings();
+                };
+
+                AddMappingRow();
+                AddCustomValueRow();
+            }
+            else if (id == "air")
+            {
+                var airSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "air");
+                bool isVisible = airSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (airSettings != null) airSettings.IsVisible = true;
+                    StatusBarService.Instance.SetAirVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (airSettings != null) airSettings.IsVisible = false;
+                    StatusBarService.Instance.SetAirVisible(false);
+                    SaveSettings();
+                };
+
+                AddMappingRow();
+                AddCustomValueRow();
+            }
+            else if (id == "armor")
+            {
+                var armorSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "armor");
+                bool isVisible = armorSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (armorSettings != null) armorSettings.IsVisible = true;
+                    StatusBarService.Instance.SetArmorVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (armorSettings != null) armorSettings.IsVisible = false;
+                    StatusBarService.Instance.SetArmorVisible(false);
+                    SaveSettings();
+                };
+
+                AddMappingRow();
+                AddCustomValueRow();
+            }
+            else if (id == "absorbing")
+            {
+                var absorbingSettings = _settings.HudElements.FirstOrDefault(h => h.Id == "absorbing");
+                bool isVisible = absorbingSettings?.IsVisible ?? true;
+
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    if (absorbingSettings != null) absorbingSettings.IsVisible = true;
+                    StatusBarService.Instance.SetAbsorbingVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    if (absorbingSettings != null) absorbingSettings.IsVisible = false;
+                    StatusBarService.Instance.SetAbsorbingVisible(false);
+                    SaveSettings();
+                };
+
                 AddMappingRow();
                 AddCustomValueRow();
             }

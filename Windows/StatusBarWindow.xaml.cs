@@ -10,15 +10,21 @@ namespace CraftSharp.Windows
     /// 状态栏窗口主文件 - 构造函数、缩放、布局核心逻辑
     ///
     /// 布局规则：
-    /// 1. 快捷栏是所有组件水平位置的基准点，始终在屏幕底部水平居中
-    /// 2. 副手槽浮动在快捷栏左右两侧（间距6px），不影响快捷栏的基准位置
-    /// 3. 垂直方向有重力特性：下方组件关闭后，上方组件自动下移填补空位
+    /// 1. 整个状态栏水平居中、垂直紧贴窗口底部
+    /// 2. 核心容器固定宽度182*scaleFactor（1092px基准在2560分辨率6倍放大）
+    /// 3. 副手槽位于核心容器外部，间距42*scaleFactor
+    /// 4. 使用StackPanel + VerticalAlignment="Bottom"实现从下往上堆叠
+    /// 5. 隐藏组件使用Visibility.Collapsed，上方组件自动向下掉落
+    /// 6. 全局垂直间距6px基准
     /// </summary>
     public partial class StatusBarWindow : Window
     {
         // 基准分辨率：2560下放大6倍
         private const double BaseScreenWidth = 2560;
         private const double BaseScaleMultiplier = 6;
+
+        // 核心容器基准宽度：182像素（182×6=1092px）
+        private const double BaseCoreContainerWidth = 182;
 
         private double _scaleFactor;
         private DispatcherTimer? _batteryTimer;
@@ -27,6 +33,15 @@ namespace CraftSharp.Windows
         // 副手槽状态
         private bool _leftOffhandEnabled = false;
         private bool _rightOffhandEnabled = false;
+
+        // 各组件可见性状态
+        private bool _hotbarVisible = true;
+        private bool _expBarVisible = true;
+        private bool _healthVisible = true;
+        private bool _foodVisible = true;
+        private bool _airVisible = true;
+        private bool _armorVisible = true;
+        private bool _absorbingVisible = true;
 
         public StatusBarWindow()
         {
@@ -59,11 +74,19 @@ namespace CraftSharp.Windows
             // 设置伤害吸收值
             SetupAbsorbing();
 
+            // 设置护甲值
+            SetupArmor();
+
             // 设置经验条
             SetupExperienceBar();
 
             // 设置快捷栏
             SetupHotbar();
+
+            // 设置状态组行的宽度（核心容器宽度）
+            StatusRowGrid.Width = GetCoreContainerWidth();
+            // 与下方经验条间距：6px基准（Margin.Bottom在上层元素上）
+            StatusRowGrid.Margin = new Thickness(0, 0, 0, BaseVerticalSpacing * _scaleFactor);
 
             // 设置副手槽
             SetupOffhandSlots();
@@ -105,6 +128,7 @@ namespace CraftSharp.Windows
             LoadFoodDimensions();
             LoadAirDimensions();
             LoadAbsorbingDimensions();
+            LoadArmorDimensions();
         }
 
         /// <summary>
@@ -117,113 +141,47 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 获取快捷栏在窗口内的左边位置
-        /// 快捷栏始终在窗口内固定位置（窗口尺寸固定，包含所有副手槽空间）
+        /// 获取核心容器宽度（182×缩放比例）
         /// </summary>
-        private double GetHotbarLeft()
+        private double GetCoreContainerWidth()
         {
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
-            // 快捷栏左边始终是左副手槽宽度+间距（无论左副手槽是否显示）
-            return offhandWidth + spacing;
-        }
-
-        /// <summary>
-        /// 获取底部偏移量（快捷栏可见时返回快捷栏高度+间距，否则返回0）
-        /// 用于重力布局：组件根据此偏移量决定Y位置
-        /// </summary>
-        private double GetBottomOffset()
-        {
-            if (_hotbarVisible)
-            {
-                double hotbarHeight = _originalHotbarHeight * _scaleFactor;
-                double spacing = _spacing * _scaleFactor;
-                return hotbarHeight + spacing;
-            }
-            return 0;
+            return BaseCoreContainerWidth * _scaleFactor;
         }
 
         /// <summary>
         /// 设置窗口尺寸
-        /// 窗口宽度固定，高度根据组件可见性动态调整（重力布局）
+        /// 窗口宽度固定 = 核心容器宽度 + 左副手槽空间 + 右副手槽空间 + 间距
         /// </summary>
         private void SetWindowSize()
         {
-            // 窗口宽度固定 = 快捷栏宽度 + 左副手槽空间 + 右副手槽空间 + 间距
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+            // 核心容器宽度
+            double coreWidth = GetCoreContainerWidth();
+            CoreContainerGrid.Width = coreWidth;
+
+            // 副手槽宽度和间距
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
+            double offhandSpacing = BaseOffhandSpacing * _scaleFactor; // 42px基准间距
 
-            // 固定窗口宽度，包含所有副手槽空间
-            double windowWidth = hotbarWidth + (offhandWidth + spacing) * 2;
-            Width = windowWidth;
+            // 设置副手槽尺寸
+            LeftOffhandGrid.Width = offhandWidth;
+            LeftOffhandGrid.Height = _originalOffhandHeight * _scaleFactor;
+            RightOffhandGrid.Width = offhandWidth;
+            RightOffhandGrid.Height = _originalOffhandHeight * _scaleFactor;
 
-            // 窗口高度从下往上计算（重力布局）
-            double height = 0;
+            // 设置间距列宽度
+            LeftOffhandSpacingGrid.Width = offhandSpacing;
+            RightOffhandSpacingGrid.Width = offhandSpacing;
 
-            // 底层：快捷栏或副手槽（至少一个可见时）
-            bool hasBottomRow = _hotbarVisible || _leftOffhandEnabled || _rightOffhandEnabled;
-            if (hasBottomRow)
-            {
-                // 底层高度取快捷栏和副手槽的最大值
-                double hotbarHeight = _originalHotbarHeight * _scaleFactor;
-                double offhandHeight = _originalOffhandHeight * _scaleFactor;
-                height += Math.Max(hotbarHeight, offhandHeight);
-            }
+            // 设置间距列可见性（随副手槽显示）
+            LeftOffhandSpacingGrid.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
+            RightOffhandSpacingGrid.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-            // 经验条：底层上方1px（如果有底层），否则在最底部
-            if (hasBottomRow)
-            {
-                height += _spacing * _scaleFactor;
-            }
-            height += _originalExpBarHeight * _scaleFactor;
+            // 窗口宽度自动适应（Grid会根据列宽自动计算）
+            Width = double.NaN; // 自动宽度
 
-            // 生命值/饥饿值：经验条上方1px
-            height += _heartSpacing * _scaleFactor + _originalHeartHeight * _scaleFactor;
-
-            // 伤害吸收值/空气值：生命值/饥饿值上方1px
-            int absorbingRows = GetMaxAbsorbingRows();
-            int extraAbsorbingRows = Math.Max(0, absorbingRows - 1);
-            double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
-            double rowSpacing = _absorbingRowSpacing * _scaleFactor;
-            double absorbingToHeartSpacing = _absorbingToHeartSpacing * _scaleFactor;
-            double airHeight = _originalAirHeight * _scaleFactor;
-            double airSpacing = _airSpacing * _scaleFactor;
-            double absorbingExtent = extraAbsorbingRows * (absorbingHeight + rowSpacing) + absorbingHeight + absorbingToHeartSpacing;
-            double airExtent = airHeight + airSpacing;
-            height += Math.Max(absorbingExtent, airExtent);
-
-            Height = height;
-        }
-
-        /// <summary>
-        /// 获取经验条的Y位置（从窗口顶部往下计算）
-        /// </summary>
-        private double GetExpBarTopOffset()
-        {
-            double heartY = GetHeartY();
-            double heartHeight = _originalHeartHeight * _scaleFactor;
-            double heartSpacing = _heartSpacing * _scaleFactor;
-            return heartY + heartHeight + heartSpacing;
-        }
-
-        /// <summary>
-        /// 获取心形/饥饿值的Y位置（从窗口顶部往下计算）
-        /// </summary>
-        private double GetHeartY()
-        {
-            int absorbingRows = GetMaxAbsorbingRows();
-            int extraRows = Math.Max(0, absorbingRows - 1);
-            double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
-            double rowSpacing = _absorbingRowSpacing * _scaleFactor;
-            double absorbingToHeartSpacing = _absorbingToHeartSpacing * _scaleFactor;
-            double airHeight = _originalAirHeight * _scaleFactor;
-            double airSpacing = _airSpacing * _scaleFactor;
-
-            double airExtent = airHeight + airSpacing;
-            double absorbingExtent = absorbingHeight + extraRows * (absorbingHeight + rowSpacing) + absorbingToHeartSpacing;
-
-            return Math.Max(airExtent, absorbingExtent);
+            // 窗口高度：根据可见组件动态计算
+            // 由于使用StackPanel + Collapsed，高度自动适应
+            Height = double.NaN; // 自动高度
         }
 
         /// <summary>
@@ -246,28 +204,43 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 定位窗口到屏幕底部，快捷栏水平居中
-        /// 窗口尺寸固定，包含所有副手槽空间（无论是否显示）
+        /// 定位窗口到屏幕底部，状态栏水平居中
         /// </summary>
         private void PositionWindow()
         {
             var screenWidth = SystemParameters.PrimaryScreenWidth;
             var screenHeight = SystemParameters.PrimaryScreenHeight;
 
-            // 快捷栏始终居中于屏幕
-            double hotbarCenterX = screenWidth / 2;
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double hotbarScreenLeft = hotbarCenterX - hotbarWidth / 2;
+            // 先让窗口计算实际尺寸
+            UpdateLayout();
 
-            // 快捷栏在窗口内的左边位置（固定）
-            double hotbarWindowLeft = GetHotbarLeft();
+            // 状态栏水平居中
+            double actualWidth = ActualWidth > 0 ? ActualWidth : Width;
+            if (actualWidth > 0 && !double.IsNaN(actualWidth))
+            {
+                Left = (screenWidth - actualWidth) / 2;
+            }
+            else
+            {
+                // 窗口还没计算好尺寸，使用核心容器宽度作为基准估算
+                double estimatedWidth = GetCoreContainerWidth() +
+                    (_leftOffhandEnabled ? (_originalOffhandWidth + BaseOffhandSpacing) * _scaleFactor : 0) +
+                    (_rightOffhandEnabled ? (_originalOffhandWidth + BaseOffhandSpacing) * _scaleFactor : 0);
+                Left = (screenWidth - estimatedWidth) / 2;
+            }
 
-            // 窗口左边位置 = 快捷栏屏幕位置 - 快捷栏窗口内位置
-            Left = hotbarScreenLeft - hotbarWindowLeft;
-
-            // 窗口顶部位置
-            double desiredTop = screenHeight - Height - 10 * _scaleFactor;
-            Top = Math.Max(0, desiredTop);
+            // 状态栏垂直紧贴窗口底部（留10*scaleFactor的边距）
+            double actualHeight = ActualHeight > 0 ? ActualHeight : Height;
+            if (actualHeight > 0 && !double.IsNaN(actualHeight))
+            {
+                Top = screenHeight - actualHeight - 10 * _scaleFactor;
+            }
+            else
+            {
+                // 估算高度（快捷栏高度 + 经验条高度 + 状态组高度 + 间距）
+                Top = screenHeight - 200 * _scaleFactor;
+            }
+            Top = Math.Max(0, Top);
         }
 
         /// <summary>
@@ -287,6 +260,82 @@ namespace CraftSharp.Windows
             {
                 this.DragMove();
             }
+        }
+
+        /// <summary>
+        /// 设置快捷栏可见性
+        /// 使用Visibility.Collapsed实现重力布局：上方组件自动向下掉落
+        /// </summary>
+        public void SetHotbarVisible(bool visible)
+        {
+            _hotbarVisible = visible;
+            HotbarGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            // 同步控制主快捷栏格子显示
+            for (int i = 0; i < 9; i++)
+            {
+                var border = GetSlotBorder(i);
+                if (border != null)
+                {
+                    border.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            // 窗口高度自动适应（无需手动计算）
+        }
+
+        /// <summary>
+        /// 设置经验条可见性
+        /// </summary>
+        public void SetExpBarVisible(bool visible)
+        {
+            _expBarVisible = visible;
+            ExperienceBarGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 设置生命值可见性
+        /// </summary>
+        public void SetHealthVisible(bool visible)
+        {
+            _healthVisible = visible;
+            HeartGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 设置饥饿值可见性
+        /// </summary>
+        public void SetFoodVisible(bool visible)
+        {
+            _foodVisible = visible;
+            FoodGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 设置空气值可见性
+        /// </summary>
+        public void SetAirVisible(bool visible)
+        {
+            _airVisible = visible;
+            AirGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 设置护甲值可见性
+        /// </summary>
+        public void SetArmorVisible(bool visible)
+        {
+            _armorVisible = visible;
+            ArmorGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 设置伤害吸收值可见性
+        /// </summary>
+        public void SetAbsorbingVisible(bool visible)
+        {
+            _absorbingVisible = visible;
+            AbsorbingGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

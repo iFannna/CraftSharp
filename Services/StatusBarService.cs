@@ -100,5 +100,59 @@ namespace CraftSharp.Services
             if (_statusBarWindow == null) return;
             _statusBarWindow.SetHotbarVisible(visible);
         }
+
+        /// <summary>
+        /// 设置经验条可见性
+        /// </summary>
+        public void SetExpBarVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetExpBarVisible(visible);
+        }
+
+        /// <summary>
+        /// 设置生命值可见性
+        /// </summary>
+        public void SetHealthVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetHealthVisible(visible);
+        }
+
+        /// <summary>
+        /// 设置饥饿值可见性
+        /// </summary>
+        public void SetFoodVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetFoodVisible(visible);
+        }
+
+        /// <summary>
+        /// 设置空气值可见性
+        /// </summary>
+        public void SetAirVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetAirVisible(visible);
+        }
+
+        /// <summary>
+        /// 设置护甲值可见性
+        /// </summary>
+        public void SetArmorVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetArmorVisible(visible);
+        }
+
+        /// <summary>
+        /// 设置伤害吸收值可见性
+        /// </summary>
+        public void SetAbsorbingVisible(bool visible)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetAbsorbingVisible(visible);
+        }
     }
 }

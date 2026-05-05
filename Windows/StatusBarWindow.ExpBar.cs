@@ -7,13 +7,16 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 经验条功能
-    /// 经验条居中于快捷栏，在快捷栏上方1px
+    ///
+    /// 布局规则：
+    /// 1. 经验条宽度占满核心容器（182×缩放比例）
+    /// 2. 与下方快捷栏间距6px基准（通过StackPanel Margin实现）
+    /// 3. 使用Grid布局，居中显示
     /// </summary>
     public partial class StatusBarWindow
     {
         private double _originalExpBarWidth;
         private double _originalExpBarHeight;
-        private double _spacing = 1; // 经验条与快捷栏之间的间距
 
         /// <summary>
         /// 加载经验条图片尺寸
@@ -34,33 +37,30 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置经验条（居中于快捷栏，在快捷栏上方1px）
+        /// 设置经验条（居中于核心容器，在快捷栏上方6px）
+        /// 使用StackPanel布局，通过Margin实现间距
         /// </summary>
         private void SetupExperienceBar()
         {
-            double expBarWidth = _originalExpBarWidth * _scaleFactor;
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
+            double coreWidth = GetCoreContainerWidth();
 
-            ExperienceBarBackground.Source = LoadBitmapImage(AssetPaths.ExperienceBarBackground);
-            ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.ExperienceBarProgress);
-
-            ExperienceBarGrid.Width = expBarWidth;
+            // 设置经验条尺寸（高度按原图比例，宽度可适当调整）
             ExperienceBarGrid.Height = expBarHeight;
+            ExperienceBarGrid.Width = coreWidth; // 占满核心容器
 
-            ExperienceBarBackground.Width = expBarWidth;
+            // 设置背景图片
+            ExperienceBarBackground.Source = LoadBitmapImage(AssetPaths.ExperienceBarBackground);
+            ExperienceBarBackground.Width = coreWidth;
             ExperienceBarBackground.Height = expBarHeight;
 
+            // 设置进度图片
+            ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.ExperienceBarProgress);
             ExperienceBarProgress.Height = expBarHeight;
 
-            // 经验条居中于快捷栏
-            double hotbarLeft = GetHotbarLeft();
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
-
-            double expBarTopOffset = GetExpBarTopOffset();
-
-            System.Windows.Controls.Canvas.SetLeft(ExperienceBarGrid, expBarLeft);
-            System.Windows.Controls.Canvas.SetTop(ExperienceBarGrid, expBarTopOffset);
+            // 与下方快捷栏间距：6px基准（Margin.Bottom在上层元素上）
+            ExperienceBarGrid.Margin = new Thickness(0, 0, 0, BaseVerticalSpacing * _scaleFactor);
+            ExperienceBarGrid.Visibility = _expBarVisible ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateBatteryLevel();
         }
@@ -73,13 +73,13 @@ namespace CraftSharp.Windows
             var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
             var batteryPercent = powerStatus.BatteryLifePercent;
 
-            double expBarWidth = _originalExpBarWidth * _scaleFactor;
+            double coreWidth = GetCoreContainerWidth();
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
 
-            ExperienceBarProgress.Width = expBarWidth;
+            ExperienceBarProgress.Width = coreWidth;
             ExperienceBarProgress.Height = expBarHeight;
 
-            var clipRect = new Rect(0, 0, expBarWidth * batteryPercent, expBarHeight);
+            var clipRect = new Rect(0, 0, coreWidth * batteryPercent, expBarHeight);
             ExperienceBarProgress.Clip = new RectangleGeometry(clipRect);
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -8,16 +9,20 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 伤害吸收值功能
-    /// 伤害吸收值左对齐快捷栏，在生命值上方
+    ///
+    /// 布局规则：
+    /// 1. 伤害吸收值紧贴核心容器左边缘左对齐
+    /// 2. 伤害吸收值在生命值上方，间距6px基准
+    /// 3. XAML顺序：护甲值(最先) → 伤害吸收 → 生命值(最后)
+    /// 4. 实际显示：护甲值(最上) → 伤害吸收 → 生命值(最下)
     /// </summary>
     public partial class StatusBarWindow
     {
         private double _originalAbsorbingFullWidth;
         private double _originalAbsorbingFullHeight;
         private double _originalAbsorbingHalfWidth;
-        private double _absorbingGap = -1; // 伤害吸收值之间的间距
-        private double _absorbingRowSpacing = 1; // 伤害吸收值行之间的间距
-        private double _absorbingToHeartSpacing = 1; // 伤害吸收值与心形之间的间距
+        private double _absorbingGap = -1; // 伤害吸收值之间的间距（基准像素）
+        private double _absorbingRowSpacing = 1; // 伤害吸收值行之间的间距（基准像素）
 
         private int _absorbingValue = 175;
         private int _absorbingBackgroundValue = 175;
@@ -77,39 +82,48 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置伤害吸收值（左对齐快捷栏，在生命值上方）
+        /// 设置伤害吸收值（紧贴核心容器左边缘左对齐，在生命值上方）
+        /// Canvas用于绘制伤害吸收值图标，Grid用于容器布局
         /// </summary>
         private void SetupAbsorbing()
         {
             double absorbingWidth = _originalAbsorbingFullWidth * _scaleFactor;
             double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
             double halfWidth = _originalAbsorbingHalfWidth * _scaleFactor;
-
-            // 伤害吸收值左对齐快捷栏
-            double hotbarLeft = GetHotbarLeft();
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-            double expBarWidth = _originalExpBarWidth * _scaleFactor;
-
-            double expBarLeft = hotbarLeft + (hotbarWidth - expBarWidth) / 2;
-            double absorbingLeft = expBarLeft;
-
             double absorbingGap = _absorbingGap * _scaleFactor;
             double rowSpacing = _absorbingRowSpacing * _scaleFactor;
-            double absorbingToHeartSpacing = _absorbingToHeartSpacing * _scaleFactor;
 
             int rows = Math.Max(GetAbsorbingBackgroundRows(), GetAbsorbingRows());
-            double heartY = GetHeartY();
-            double absorbingBottomRowY = heartY - absorbingToHeartSpacing - absorbingHeight;
 
+            // 设置AbsorbingCanvas尺寸（支持多行）
+            double absorbingRowWidth = 10 * absorbingWidth + 9 * absorbingGap;
+            double absorbingTotalHeight = rows * absorbingHeight + (rows - 1) * rowSpacing;
+            AbsorbingCanvas.Width = absorbingRowWidth;
+            AbsorbingCanvas.Height = absorbingTotalHeight;
+
+            // 设置AbsorbingGrid尺寸和布局
+            AbsorbingGrid.Width = absorbingRowWidth;
+            AbsorbingGrid.Height = absorbingTotalHeight;
+            AbsorbingGrid.HorizontalAlignment = System.Windows.HorizontalAlignment.Left; // 左对齐
+            // 与下方生命值间距：6px基准（Margin.Bottom在上层元素上）
+            AbsorbingGrid.Margin = new Thickness(0, 0, 0, BaseVerticalSpacing * _scaleFactor);
+            AbsorbingGrid.Visibility = _absorbingVisible ? Visibility.Visible : Visibility.Collapsed;
+
+            // 清除现有伤害吸收值图标
+            AbsorbingCanvas.Children.Clear();
+
+            // 绘制多行伤害吸收值，从下往上排列
             for (int row = 0; row < rows; row++)
             {
-                double rowTopOffset = absorbingBottomRowY - row * (absorbingHeight + rowSpacing);
+                // 最底行(row=rows-1)在最下方，最顶行(row=0)在最上方
+                double rowTopOffset = (rows - 1 - row) * (absorbingHeight + rowSpacing);
 
                 for (int i = 0; i < 10; i++)
                 {
                     int globalIndex = row * 10 + i;
-                    double iconLeft = absorbingLeft + i * (absorbingWidth + absorbingGap);
+                    double iconLeft = i * (absorbingWidth + absorbingGap);
 
+                    // 心形容器（空心）
                     var containerImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingContainer{globalIndex}",
@@ -121,10 +135,11 @@ namespace CraftSharp.Windows
                         SnapsToDevicePixels = true
                     };
                     RenderOptions.SetBitmapScalingMode(containerImage, BitmapScalingMode.NearestNeighbor);
-                    System.Windows.Controls.Canvas.SetLeft(containerImage, iconLeft);
-                    System.Windows.Controls.Canvas.SetTop(containerImage, rowTopOffset);
+                    Canvas.SetLeft(containerImage, iconLeft);
+                    Canvas.SetTop(containerImage, rowTopOffset);
                     AbsorbingCanvas.Children.Add(containerImage);
 
+                    // 半伤害吸收值
                     var halfImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingHalf{globalIndex}",
@@ -136,10 +151,11 @@ namespace CraftSharp.Windows
                         SnapsToDevicePixels = true
                     };
                     RenderOptions.SetBitmapScalingMode(halfImage, BitmapScalingMode.NearestNeighbor);
-                    System.Windows.Controls.Canvas.SetLeft(halfImage, iconLeft);
-                    System.Windows.Controls.Canvas.SetTop(halfImage, rowTopOffset);
+                    Canvas.SetLeft(halfImage, iconLeft);
+                    Canvas.SetTop(halfImage, rowTopOffset);
                     AbsorbingCanvas.Children.Add(halfImage);
 
+                    // 满伤害吸收值
                     var fullImage = new System.Windows.Controls.Image
                     {
                         Name = $"AbsorbingFull{globalIndex}",
@@ -151,8 +167,8 @@ namespace CraftSharp.Windows
                         SnapsToDevicePixels = true
                     };
                     RenderOptions.SetBitmapScalingMode(fullImage, BitmapScalingMode.NearestNeighbor);
-                    System.Windows.Controls.Canvas.SetLeft(fullImage, iconLeft);
-                    System.Windows.Controls.Canvas.SetTop(fullImage, rowTopOffset);
+                    Canvas.SetLeft(fullImage, iconLeft);
+                    Canvas.SetTop(fullImage, rowTopOffset);
                     AbsorbingCanvas.Children.Add(fullImage);
                 }
             }

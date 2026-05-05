@@ -8,126 +8,162 @@
         Topmost="False"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        RenderOptions.BitmapScalingMode="NearestNeighbor">
+        RenderOptions.BitmapScalingMode="NearestNeighbor"
+        WindowStartupLocation="Manual">
 
-    <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown">
-        <Canvas x:Name="MainCanvas">
-            <!-- 心形生命值容器 -->
-            <Canvas x:Name="HeartCanvas"/>
+    <!-- 根Grid：整个状态栏水平居中，垂直紧贴窗口底部 -->
+    <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
+          HorizontalAlignment="Center" VerticalAlignment="Bottom">
 
-            <!-- 饥饿值容器 -->
-            <Canvas x:Name="FoodCanvas"/>
+        <!-- 主容器Grid：包含副手槽和核心容器 -->
+        <!-- 使用五列布局：左副手槽 | 左间距 | 核心容器 | 右间距 | 右副手槽 -->
+        <Grid x:Name="MainContainerGrid" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/> <!-- 左副手槽列 -->
+                <ColumnDefinition Width="Auto"/> <!-- 左间距列 -->
+                <ColumnDefinition Width="Auto"/> <!-- 核心容器列 -->
+                <ColumnDefinition Width="Auto"/> <!-- 右间距列 -->
+                <ColumnDefinition Width="Auto"/> <!-- 右副手槽列 -->
+            </Grid.ColumnDefinitions>
 
-            <!-- 空气值容器 -->
-            <Canvas x:Name="AirCanvas"/>
-
-            <!-- 伤害吸收值容器 -->
-            <Canvas x:Name="AbsorbingCanvas"/>
-
-            <!-- 经验条 -->
-            <Grid x:Name="ExperienceBarGrid">
-                <Image x:Name="ExperienceBarBackground"
+            <!-- ===== 左副手槽（Column=0） ===== -->
+            <Grid x:Name="LeftOffhandGrid" Grid.Column="0"
+                  VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <Image x:Name="LeftOffhandImage"
                        Stretch="Fill"
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        UseLayoutRounding="True"
                        SnapsToDevicePixels="True"/>
-                <Image x:Name="ExperienceBarProgress"
-                       Stretch="Fill"
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       UseLayoutRounding="True"
-                       SnapsToDevicePixels="True"
-                       HorizontalAlignment="Left"/>
-            </Grid>
-
-            <!-- 左副手槽背景 -->
-            <Image Stretch="Fill"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   UseLayoutRounding="True"
-                   SnapsToDevicePixels="True"
-                   x:Name="LeftOffhandImage"/>
-
-            <!-- 右副手槽背景 -->
-            <Image Stretch="Fill"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   UseLayoutRounding="True"
-                   SnapsToDevicePixels="True"
-                   x:Name="RightOffhandImage"
-                   RenderTransformOrigin="0.5,0.5">
-                <Image.RenderTransform>
-                    <ScaleTransform x:Name="RightOffhandScaleTransform" ScaleX="-1"/>
-                </Image.RenderTransform>
-            </Image>
-
-            <!-- 快捷栏背景 -->
-            <Image Stretch="Fill"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   UseLayoutRounding="True"
-                   SnapsToDevicePixels="True"
-                   x:Name="HotbarImage"/>
-
-            <!-- 格子容器 -->
-            <Canvas x:Name="SlotCanvas">
                 <!-- 左副手格子 -->
                 <Border x:Name="SlotLeftOffhand" Background="Transparent"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconLeftOffhand" Stretch="Uniform" Visibility="Collapsed"/>
                 </Border>
+            </Grid>
 
+            <!-- ===== 左间距列（Column=1） ===== -->
+            <Grid x:Name="LeftOffhandSpacingGrid" Grid.Column="1"/>
+
+            <!-- ===== 核心容器（Column=2） ===== -->
+            <!-- 固定宽度182*scaleFactor -->
+            <!-- StackPanel从上往下排列，靠底部对齐 -->
+            <!-- XAML顺序：状态组(最先) → 经验条 → 快捷栏(最后) -->
+            <!-- 显示顺序：状态组(上) → 经验条 → 快捷栏(下) -->
+            <Grid x:Name="CoreContainerGrid" Grid.Column="2"
+                  VerticalAlignment="Bottom" HorizontalAlignment="Center">
+
+                <StackPanel x:Name="VerticalStackPanel"
+                            Orientation="Vertical"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center">
+
+                    <!-- ===== 状态组行（最先写，显示在最上方） ===== -->
+                    <!-- Margin.Top会在状态组上方创建间距（无上一级，所以Margin.Top=0） -->
+                    <!-- Margin.Bottom会在状态组和经验条之间创建间距 -->
+                    <Grid x:Name="StatusRowGrid" HorizontalAlignment="Center" Height="Auto">
+                        <!-- 左列：护甲值(上) → 伤害吸收 → 生命值(下) -->
+                        <!-- StackPanel从上往下排列，靠底部对齐 -->
+                        <!-- XAML顺序：护甲值(最先) → 伤害吸收 → 生命值(最后) -->
+                        <!-- 显示顺序：护甲值(上) → 伤害吸收 → 生命值(下) -->
+                        <StackPanel x:Name="LeftStatusStackPanel"
+                                    Orientation="Vertical"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Left">
+                            <!-- 护甲值（最先写，显示在最上方） -->
+                            <!-- Margin.Bottom在护甲值和伤害吸收之间创建间距 -->
+                            <Grid x:Name="ArmorGrid" HorizontalAlignment="Left" Height="Auto">
+                                <!-- 护甲值图片动态添加 -->
+                            </Grid>
+                            <!-- 伤害吸收（第二个写，显示在护甲值下方） -->
+                            <!-- Margin.Bottom在伤害吸收和生命值之间创建间距 -->
+                            <Grid x:Name="AbsorbingGrid" HorizontalAlignment="Left" Height="Auto">
+                                <Canvas x:Name="AbsorbingCanvas"/>
+                            </Grid>
+                            <!-- 生命值（最后写，显示在最下方） -->
+                            <!-- 无Margin.Bottom（下方无元素） -->
+                            <Grid x:Name="HeartGrid" HorizontalAlignment="Left" Height="Auto">
+                                <Canvas x:Name="HeartCanvas"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- 右列：空气值(上) → 饥饿值(下) -->
+                        <!-- StackPanel从上往下排列，靠底部对齐 -->
+                        <!-- XAML顺序：空气值(最先) → 饥饿值(最后) -->
+                        <!-- 显示顺序：空气值(上) → 饥饿值(下) -->
+                        <StackPanel x:Name="RightStatusStackPanel"
+                                    Orientation="Vertical"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right">
+                            <!-- 空气值（最先写，显示在最上方） -->
+                            <!-- Margin.Bottom在空气值和饥饿值之间创建间距 -->
+                            <Grid x:Name="AirGrid" HorizontalAlignment="Right" Height="Auto">
+                                <Canvas x:Name="AirCanvas"/>
+                            </Grid>
+                            <!-- 饥饿值（最后写，显示在最下方） -->
+                            <!-- 无Margin.Bottom（下方无元素） -->
+                            <Grid x:Name="FoodGrid" HorizontalAlignment="Right" Height="Auto">
+                                <Canvas x:Name="FoodCanvas"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- ===== 经验条（第二个写，显示在状态组下方） ===== -->
+                    <!-- Margin.Bottom会在经验条和快捷栏之间创建间距 -->
+                    <!-- Margin.Top会在状态组和经验条之间创建间距（使用0） -->
+                    <Grid x:Name="ExperienceBarGrid" HorizontalAlignment="Center" Height="Auto">
+                        <Image x:Name="ExperienceBarBackground"
+                               Stretch="Fill"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               UseLayoutRounding="True"
+                               SnapsToDevicePixels="True"/>
+                        <Image x:Name="ExperienceBarProgress"
+                               Stretch="Fill"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               UseLayoutRounding="True"
+                               SnapsToDevicePixels="True"
+                               HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- ===== 快捷栏（最后写，显示在最下方） ===== -->
+                    <!-- 无Margin.Bottom（下方无元素） -->
+                    <!-- Margin.Top会在经验条和快捷栏之间创建间距（使用0） -->
+                    <Grid x:Name="HotbarGrid" HorizontalAlignment="Center" Height="Auto">
+                        <Image x:Name="HotbarImage"
+                               Stretch="Fill"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               UseLayoutRounding="True"
+                               SnapsToDevicePixels="True"/>
+                        <Grid x:Name="HotbarSlotsGrid">
+                            <!-- 主快捷栏格子 (9个) - 动态添加 -->
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!-- ===== 右间距列（Column=3） ===== -->
+            <Grid x:Name="RightOffhandSpacingGrid" Grid.Column="3"/>
+
+            <!-- ===== 右副手槽（Column=4） ===== -->
+            <Grid x:Name="RightOffhandGrid" Grid.Column="4"
+                  VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <Image x:Name="RightOffhandImage"
+                       Stretch="Fill"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       UseLayoutRounding="True"
+                       SnapsToDevicePixels="True"
+                       RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="RightOffhandScaleTransform" ScaleX="-1"/>
+                    </Image.RenderTransform>
+                </Image>
                 <!-- 右副手格子 -->
                 <Border x:Name="SlotRightOffhand" Background="Transparent"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconRightOffhand" Stretch="Uniform" Visibility="Collapsed"/>
                 </Border>
-
-                <!-- 主快捷栏格子 (9个) -->
-                <Border x:Name="Slot0" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon0" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot1" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon1" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot2" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon2" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot3" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon3" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot4" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon4" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot5" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon5" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot6" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon6" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot7" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon7" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-                <Border x:Name="Slot8" Background="Transparent"
-                        MouseLeftButtonDown="Slot_Click"
-                        AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="Icon8" Stretch="Uniform" Visibility="Collapsed"/>
-                </Border>
-            </Canvas>
-        </Canvas>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

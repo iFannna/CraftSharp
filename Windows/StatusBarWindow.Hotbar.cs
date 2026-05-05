@@ -13,6 +13,11 @@ namespace CraftSharp.Windows
 {
     /// <summary>
     /// 快捷栏和格子功能
+    ///
+    /// 布局规则：
+    /// 1. 副手槽间距42px基准（BaseOffhandSpacing）
+    /// 2. 全局垂直间距6px基准（BaseVerticalSpacing）
+    /// 3. 使用Grid布局，不使用Canvas定位
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -23,8 +28,16 @@ namespace CraftSharp.Windows
         private double _originalHotbarHeight;
         private double _originalOffhandWidth;
         private double _originalOffhandHeight;
-        private double _offhandSpacing = 6; // 副手槽与快捷栏之间的间距（像素）
-        private bool _hotbarVisible = true; // 快捷栏可见性（不影响副手槽）
+
+        /// <summary>
+        /// 副手槽与核心容器之间的间距基准（42像素）
+        /// </summary>
+        private const double BaseOffhandSpacing = 42;
+
+        /// <summary>
+        /// 全局垂直间距基准（6像素）
+        /// </summary>
+        private const double BaseVerticalSpacing = 6;
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -63,12 +76,12 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置快捷栏位置（在最底部）
-        /// 快捷栏是水平位置的基准点
+        /// 设置快捷栏（宽度占满核心容器）
+        /// 快捷栏是核心容器最下方的元素
         /// </summary>
         private void SetupHotbar()
         {
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+            double hotbarWidth = GetCoreContainerWidth(); // 占满核心容器
             double hotbarHeight = _originalHotbarHeight * _scaleFactor;
 
             HotbarImage.Source = LoadBitmapImage(AssetPaths.Hotbar);
@@ -76,158 +89,119 @@ namespace CraftSharp.Windows
             HotbarImage.Height = hotbarHeight;
             HotbarImage.Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed;
 
-            // 快捷栏Y位置 = 窗口底部
-            double expBarTopOffset = GetExpBarTopOffset();
-            double expBarHeight = _originalExpBarHeight * _scaleFactor;
-            double expBarSpacing = _spacing * _scaleFactor;
-            double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
-
-            // 快捷栏左边位置
-            double hotbarLeft = GetHotbarLeft();
-            Canvas.SetLeft(HotbarImage, hotbarLeft);
-            Canvas.SetTop(HotbarImage, hotbarTopOffset);
+            // 设置快捷栏Grid尺寸
+            HotbarGrid.Width = hotbarWidth;
+            HotbarGrid.Height = hotbarHeight;
+            HotbarGrid.Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
-        /// 设置副手槽位置（浮动在快捷栏左右两侧）
+        /// 设置副手槽位置
+        /// 副手槽位于核心容器外部，间距42px基准
         /// </summary>
         private void SetupOffhandSlots()
         {
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
             double offhandHeight = _originalOffhandHeight * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
 
-            // 副手槽Y位置 = 与快捷栏同一行
-            double expBarTopOffset = GetExpBarTopOffset();
-            double expBarHeight = _originalExpBarHeight * _scaleFactor;
-            double expBarSpacing = _spacing * _scaleFactor;
-            double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
-
-            // 快捷栏左边位置（基准点）
-            double hotbarLeft = GetHotbarLeft();
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
-
-            // 左副手槽：在快捷栏左边，间距6px
+            // 左副手槽
             LeftOffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
             LeftOffhandImage.Width = offhandWidth;
             LeftOffhandImage.Height = offhandHeight;
+            LeftOffhandGrid.Width = offhandWidth;
+            LeftOffhandGrid.Height = offhandHeight;
+            LeftOffhandGrid.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-            if (_leftOffhandEnabled)
-            {
-                LeftOffhandImage.Visibility = Visibility.Visible;
-                Canvas.SetLeft(LeftOffhandImage, hotbarLeft - spacing - offhandWidth);
-                Canvas.SetTop(LeftOffhandImage, hotbarTopOffset);
-            }
-            else
-            {
-                LeftOffhandImage.Visibility = Visibility.Collapsed;
-            }
-
-            // 右副手槽：在快捷栏右边，间距6px，图片翻转
+            // 右副手槽（翻转显示）
             RightOffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
             RightOffhandImage.Width = offhandWidth;
             RightOffhandImage.Height = offhandHeight;
             RightOffhandScaleTransform.ScaleX = -1;
-
-            if (_rightOffhandEnabled)
-            {
-                RightOffhandImage.Visibility = Visibility.Visible;
-                Canvas.SetLeft(RightOffhandImage, hotbarLeft + hotbarWidth + spacing);
-                Canvas.SetTop(RightOffhandImage, hotbarTopOffset);
-            }
-            else
-            {
-                RightOffhandImage.Visibility = Visibility.Collapsed;
-            }
+            RightOffhandGrid.Width = offhandWidth;
+            RightOffhandGrid.Height = offhandHeight;
+            RightOffhandGrid.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
         /// 设置格子位置和大小
+        /// 使用Grid布局，不使用Canvas定位
         /// </summary>
         private void SetupSlots()
         {
-            double expBarTopOffset = GetExpBarTopOffset();
-            double expBarHeight = _originalExpBarHeight * _scaleFactor;
-            double expBarSpacing = _spacing * _scaleFactor;
-            double hotbarTopOffset = expBarTopOffset + expBarHeight + expBarSpacing;
-
-            double hotbarLeft = GetHotbarLeft();
-            double hotbarWidth = _originalHotbarWidth * _scaleFactor;
+            double coreWidth = GetCoreContainerWidth();
+            double hotbarHeight = _originalHotbarHeight * _scaleFactor;
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double spacing = _offhandSpacing * _scaleFactor;
+            double offhandHeight = _originalOffhandHeight * _scaleFactor;
 
-            // 副手格子尺寸
-            double offhandSlotWidth = offhandWidth;
-            double offhandSlotHeight = _originalOffhandHeight * _scaleFactor;
-            double offhandIconSize = _originalOffhandHeight * 0.73 * _scaleFactor;
+            // 副手格子尺寸和图标尺寸
+            double offhandIconSize = offhandHeight * 0.73;
 
-            // 左副手格子
+            // 设置左副手格子
             var leftOffhandBorder = GetSlotBorder("LeftOffhand");
             var leftOffhandIcon = GetIconImage("LeftOffhand");
             if (leftOffhandBorder != null && leftOffhandIcon != null)
             {
-                leftOffhandBorder.Width = offhandSlotWidth;
-                leftOffhandBorder.Height = offhandSlotHeight;
+                leftOffhandBorder.Width = offhandWidth;
+                leftOffhandBorder.Height = offhandHeight;
                 leftOffhandIcon.Width = offhandIconSize;
                 leftOffhandIcon.Height = offhandIconSize;
-
-                if (_leftOffhandEnabled)
-                {
-                    leftOffhandBorder.Visibility = Visibility.Visible;
-                    Canvas.SetLeft(leftOffhandBorder, hotbarLeft - spacing - offhandWidth);
-                    Canvas.SetTop(leftOffhandBorder, hotbarTopOffset);
-                }
-                else
-                {
-                    leftOffhandBorder.Visibility = Visibility.Collapsed;
-                }
+                leftOffhandBorder.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            // 右副手格子
+            // 设置右副手格子
             var rightOffhandBorder = GetSlotBorder("RightOffhand");
             var rightOffhandIcon = GetIconImage("RightOffhand");
             if (rightOffhandBorder != null && rightOffhandIcon != null)
             {
-                rightOffhandBorder.Width = offhandSlotWidth;
-                rightOffhandBorder.Height = offhandSlotHeight;
+                rightOffhandBorder.Width = offhandWidth;
+                rightOffhandBorder.Height = offhandHeight;
                 rightOffhandIcon.Width = offhandIconSize;
                 rightOffhandIcon.Height = offhandIconSize;
-
-                if (_rightOffhandEnabled)
-                {
-                    rightOffhandBorder.Visibility = Visibility.Visible;
-                    Canvas.SetLeft(rightOffhandBorder, hotbarLeft + hotbarWidth + spacing);
-                    Canvas.SetTop(rightOffhandBorder, hotbarTopOffset);
-                }
-                else
-                {
-                    rightOffhandBorder.Visibility = Visibility.Collapsed;
-                }
+                rightOffhandBorder.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            // 主快捷栏格子 (9个)
-            double slotWidth = hotbarWidth / 9.0;
-            double slotHeight = _originalHotbarHeight * _scaleFactor;
-            double iconSize = _originalHotbarHeight * 0.73 * _scaleFactor;
+            // 设置主快捷栏格子容器列定义
+            HotbarSlotsGrid.ColumnDefinitions.Clear();
+            for (int i = 0; i < 9; i++)
+            {
+                HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            }
+
+            // 主快捷栏格子尺寸
+            double slotWidth = coreWidth / 9.0;
+            double slotHeight = hotbarHeight;
+            double iconSize = hotbarHeight * 0.73;
+
+            // 清除现有格子并重新添加
+            HotbarSlotsGrid.Children.Clear();
 
             for (int i = 0; i < 9; i++)
             {
-                var border = GetSlotBorder(i);
-                var icon = GetIconImage(i);
-
-                if (border != null && icon != null)
+                var border = new Border
                 {
-                    border.Width = slotWidth;
-                    border.Height = slotHeight;
-                    icon.Width = iconSize;
-                    icon.Height = iconSize;
+                    Name = $"Slot{i}",
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    Width = slotWidth,
+                    Height = slotHeight,
+                    Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed
+                };
+                border.MouseLeftButtonDown += Slot_Click;
+                border.AllowDrop = true;
+                border.Drop += Slot_Drop;
+                border.DragOver += Slot_DragOver;
 
-                    Canvas.SetLeft(border, hotbarLeft + i * slotWidth);
-                    Canvas.SetTop(border, hotbarTopOffset);
+                var icon = new System.Windows.Controls.Image
+                {
+                    Name = $"Icon{i}",
+                    Stretch = Stretch.Uniform,
+                    Width = iconSize,
+                    Height = iconSize,
+                    Visibility = Visibility.Collapsed
+                };
 
-                    // 快捷栏可见性控制
-                    border.Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed;
-                }
+                border.Child = icon;
+                HotbarSlotsGrid.Children.Add(border);
+                Grid.SetColumn(border, i);
             }
         }
 
@@ -271,8 +245,12 @@ namespace CraftSharp.Windows
             var icon = IconExtractor.GetIcon(filePath, (int)(32 * _scaleFactor));
             if (icon != null)
             {
-                GetIconImage(index).Source = icon;
-                GetIconImage(index).Visibility = Visibility.Visible;
+                var iconImage = GetIconImage(index);
+                if (iconImage != null)
+                {
+                    iconImage.Source = icon;
+                    iconImage.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -284,8 +262,12 @@ namespace CraftSharp.Windows
             var icon = IconExtractor.GetIcon(filePath, (int)(32 * _scaleFactor));
             if (icon != null)
             {
-                GetIconImage(name).Source = icon;
-                GetIconImage(name).Visibility = Visibility.Visible;
+                var iconImage = GetIconImage(name);
+                if (iconImage != null)
+                {
+                    iconImage.Source = icon;
+                    iconImage.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -294,7 +276,15 @@ namespace CraftSharp.Windows
         /// </summary>
         private System.Windows.Controls.Image GetIconImage(int index)
         {
-            return (System.Windows.Controls.Image)FindName($"Icon{index}");
+            // 从HotbarSlotsGrid中查找
+            foreach (var child in HotbarSlotsGrid.Children)
+            {
+                if (child is Border border && border.Name == $"Slot{index}")
+                {
+                    return border.Child as System.Windows.Controls.Image;
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -310,7 +300,15 @@ namespace CraftSharp.Windows
         /// </summary>
         private Border GetSlotBorder(int index)
         {
-            return (Border)FindName($"Slot{index}");
+            // 从HotbarSlotsGrid中查找
+            foreach (var child in HotbarSlotsGrid.Children)
+            {
+                if (child is Border border && border.Name == $"Slot{index}")
+                {
+                    return border;
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -431,31 +429,39 @@ namespace CraftSharp.Windows
                 _slotService.ClearSlot(_slotIds[index]);
                 if (index == 0)
                 {
-                    GetIconImage("LeftOffhand").Source = null;
-                    GetIconImage("LeftOffhand").Visibility = Visibility.Collapsed;
+                    var icon = GetIconImage("LeftOffhand");
+                    if (icon != null)
+                    {
+                        icon.Source = null;
+                        icon.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else if (index == 1)
                 {
-                    GetIconImage("RightOffhand").Source = null;
-                    GetIconImage("RightOffhand").Visibility = Visibility.Collapsed;
+                    var icon = GetIconImage("RightOffhand");
+                    if (icon != null)
+                    {
+                        icon.Source = null;
+                        icon.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
-                    GetIconImage(index - 2).Source = null;
-                    GetIconImage(index - 2).Visibility = Visibility.Collapsed;
+                    var icon = GetIconImage(index - 2);
+                    if (icon != null)
+                    {
+                        icon.Source = null;
+                        icon.Visibility = Visibility.Collapsed;
+                    }
                 }
             }
         }
 
         /// <summary>
         /// 设置副手槽启用状态
-        /// 窗口高度动态调整（根据副手槽是否显示），底部位置不变
         /// </summary>
         public void SetOffhandConfig(bool leftEnabled, bool rightEnabled)
         {
-            // 记录旧的底部位置
-            double oldBottom = Top + Height;
-
             _leftOffhandEnabled = leftEnabled;
             _rightOffhandEnabled = rightEnabled;
 
@@ -464,43 +470,18 @@ namespace CraftSharp.Windows
             SetupSlots();
             LoadSlots();
 
-            // 重新计算窗口大小（重力布局）
+            // 更新间距列可见性
+            if (LeftOffhandSpacingGrid != null)
+                LeftOffhandSpacingGrid.Visibility = leftEnabled ? Visibility.Visible : Visibility.Collapsed;
+            if (RightOffhandSpacingGrid != null)
+                RightOffhandSpacingGrid.Visibility = rightEnabled ? Visibility.Visible : Visibility.Collapsed;
+
+            // 重新设置窗口大小（会更新间距列宽度）
             SetWindowSize();
 
-            // 调整Top使底部位置不变
-            Top = oldBottom - Height;
-        }
-
-        /// <summary>
-        /// 设置快捷栏可见性（只控制快捷栏本身，不影响副手槽）
-        /// 窗口高度动态调整，其他组件自动下移填补空位（重力布局）
-        /// 窗口位置保持不变（底部位置不变）
-        /// </summary>
-        public void SetHotbarVisible(bool visible)
-        {
-            _hotbarVisible = visible;
-
-            // 记录旧的底部位置
-            double oldBottom = Top + Height;
-
-            // 控制快捷栏背景显示
-            HotbarImage.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-
-            // 控制主快捷栏格子（9个）显示
-            for (int i = 0; i < 9; i++)
-            {
-                var border = GetSlotBorder(i);
-                if (border != null)
-                {
-                    border.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-                }
-            }
-
-            // 重新计算窗口大小（重力布局）
-            SetWindowSize();
-
-            // 调整Top使底部位置不变
-            Top = oldBottom - Height;
+            // 更新布局并重新定位
+            UpdateLayout();
+            PositionWindow();
         }
     }
 }
