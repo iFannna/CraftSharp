@@ -15,8 +15,8 @@ namespace CraftSharp.Windows
     /// 快捷栏和格子功能
     ///
     /// 布局规则：
-    /// 1. 副手槽间距42px基准（BaseOffhandSpacing）
-    /// 2. 全局垂直间距6px基准（BaseVerticalSpacing）
+    /// 1. 副手槽间距42px基准
+    /// 2. 全局垂直间距6px基准
     /// 3. 使用Grid布局，不使用Canvas定位
     /// </summary>
     public partial class StatusBarWindow
@@ -30,14 +30,14 @@ namespace CraftSharp.Windows
         private double _originalOffhandHeight;
 
         /// <summary>
-        /// 副手槽与核心容器之间的间距基准（42像素）
+        /// 副手槽与核心容器之间的间距基准
         /// </summary>
-        private const double BaseOffhandSpacing = 42;
+        private const double BaseOffhandSpacing = 7;
 
         /// <summary>
-        /// 全局垂直间距基准（6像素）
+        /// 全局垂直间距基准
         /// </summary>
-        private const double BaseVerticalSpacing = 6;
+        private const double BaseVerticalSpacing = 1;
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -112,7 +112,7 @@ namespace CraftSharp.Windows
             LeftOffhandGrid.Height = offhandHeight;
             LeftOffhandGrid.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-            // 右副手槽（翻转显示）
+            // 右副手槽
             RightOffhandImage.Source = LoadBitmapImage(AssetPaths.HotbarOffhand);
             RightOffhandImage.Width = offhandWidth;
             RightOffhandImage.Height = offhandHeight;
@@ -255,7 +255,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 设置格子图标（副手槽）
+        /// 设置格子图标
         /// </summary>
         private void SetSlotIcon(string name, string filePath)
         {
@@ -288,7 +288,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 获取图标 Image 控件（副手槽）
+        /// 获取图标 Image 控件
         /// </summary>
         private System.Windows.Controls.Image GetIconImage(string name)
         {
@@ -312,7 +312,7 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 获取格子 Border 控件（副手槽）
+        /// 获取格子 Border 控件
         /// </summary>
         private Border GetSlotBorder(string name)
         {
