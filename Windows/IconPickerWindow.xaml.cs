@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -26,17 +27,35 @@ namespace CraftSharp.Windows
 
         private readonly string _assetsBasePath;
         private readonly ObservableCollection<IconItem> _iconItems = new();
+        private IconCategoriesConfig? _categoryConfig;
 
         public IconPickerWindow()
         {
             InitializeComponent();
             _assetsBasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
 
+            // 加载分类配置
+            LoadCategoryConfig();
+
             // 设置窗口图标（使用当前应用图标）
             SetWindowIcon();
 
             // 手动触发加载"全部方块"
             LoadIconsForTagAsync("block_all");
+        }
+
+        private void LoadCategoryConfig()
+        {
+            var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "icon_categories.json");
+            if (File.Exists(configPath))
+            {
+                try
+                {
+                    var json = File.ReadAllText(configPath);
+                    _categoryConfig = JsonSerializer.Deserialize<IconCategoriesConfig>(json);
+                }
+                catch { }
+            }
         }
 
         private void SetWindowIcon()
@@ -139,72 +158,84 @@ namespace CraftSharp.Windows
         {
             var result = new List<IconData>();
 
+            if (_categoryConfig == null)
+                return result;
+
             string basePath;
-            List<string> subDirs = new();
 
             if (tag.StartsWith("block"))
             {
-                basePath = Path.Combine(_assetsBasePath, "minecraft", "textures", "block");
+                basePath = Path.Combine(_assetsBasePath, "minecraft", "textures", "block", "block");
+
                 if (tag == "block_root")
-                {
                     return result; // 根节点不加载，保持当前显示
-                }
-                else if (tag == "block_all")
-                {
-                    subDirs.Add("block");
-                }
-                else
+
+                // 解析分类：block_all 或 block/{category}
+                string? category = null;
+                if (tag != "block_all")
                 {
                     var parts = tag.Split('/');
                     if (parts.Length > 1)
+                        category = parts[1];
+                }
+
+                // 从配置中筛选
+                foreach (var (filename, categories) in _categoryConfig.Blocks)
+                {
+                    // block_all 包含所有方块，否则需要匹配分类
+                    if (category == null || categories.Contains(category))
                     {
-                        subDirs.Add(parts[1]);
+                        var fullPath = Path.Combine(basePath, filename);
+                        if (File.Exists(fullPath))
+                        {
+                            result.Add(new IconData
+                            {
+                                FilePath = fullPath,
+                                Name = Path.GetFileNameWithoutExtension(filename),
+                                RelativePath = $"Assets/minecraft/textures/block/block/{filename}"
+                            });
+                        }
                     }
                 }
             }
             else if (tag.StartsWith("item"))
             {
-                basePath = Path.Combine(_assetsBasePath, "minecraft", "textures", "item");
+                basePath = Path.Combine(_assetsBasePath, "minecraft", "textures", "item", "item");
+
                 if (tag == "item_root")
-                {
                     return result; // 根节点不加载，保持当前显示
-                }
-                else if (tag == "item_all")
-                {
-                    subDirs.Add("item");
-                }
-                else
+
+                // 解析分类：item_all 或 item/{category}
+                string? category = null;
+                if (tag != "item_all")
                 {
                     var parts = tag.Split('/');
                     if (parts.Length > 1)
+                        category = parts[1];
+                }
+
+                // 从配置中筛选
+                foreach (var (filename, categories) in _categoryConfig.Items)
+                {
+                    // item_all 包含所有物品，否则需要匹配分类
+                    if (category == null || categories.Contains(category))
                     {
-                        subDirs.Add(parts[1]);
+                        var fullPath = Path.Combine(basePath, filename);
+                        if (File.Exists(fullPath))
+                        {
+                            result.Add(new IconData
+                            {
+                                FilePath = fullPath,
+                                Name = Path.GetFileNameWithoutExtension(filename),
+                                RelativePath = $"Assets/minecraft/textures/item/item/{filename}"
+                            });
+                        }
                     }
                 }
             }
-            else
-            {
-                return result;
-            }
 
-            foreach (var subDir in subDirs)
-            {
-                var fullPath = Path.Combine(basePath, subDir);
-                if (!Directory.Exists(fullPath)) continue;
-
-                var pngFiles = Directory.GetFiles(fullPath, "*.png");
-                foreach (var pngPath in pngFiles.OrderBy(f => Path.GetFileNameWithoutExtension(f)))
-                {
-                    result.Add(new IconData
-                    {
-                        FilePath = pngPath,
-                        Name = Path.GetFileNameWithoutExtension(pngPath),
-                        RelativePath = $"Assets/minecraft/textures/{(tag.StartsWith("block") ? "block" : "item")}/{subDir}/{Path.GetFileName(pngPath)}"
-                    });
-                }
-            }
-
-            return result;
+            // 按名称排序
+            return result.OrderBy(d => d.Name).ToList();
         }
 
         private record IconData
@@ -234,5 +265,14 @@ namespace CraftSharp.Windows
         public string Name { get; set; } = "";
         public BitmapImage BitmapImage { get; set; } = null!;
         public string RelativePath { get; set; } = "";
+    }
+
+    /// <summary>
+    /// 图标分类配置结构
+    /// </summary>
+    public class IconCategoriesConfig
+    {
+        public Dictionary<string, List<string>> Blocks { get; set; } = new();
+        public Dictionary<string, List<string>> Items { get; set; } = new();
     }
 }
