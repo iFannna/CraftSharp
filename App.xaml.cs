@@ -399,29 +399,21 @@ namespace CraftSharp
         {
             if (_appSettings == null) return;
 
-            // 经验条
-            var expBarSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "expbar");
-            StatusBarService.Instance.SetExpBarVisible(expBarSettings?.IsVisible ?? true);
+            var visibilityMap = new Dictionary<string, Action<bool>>
+            {
+                { "expbar", StatusBarService.Instance.SetExpBarVisible },
+                { "health", StatusBarService.Instance.SetHealthVisible },
+                { "food", StatusBarService.Instance.SetFoodVisible },
+                { "air", StatusBarService.Instance.SetAirVisible },
+                { "armor", StatusBarService.Instance.SetArmorVisible },
+                { "absorbing", StatusBarService.Instance.SetAbsorbingVisible },
+            };
 
-            // 生命值
-            var healthSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "health");
-            StatusBarService.Instance.SetHealthVisible(healthSettings?.IsVisible ?? true);
-
-            // 饥饿值
-            var foodSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "food");
-            StatusBarService.Instance.SetFoodVisible(foodSettings?.IsVisible ?? true);
-
-            // 空气值
-            var airSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "air");
-            StatusBarService.Instance.SetAirVisible(airSettings?.IsVisible ?? true);
-
-            // 护甲值
-            var armorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "armor");
-            StatusBarService.Instance.SetArmorVisible(armorSettings?.IsVisible ?? true);
-
-            // 伤害吸收值
-            var absorbingSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "absorbing");
-            StatusBarService.Instance.SetAbsorbingVisible(absorbingSettings?.IsVisible ?? true);
+            foreach (var kvp in visibilityMap)
+            {
+                var settings = _appSettings.HudElements.FirstOrDefault(h => h.Id == kvp.Key);
+                kvp.Value(settings?.IsVisible ?? true);
+            }
         }
 
         /// <summary>
