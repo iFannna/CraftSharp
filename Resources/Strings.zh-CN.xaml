@@ -60,11 +60,11 @@
     <sys:String x:Key="IconPickerCategoryRedstoneBlock">红石方块</sys:String>
     <sys:String x:Key="IconPickerCategoryItem">物品</sys:String>
     <sys:String x:Key="IconPickerCategoryItemAll">全部物品</sys:String>
-    <sys:String x:Key="IconPickerCategoryCombat">战斗</sys:String>
-    <sys:String x:Key="IconPickerCategoryFood">食物饮料</sys:String>
-    <sys:String x:Key="IconPickerCategoryIngredient">材料</sys:String>
-    <sys:String x:Key="IconPickerCategorySpawnEgg">生成蛋</sys:String>
-    <sys:String x:Key="IconPickerCategoryTool">工具</sys:String>
+    <sys:String x:Key="IconPickerCategoryCombat">战斗用品</sys:String>
+    <sys:String x:Key="IconPickerCategoryFood">食物与饮品</sys:String>
+    <sys:String x:Key="IconPickerCategoryIngredient">原材料</sys:String>
+    <sys:String x:Key="IconPickerCategorySpawnEgg">刷怪蛋</sys:String>
+    <sys:String x:Key="IconPickerCategoryTool">工具与实用物品</sys:String>
     <sys:String x:Key="IconPickerLoading">加载中...</sys:String>
 
     <!-- HUD 设置面板 -->

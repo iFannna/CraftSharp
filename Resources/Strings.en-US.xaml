@@ -64,7 +64,7 @@
     <sys:String x:Key="IconPickerCategoryFood">Food &amp; Drink</sys:String>
     <sys:String x:Key="IconPickerCategoryIngredient">Ingredients</sys:String>
     <sys:String x:Key="IconPickerCategorySpawnEgg">Spawn Eggs</sys:String>
-    <sys:String x:Key="IconPickerCategoryTool">Tools</sys:String>
+    <sys:String x:Key="IconPickerCategoryTool">Tools &amp; utilities</sys:String>
     <sys:String x:Key="IconPickerLoading">Loading...</sys:String>
 
     <!-- HUD Settings Panel -->
