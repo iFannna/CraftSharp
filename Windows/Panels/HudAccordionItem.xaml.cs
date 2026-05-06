@@ -22,6 +22,7 @@ namespace CraftSharp.Windows.Panels
         private StackPanel? _valueContainer;
         private System.Windows.Controls.TextBox? _currentValueTextBox;
         private System.Windows.Controls.TextBox? _maxValueTextBox;
+        private System.Windows.Controls.TextBlock? _maxValueDisplay; // 显示"/最大值"
 
         public HudAccordionItem(AppSettings settings, string id, string name)
         {
@@ -176,6 +177,7 @@ namespace CraftSharp.Windows.Panels
             _valueContainer = null;
             _currentValueTextBox = null;
             _maxValueTextBox = null;
+            _maxValueDisplay = null;
 
             if (id == "statusbar")
             {
@@ -464,6 +466,8 @@ namespace CraftSharp.Windows.Panels
             // 当前值行
             var currentRow = new Grid { Margin = new Thickness(0, 0, 0, 8) };
             currentRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            currentRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            currentRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             currentRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var currentLabel = new System.Windows.Controls.TextBlock
@@ -474,13 +478,19 @@ namespace CraftSharp.Windows.Panels
             };
             currentRow.Children.Add(currentLabel);
 
+            // 输入框 + 最大值显示容器
+            var inputContainer = new StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
+                Margin = new Thickness(8, 0, 0, 0)
+            };
+
             _currentValueTextBox = new System.Windows.Controls.TextBox
             {
                 Text = currentValue.ToString(),
-                Width = 80,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(8, 0, 0, 0)
+                HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
             };
             // 限制只能输入数字
             _currentValueTextBox.PreviewTextInput += (s, e) =>
@@ -499,8 +509,20 @@ namespace CraftSharp.Windows.Panels
                 else
                     e.CancelCommand();
             });
-            currentRow.Children.Add(_currentValueTextBox);
-            Grid.SetColumn(_currentValueTextBox, 1);
+            inputContainer.Children.Add(_currentValueTextBox);
+
+            // 显示 "/最大值"（如果没有最大值输入框则显示固定上限100）
+            _maxValueDisplay = new System.Windows.Controls.TextBlock
+            {
+                Text = "/" + (hasMaxValue ? maxValue : 100),
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(4, 0, 0, 0),
+                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+            };
+            inputContainer.Children.Add(_maxValueDisplay);
+
+            currentRow.Children.Add(inputContainer);
+            Grid.SetColumn(inputContainer, 1);
             // 失焦时验证并保存数值（输入过程中不保存）
             _currentValueTextBox.LostFocus += (s, e) =>
             {
@@ -525,7 +547,8 @@ namespace CraftSharp.Windows.Panels
             // 最大值行（仅当hasMaxValue为true时显示）
             if (hasMaxValue)
             {
-                var maxRow = new Grid();
+                var maxRow = new Grid { Margin = new Thickness(0, 0, 0, 8) };
+                maxRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
                 maxRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
                 maxRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
@@ -537,13 +560,19 @@ namespace CraftSharp.Windows.Panels
                 };
                 maxRow.Children.Add(maxLabel);
 
+                // 输入框 + 最大上限显示容器
+                var maxInputContainer = new StackPanel
+                {
+                    Orientation = System.Windows.Controls.Orientation.Horizontal,
+                    Margin = new Thickness(8, 0, 0, 0)
+                };
+
                 _maxValueTextBox = new System.Windows.Controls.TextBox
                 {
                     Text = maxValue.ToString(),
-                    Width = 80,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(8, 0, 0, 0)
+                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center
                 };
                 // 限制只能输入数字
                 _maxValueTextBox.PreviewTextInput += (s, e) =>
@@ -562,8 +591,20 @@ namespace CraftSharp.Windows.Panels
                     else
                         e.CancelCommand();
                 });
-                maxRow.Children.Add(_maxValueTextBox);
-                Grid.SetColumn(_maxValueTextBox, 1);
+                maxInputContainer.Children.Add(_maxValueTextBox);
+
+                // 显示"/最大上限"
+                var maxValueLimitDisplay = new System.Windows.Controls.TextBlock
+                {
+                    Text = "/" + maxValueLimit,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(4, 0, 0, 0),
+                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                };
+                maxInputContainer.Children.Add(maxValueLimitDisplay);
+
+                maxRow.Children.Add(maxInputContainer);
+                Grid.SetColumn(maxInputContainer, 1);
                 _valueContainer.Children.Add(maxRow);
                 // 失焦时验证并保存数值（输入过程中不保存）
                 _maxValueTextBox.LostFocus += (s, e) =>
@@ -592,6 +633,13 @@ namespace CraftSharp.Windows.Panels
                         }
 
                         _maxValueTextBox.Text = val.ToString();
+
+                        // 更新当前值旁边的"/最大值"显示
+                        if (_maxValueDisplay != null)
+                        {
+                            _maxValueDisplay.Text = "/" + val;
+                        }
+
                         SaveSettings();
                         StatusBarService.Instance.RefreshHudElement(id);
                     }
