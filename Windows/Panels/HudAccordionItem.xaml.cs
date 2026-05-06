@@ -215,9 +215,15 @@ namespace CraftSharp.Windows.Panels
                 // 经验条特殊：只有当前值，没有最大值
                 AddStandardHudElement(id, StatusBarService.Instance.SetExpBarVisible, hasMaxValue: false);
             }
-            else if (id == "food" || id == "air" || id == "armor" || id == "absorbing")
+            else if (id == "absorbing")
             {
-                // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（含最大值）
+                // 伤害吸收值特殊：maxValue上限1024，多行显示
+                var setVisibleAction = GetSetVisibleAction(id);
+                AddStandardHudElement(id, setVisibleAction, maxValueLimit: 1024);
+            }
+            else if (id == "food" || id == "air" || id == "armor")
+            {
+                // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（maxValue上限20）
                 var setVisibleAction = GetSetVisibleAction(id);
                 AddStandardHudElement(id, setVisibleAction);
             }
@@ -242,7 +248,7 @@ namespace CraftSharp.Windows.Panels
         /// <summary>
         /// 添加标准HUD元素配置（显示开关 + 数据映射 + 自定义数值）
         /// </summary>
-        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true)
+        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20)
         {
             EnsureHudElementExists(id);
             var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -297,7 +303,7 @@ namespace CraftSharp.Windows.Panels
             AddDataMappingSection(id, dataMappingEnabled, dataMappingType);
 
             // 自定义数值开关 + 数值输入
-            AddCustomValueSection(id, customValueEnabled, customCurrentValue, customMaxValue, hasMaxValue);
+            AddCustomValueSection(id, customValueEnabled, customCurrentValue, customMaxValue, hasMaxValue, maxValueLimit);
         }
 
         /// <summary>
@@ -412,7 +418,7 @@ namespace CraftSharp.Windows.Panels
         /// <summary>
         /// 添加自定义数值配置区域（开关 + 当前值 + 最大值）
         /// </summary>
-        private void AddCustomValueSection(string id, bool enabled, int currentValue, int maxValue, bool hasMaxValue = true)
+        private void AddCustomValueSection(string id, bool enabled, int currentValue, int maxValue, bool hasMaxValue = true, int maxValueLimit = 20)
         {
             // 开关行
             var grid = new Grid { Margin = new Thickness(0, 0, 0, 8) };
@@ -562,9 +568,9 @@ namespace CraftSharp.Windows.Panels
                     {
                         int val;
                         if (!int.TryParse(_maxValueTextBox.Text, out val) || _maxValueTextBox.Text.Length == 0)
-                            val = 20; // 空或无效时设为默认最大值20
-                        // 上限20
-                        if (val > 20) val = 20;
+                            val = maxValueLimit; // 空或无效时设为默认最大值
+                        // 上限maxValueLimit
+                        if (val > maxValueLimit) val = maxValueLimit;
                         // 向下取整到2的倍数，最小值为2
                         val = Math.Max(2, (val / 2) * 2);
                         elem.CustomMaxValue = val;
