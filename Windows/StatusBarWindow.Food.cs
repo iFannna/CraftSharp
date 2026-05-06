@@ -22,6 +22,11 @@ namespace CraftSharp.Windows
     /// - maxValue决定显示的背景图标数量
     /// - currentValue决定显示的half/full图标数量
     /// - 背景使用empty图标
+    ///
+    /// 饱和度规则：
+    /// - 饱和度叠加在饥饿值上方，ZIndex最高
+    /// - 饱和度只有满和半两种图标，没有空图标
+    /// - 饱和度为0时，所有饱和度图标隐藏，露出下面的饥饿值
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -29,6 +34,10 @@ namespace CraftSharp.Windows
         private double _originalFoodHeight;
         private double _originalHalfFoodWidth;
         private double _foodGap = -1; // 饥饿值之间的间距（基准像素）
+
+        private double _originalSaturationWidth;
+        private double _originalSaturationHeight;
+        private double _originalHalfSaturationWidth;
 
         /// <summary>
         /// 加载饥饿值图片尺寸
@@ -55,6 +64,35 @@ namespace CraftSharp.Windows
                     var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
                     var frame = decoder.Frames[0];
                     _originalHalfFoodWidth = frame.PixelWidth;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 加载饱和度图片尺寸
+        /// </summary>
+        private void LoadSaturationDimensions()
+        {
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.SaturationFull);
+            if (System.IO.File.Exists(path))
+            {
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalSaturationWidth = frame.PixelWidth;
+                    _originalSaturationHeight = frame.PixelHeight;
+                }
+            }
+
+            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.SaturationHalf);
+            if (System.IO.File.Exists(path))
+            {
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+                    var frame = decoder.Frames[0];
+                    _originalHalfSaturationWidth = frame.PixelWidth;
                 }
             }
         }
@@ -112,6 +150,7 @@ namespace CraftSharp.Windows
                 RenderOptions.SetBitmapScalingMode(emptyImage, BitmapScalingMode.NearestNeighbor);
                 Canvas.SetLeft(emptyImage, iconLeft);
                 Canvas.SetTop(emptyImage, 0);
+                Canvas.SetZIndex(emptyImage, 0); // 最底层
                 FoodCanvas.Children.Add(emptyImage);
 
                 // 半饥饿值
@@ -128,6 +167,7 @@ namespace CraftSharp.Windows
                 RenderOptions.SetBitmapScalingMode(halfImage, BitmapScalingMode.NearestNeighbor);
                 Canvas.SetLeft(halfImage, iconLeft + foodWidth - halfWidth);
                 Canvas.SetTop(halfImage, 0);
+                Canvas.SetZIndex(halfImage, 10);
                 FoodCanvas.Children.Add(halfImage);
 
                 // 满饥饿值
@@ -144,10 +184,48 @@ namespace CraftSharp.Windows
                 RenderOptions.SetBitmapScalingMode(fullImage, BitmapScalingMode.NearestNeighbor);
                 Canvas.SetLeft(fullImage, iconLeft);
                 Canvas.SetTop(fullImage, 0);
+                Canvas.SetZIndex(fullImage, 20);
                 FoodCanvas.Children.Add(fullImage);
+
+                // 半饱和度（叠加在饥饿值上方）
+                var saturationHalfImage = new System.Windows.Controls.Image
+                {
+                    Name = $"SaturationHalf{i}",
+                    Source = LoadBitmapImage(AssetPaths.SaturationHalf),
+                    Width = _originalHalfSaturationWidth * _scaleFactor,
+                    Height = _originalSaturationHeight * _scaleFactor,
+                    Stretch = Stretch.Uniform,
+                    UseLayoutRounding = true,
+                    SnapsToDevicePixels = true,
+                    Visibility = Visibility.Hidden // 默认隐藏
+                };
+                RenderOptions.SetBitmapScalingMode(saturationHalfImage, BitmapScalingMode.NearestNeighbor);
+                Canvas.SetLeft(saturationHalfImage, iconLeft + foodWidth - _originalHalfSaturationWidth * _scaleFactor);
+                Canvas.SetTop(saturationHalfImage, 0);
+                Canvas.SetZIndex(saturationHalfImage, 30); // 高于饥饿值
+                FoodCanvas.Children.Add(saturationHalfImage);
+
+                // 满饱和度（叠加在饥饿值上方，最高层）
+                var saturationFullImage = new System.Windows.Controls.Image
+                {
+                    Name = $"SaturationFull{i}",
+                    Source = LoadBitmapImage(AssetPaths.SaturationFull),
+                    Width = _originalSaturationWidth * _scaleFactor,
+                    Height = _originalSaturationHeight * _scaleFactor,
+                    Stretch = Stretch.Uniform,
+                    UseLayoutRounding = true,
+                    SnapsToDevicePixels = true,
+                    Visibility = Visibility.Hidden // 默认隐藏
+                };
+                RenderOptions.SetBitmapScalingMode(saturationFullImage, BitmapScalingMode.NearestNeighbor);
+                Canvas.SetLeft(saturationFullImage, iconLeft);
+                Canvas.SetTop(saturationFullImage, 0);
+                Canvas.SetZIndex(saturationFullImage, 40); // 最高层
+                FoodCanvas.Children.Add(saturationFullImage);
             }
 
             UpdateFoodLevel();
+            UpdateSaturationLevel();
         }
 
         /// <summary>
@@ -189,6 +267,51 @@ namespace CraftSharp.Windows
                 else
                 {
                     // 空（只有背景empty可见）
+                    if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
+                    if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 更新饱和度显示
+        /// 饱和度叠加在饥饿值上方，只有满和半两种状态
+        /// </summary>
+        private void UpdateSaturationLevel()
+        {
+            // 获取配置值
+            var settings = GetHudElementSettings("food");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int saturationValue = settings?.CustomSaturationValue ?? 0;
+            int slotCount = maxValue / 2;
+
+            // 计算完整和半饱和度数量
+            // saturationValue: 半饱和=1, 满饱和=2
+            int fullSaturation = saturationValue / 2;
+            bool hasHalfSaturation = (saturationValue % 2) == 1;
+
+            for (int i = 0; i < slotCount; i++)
+            {
+                var halfImage = FoodCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"SaturationHalf{i}");
+                var fullImage = FoodCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"SaturationFull{i}");
+
+                if (i < fullSaturation)
+                {
+                    // 满饱和度
+                    if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
+                    if (fullImage != null) fullImage.Visibility = Visibility.Visible;
+                }
+                else if (i == fullSaturation && hasHalfSaturation)
+                {
+                    // 半饱和度
+                    if (halfImage != null) halfImage.Visibility = Visibility.Visible;
+                    if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    // 无饱和度（隐藏，露出下方饥饿值）
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }

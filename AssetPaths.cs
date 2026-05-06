@@ -30,6 +30,10 @@ namespace CraftSharp
         public const string FoodHalf = "Assets/minecraft/textures/gui/sprites/food/food_half.png";
         public const string FoodEmpty = "Assets/minecraft/textures/gui/sprites/food/food_empty.png";
 
+        // 饱和度
+        public const string SaturationFull = "Assets/minecraft/textures/gui/sprites/food/saturation_full.png";
+        public const string SaturationHalf = "Assets/minecraft/textures/gui/sprites/food/saturation_half.png";
+
         // 盔甲值
         public const string ArmorFull = "Assets/minecraft/textures/gui/sprites/armor/armor_full.png";
         public const string ArmorHalf = "Assets/minecraft/textures/gui/sprites/armor/armor_half.png";

@@ -181,6 +181,11 @@ namespace CraftSharp.Models
         /// 自定义最大值（上限20，代表10个完整图标）
         /// </summary>
         public int CustomMaxValue { get; set; } = 20;
+
+        /// <summary>
+        /// 自定义饱和度（仅饥饿值，默认0，最大20）
+        /// </summary>
+        public int CustomSaturationValue { get; set; } = 0;
     }
 
     /// <summary>

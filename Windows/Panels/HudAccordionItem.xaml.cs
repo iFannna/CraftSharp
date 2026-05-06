@@ -23,6 +23,8 @@ namespace CraftSharp.Windows.Panels
         private System.Windows.Controls.TextBox? _currentValueTextBox;
         private System.Windows.Controls.TextBox? _maxValueTextBox;
         private System.Windows.Controls.TextBlock? _maxValueDisplay; // 显示"/最大值"
+        private System.Windows.Controls.TextBox? _saturationTextBox; // 饱和度输入框
+        private System.Windows.Controls.TextBlock? _saturationLimitDisplay; // 饱和度上限显示
 
         public HudAccordionItem(AppSettings settings, string id, string name)
         {
@@ -178,6 +180,8 @@ namespace CraftSharp.Windows.Panels
             _currentValueTextBox = null;
             _maxValueTextBox = null;
             _maxValueDisplay = null;
+            _saturationTextBox = null;
+            _saturationLimitDisplay = null;
 
             if (id == "statusbar")
             {
@@ -233,7 +237,7 @@ namespace CraftSharp.Windows.Panels
             {
                 // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（maxValue上限20）
                 var setVisibleAction = GetSetVisibleAction(id);
-                AddStandardHudElement(id, setVisibleAction);
+                AddStandardHudElement(id, setVisibleAction, hasSaturation: id == "food");
             }
         }
 
@@ -256,7 +260,7 @@ namespace CraftSharp.Windows.Panels
         /// <summary>
         /// 添加标准HUD元素配置（显示开关 + 数据映射 + 自定义数值）
         /// </summary>
-        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20)
+        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false)
         {
             EnsureHudElementExists(id);
             var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -267,6 +271,7 @@ namespace CraftSharp.Windows.Panels
             bool customValueEnabled = settings?.CustomValueEnabled ?? false;
             int customCurrentValue = settings?.CustomCurrentValue ?? 10;
             int customMaxValue = settings?.CustomMaxValue ?? 20;
+            int customSaturationValue = settings?.CustomSaturationValue ?? 0;
 
             // 显示开关
             var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
@@ -311,7 +316,7 @@ namespace CraftSharp.Windows.Panels
             AddDataMappingSection(id, dataMappingEnabled, dataMappingType);
 
             // 自定义数值开关 + 数值输入
-            AddCustomValueSection(id, customValueEnabled, customCurrentValue, customMaxValue, hasMaxValue, maxValueLimit);
+            AddCustomValueSection(id, customValueEnabled, customCurrentValue, customMaxValue, hasMaxValue, maxValueLimit, hasSaturation, customSaturationValue);
         }
 
         /// <summary>
@@ -424,9 +429,9 @@ namespace CraftSharp.Windows.Panels
         }
 
         /// <summary>
-        /// 添加自定义数值配置区域（开关 + 当前值 + 最大值）
+        /// 添加自定义数值配置区域（开关 + 当前值 + 最大值 + 饱和度）
         /// </summary>
-        private void AddCustomValueSection(string id, bool enabled, int currentValue, int maxValue, bool hasMaxValue = true, int maxValueLimit = 20)
+        private void AddCustomValueSection(string id, bool enabled, int currentValue, int maxValue, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false, int saturationValue = 0)
         {
             // 开关行
             var grid = new Grid { Margin = new Thickness(0, 0, 0, 8) };
@@ -640,6 +645,104 @@ namespace CraftSharp.Windows.Panels
                             _maxValueDisplay.Text = "/" + val;
                         }
 
+                        // 更新饱和度上限显示和数值（如果存在饱和度字段）
+                        if (_saturationLimitDisplay != null)
+                        {
+                            _saturationLimitDisplay.Text = "/" + val;
+                        }
+                        if (elem.CustomSaturationValue > val)
+                        {
+                            elem.CustomSaturationValue = val;
+                            if (_saturationTextBox != null)
+                            {
+                                _saturationTextBox.Text = val.ToString();
+                            }
+                        }
+
+                        SaveSettings();
+                        StatusBarService.Instance.RefreshHudElement(id);
+                    }
+                };
+            }
+
+            // 饱和度行（仅当hasSaturation为true时显示）
+            if (hasSaturation)
+            {
+                var saturationRow = new Grid { Margin = new Thickness(0, 0, 0, 8) };
+                saturationRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                saturationRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                saturationRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                var saturationLabel = new System.Windows.Controls.TextBlock
+                {
+                    Text = GetResourceString("CustomSaturationValue") + ":",
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                };
+                saturationRow.Children.Add(saturationLabel);
+
+                // 输入框 + 最大值显示容器
+                var saturationInputContainer = new StackPanel
+                {
+                    Orientation = System.Windows.Controls.Orientation.Horizontal,
+                    Margin = new Thickness(8, 0, 0, 0)
+                };
+
+                _saturationTextBox = new System.Windows.Controls.TextBox
+                {
+                    Text = saturationValue.ToString(),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                // 限制只能输入数字
+                _saturationTextBox.PreviewTextInput += (s, e) =>
+                {
+                    e.Handled = !e.Text.All(c => char.IsDigit(c));
+                };
+                // 限制粘贴内容
+                System.Windows.DataObject.AddPastingHandler(_saturationTextBox, (s, e) =>
+                {
+                    if (e.DataObject.GetDataPresent(typeof(string)))
+                    {
+                        var text = (string)e.DataObject.GetData(typeof(string));
+                        if (!text.All(c => char.IsDigit(c)))
+                            e.CancelCommand();
+                    }
+                    else
+                        e.CancelCommand();
+                });
+                saturationInputContainer.Children.Add(_saturationTextBox);
+
+                // 显示"/最大值"（饱和度上限跟随最大值）
+                _saturationLimitDisplay = new System.Windows.Controls.TextBlock
+                {
+                    Text = "/" + maxValue,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(4, 0, 0, 0),
+                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                };
+                saturationInputContainer.Children.Add(_saturationLimitDisplay);
+
+                saturationRow.Children.Add(saturationInputContainer);
+                Grid.SetColumn(saturationInputContainer, 1);
+                _valueContainer.Children.Add(saturationRow);
+
+                // 失焦时验证并保存数值
+                _saturationTextBox.LostFocus += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null)
+                    {
+                        int maxVal = elem.CustomMaxValue; // 饱和度上限跟随最大值
+                        int val;
+                        if (!int.TryParse(_saturationTextBox.Text, out val) || _saturationTextBox.Text.Length == 0)
+                            val = 0; // 空或无效时设为默认值0
+                        if (val < 0) val = 0;
+                        if (val > maxVal) val = maxVal; // 饱和度上限为最大值
+                        elem.CustomSaturationValue = val;
+                        _saturationTextBox.Text = val.ToString();
                         SaveSettings();
                         StatusBarService.Instance.RefreshHudElement(id);
                     }

@@ -183,6 +183,7 @@ namespace CraftSharp.Windows
             LoadExpBarDimensions();
             LoadHeartDimensions();
             LoadFoodDimensions();
+            LoadSaturationDimensions();
             LoadAirDimensions();
             LoadAbsorbingDimensions();
             LoadArmorDimensions();

@@ -112,6 +112,7 @@
     <!-- 自定义数值 -->
     <sys:String x:Key="CustomCurrentValue">当前值</sys:String>
     <sys:String x:Key="CustomMaxValue">最大值</sys:String>
+    <sys:String x:Key="CustomSaturationValue">饱和度</sys:String>
 
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>

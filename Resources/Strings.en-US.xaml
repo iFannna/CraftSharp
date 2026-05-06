@@ -112,6 +112,7 @@
     <!-- Custom Value -->
     <sys:String x:Key="CustomCurrentValue">Current Value</sys:String>
     <sys:String x:Key="CustomMaxValue">Max Value</sys:String>
+    <sys:String x:Key="CustomSaturationValue">Saturation</sys:String>
 
     <!-- Hotkey Settings Panel -->
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
