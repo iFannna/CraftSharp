@@ -136,6 +136,11 @@ namespace CraftSharp.Models
         /// </summary>
         public bool IsVisible { get; set; } = true;
 
+        /// <summary>
+        /// 图标样式（如"full"、"hardcore_full"、"food_full"、"food_full_hunger"等）
+        /// </summary>
+        public string IconStyle { get; set; } = "";
+
 
         /// <summary>
         /// 锁定位置（仅快捷栏）

@@ -17,7 +17,7 @@ namespace CraftSharp
         // 背包
         public const string Inventory = "Assets/minecraft/textures/gui/sprites/inventory/inventory.png";
 
-        // 生命值
+        // 生命值（默认图标）
         public const string HeartFull = "Assets/minecraft/textures/gui/sprites/heart/full.png";
         public const string HeartHalf = "Assets/minecraft/textures/gui/sprites/heart/half.png";
         public const string HeartContainer = "Assets/minecraft/textures/gui/sprites/heart/container.png";
@@ -25,7 +25,7 @@ namespace CraftSharp
         public const string HeartHalfBlinking = "Assets/minecraft/textures/gui/sprites/heart/half_blinking.png";
         public const string HeartContainerBlinking = "Assets/minecraft/textures/gui/sprites/heart/container_blinking.png";
 
-        // 饥饿值
+        // 饥饿值（默认图标）
         public const string FoodFull = "Assets/minecraft/textures/gui/sprites/food/food_full.png";
         public const string FoodHalf = "Assets/minecraft/textures/gui/sprites/food/food_half.png";
         public const string FoodEmpty = "Assets/minecraft/textures/gui/sprites/food/food_empty.png";
@@ -47,5 +47,101 @@ namespace CraftSharp
         // 伤害吸收值
         public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/heart/absorbing_full.png";
         public const string AbsorbingHalf = "Assets/minecraft/textures/gui/sprites/heart/absorbing_half.png";
+
+        /// <summary>
+        /// 根据 IconStyle 获取生命值图标路径
+        /// IconStyle: full, hardcore_full, poisoned_full, withered_full, frozen_full, vehicle_full
+        /// </summary>
+        public static string GetHeartPath(string iconStyle, string suffix)
+        {
+            // suffix: full, half, container, full_blinking, half_blinking, container_blinking
+            // 如果 iconStyle 为空或默认，使用原始路径
+            if (string.IsNullOrEmpty(iconStyle) || iconStyle == "full")
+            {
+                return $"Assets/minecraft/textures/gui/sprites/heart/{suffix}.png";
+            }
+
+            // 从 iconStyle 提取 baseName
+            // 例如: "hardcore_full" → "hardcore"
+            // "poisoned_hardcore_full" → "poisoned_hardcore"
+            string baseName = iconStyle.Replace("_full", "");
+
+            // 根据不同的 suffix 使用不同的命名规则
+            // 实际文件命名：
+            // - container: container.png, container_hardcore.png, container_hardcore_blinking.png
+            // - full/half: {baseName}_full.png, {baseName}_half.png
+            // - blinking: {baseName}_full_blinking.png, {baseName}_half_blinking.png
+            //
+            // 特殊情况：
+            // - container 只有 hardcore 和 vehicle 有特定版本，其他用默认
+            // - blinking 版本可能不存在，需要检查
+
+            if (suffix == "container")
+            {
+                // container 只有 hardcore 和 vehicle 有特定版本
+                if (baseName == "hardcore" || baseName == "vehicle")
+                {
+                    return $"Assets/minecraft/textures/gui/sprites/heart/container_{baseName}.png";
+                }
+                // poisoned、withered、frozen 没有 container 版本，使用默认
+                return $"Assets/minecraft/textures/gui/sprites/heart/container.png";
+            }
+            else if (suffix == "container_blinking")
+            {
+                // container_blinking 只有 hardcore 有特定版本
+                if (baseName == "hardcore")
+                {
+                    return $"Assets/minecraft/textures/gui/sprites/heart/container_{baseName}_blinking.png";
+                }
+                // 其他使用默认
+                return $"Assets/minecraft/textures/gui/sprites/heart/container_blinking.png";
+            }
+            else if (suffix.Contains("_blinking"))
+            {
+                // full_blinking, half_blinking
+                // 可能不存在特定版本，返回路径（调用者需要检查文件是否存在）
+                return $"Assets/minecraft/textures/gui/sprites/heart/{baseName}_{suffix}.png";
+            }
+            else
+            {
+                // full, half
+                return $"Assets/minecraft/textures/gui/sprites/heart/{baseName}_{suffix}.png";
+            }
+        }
+
+        /// <summary>
+        /// 检查生命值图标文件是否存在，不存在则返回默认图标路径
+        /// </summary>
+        public static string GetHeartPathWithFallback(string iconStyle, string suffix)
+        {
+            string specificPath = GetHeartPath(iconStyle, suffix);
+            string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, specificPath);
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                return specificPath;
+            }
+
+            // 文件不存在，回退到默认图标
+            return $"Assets/minecraft/textures/gui/sprites/heart/{suffix}.png";
+        }
+
+        /// <summary>
+        /// 根据 IconStyle 获取饥饿值图标路径
+        /// IconStyle: food_full, food_full_hunger
+        /// </summary>
+        public static string GetFoodPath(string iconStyle, string suffix)
+        {
+            // suffix: full, half, empty
+            // 如果 iconStyle 为空或默认，使用原始路径
+            if (string.IsNullOrEmpty(iconStyle) || iconStyle == "food_full")
+            {
+                return $"Assets/minecraft/textures/gui/sprites/food/food_{suffix}.png";
+            }
+
+            // hunger 后缀样式
+            // 例如: iconStyle="food_full_hunger", suffix="half" → "food_half_hunger.png"
+            return $"Assets/minecraft/textures/gui/sprites/food/food_{suffix}_hunger.png";
+        }
     }
 }

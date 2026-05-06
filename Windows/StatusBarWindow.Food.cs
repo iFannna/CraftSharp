@@ -112,6 +112,7 @@ namespace CraftSharp.Windows
             var settings = GetHudElementSettings("food");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+            string iconStyle = settings?.IconStyle ?? ""; // 图标样式（food_full 或 food_full_hunger）
 
             // 设置FoodCanvas尺寸（根据maxValue动态计算）
             double foodsWidth = slotCount * foodWidth + (slotCount - 1) * foodGap;
@@ -140,7 +141,7 @@ namespace CraftSharp.Windows
                 var emptyImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodEmpty{i}",
-                    Source = LoadBitmapImage(AssetPaths.FoodEmpty),
+                    Source = LoadBitmapImage(AssetPaths.GetFoodPath(iconStyle, "empty")),
                     Width = foodWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,
@@ -157,7 +158,7 @@ namespace CraftSharp.Windows
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodHalf{i}",
-                    Source = LoadBitmapImage(AssetPaths.FoodHalf),
+                    Source = LoadBitmapImage(AssetPaths.GetFoodPath(iconStyle, "half")),
                     Width = halfWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,
@@ -174,7 +175,7 @@ namespace CraftSharp.Windows
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"FoodFull{i}",
-                    Source = LoadBitmapImage(AssetPaths.FoodFull),
+                    Source = LoadBitmapImage(AssetPaths.GetFoodPath(iconStyle, "full")),
                     Width = foodWidth,
                     Height = foodHeight,
                     Stretch = Stretch.Uniform,

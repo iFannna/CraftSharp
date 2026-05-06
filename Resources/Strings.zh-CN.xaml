@@ -69,6 +69,9 @@
     <sys:String x:Key="IconPickerCategoryTool">工具与实用物品</sys:String>
     <sys:String x:Key="IconPickerLoading">加载中...</sys:String>
 
+    <!-- HUD 图标选择窗口 -->
+    <sys:String x:Key="HudIconPickerTitle">选择元素图标</sys:String>
+
     <!-- HUD 设置面板 -->
     <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
     <sys:String x:Key="HudStatusBarSettings">状态栏设置</sys:String>
@@ -94,6 +97,8 @@
     <sys:String x:Key="HudOptionLeftOffhandDesc">在快捷栏左侧显示副手槽位</sys:String>
     <sys:String x:Key="HudOptionRightOffhand">右副手槽</sys:String>
     <sys:String x:Key="HudOptionRightOffhandDesc">在快捷栏右侧显示副手槽位</sys:String>
+    <sys:String x:Key="HudOptionElementIcon">元素图标</sys:String>
+    <sys:String x:Key="HudOptionElementIconDesc">此HUD元素的显示图标</sys:String>
     <sys:String x:Key="HudOptionShowElement">显示元素</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">在快捷栏上显示此 HUD 元素</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">动画效果</sys:String>

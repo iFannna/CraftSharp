@@ -69,6 +69,9 @@
     <sys:String x:Key="IconPickerCategoryTool">Tools &amp; utilities</sys:String>
     <sys:String x:Key="IconPickerLoading">Loading...</sys:String>
 
+    <!-- HUD Icon Picker Window -->
+    <sys:String x:Key="HudIconPickerTitle">Select Element Icon</sys:String>
+
     <!-- HUD Settings Panel -->
     <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
     <sys:String x:Key="HudStatusBarSettings">Status Bar Settings</sys:String>
@@ -94,6 +97,8 @@
     <sys:String x:Key="HudOptionLeftOffhandDesc">Show offhand slot on the left side of hotbar</sys:String>
     <sys:String x:Key="HudOptionRightOffhand">Right Offhand</sys:String>
     <sys:String x:Key="HudOptionRightOffhandDesc">Show offhand slot on the right side of hotbar</sys:String>
+    <sys:String x:Key="HudOptionElementIcon">Element Icon</sys:String>
+    <sys:String x:Key="HudOptionElementIconDesc">The display icon for this HUD element</sys:String>
     <sys:String x:Key="HudOptionShowElement">Show Element</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">Display this HUD element on hotbar</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">Animation Effect</sys:String>

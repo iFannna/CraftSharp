@@ -88,6 +88,7 @@ namespace CraftSharp.Windows
             var settings = GetHudElementSettings("health");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+            string iconStyle = settings?.IconStyle ?? ""; // 图标样式
 
             // 设置HeartCanvas尺寸（根据maxValue动态计算）
             double heartsWidth = slotCount * heartWidth + (slotCount - 1) * heartGap;
@@ -115,7 +116,7 @@ namespace CraftSharp.Windows
                 var containerImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainer{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartContainer),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "container")),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -131,7 +132,7 @@ namespace CraftSharp.Windows
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartHalf{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartHalf),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "half")),
                     Width = halfWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -147,7 +148,7 @@ namespace CraftSharp.Windows
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartFull{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartFull),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "full")),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -245,6 +246,10 @@ namespace CraftSharp.Windows
                 ClearHeartAnimationIcons();
             }
 
+            // 获取图标样式
+            var settings = GetHudElementSettings("health");
+            string iconStyle = settings?.IconStyle ?? "";
+
             double heartWidth = _originalHeartWidth * _scaleFactor;
             double heartHeight = _originalHeartHeight * _scaleFactor;
             double halfWidth = _originalHalfHeartWidth * _scaleFactor;
@@ -274,7 +279,7 @@ namespace CraftSharp.Windows
                 var containerBlinking = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainerBlinking{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartContainerBlinking),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "container_blinking")),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,
@@ -322,7 +327,7 @@ namespace CraftSharp.Windows
                         var fullBlinking = new System.Windows.Controls.Image
                         {
                             Name = $"HeartFullBlinking{i}",
-                            Source = LoadBitmapImage(AssetPaths.HeartFullBlinking),
+                            Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "full_blinking")),
                             Width = heartWidth,
                             Height = heartHeight,
                             Stretch = Stretch.Uniform,
@@ -341,7 +346,7 @@ namespace CraftSharp.Windows
                             var halfOverlay = new System.Windows.Controls.Image
                             {
                                 Name = $"HeartHalfOverlay{i}",
-                                Source = LoadBitmapImage(AssetPaths.HeartHalf),
+                                Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "half")),
                                 Width = halfWidth,
                                 Height = heartHeight,
                                 Stretch = Stretch.Uniform,
@@ -363,7 +368,7 @@ namespace CraftSharp.Windows
                         var halfBlinking = new System.Windows.Controls.Image
                         {
                             Name = $"HeartHalfBlinking{i}",
-                            Source = LoadBitmapImage(AssetPaths.HeartHalfBlinking),
+                            Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "half_blinking")),
                             Width = halfWidth,
                             Height = heartHeight,
                             Stretch = Stretch.Uniform,
@@ -493,6 +498,10 @@ namespace CraftSharp.Windows
         /// </summary>
         private void ShowHeartBlinkingIcons(int oldValue, int newValue, int maxValue)
         {
+            // 获取图标样式
+            var settings = GetHudElementSettings("health");
+            string iconStyle = settings?.IconStyle ?? "";
+
             double heartWidth = _originalHeartWidth * _scaleFactor;
             double heartHeight = _originalHeartHeight * _scaleFactor;
             double halfWidth = _originalHalfHeartWidth * _scaleFactor;
@@ -529,7 +538,7 @@ namespace CraftSharp.Windows
                         var fullBlinking = new System.Windows.Controls.Image
                         {
                             Name = $"HeartFullBlinking{i}",
-                            Source = LoadBitmapImage(AssetPaths.HeartFullBlinking),
+                            Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "full_blinking")),
                             Width = heartWidth,
                             Height = heartHeight,
                             Stretch = Stretch.Uniform,
@@ -548,7 +557,7 @@ namespace CraftSharp.Windows
                             var halfOverlay = new System.Windows.Controls.Image
                             {
                                 Name = $"HeartHalfOverlay{i}",
-                                Source = LoadBitmapImage(AssetPaths.HeartHalf),
+                                Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "half")),
                                 Width = halfWidth,
                                 Height = heartHeight,
                                 Stretch = Stretch.Uniform,
@@ -570,7 +579,7 @@ namespace CraftSharp.Windows
                         var halfBlinking = new System.Windows.Controls.Image
                         {
                             Name = $"HeartHalfBlinking{i}",
-                            Source = LoadBitmapImage(AssetPaths.HeartHalfBlinking),
+                            Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "half_blinking")),
                             Width = halfWidth,
                             Height = heartHeight,
                             Stretch = Stretch.Uniform,
@@ -592,6 +601,10 @@ namespace CraftSharp.Windows
         /// </summary>
         private void ShowHeartContainerBlinking(int maxValue)
         {
+            // 获取图标样式
+            var settings = GetHudElementSettings("health");
+            string iconStyle = settings?.IconStyle ?? "";
+
             double heartWidth = _originalHeartWidth * _scaleFactor;
             double heartHeight = _originalHeartHeight * _scaleFactor;
             double heartGap = _heartGap * _scaleFactor;
@@ -613,7 +626,7 @@ namespace CraftSharp.Windows
                 var containerBlinking = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainerBlinking{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartContainerBlinking),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "container_blinking")),
                     Width = heartWidth,
                     Height = heartHeight,
                     Stretch = Stretch.Uniform,

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Panels
@@ -213,8 +214,11 @@ namespace CraftSharp.Windows.Panels
             }
             else if (id == "health")
             {
-                // health 特殊：有恢复动画选项
-                AddStandardHudElement(id, StatusBarService.Instance.SetHealthVisible, hasRegenAnimation: true);
+                // health 特殊：有恢复动画选项 + 图标预览
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                string iconStyle = settings?.IconStyle ?? "";
+                string iconPath = AssetPaths.GetHeartPathWithFallback(iconStyle, "full");
+                AddStandardHudElement(id, StatusBarService.Instance.SetHealthVisible, hasRegenAnimation: true, iconPath: iconPath);
             }
             else if (id == "expbar")
             {
@@ -237,7 +241,12 @@ namespace CraftSharp.Windows.Panels
             {
                 // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（maxValue上限20）
                 var setVisibleAction = GetSetVisibleAction(id);
-                AddStandardHudElement(id, setVisibleAction, hasSaturation: id == "food");
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                string iconStyle = settings?.IconStyle ?? "";
+                string iconPath = id == "food"
+                    ? AssetPaths.GetFoodPath(iconStyle, "full")
+                    : AssetPaths.ArmorFull;
+                AddStandardHudElement(id, setVisibleAction, hasSaturation: id == "food", iconPath: iconPath);
             }
         }
 
@@ -260,7 +269,7 @@ namespace CraftSharp.Windows.Panels
         /// <summary>
         /// 添加标准HUD元素配置（显示开关 + 数据映射 + 自定义数值）
         /// </summary>
-        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false)
+        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false, string iconPath = "")
         {
             EnsureHudElementExists(id);
             var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -272,6 +281,12 @@ namespace CraftSharp.Windows.Panels
             int customCurrentValue = settings?.CustomCurrentValue ?? 10;
             int customMaxValue = settings?.CustomMaxValue ?? 20;
             int customSaturationValue = settings?.CustomSaturationValue ?? 0;
+
+            // 元素图标预览（如果提供了iconPath）
+            if (!string.IsNullOrEmpty(iconPath))
+            {
+                AddIconPreviewRow("HudOptionElementIcon", iconPath);
+            }
 
             // 显示开关
             var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
@@ -819,6 +834,135 @@ namespace CraftSharp.Windows.Panels
             ContentPanel.Children.Add(grid);
 
             return toggle;
+        }
+
+        // 图标预览 Border（用于点击打开选择器）
+        private System.Windows.Controls.Border? _iconPreviewBorder;
+
+        /// <summary>
+        /// 添加图标预览行（左侧标签 + 右侧图标预览）
+        /// </summary>
+        private void AddIconPreviewRow(string labelKey, string iconPath)
+        {
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var left = new StackPanel();
+            var titleLabel = new System.Windows.Controls.TextBlock
+            {
+                Text = GetResourceString(labelKey),
+                FontWeight = FontWeights.Medium,
+                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+            };
+            var descLabel = new System.Windows.Controls.TextBlock
+            {
+                Text = GetResourceString(labelKey + "Desc"),
+                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            left.Children.Add(titleLabel);
+            left.Children.Add(descLabel);
+            grid.Children.Add(left);
+
+            // 图标预览
+            _iconPreviewBorder = new System.Windows.Controls.Border
+            {
+                Width = 32,
+                Height = 32,
+                CornerRadius = new CornerRadius(6),
+                Background = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("CardBackgroundBrush"),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                ToolTip = GetResourceString("AppIconTooltip")
+            };
+            var iconImage = new System.Windows.Controls.Image
+            {
+                Name = "IconPreviewImage",
+                Source = LoadBitmapImage(iconPath),
+                Stretch = Stretch.Uniform
+            };
+            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
+            _iconPreviewBorder.Child = iconImage;
+            _iconPreviewBorder.MouseLeftButtonDown += IconPreview_Click;
+            grid.Children.Add(_iconPreviewBorder);
+            Grid.SetColumn(_iconPreviewBorder, 1);
+
+            ContentPanel.Children.Add(grid);
+        }
+
+        /// <summary>
+        /// 图标预览点击事件：打开图标选择器
+        /// </summary>
+        private void IconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // 确定 HUD 元素类型（heart 或 food）
+            string elementType = _hudId == "health" ? "heart" : "food";
+
+            var picker = new HudIconPickerWindow(elementType);
+            picker.Owner = System.Windows.Window.GetWindow(this);
+
+            // 获取当前设置的 IconStyle
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == _hudId);
+            string currentStyle = settings?.IconStyle ?? "";
+
+            if (picker.ShowDialog() == true && picker.SelectedIconStyle != null)
+            {
+                // 更新设置
+                EnsureHudElementExists(_hudId);
+                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == _hudId);
+                if (elem != null)
+                {
+                    elem.IconStyle = picker.SelectedIconStyle;
+                    SaveSettings();
+                }
+
+                // 更新图标预览
+                if (_iconPreviewBorder != null)
+                {
+                    var iconImage = _iconPreviewBorder.Child as System.Windows.Controls.Image;
+                    if (iconImage != null)
+                    {
+                        string newIconPath = GetIconPathFromStyle(_hudId, picker.SelectedIconStyle);
+                        iconImage.Source = LoadBitmapImage(newIconPath);
+                    }
+                }
+
+                // 刷新 HUD 元素显示
+                StatusBarService.Instance.RefreshHudElement(_hudId);
+            }
+        }
+
+        /// <summary>
+        /// 根据 IconStyle 获取图标路径（用于预览更新）
+        /// </summary>
+        private static string GetIconPathFromStyle(string hudId, string iconStyle)
+        {
+            if (hudId == "health")
+            {
+                // 生命值：使用 AssetPaths 的方法获取带回退的路径
+                return AssetPaths.GetHeartPathWithFallback(iconStyle, "full");
+            }
+            else if (hudId == "food")
+            {
+                // 饥饿值：使用 AssetPaths 的方法获取路径
+                return AssetPaths.GetFoodPath(iconStyle, "full");
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// 从文件路径加载 BitmapImage
+        /// </summary>
+        private static BitmapImage LoadBitmapImage(string relativePath)
+        {
+            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
     }
 }
