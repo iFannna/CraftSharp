@@ -46,20 +46,31 @@ namespace CraftSharp.Windows
         {
             LoadingOverlay.Visibility = Visibility.Visible;
 
-            var basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", _elementType);
+            // 确定图标目录路径（absorbing 使用 heart 目录）
+            string spriteDir = _elementType == "absorbing" ? "heart" : _elementType;
+            var basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", spriteDir);
 
             if (_elementType == "heart")
             {
                 // 生命值：显示所有 full 图标
-                // 可选样式：full, hardcore_full, poisoned_full, withered_full, frozen_full, vehicle_full
+                // 可选样式：
+                // - 基础：full, hardcore_full
+                // - 效果：poisoned_full, withered_full, frozen_full, vehicle_full
+                // - 效果+极限：poisoned_hardcore_full, withered_hardcore_full, frozen_hardcore_full（vehicle无hardcore版本）
+                // - 伤害吸收：absorbing_full, absorbing_hardcore_full
                 var heartStyles = new[]
                 {
                     ("full", "普通"),
                     ("hardcore_full", "极限模式"),
                     ("poisoned_full", "中毒"),
+                    ("poisoned_hardcore_full", "中毒极限"),
                     ("withered_full", "凋零"),
+                    ("withered_hardcore_full", "凋零极限"),
                     ("frozen_full", "冻结"),
-                    ("vehicle_full", "载具")
+                    ("frozen_hardcore_full", "冻结极限"),
+                    ("vehicle_full", "载具"),
+                    ("absorbing_full", "伤害吸收"),
+                    ("absorbing_hardcore_full", "伤害吸收极限")
                 };
 
                 foreach (var (style, displayName) in heartStyles)
@@ -86,7 +97,7 @@ namespace CraftSharp.Windows
             }
             else if (_elementType == "food")
             {
-                // 饥饿值：只显示 food_full 和 food_full_hunger
+                // 饥饿值：food_full 和 food_full_hunger
                 var foodStyles = new[]
                 {
                     ("food_full", "普通"),
@@ -94,6 +105,97 @@ namespace CraftSharp.Windows
                 };
 
                 foreach (var (style, displayName) in foodStyles)
+                {
+                    var filename = $"{style}.png";
+                    var fullPath = Path.Combine(basePath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
+            else if (_elementType == "absorbing")
+            {
+                // 伤害吸收值：absorbing_full 和 absorbing_hardcore_full
+                var absorbingStyles = new[]
+                {
+                    ("absorbing_full", "普通"),
+                    ("absorbing_hardcore_full", "极限模式")
+                };
+
+                foreach (var (style, displayName) in absorbingStyles)
+                {
+                    var filename = $"{style}.png";
+                    var fullPath = Path.Combine(basePath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
+            else if (_elementType == "armor")
+            {
+                // 护甲值：只有 armor_full
+                var armorStyles = new[]
+                {
+                    ("armor_full", "普通")
+                };
+
+                foreach (var (style, displayName) in armorStyles)
+                {
+                    var filename = $"{style}.png";
+                    var fullPath = Path.Combine(basePath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
+            else if (_elementType == "air")
+            {
+                // 空气值：只有 air
+                var airStyles = new[]
+                {
+                    ("air", "普通")
+                };
+
+                foreach (var (style, displayName) in airStyles)
                 {
                     var filename = $"{style}.png";
                     var fullPath = Path.Combine(basePath, filename);

@@ -95,6 +95,7 @@ namespace CraftSharp.Windows
             var settings = GetHudElementSettings("absorbing");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+            string iconStyle = settings?.IconStyle ?? ""; // 图标样式
 
             // 计算行数（向上取整）
             int totalRows = (slotCount == 0) ? 1 : (slotCount - 1) / AbsorbingIconsPerRow + 1;
@@ -140,7 +141,7 @@ namespace CraftSharp.Windows
                 var containerImage = new System.Windows.Controls.Image
                 {
                     Name = $"AbsorbingContainer{i}",
-                    Source = LoadBitmapImage(AssetPaths.HeartContainer),
+                    Source = LoadBitmapImage(AssetPaths.GetHeartPathWithFallback(iconStyle, "container")),
                     Width = absorbingWidth,
                     Height = absorbingHeight,
                     Stretch = Stretch.Uniform,
@@ -156,7 +157,7 @@ namespace CraftSharp.Windows
                 var halfImage = new System.Windows.Controls.Image
                 {
                     Name = $"AbsorbingHalf{i}",
-                    Source = LoadBitmapImage(AssetPaths.AbsorbingHalf),
+                    Source = LoadBitmapImage(AssetPaths.GetAbsorbingPathWithFallback(iconStyle, "half")),
                     Width = halfWidth,
                     Height = absorbingHeight,
                     Stretch = Stretch.Uniform,
@@ -172,7 +173,7 @@ namespace CraftSharp.Windows
                 var fullImage = new System.Windows.Controls.Image
                 {
                     Name = $"AbsorbingFull{i}",
-                    Source = LoadBitmapImage(AssetPaths.AbsorbingFull),
+                    Source = LoadBitmapImage(AssetPaths.GetAbsorbingPathWithFallback(iconStyle, "full")),
                     Width = absorbingWidth,
                     Height = absorbingHeight,
                     Stretch = Stretch.Uniform,

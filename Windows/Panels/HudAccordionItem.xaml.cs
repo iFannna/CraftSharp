@@ -227,25 +227,34 @@ namespace CraftSharp.Windows.Panels
             }
             else if (id == "absorbing")
             {
-                // 伤害吸收值特殊：maxValue上限1024，多行显示
+                // 伤害吸收值特殊：maxValue上限1024，多行显示 + 图标样式选择
                 var setVisibleAction = GetSetVisibleAction(id);
-                AddStandardHudElement(id, setVisibleAction, maxValueLimit: 1024);
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                string iconStyle = settings?.IconStyle ?? "";
+                string iconPath = GetAbsorbingIconPath(iconStyle);
+                AddStandardHudElement(id, setVisibleAction, maxValueLimit: 1024, iconPath: iconPath);
             }
             else if (id == "air")
             {
-                // 空气值特殊：有动画效果选项（仅UI开关，暂不实现动画）
+                // 空气值特殊：有动画效果选项 + 图标预览
                 var setVisibleAction = GetSetVisibleAction(id);
-                AddStandardHudElement(id, setVisibleAction, hasRegenAnimation: true);
+                AddStandardHudElement(id, setVisibleAction, hasRegenAnimation: true, iconPath: AssetPaths.Air);
             }
             else if (id == "food" || id == "armor")
             {
                 // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（maxValue上限20）
                 var setVisibleAction = GetSetVisibleAction(id);
-                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
-                string iconStyle = settings?.IconStyle ?? "";
-                string iconPath = id == "food"
-                    ? AssetPaths.GetFoodPath(iconStyle, "full")
-                    : AssetPaths.ArmorFull;
+                string iconPath = "";
+                if (id == "food")
+                {
+                    var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    string iconStyle = settings?.IconStyle ?? "";
+                    iconPath = AssetPaths.GetFoodPath(iconStyle, "full");
+                }
+                else if (id == "armor")
+                {
+                    iconPath = AssetPaths.ArmorFull;
+                }
                 AddStandardHudElement(id, setVisibleAction, hasSaturation: id == "food", iconPath: iconPath);
             }
         }
@@ -895,8 +904,8 @@ namespace CraftSharp.Windows.Panels
         /// </summary>
         private void IconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // 确定 HUD 元素类型（heart 或 food）
-            string elementType = _hudId == "health" ? "heart" : "food";
+            // 确定 HUD 元素类型
+            string elementType = GetElementTypeFromHudId(_hudId);
 
             var picker = new HudIconPickerWindow(elementType);
             picker.Owner = System.Windows.Window.GetWindow(this);
@@ -933,21 +942,48 @@ namespace CraftSharp.Windows.Panels
         }
 
         /// <summary>
+        /// 根据 HudId 获取元素类型（用于图标选择器）
+        /// </summary>
+        private static string GetElementTypeFromHudId(string hudId)
+        {
+            return hudId switch
+            {
+                "health" => "heart",
+                "food" => "food",
+                "absorbing" => "absorbing",
+                "armor" => "armor",
+                "air" => "air",
+                _ => hudId
+            };
+        }
+
+        /// <summary>
         /// 根据 IconStyle 获取图标路径（用于预览更新）
         /// </summary>
         private static string GetIconPathFromStyle(string hudId, string iconStyle)
         {
-            if (hudId == "health")
+            return hudId switch
             {
-                // 生命值：使用 AssetPaths 的方法获取带回退的路径
-                return AssetPaths.GetHeartPathWithFallback(iconStyle, "full");
-            }
-            else if (hudId == "food")
+                "health" => AssetPaths.GetHeartPathWithFallback(iconStyle, "full"),
+                "food" => AssetPaths.GetFoodPath(iconStyle, "full"),
+                "absorbing" => GetAbsorbingIconPath(iconStyle),
+                "armor" => AssetPaths.ArmorFull,
+                "air" => AssetPaths.Air,
+                _ => ""
+            };
+        }
+
+        /// <summary>
+        /// 根据 IconStyle 获取伤害吸收值图标路径
+        /// </summary>
+        private static string GetAbsorbingIconPath(string iconStyle)
+        {
+            if (string.IsNullOrEmpty(iconStyle) || iconStyle == "absorbing_full")
             {
-                // 饥饿值：使用 AssetPaths 的方法获取路径
-                return AssetPaths.GetFoodPath(iconStyle, "full");
+                return AssetPaths.AbsorbingFull;
             }
-            return "";
+            // absorbing_hardcore_full
+            return "Assets/minecraft/textures/gui/sprites/heart/absorbing_hardcore_full.png";
         }
 
         /// <summary>
