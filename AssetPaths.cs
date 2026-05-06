@@ -21,6 +21,9 @@ namespace CraftSharp
         public const string HeartFull = "Assets/minecraft/textures/gui/sprites/heart/full.png";
         public const string HeartHalf = "Assets/minecraft/textures/gui/sprites/heart/half.png";
         public const string HeartContainer = "Assets/minecraft/textures/gui/sprites/heart/container.png";
+        public const string HeartFullBlinking = "Assets/minecraft/textures/gui/sprites/heart/full_blinking.png";
+        public const string HeartHalfBlinking = "Assets/minecraft/textures/gui/sprites/heart/half_blinking.png";
+        public const string HeartContainerBlinking = "Assets/minecraft/textures/gui/sprites/heart/container_blinking.png";
 
         // 饥饿值
         public const string FoodFull = "Assets/minecraft/textures/gui/sprites/food/food_full.png";

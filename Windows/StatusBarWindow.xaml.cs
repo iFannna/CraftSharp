@@ -31,6 +31,11 @@ namespace CraftSharp.Windows
         private DispatcherTimer? _batteryTimer;
         private bool _isLocked = false;
 
+        // 性能计数器（缓存以避免每次调用NextValue的延迟）
+        private System.Diagnostics.PerformanceCounter? _cpuCounter;
+        private System.Diagnostics.PerformanceCounter? _availableMemoryCounter;
+        private bool _performanceCountersInitialized = false;
+
         // 副手槽状态
         private bool _leftOffhandEnabled = false;
         private bool _rightOffhandEnabled = false;
@@ -301,7 +306,7 @@ namespace CraftSharp.Windows
         {
             _batteryTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(30)
+                Interval = TimeSpan.FromSeconds(3)
             };
             _batteryTimer.Tick += (s, e) =>
             {
@@ -545,6 +550,87 @@ namespace CraftSharp.Windows
         {
             _absorbingVisible = visible;
             AbsorbingGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 获取数据映射值（百分比 0.0 - 1.0）
+        /// </summary>
+        protected double GetDataMappingValue(string mappingType)
+        {
+            // 初始化性能计数器（仅在第一次调用时）
+            if (!_performanceCountersInitialized)
+            {
+                InitializePerformanceCounters();
+                _performanceCountersInitialized = true;
+            }
+
+            switch (mappingType)
+            {
+                case "电池电量":
+                    var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
+                    return powerStatus.BatteryLifePercent;
+
+                case "内存占用率":
+                    try
+                    {
+                        // 使用可用内存计算物理内存占用率
+                        // 任务管理器显示的内存占用率 = (总物理内存 - 可用内存) / 总物理内存
+                        if (_availableMemoryCounter != null)
+                        {
+                            double availableMB = _availableMemoryCounter.NextValue();
+                            double totalMB = new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory / (1024.0 * 1024.0);
+                            double usedPercent = (totalMB - availableMB) / totalMB;
+                            return Math.Min(1.0, Math.Max(0.0, usedPercent));
+                        }
+                        return 0;
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
+
+                case "CPU利用率":
+                    try
+                    {
+                        if (_cpuCounter != null)
+                        {
+                            return Math.Min(1.0, _cpuCounter.NextValue() / 100.0);
+                        }
+                        return 0;
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
+
+                case "GPU利用率":
+                    // GPU利用率需要特殊API，暂时返回电池电量
+                    var ps = System.Windows.Forms.SystemInformation.PowerStatus;
+                    return ps.BatteryLifePercent;
+
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// 初始化性能计数器
+        /// </summary>
+        private void InitializePerformanceCounters()
+        {
+            try
+            {
+                _cpuCounter = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", "_Total");
+                _availableMemoryCounter = new System.Diagnostics.PerformanceCounter("Memory", "Available MBytes");
+
+                // 第一次调用NextValue返回0，需要预热
+                _cpuCounter.NextValue();
+                _availableMemoryCounter.NextValue();
+            }
+            catch
+            {
+                // 如果初始化失败，计数器将为null，GetDataMappingValue将返回0
+            }
         }
 
         /// <summary>

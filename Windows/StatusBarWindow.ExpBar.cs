@@ -101,9 +101,9 @@ namespace CraftSharp.Windows
                 return currentValue / 100.0;
             }
 
-            // 否则使用电池电量（数据映射）
-            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-            return powerStatus.BatteryLifePercent;
+            // 否则使用数据映射
+            string mappingType = settings?.DataMappingType ?? "电池电量";
+            return GetDataMappingValue(mappingType);
         }
     }
 }

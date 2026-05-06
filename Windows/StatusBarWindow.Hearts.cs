@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using CraftSharp.Models;
 
 namespace CraftSharp.Windows
@@ -22,6 +23,10 @@ namespace CraftSharp.Windows
     /// - maxValue决定显示的背景图标数量
     /// - currentValue决定显示的half/full图标数量
     /// - 背景使用container图标
+    ///
+    /// 动画规则（仅在数据映射开启时生效）：
+    /// - 生命值增多或减少时：所有container变成container_blinking，持续1000ms
+    /// - 生命值减少时：将旧值对应位置的图标变成blinking，新值图标叠加在上面
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -29,6 +34,13 @@ namespace CraftSharp.Windows
         private double _originalHeartHeight;
         private double _originalHalfHeartWidth;
         private double _heartGap = -1; // 心形之间的间距（基准像素）
+
+        // 上一次的生命值（用于检测变化并触发动画）
+        private int _previousHealthValue = -1;
+        // 动画定时器
+        private DispatcherTimer? _heartAnimationTimer;
+        // 是否正在显示动画
+        private bool _heartAnimationPlaying = false;
 
         /// <summary>
         /// 加载心形图片尺寸
@@ -158,14 +170,37 @@ namespace CraftSharp.Windows
             // 获取配置值
             var settings = GetHudElementSettings("health");
             int maxValue = settings?.CustomMaxValue ?? 20;
-            int currentValue = settings?.CustomCurrentValue ?? 20;
             int slotCount = maxValue / 2;
+
+            // 计算当前值
+            int currentValue;
+            bool dataMappingEnabled = settings?.CustomValueEnabled != true;
+
+            if (dataMappingEnabled)
+            {
+                // 数据映射开启：从数据源获取百分比，转换为生命值
+                string mappingType = settings?.DataMappingType ?? "电池电量";
+                double percent = GetDataMappingValue(mappingType);
+                currentValue = (int)(percent * maxValue);
+            }
+            else
+            {
+                // 自定义数值开启：使用配置的当前值
+                currentValue = settings?.CustomCurrentValue ?? 20;
+            }
 
             // 计算完整和半心数量
             // currentValue: 半心=1, 满心=2
             // 例如: currentValue=15 → 7满心(14) + 1半心(1)
             int fullHearts = currentValue / 2;
             bool hasHalfHeart = (currentValue % 2) == 1;
+
+            // 检查是否需要触发动画（仅在数据映射开启时）
+            if (dataMappingEnabled && _previousHealthValue >= 0 && _previousHealthValue != currentValue)
+            {
+                TriggerHeartAnimation(_previousHealthValue, currentValue, maxValue);
+            }
+            _previousHealthValue = currentValue;
 
             for (int i = 0; i < slotCount; i++)
             {
@@ -191,6 +226,199 @@ namespace CraftSharp.Windows
                     // 空（只有背景container可见）
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 触发生命值动画
+        /// </summary>
+        private void TriggerHeartAnimation(int oldValue, int newValue, int maxValue)
+        {
+            // 如果动画正在播放，先停止
+            if (_heartAnimationPlaying)
+            {
+                _heartAnimationTimer?.Stop();
+                ClearHeartAnimationIcons();
+            }
+
+            double heartWidth = _originalHeartWidth * _scaleFactor;
+            double heartHeight = _originalHeartHeight * _scaleFactor;
+            double halfWidth = _originalHalfHeartWidth * _scaleFactor;
+            double heartGap = _heartGap * _scaleFactor;
+            int slotCount = maxValue / 2;
+
+            bool isDecreasing = newValue < oldValue;
+
+            // 计算旧值和新值的心形状态
+            int oldFullHearts = oldValue / 2;
+            bool oldHasHalfHeart = (oldValue % 2) == 1;
+            int newFullHearts = newValue / 2;
+            bool newHasHalfHeart = (newValue % 2) == 1;
+
+            // 1. 隐藏原始 container 图标，显示 container_blinking
+            for (int i = 0; i < slotCount; i++)
+            {
+                var container = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"HeartContainer{i}");
+                if (container != null)
+                {
+                    container.Visibility = Visibility.Hidden;
+                }
+
+                double iconLeft = i * (heartWidth + heartGap);
+
+                var containerBlinking = new System.Windows.Controls.Image
+                {
+                    Name = $"HeartContainerBlinking{i}",
+                    Source = LoadBitmapImage(AssetPaths.HeartContainerBlinking),
+                    Width = heartWidth,
+                    Height = heartHeight,
+                    Stretch = Stretch.Uniform,
+                    UseLayoutRounding = true,
+                    SnapsToDevicePixels = true
+                };
+                RenderOptions.SetBitmapScalingMode(containerBlinking, BitmapScalingMode.NearestNeighbor);
+                Canvas.SetLeft(containerBlinking, iconLeft);
+                Canvas.SetTop(containerBlinking, 0);
+                Canvas.SetZIndex(containerBlinking, 0); // 最底层
+                HeartCanvas.Children.Add(containerBlinking);
+            }
+
+            // 2. 设置 half/full 图标的 Z-index 为较高值，确保它们在 container_blinking 之上
+            for (int i = 0; i < slotCount; i++)
+            {
+                var halfImage = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"HeartHalf{i}");
+                var fullImage = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"HeartFull{i}");
+
+                if (halfImage != null) Canvas.SetZIndex(halfImage, 10);
+                if (fullImage != null) Canvas.SetZIndex(fullImage, 10);
+            }
+
+            // 3. 生命值减少时：在减少的位置显示 full/half_blinking，新值图标叠加在上面
+            if (isDecreasing)
+            {
+                for (int i = 0; i < slotCount; i++)
+                {
+                    // 判断该位置旧值的状态
+                    bool oldIsFull = i < oldFullHearts;
+                    bool oldIsHalf = i == oldFullHearts && oldHasHalfHeart;
+
+                    // 判断该位置新值的状态
+                    bool newIsFull = i < newFullHearts;
+                    bool newIsHalf = i == newFullHearts && newHasHalfHeart;
+
+                    // 只在旧值有图标且新值没有（或更少）的位置显示 blinking
+                    if (oldIsFull && !newIsFull)
+                    {
+                        double iconLeft = i * (heartWidth + heartGap);
+
+                        // 显示 full_blinking
+                        var fullBlinking = new System.Windows.Controls.Image
+                        {
+                            Name = $"HeartFullBlinking{i}",
+                            Source = LoadBitmapImage(AssetPaths.HeartFullBlinking),
+                            Width = heartWidth,
+                            Height = heartHeight,
+                            Stretch = Stretch.Uniform,
+                            UseLayoutRounding = true,
+                            SnapsToDevicePixels = true
+                        };
+                        RenderOptions.SetBitmapScalingMode(fullBlinking, BitmapScalingMode.NearestNeighbor);
+                        Canvas.SetLeft(fullBlinking, iconLeft);
+                        Canvas.SetTop(fullBlinking, 0);
+                        Canvas.SetZIndex(fullBlinking, 5); // 中间层
+                        HeartCanvas.Children.Add(fullBlinking);
+
+                        // 如果新值是半心，叠加半心图标
+                        if (newIsHalf)
+                        {
+                            var halfOverlay = new System.Windows.Controls.Image
+                            {
+                                Name = $"HeartHalfOverlay{i}",
+                                Source = LoadBitmapImage(AssetPaths.HeartHalf),
+                                Width = halfWidth,
+                                Height = heartHeight,
+                                Stretch = Stretch.Uniform,
+                                UseLayoutRounding = true,
+                                SnapsToDevicePixels = true
+                            };
+                            RenderOptions.SetBitmapScalingMode(halfOverlay, BitmapScalingMode.NearestNeighbor);
+                            Canvas.SetLeft(halfOverlay, iconLeft);
+                            Canvas.SetTop(halfOverlay, 0);
+                            Canvas.SetZIndex(halfOverlay, 15); // 最顶层
+                            HeartCanvas.Children.Add(halfOverlay);
+                        }
+                    }
+                    else if (oldIsHalf && !newIsFull && !newIsHalf)
+                    {
+                        double iconLeft = i * (heartWidth + heartGap);
+
+                        // 显示 half_blinking
+                        var halfBlinking = new System.Windows.Controls.Image
+                        {
+                            Name = $"HeartHalfBlinking{i}",
+                            Source = LoadBitmapImage(AssetPaths.HeartHalfBlinking),
+                            Width = halfWidth,
+                            Height = heartHeight,
+                            Stretch = Stretch.Uniform,
+                            UseLayoutRounding = true,
+                            SnapsToDevicePixels = true
+                        };
+                        RenderOptions.SetBitmapScalingMode(halfBlinking, BitmapScalingMode.NearestNeighbor);
+                        Canvas.SetLeft(halfBlinking, iconLeft);
+                        Canvas.SetTop(halfBlinking, 0);
+                        Canvas.SetZIndex(halfBlinking, 5); // 中间层
+                        HeartCanvas.Children.Add(halfBlinking);
+                    }
+                }
+            }
+
+            _heartAnimationPlaying = true;
+
+            // 1000ms 后移除动画图标，恢复原始 container
+            _heartAnimationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(1000)
+            };
+            _heartAnimationTimer.Tick += (s, e) =>
+            {
+                _heartAnimationTimer.Stop();
+                ClearHeartAnimationIcons();
+                _heartAnimationPlaying = false;
+            };
+            _heartAnimationTimer.Start();
+        }
+
+        /// <summary>
+        /// 清除生命值动画图标
+        /// </summary>
+        private void ClearHeartAnimationIcons()
+        {
+            // 移除所有 blinking 相关图标
+            var blinkingIcons = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
+                .Where(img => img.Name.Contains("Blinking") || img.Name.Contains("Overlay"))
+                .ToList();
+
+            foreach (var icon in blinkingIcons)
+            {
+                HeartCanvas.Children.Remove(icon);
+            }
+
+            // 恢复原始 container 的可见性
+            var settings = GetHudElementSettings("health");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int slotCount = maxValue / 2;
+
+            for (int i = 0; i < slotCount; i++)
+            {
+                var container = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
+                    .FirstOrDefault(img => img.Name == $"HeartContainer{i}");
+                if (container != null)
+                {
+                    container.Visibility = Visibility.Visible;
                 }
             }
         }
