@@ -103,6 +103,16 @@
     <sys:String x:Key="HudOptionCustomValue">自定义数值</sys:String>
     <sys:String x:Key="HudOptionCustomValueDesc">开启后手动设置数值</sys:String>
 
+    <!-- 数据映射类型 -->
+    <sys:String x:Key="DataMappingBattery">电池电量</sys:String>
+    <sys:String x:Key="DataMappingMemory">内存占用率</sys:String>
+    <sys:String x:Key="DataMappingCpu">CPU利用率</sys:String>
+    <sys:String x:Key="DataMappingGpu">GPU利用率</sys:String>
+
+    <!-- 自定义数值 -->
+    <sys:String x:Key="CustomCurrentValue">当前值</sys:String>
+    <sys:String x:Key="CustomMaxValue">最大值</sys:String>
+
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
     <sys:String x:Key="HotkeyPanelDesc">点击按钮后按下新的快捷键进行设置</sys:String>

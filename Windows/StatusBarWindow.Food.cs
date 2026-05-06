@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CraftSharp.Models;
 
 namespace CraftSharp.Windows
 {
@@ -15,6 +16,12 @@ namespace CraftSharp.Windows
     /// 2. 使用Canvas绘制饥饿值图标，外层使用Grid+StackPanel布局
     /// 3. XAML顺序：空气值(最先) → 饥饿值(最后)
     /// 4. 实际显示：空气值(最上) → 饥饿值(最下)
+    ///
+    /// 图标规则：
+    /// - maxValue上限20，代表10个完整图标（半饥饿=1，满饥饿=2）
+    /// - maxValue决定显示的背景图标数量
+    /// - currentValue决定显示的half/full图标数量
+    /// - 背景使用empty图标
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -63,8 +70,13 @@ namespace CraftSharp.Windows
             double halfWidth = _originalHalfFoodWidth * _scaleFactor;
             double foodGap = _foodGap * _scaleFactor;
 
-            // 设置FoodCanvas尺寸
-            double foodsWidth = 10 * foodWidth + 9 * foodGap;
+            // 获取配置值
+            var settings = GetHudElementSettings("food");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+
+            // 设置FoodCanvas尺寸（根据maxValue动态计算）
+            double foodsWidth = slotCount * foodWidth + (slotCount - 1) * foodGap;
             FoodCanvas.Width = foodsWidth;
             FoodCanvas.Height = foodHeight;
 
@@ -80,8 +92,8 @@ namespace CraftSharp.Windows
             // 清除现有饥饿值图标
             FoodCanvas.Children.Clear();
 
-            // 绘制10个饥饿值图标，从右到左排列（因为右对齐）
-            for (int i = 0; i < 10; i++)
+            // 根据maxValue绘制槽位（背景图标），从右到左排列（因为右对齐）
+            for (int i = 0; i < slotCount; i++)
             {
                 // 计算图标位置：从右往左
                 double iconLeft = foodsWidth - (i + 1) * (foodWidth + foodGap) + foodGap;
@@ -139,21 +151,23 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 更新饥饿值显示（向上取整）
+        /// 更新饥饿值显示
+        /// currentValue决定显示的half/full图标数量
         /// </summary>
         private void UpdateFoodLevel()
         {
-            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-            var batteryPercent = powerStatus.BatteryLifePercent;
+            // 获取配置值
+            var settings = GetHudElementSettings("food");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int currentValue = settings?.CustomCurrentValue ?? 20;
+            int slotCount = maxValue / 2;
 
-            int percent = (int)Math.Ceiling(batteryPercent * 100);
-            int roundedPercent = ((percent + 4) / 5) * 5;
-            if (roundedPercent > 100) roundedPercent = 100;
+            // 计算完整和半饥饿数量
+            // currentValue: 半饥饿=1, 满饥饿=2
+            int fullFoods = currentValue / 2;
+            bool hasHalfFood = (currentValue % 2) == 1;
 
-            int fullFoods = roundedPercent / 10;
-            bool hasHalfFood = (roundedPercent % 10) == 5;
-
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < slotCount; i++)
             {
                 var halfImage = FoodCanvas.Children.OfType<System.Windows.Controls.Image>()
                     .FirstOrDefault(img => img.Name == $"FoodHalf{i}");
@@ -162,16 +176,19 @@ namespace CraftSharp.Windows
 
                 if (i < fullFoods)
                 {
+                    // 满饥饿
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Visible;
                 }
                 else if (i == fullFoods && hasHalfFood)
                 {
+                    // 半饥饿
                     if (halfImage != null) halfImage.Visibility = Visibility.Visible;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }
                 else
                 {
+                    // 空（只有背景empty可见）
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }

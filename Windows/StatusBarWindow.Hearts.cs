@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CraftSharp.Models;
 
 namespace CraftSharp.Windows
 {
@@ -15,6 +16,12 @@ namespace CraftSharp.Windows
     /// 2. 使用Canvas绘制心形，外层使用Grid+StackPanel布局
     /// 3. XAML顺序：护甲值(最先) → 伤害吸收 → 生命值(最后)
     /// 4. 实际显示：护甲值(最上) → 伤害吸收 → 生命值(最下)
+    ///
+    /// 图标规则：
+    /// - maxValue上限20，代表10个完整图标（半心=1，满心=2）
+    /// - maxValue决定显示的背景图标数量
+    /// - currentValue决定显示的half/full图标数量
+    /// - 背景使用container图标
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -63,8 +70,13 @@ namespace CraftSharp.Windows
             double halfWidth = _originalHalfHeartWidth * _scaleFactor;
             double heartGap = _heartGap * _scaleFactor;
 
-            // 设置HeartCanvas尺寸
-            double heartsWidth = 10 * heartWidth + 9 * heartGap;
+            // 获取配置值
+            var settings = GetHudElementSettings("health");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+
+            // 设置HeartCanvas尺寸（根据maxValue动态计算）
+            double heartsWidth = slotCount * heartWidth + (slotCount - 1) * heartGap;
             HeartCanvas.Width = heartsWidth;
             HeartCanvas.Height = heartHeight;
 
@@ -80,12 +92,12 @@ namespace CraftSharp.Windows
             // 清除现有心形
             HeartCanvas.Children.Clear();
 
-            // 绘制10颗心形，从左到右排列
-            for (int i = 0; i < 10; i++)
+            // 根据maxValue绘制槽位（背景图标）
+            for (int i = 0; i < slotCount; i++)
             {
                 double iconLeft = i * (heartWidth + heartGap);
 
-                // 心形容器（空心）
+                // 心形容器（背景）
                 var containerImage = new System.Windows.Controls.Image
                 {
                     Name = $"HeartContainer{i}",
@@ -139,17 +151,23 @@ namespace CraftSharp.Windows
 
         /// <summary>
         /// 更新心形生命值显示
+        /// currentValue决定显示的half/full图标数量
         /// </summary>
         private void UpdateHeartLevel()
         {
-            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-            var batteryPercent = powerStatus.BatteryLifePercent;
+            // 获取配置值
+            var settings = GetHudElementSettings("health");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int currentValue = settings?.CustomCurrentValue ?? 20;
+            int slotCount = maxValue / 2;
 
-            int fullHearts = (int)(batteryPercent * 10);
-            double remainder = batteryPercent * 100 - fullHearts * 10;
-            bool hasHalfHeart = remainder >= 5;
+            // 计算完整和半心数量
+            // currentValue: 半心=1, 满心=2
+            // 例如: currentValue=15 → 7满心(14) + 1半心(1)
+            int fullHearts = currentValue / 2;
+            bool hasHalfHeart = (currentValue % 2) == 1;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < slotCount; i++)
             {
                 var halfImage = HeartCanvas.Children.OfType<System.Windows.Controls.Image>()
                     .FirstOrDefault(img => img.Name == $"HeartHalf{i}");
@@ -158,16 +176,19 @@ namespace CraftSharp.Windows
 
                 if (i < fullHearts)
                 {
+                    // 满心
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Visible;
                 }
                 else if (i == fullHearts && hasHalfHeart)
                 {
+                    // 半心
                     if (halfImage != null) halfImage.Visibility = Visibility.Visible;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }
                 else
                 {
+                    // 空（只有背景container可见）
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }

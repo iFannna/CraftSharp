@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CraftSharp.Models;
 
 namespace CraftSharp.Windows
 {
@@ -15,6 +16,12 @@ namespace CraftSharp.Windows
     /// 2. 护甲值在伤害吸收值上方，间距6px基准
     /// 3. XAML顺序：护甲值(最先) → 伤害吸收 → 生命值(最后)
     /// 4. 实际显示：护甲值(最上) → 伤害吸收 → 生命值(最下)
+    ///
+    /// 图标规则：
+    /// - maxValue上限20，代表10个完整图标（半护甲=1，满护甲=2）
+    /// - maxValue决定显示的背景图标数量
+    /// - currentValue决定显示的half/full图标数量
+    /// - 背景使用empty图标
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -63,8 +70,13 @@ namespace CraftSharp.Windows
             double halfWidth = _originalHalfArmorWidth * _scaleFactor;
             double armorGap = _armorGap * _scaleFactor;
 
-            // 设置ArmorGrid尺寸（暂时为空，等待实现）
-            double armorsWidth = 10 * armorWidth + 9 * armorGap;
+            // 获取配置值
+            var settings = GetHudElementSettings("armor");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
+
+            // 设置ArmorGrid尺寸（根据maxValue动态计算）
+            double armorsWidth = slotCount * armorWidth + (slotCount - 1) * armorGap;
             ArmorGrid.Width = armorsWidth;
             ArmorGrid.Height = armorHeight;
             ArmorGrid.HorizontalAlignment = System.Windows.HorizontalAlignment.Left; // 左对齐
@@ -83,8 +95,8 @@ namespace CraftSharp.Windows
             ArmorGrid.Children.Clear();
             ArmorGrid.Children.Add(armorCanvas);
 
-            // 绘制10个护甲值图标，从左到右排列
-            for (int i = 0; i < 10; i++)
+            // 根据maxValue绘制槽位（背景图标）
+            for (int i = 0; i < slotCount; i++)
             {
                 double iconLeft = i * (armorWidth + armorGap);
 
@@ -141,18 +153,26 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 更新护甲值显示（暂时固定显示满值）
-        /// TODO: 后续可连接到实际数据源
+        /// 更新护甲值显示
+        /// currentValue决定显示的half/full图标数量
         /// </summary>
         private void UpdateArmorLevel()
         {
-            // 暂时固定显示满护甲值
-            int fullArmors = 10;
+            // 获取配置值
+            var settings = GetHudElementSettings("armor");
+            int maxValue = settings?.CustomMaxValue ?? 20;
+            int currentValue = settings?.CustomCurrentValue ?? 20;
+            int slotCount = maxValue / 2;
 
             Canvas armorCanvas = ArmorGrid.Children.OfType<Canvas>().FirstOrDefault();
             if (armorCanvas == null) return;
 
-            for (int i = 0; i < 10; i++)
+            // 计算完整和半护甲数量
+            // currentValue: 半护甲=1, 满护甲=2
+            int fullArmors = currentValue / 2;
+            bool hasHalfArmor = (currentValue % 2) == 1;
+
+            for (int i = 0; i < slotCount; i++)
             {
                 var halfImage = armorCanvas.Children.OfType<System.Windows.Controls.Image>()
                     .FirstOrDefault(img => img.Name == $"ArmorHalf{i}");
@@ -161,11 +181,19 @@ namespace CraftSharp.Windows
 
                 if (i < fullArmors)
                 {
+                    // 满护甲
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Visible;
                 }
+                else if (i == fullArmors && hasHalfArmor)
+                {
+                    // 半护甲
+                    if (halfImage != null) halfImage.Visibility = Visibility.Visible;
+                    if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
+                }
                 else
                 {
+                    // 空（只有背景empty可见）
                     if (halfImage != null) halfImage.Visibility = Visibility.Hidden;
                     if (fullImage != null) fullImage.Visibility = Visibility.Hidden;
                 }

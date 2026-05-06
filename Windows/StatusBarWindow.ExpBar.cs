@@ -12,6 +12,10 @@ namespace CraftSharp.Windows
     /// 1. 经验条宽度占满核心容器（182×缩放比例）
     /// 2. 与下方快捷栏间距6px基准（通过StackPanel Margin实现）
     /// 3. 使用Grid布局，居中显示
+    ///
+    /// 数值规则：
+    /// - CustomCurrentValue 范围 0-100（百分比）
+    /// - CustomValueEnabled 时使用自定义值，否则使用数据映射（电池等）
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -62,25 +66,44 @@ namespace CraftSharp.Windows
             ExperienceBarGrid.Margin = new Thickness(0, 0, 0, BaseVerticalSpacing * _scaleFactor);
             ExperienceBarGrid.Visibility = _expBarVisible ? Visibility.Visible : Visibility.Collapsed;
 
-            UpdateBatteryLevel();
+            UpdateExpBarProgress();
         }
 
         /// <summary>
-        /// 更新电量显示（使用裁剪截断）
+        /// 更新经验条进度显示
         /// </summary>
-        private void UpdateBatteryLevel()
+        private void UpdateExpBarProgress()
         {
-            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-            var batteryPercent = powerStatus.BatteryLifePercent;
-
             double coreWidth = GetCoreContainerWidth();
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
 
             ExperienceBarProgress.Width = coreWidth;
             ExperienceBarProgress.Height = expBarHeight;
 
-            var clipRect = new Rect(0, 0, coreWidth * batteryPercent, expBarHeight);
+            // 获取进度百分比
+            double percent = GetExpBarPercent();
+
+            var clipRect = new Rect(0, 0, coreWidth * percent, expBarHeight);
             ExperienceBarProgress.Clip = new RectangleGeometry(clipRect);
+        }
+
+        /// <summary>
+        /// 获取经验条进度百分比（0.0 - 1.0）
+        /// </summary>
+        private double GetExpBarPercent()
+        {
+            var settings = GetHudElementSettings("expbar");
+
+            // 如果启用自定义数值，使用配置的当前值（0-100）
+            if (settings?.CustomValueEnabled == true)
+            {
+                int currentValue = settings.CustomCurrentValue;
+                return currentValue / 100.0;
+            }
+
+            // 否则使用电池电量（数据映射）
+            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
+            return powerStatus.BatteryLifePercent;
         }
     }
 }

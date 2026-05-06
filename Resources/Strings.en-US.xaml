@@ -103,6 +103,16 @@
     <sys:String x:Key="HudOptionCustomValue">Custom Value</sys:String>
     <sys:String x:Key="HudOptionCustomValueDesc">Enable to manually set value</sys:String>
 
+    <!-- Data Mapping Types -->
+    <sys:String x:Key="DataMappingBattery">Battery Level</sys:String>
+    <sys:String x:Key="DataMappingMemory">Memory Usage</sys:String>
+    <sys:String x:Key="DataMappingCpu">CPU Usage</sys:String>
+    <sys:String x:Key="DataMappingGpu">GPU Usage</sys:String>
+
+    <!-- Custom Value -->
+    <sys:String x:Key="CustomCurrentValue">Current Value</sys:String>
+    <sys:String x:Key="CustomMaxValue">Max Value</sys:String>
+
     <!-- Hotkey Settings Panel -->
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
     <sys:String x:Key="HotkeyPanelDesc">Click button then press new key to set</sys:String>

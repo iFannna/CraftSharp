@@ -47,6 +47,9 @@ namespace CraftSharp.Windows
         // 标记：是否跳过构造函数中的默认定位（用于"记住位置"功能）
         private bool _skipDefaultPositioning = false;
 
+        // 应用设置
+        private Models.AppSettings? _appSettings;
+
         /// <summary>
         /// 设置跳过默认定位（必须在构造函数之前通过静态方式设置）
         /// </summary>
@@ -242,7 +245,7 @@ namespace CraftSharp.Windows
             };
             _batteryTimer.Tick += (s, e) =>
             {
-                UpdateBatteryLevel();
+                UpdateExpBarProgress();
                 UpdateHeartLevel();
                 UpdateFoodLevel();
                 UpdateAirLevel();
@@ -338,6 +341,29 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
+        /// 设置应用配置
+        /// </summary>
+        public void SetAppSettings(Models.AppSettings settings)
+        {
+            _appSettings = settings;
+            // 配置设置后重新Setup所有HUD元素（使用配置文件中的值）
+            SetupHearts();
+            SetupFood();
+            SetupAir();
+            SetupArmor();
+            SetupAbsorbing();
+            SetupExperienceBar();
+        }
+
+        /// <summary>
+        /// 获取HUD元素配置
+        /// </summary>
+        private Models.HudElementSettings? GetHudElementSettings(string id)
+        {
+            return _appSettings?.HudElements.FirstOrDefault(h => h.Id == id);
+        }
+
+        /// <summary>
         /// 根Grid鼠标按下事件 - 实现窗口拖动
         /// </summary>
         private void RootGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -422,6 +448,34 @@ namespace CraftSharp.Windows
         {
             _absorbingVisible = visible;
             AbsorbingGrid.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 刷新指定HUD元素的显示（重新创建图标并更新显示）
+        /// </summary>
+        public void RefreshHudElement(string id)
+        {
+            switch (id)
+            {
+                case "health":
+                    SetupHearts();
+                    break;
+                case "food":
+                    SetupFood();
+                    break;
+                case "armor":
+                    SetupArmor();
+                    break;
+                case "absorbing":
+                    SetupAbsorbing();
+                    break;
+                case "air":
+                    SetupAir();
+                    break;
+                case "expbar":
+                    SetupExperienceBar();
+                    break;
+            }
         }
     }
 }

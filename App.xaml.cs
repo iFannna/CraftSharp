@@ -56,7 +56,7 @@ namespace CraftSharp
             _statusBarWindow = new StatusBarWindow();
 
             // 初始化状态栏服务
-            StatusBarService.Instance.Initialize(_statusBarWindow);
+            StatusBarService.Instance.Initialize(_statusBarWindow, _appSettings!);
 
             // 监听状态栏位置变化（即时保存到配置文件）
             _statusBarWindow.PositionChanged += (s, e) =>

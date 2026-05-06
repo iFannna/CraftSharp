@@ -1,4 +1,5 @@
 using System;
+using CraftSharp.Models;
 
 namespace CraftSharp.Services
 {
@@ -11,6 +12,7 @@ namespace CraftSharp.Services
         public static StatusBarService Instance => _instance ??= new StatusBarService();
 
         private Windows.StatusBarWindow? _statusBarWindow;
+        private AppSettings? _appSettings;
 
         /// <summary>
         /// 状态栏可见性变化事件
@@ -24,6 +26,16 @@ namespace CraftSharp.Services
 
         /// <summary>
         /// 初始化服务
+        /// </summary>
+        public void Initialize(Windows.StatusBarWindow statusBarWindow, AppSettings settings)
+        {
+            _statusBarWindow = statusBarWindow;
+            _appSettings = settings;
+            _statusBarWindow.SetAppSettings(settings);
+        }
+
+        /// <summary>
+        /// 初始化服务（无参数版本，兼容旧调用）
         /// </summary>
         public void Initialize(Windows.StatusBarWindow statusBarWindow)
         {
@@ -162,6 +174,15 @@ namespace CraftSharp.Services
         {
             if (_statusBarWindow == null) return;
             _statusBarWindow.SetAbsorbingVisible(visible);
+        }
+
+        /// <summary>
+        /// 刷新指定HUD元素的显示
+        /// </summary>
+        public void RefreshHudElement(string id)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.RefreshHudElement(id);
         }
     }
 }

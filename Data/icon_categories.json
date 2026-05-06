@@ -2350,11 +2350,11 @@
     "test_block_accept.png": [],
     "test_block_fail.png": [],
     "test_block_log.png": [
-      "natural_block"
+      
     ],
     "test_block_start.png": [],
     "test_instance_block.png": [
-      "building_block"
+      
     ],
     "tinted_glass.png": [
       "colored_block"

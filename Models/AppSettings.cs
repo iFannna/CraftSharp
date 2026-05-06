@@ -175,12 +175,12 @@ namespace CraftSharp.Models
         /// <summary>
         /// 自定义当前值
         /// </summary>
-        public int CustomCurrentValue { get; set; } = 100;
+        public int CustomCurrentValue { get; set; } = 20;
 
         /// <summary>
-        /// 自定义最大值
+        /// 自定义最大值（上限20，代表10个完整图标）
         /// </summary>
-        public int CustomMaxValue { get; set; } = 100;
+        public int CustomMaxValue { get; set; } = 20;
     }
 
     /// <summary>
