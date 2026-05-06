@@ -221,7 +221,13 @@ namespace CraftSharp.Windows.Panels
                 var setVisibleAction = GetSetVisibleAction(id);
                 AddStandardHudElement(id, setVisibleAction, maxValueLimit: 1024);
             }
-            else if (id == "food" || id == "air" || id == "armor")
+            else if (id == "air")
+            {
+                // 空气值特殊：有动画效果选项（仅UI开关，暂不实现动画）
+                var setVisibleAction = GetSetVisibleAction(id);
+                AddStandardHudElement(id, setVisibleAction, hasRegenAnimation: true);
+            }
+            else if (id == "food" || id == "armor")
             {
                 // 标准HUD元素：显示开关 + 数据映射 + 自定义数值（maxValue上限20）
                 var setVisibleAction = GetSetVisibleAction(id);

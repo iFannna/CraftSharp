@@ -38,6 +38,7 @@ namespace CraftSharp
         // 空气值
         public const string Air = "Assets/minecraft/textures/gui/sprites/air/air.png";
         public const string AirEmpty = "Assets/minecraft/textures/gui/sprites/air/air_empty.png";
+        public const string AirBursting = "Assets/minecraft/textures/gui/sprites/air/air_bursting.png";
 
         // 伤害吸收值
         public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/heart/absorbing_full.png";

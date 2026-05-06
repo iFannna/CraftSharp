@@ -96,8 +96,8 @@
     <sys:String x:Key="HudOptionRightOffhandDesc">在快捷栏右侧显示副手槽位</sys:String>
     <sys:String x:Key="HudOptionShowElement">显示元素</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">在快捷栏上显示此 HUD 元素</sys:String>
-    <sys:String x:Key="HudOptionRegenAnim">恢复动画</sys:String>
-    <sys:String x:Key="HudOptionRegenAnimDesc">生命值恢复时显示动画效果</sys:String>
+    <sys:String x:Key="HudOptionRegenAnim">动画效果</sys:String>
+    <sys:String x:Key="HudOptionRegenAnimDesc">生命值变化时显示动画效果</sys:String>
     <sys:String x:Key="HudOptionDataMapping">数据映射</sys:String>
     <sys:String x:Key="HudOptionDataMappingDesc">开启后选择映射的系统数据</sys:String>
     <sys:String x:Key="HudOptionCustomValue">自定义数值</sys:String>

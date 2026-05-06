@@ -24,7 +24,7 @@ namespace CraftSharp.Windows
     /// - currentValue决定显示的half/full图标数量
     /// - 背景使用container图标
     ///
-    /// 动画规则（仅在数据映射开启时生效）：
+    /// 动画规则（仅在恢复动画开关开启且数据映射开启时生效）：
     /// - 生命值增多或减少时：所有container变成container_blinking，持续1000ms
     /// - 生命值减少时：将旧值对应位置的图标变成blinking，新值图标叠加在上面
     /// </summary>
@@ -195,8 +195,9 @@ namespace CraftSharp.Windows
             int fullHearts = currentValue / 2;
             bool hasHalfHeart = (currentValue % 2) == 1;
 
-            // 检查是否需要触发动画（仅在数据映射开启时）
-            if (dataMappingEnabled && _previousHealthValue >= 0 && _previousHealthValue != currentValue)
+            // 检查是否需要触发动画（仅在恢复动画开启且数据映射开启时）
+            bool regenAnimationEnabled = settings?.RegenAnimation ?? false;
+            if (regenAnimationEnabled && dataMappingEnabled && _previousHealthValue >= 0 && _previousHealthValue != currentValue)
             {
                 TriggerHeartAnimation(_previousHealthValue, currentValue, maxValue);
             }
@@ -378,10 +379,10 @@ namespace CraftSharp.Windows
 
             _heartAnimationPlaying = true;
 
-            // 1000ms 后移除动画图标，恢复原始 container
+            // 200ms 后移除动画图标，恢复原始 container
             _heartAnimationTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(1000)
+                Interval = TimeSpan.FromMilliseconds(200)
             };
             _heartAnimationTimer.Tick += (s, e) =>
             {

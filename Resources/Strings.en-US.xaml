@@ -96,8 +96,8 @@
     <sys:String x:Key="HudOptionRightOffhandDesc">Show offhand slot on the right side of hotbar</sys:String>
     <sys:String x:Key="HudOptionShowElement">Show Element</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">Display this HUD element on hotbar</sys:String>
-    <sys:String x:Key="HudOptionRegenAnim">Regeneration Animation</sys:String>
-    <sys:String x:Key="HudOptionRegenAnimDesc">Show animation effect when health regenerates</sys:String>
+    <sys:String x:Key="HudOptionRegenAnim">Animation Effect</sys:String>
+    <sys:String x:Key="HudOptionRegenAnimDesc">Show animation effect when health changes</sys:String>
     <sys:String x:Key="HudOptionDataMapping">Data Mapping</sys:String>
     <sys:String x:Key="HudOptionDataMappingDesc">Enable to select system data to map</sys:String>
     <sys:String x:Key="HudOptionCustomValue">Custom Value</sys:String>
