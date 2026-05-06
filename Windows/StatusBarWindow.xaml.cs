@@ -47,6 +47,11 @@ namespace CraftSharp.Windows
         // 标记：是否跳过构造函数中的默认定位（用于"记住位置"功能）
         private bool _skipDefaultPositioning = false;
 
+        // 拖动状态
+        private bool _isDragging = false;
+        private double _dragOffsetX;  // 鼠标相对于窗口左上角的偏移
+        private double _dragOffsetY;
+
         // 应用设置
         private Models.AppSettings? _appSettings;
 
@@ -230,8 +235,63 @@ namespace CraftSharp.Windows
             // 窗口宽度 = 所有列宽度之和（固定宽度，不随副手槽可见性变化）
             Width = offhandWidth + offhandSpacing + coreWidth + offhandSpacing + offhandWidth;
 
-            // 窗口高度：根据可见组件动态计算
-            Height = double.NaN; // 自动高度
+            // 窗口高度：使用足够大的固定高度容纳所有可能的组件
+            // 伤害吸收值最大情况：1024上限 = 512个图标，每行10个，最多52行
+            Height = CalculateMaxWindowHeight();
+        }
+
+        /// <summary>
+        /// 计算窗口最大高度（所有组件都显示时的高度）
+        /// 伤害吸收值最大：1024上限 = 512个图标，每行10个，最多52行
+        /// </summary>
+        private double CalculateMaxWindowHeight()
+        {
+            double spacing = BaseVerticalSpacing * _scaleFactor;
+
+            // 快捷栏高度
+            double hotbarHeight = _originalHotbarHeight * _scaleFactor;
+
+            // 经验条高度
+            double expBarHeight = _originalExpBarHeight * _scaleFactor;
+
+            // 生命值高度（一行10个心形）
+            double heartHeight = _originalHeartHeight * _scaleFactor;
+
+            // 饥饿值高度
+            double foodHeight = _originalFoodHeight * _scaleFactor;
+
+            // 空气值高度
+            double airHeight = _originalAirHeight * _scaleFactor;
+
+            // 护甲值高度（一行10个护甲图标）
+            double armorHeight = _originalArmorHeight * _scaleFactor;
+
+            // 伤害吸收值最大高度计算
+            // maxValue上限1024，每2点一个完整图标 = 512个图标
+            // 每行10个图标 = 最多52行
+            // 行间距最多减7（BaseVerticalSpacing - 7）
+            int maxAbsorbingSlots = 512;
+            int maxAbsorbingRows = (maxAbsorbingSlots - 1) / AbsorbingIconsPerRow + 1; // 52行
+            int maxGapAdjustment = Math.Min(maxAbsorbingRows - 1, 7); // 7
+            double absorbingHeight = _originalAbsorbingFullHeight * _scaleFactor;
+            double absorbingRowGap = (BaseVerticalSpacing - maxGapAdjustment) * _scaleFactor; // 最小间距
+            double maxAbsorbingHeight = maxAbsorbingRows * absorbingHeight + (maxAbsorbingRows - 1) * absorbingRowGap;
+
+            // 左列高度：护甲 + 护甲间距 + 吸收 + 吸收间距 + 生命值
+            // 护甲与吸收间距：BaseVerticalSpacing
+            // 吸收与生命值间距：BaseVerticalSpacing - gapAdjustment
+            double leftColumnHeight = armorHeight + spacing + maxAbsorbingHeight + ((BaseVerticalSpacing - maxGapAdjustment) * _scaleFactor) + heartHeight;
+
+            // 右列高度：空气 + 空气间距 + 饥饿
+            double rightColumnHeight = airHeight + spacing + foodHeight;
+
+            // 状态行高度
+            double statusRowHeight = Math.Max(leftColumnHeight, rightColumnHeight);
+
+            // 总高度：状态行 + 状态行间距 + 经验条 + 经验条间距 + 快捷栏
+            double totalHeight = statusRowHeight + spacing + expBarHeight + spacing + hotbarHeight;
+
+            return totalHeight;
         }
 
         /// <summary>
@@ -364,14 +424,51 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
-        /// 根Grid鼠标按下事件 - 实现窗口拖动
+        /// 根Grid鼠标按下事件 - 开始自定义拖动（允许拖出屏幕）
         /// </summary>
         private void RootGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (!_isLocked)
             {
-                this.DragMove();
+                _isDragging = true;
+                // 记录鼠标相对于窗口左上角的偏移（WPF逻辑坐标）
+                System.Windows.Point mousePos = e.GetPosition(this);
+                _dragOffsetX = mousePos.X;
+                _dragOffsetY = mousePos.Y;
+                CaptureMouse();
             }
+        }
+
+        /// <summary>
+        /// 鼠标移动事件 - 执行自定义拖动
+        /// </summary>
+        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isDragging && e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                // 获取鼠标在屏幕上的位置（WPF单位）
+                System.Windows.Point screenPoint = PointToScreen(new System.Windows.Point(0, 0));
+                System.Windows.Point mouseScreenPoint = e.GetPosition(null);
+
+                // 直接获取鼠标相对于窗口的位置，更新窗口位置使鼠标保持在原位置
+                System.Windows.Point currentMousePos = e.GetPosition(this);
+                Left += currentMousePos.X - _dragOffsetX;
+                Top += currentMousePos.Y - _dragOffsetY;
+            }
+            base.OnMouseMove(e);
+        }
+
+        /// <summary>
+        /// 鼠标左键释放事件 - 结束拖动
+        /// </summary>
+        protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_isDragging)
+            {
+                _isDragging = false;
+                ReleaseMouseCapture();
+            }
+            base.OnMouseLeftButtonUp(e);
         }
 
         /// <summary>
