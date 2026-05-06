@@ -215,6 +215,9 @@ namespace CraftSharp
                     {
                         Id = "air",
                         IsVisible = false,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 20,
+                        CustomMaxValue = 20,
                         DataMappingType = "电池电量",
                     }
                 },
