@@ -171,32 +171,80 @@ namespace CraftSharp
 
         /// <summary>
         /// 确保所有HUD元素都存在（不存在则添加默认配置）
+        /// 默认配置：
+        /// - 经验条：默认开启自定义数值，当前值0
+        /// - 生命值、饥饿值、伤害吸收值、护甲值：默认开启自定义数值，当前值20最大值20
+        /// - 所有组件：数据映射默认为电池电量
         /// </summary>
         private void EnsureAllHudElementsExist()
         {
             if (_appSettings == null) return;
 
-            var defaultConfigs = new Dictionary<string, (bool isVisible, bool regenAnim)>
+            var defaultConfigs = new Dictionary<string, Models.HudElementSettings>
             {
-                { "expbar", (true, false) },
-                { "health", (true, false) },
-                { "food", (true, false) },
-                { "air", (false, false) },
-                { "armor", (false, false) },
-                { "absorbing", (false, false) },
+                { "expbar", new Models.HudElementSettings
+                    {
+                        Id = "expbar",
+                        IsVisible = true,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 0,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "health", new Models.HudElementSettings
+                    {
+                        Id = "health",
+                        IsVisible = true,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 20,
+                        CustomMaxValue = 20,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "food", new Models.HudElementSettings
+                    {
+                        Id = "food",
+                        IsVisible = true,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 20,
+                        CustomMaxValue = 20,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "air", new Models.HudElementSettings
+                    {
+                        Id = "air",
+                        IsVisible = false,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "armor", new Models.HudElementSettings
+                    {
+                        Id = "armor",
+                        IsVisible = false,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 20,
+                        CustomMaxValue = 20,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "absorbing", new Models.HudElementSettings
+                    {
+                        Id = "absorbing",
+                        IsVisible = false,
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 20,
+                        CustomMaxValue = 20,
+                        DataMappingType = "电池电量",
+                    }
+                },
             };
 
             foreach (var kvp in defaultConfigs)
             {
                 if (!_appSettings.HudElements.Any(h => h.Id == kvp.Key))
                 {
-                    var newElement = new Models.HudElementSettings
-                    {
-                        Id = kvp.Key,
-                        IsVisible = kvp.Value.isVisible,
-                        RegenAnimation = kvp.Value.regenAnim,
-                    };
-                    _appSettings.HudElements.Add(newElement);
+                    _appSettings.HudElements.Add(kvp.Value);
                 }
             }
         }
