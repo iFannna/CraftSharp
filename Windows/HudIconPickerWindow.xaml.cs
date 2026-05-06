@@ -60,17 +60,17 @@ namespace CraftSharp.Windows
                 // - 伤害吸收：absorbing_full, absorbing_hardcore_full
                 var heartStyles = new[]
                 {
-                    ("full", "普通"),
-                    ("hardcore_full", "极限模式"),
-                    ("poisoned_full", "中毒"),
-                    ("poisoned_hardcore_full", "中毒极限"),
-                    ("withered_full", "凋零"),
-                    ("withered_hardcore_full", "凋零极限"),
-                    ("frozen_full", "冻结"),
-                    ("frozen_hardcore_full", "冻结极限"),
-                    ("vehicle_full", "载具"),
-                    ("absorbing_full", "伤害吸收"),
-                    ("absorbing_hardcore_full", "伤害吸收极限")
+                    ("full", "普通 / Normal"),
+                    ("hardcore_full", "极限模式 / Hardcore"),
+                    ("poisoned_full", "中毒 / Poisoned"),
+                    ("poisoned_hardcore_full", "中毒极限 / Poisoned Hardcore"),
+                    ("withered_full", "凋零 / Withered"),
+                    ("withered_hardcore_full", "凋零极限 / Withered Hardcore"),
+                    ("frozen_full", "冻结 / Frozen"),
+                    ("frozen_hardcore_full", "冻结极限 / Frozen Hardcore"),
+                    ("vehicle_full", "载具 / Vehicle"),
+                    ("absorbing_full", "伤害吸收 / Absorption"),
+                    ("absorbing_hardcore_full", "伤害吸收极限 / Absorption Hardcore")
                 };
 
                 foreach (var (style, displayName) in heartStyles)
@@ -100,8 +100,8 @@ namespace CraftSharp.Windows
                 // 饥饿值：food_full 和 food_full_hunger
                 var foodStyles = new[]
                 {
-                    ("food_full", "普通"),
-                    ("food_full_hunger", "饥饿效果")
+                    ("food_full", "普通 / Normal"),
+                    ("food_full_hunger", "饥饿效果 / Hunger Effect")
                 };
 
                 foreach (var (style, displayName) in foodStyles)
@@ -131,8 +131,8 @@ namespace CraftSharp.Windows
                 // 伤害吸收值：absorbing_full 和 absorbing_hardcore_full
                 var absorbingStyles = new[]
                 {
-                    ("absorbing_full", "普通"),
-                    ("absorbing_hardcore_full", "极限模式")
+                    ("absorbing_full", "普通 / Normal"),
+                    ("absorbing_hardcore_full", "极限模式 / Hardcore")
                 };
 
                 foreach (var (style, displayName) in absorbingStyles)
@@ -162,7 +162,7 @@ namespace CraftSharp.Windows
                 // 护甲值：只有 armor_full
                 var armorStyles = new[]
                 {
-                    ("armor_full", "普通")
+                    ("armor_full", "普通 / Normal")
                 };
 
                 foreach (var (style, displayName) in armorStyles)
@@ -192,7 +192,7 @@ namespace CraftSharp.Windows
                 // 空气值：只有 air
                 var airStyles = new[]
                 {
-                    ("air", "普通")
+                    ("air", "普通 / Normal")
                 };
 
                 foreach (var (style, displayName) in airStyles)

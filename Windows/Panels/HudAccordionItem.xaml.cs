@@ -236,9 +236,9 @@ namespace CraftSharp.Windows.Panels
             }
             else if (id == "air")
             {
-                // 空气值特殊：有动画效果选项 + 图标预览
+                // 空气值特殊：有动画效果选项（气泡破裂） + 图标预览
                 var setVisibleAction = GetSetVisibleAction(id);
-                AddStandardHudElement(id, setVisibleAction, hasRegenAnimation: true, iconPath: AssetPaths.Air);
+                AddStandardHudElement(id, setVisibleAction, hasRegenAnimation: true, hasAirAnimation: true, iconPath: AssetPaths.Air);
             }
             else if (id == "food" || id == "armor")
             {
@@ -278,7 +278,7 @@ namespace CraftSharp.Windows.Panels
         /// <summary>
         /// 添加标准HUD元素配置（显示开关 + 数据映射 + 自定义数值）
         /// </summary>
-        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false, string iconPath = "")
+        private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasAirAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false, string iconPath = "")
         {
             EnsureHudElementExists(id);
             var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -319,7 +319,10 @@ namespace CraftSharp.Windows.Panels
             // 恢复动画开关（仅生命值）
             if (hasRegenAnimation)
             {
-                var regenToggle = AddToggleRow("HudOptionRegenAnim", "HudOptionRegenAnimDesc", regenAnim);
+                // 空气值使用独立的动画描述
+                string animLabelKey = hasAirAnimation ? "HudOptionAirAnim" : "HudOptionRegenAnim";
+                string animDescKey = hasAirAnimation ? "HudOptionAirAnimDesc" : "HudOptionRegenAnimDesc";
+                var regenToggle = AddToggleRow(animLabelKey, animDescKey, regenAnim);
                 regenToggle.Checked += (s, e) =>
                 {
                     EnsureHudElementExists(id);

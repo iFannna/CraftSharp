@@ -103,6 +103,8 @@
     <sys:String x:Key="HudOptionShowElementDesc">在快捷栏上显示此 HUD 元素</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">动画效果</sys:String>
     <sys:String x:Key="HudOptionRegenAnimDesc">生命值变化时显示动画效果</sys:String>
+    <sys:String x:Key="HudOptionAirAnim">动画效果</sys:String>
+    <sys:String x:Key="HudOptionAirAnimDesc">空气值减少时显示气泡破裂动画效果</sys:String>
     <sys:String x:Key="HudOptionDataMapping">数据映射</sys:String>
     <sys:String x:Key="HudOptionDataMappingDesc">开启后选择映射的系统数据</sys:String>
     <sys:String x:Key="HudOptionCustomValue">自定义数值</sys:String>

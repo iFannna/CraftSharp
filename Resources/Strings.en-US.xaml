@@ -103,6 +103,8 @@
     <sys:String x:Key="HudOptionShowElementDesc">Display this HUD element on hotbar</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">Animation Effect</sys:String>
     <sys:String x:Key="HudOptionRegenAnimDesc">Show animation effect when health changes</sys:String>
+    <sys:String x:Key="HudOptionAirAnim">Animation Effect</sys:String>
+    <sys:String x:Key="HudOptionAirAnimDesc">Show bubble burst animation when air decreases</sys:String>
     <sys:String x:Key="HudOptionDataMapping">Data Mapping</sys:String>
     <sys:String x:Key="HudOptionDataMappingDesc">Enable to select system data to map</sys:String>
     <sys:String x:Key="HudOptionCustomValue">Custom Value</sys:String>
