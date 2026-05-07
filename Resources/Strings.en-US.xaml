@@ -158,4 +158,13 @@
     <sys:String x:Key="TrayExit">Exit</sys:String>
     <sys:String x:Key="TrayMinimized">Application minimized to system tray</sys:String>
 
+    <!-- Top Most Confirmation Dialog -->
+    <sys:String x:Key="TopMostConfirmTitle">Window Top Most Confirmation</sys:String>
+    <sys:String x:Key="TopMostConfirmHint">Note: This feature does not work in exclusive fullscreen mode</sys:String>
+    <sys:String x:Key="TopMostConfirmSolution">Solution: Enable borderless windowed or windowed fullscreen mode</sys:String>
+    <sys:String x:Key="TopMostConfirmWarningLabel">Risk Warning</sys:String>
+    <sys:String x:Key="TopMostConfirmWarningContent">Anti-cheat systems (VAC, EAC, BattlEye) in most online multiplayer games (CS2, Valorant, PUBG, Apex, etc.) may consider third-party crosshair software as cheating tools. Please use with caution</sys:String>
+    <sys:String x:Key="TopMostConfirmCancel">Cancel</sys:String>
+    <sys:String x:Key="TopMostConfirmOk">Confirm</sys:String>
+
 </ResourceDictionary>

@@ -158,4 +158,13 @@
     <sys:String x:Key="TrayExit">退出</sys:String>
     <sys:String x:Key="TrayMinimized">程序已最小化到系统托盘</sys:String>
 
+    <!-- 窗口置顶确认弹窗 -->
+    <sys:String x:Key="TopMostConfirmTitle">窗口置顶确认</sys:String>
+    <sys:String x:Key="TopMostConfirmHint">提示：独占全屏模式下此功能会失效</sys:String>
+    <sys:String x:Key="TopMostConfirmSolution">解决方案：开启无边框窗口化或窗口化全屏模式</sys:String>
+    <sys:String x:Key="TopMostConfirmWarningLabel">风险警告</sys:String>
+    <sys:String x:Key="TopMostConfirmWarningContent">绝大多数在线多人游戏（如CS2、Valorant、PUBG、Apex等）的反作弊系统（VAC、EAC、BattlEye）会将此类第三方准星软件视为作弊工具，请谨慎使用</sys:String>
+    <sys:String x:Key="TopMostConfirmCancel">取消</sys:String>
+    <sys:String x:Key="TopMostConfirmOk">确认</sys:String>
+
 </ResourceDictionary>

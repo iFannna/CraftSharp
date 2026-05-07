@@ -305,23 +305,46 @@ namespace CraftSharp.Windows.Panels
                     SaveSettings();
                 };
 
-                // 窗口置顶
+                // 窗口置顶（开启时需要确认弹窗）
+                // 使用 Click 事件来完全控制行为，而不是 Checked/Unchecked
                 var topMostToggle = AddToggleRow("HudOptionTopMost", "HudOptionTopMostDesc", topMost);
-                topMostToggle.Checked += (s, e) =>
+
+                topMostToggle.Click += (s, e) =>
                 {
-                    EnsureHudElementExists(id);
-                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
-                    if (elem != null) elem.TopMost = true;
-                    Services.CrosshairService.Instance.SetTopMost(true);
-                    SaveSettings();
-                };
-                topMostToggle.Unchecked += (s, e) =>
-                {
-                    EnsureHudElementExists(id);
-                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
-                    if (elem != null) elem.TopMost = false;
-                    Services.CrosshairService.Instance.SetTopMost(false);
-                    SaveSettings();
+                    // 获取点击后的状态（ToggleSwitch 点击后会先改变状态再触发事件）
+                    bool newState = topMostToggle.IsChecked ?? false;
+
+                    if (newState) // 用户试图开启
+                    {
+                        // 弹出确认窗口
+                        var confirmWindow = new TopMostConfirmWindow();
+                        confirmWindow.Owner = System.Windows.Window.GetWindow(this);
+                        confirmWindow.ShowDialog();
+
+                        if (confirmWindow.IsConfirmed)
+                        {
+                            // 用户确认：执行开启逻辑
+                            EnsureHudElementExists(id);
+                            var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                            if (elem != null) elem.TopMost = true;
+                            Services.CrosshairService.Instance.SetTopMost(true);
+                            SaveSettings();
+                        }
+                        else
+                        {
+                            // 用户取消：恢复关闭状态，不执行任何逻辑
+                            topMostToggle.IsChecked = false;
+                        }
+                    }
+                    else // 用户试图关闭
+                    {
+                        // 关闭不需要确认，直接执行逻辑
+                        EnsureHudElementExists(id);
+                        var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                        if (elem != null) elem.TopMost = false;
+                        Services.CrosshairService.Instance.SetTopMost(false);
+                        SaveSettings();
+                    }
                 };
             }
             else if (id == "attackindicator")
