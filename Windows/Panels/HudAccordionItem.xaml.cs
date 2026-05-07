@@ -137,6 +137,21 @@ namespace CraftSharp.Windows.Panels
             }
         }
 
+        /// <summary>
+        /// 刷新HUD元素显示（根据id调用相应的服务）
+        /// </summary>
+        private void RefreshHudElement(string id)
+        {
+            if (id == "crosshair" || id == "attackindicator")
+            {
+                Services.CrosshairService.Instance.RefreshHudElement(id);
+            }
+            else
+            {
+                RefreshHudElement(id);
+            }
+        }
+
         private void RefreshContentHeight()
         {
             if (!_isExpanded || _isAnimating) return;
@@ -259,6 +274,94 @@ namespace CraftSharp.Windows.Panels
                     iconPath = AssetPaths.ArmorFull;
                 }
                 AddStandardHudElement(id, setVisibleAction, hasSaturation: id == "food", iconPath: iconPath);
+            }
+            else if (id == "crosshair")
+            {
+                // 准星：元素图标 + 显示元素 + 窗口置顶
+                EnsureHudElementExists(id);
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                bool isVisible = settings?.IsVisible ?? false; // 默认不显示
+                bool topMost = settings?.TopMost ?? false;
+
+                // 元素图标预览
+                AddIconPreviewRow("HudOptionElementIcon", AssetPaths.Crosshair);
+
+                // 显示开关
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.IsVisible = true;
+                    Services.CrosshairService.Instance.SetCrosshairVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.IsVisible = false;
+                    Services.CrosshairService.Instance.SetCrosshairVisible(false);
+                    SaveSettings();
+                };
+
+                // 窗口置顶
+                var topMostToggle = AddToggleRow("HudOptionTopMost", "HudOptionTopMostDesc", topMost);
+                topMostToggle.Checked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.TopMost = true;
+                    Services.CrosshairService.Instance.SetTopMost(true);
+                    SaveSettings();
+                };
+                topMostToggle.Unchecked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.TopMost = false;
+                    Services.CrosshairService.Instance.SetTopMost(false);
+                    SaveSettings();
+                };
+            }
+            else if (id == "attackindicator")
+            {
+                // 攻击指示器：元素图标 + 显示元素 + 数据映射 + 自定义数值
+                EnsureHudElementExists(id);
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                bool isVisible = settings?.IsVisible ?? false; // 默认不显示
+                bool dataMappingEnabled = settings?.DataMappingEnabled ?? false;
+                string dataMappingType = settings?.DataMappingType ?? "电池电量";
+                bool customValueEnabled = settings?.CustomValueEnabled ?? true;
+                int customCurrentValue = settings?.CustomCurrentValue ?? 100;
+
+                // 元素图标预览
+                AddIconPreviewRow("HudOptionElementIcon", AssetPaths.CrosshairAttackIndicatorFull);
+
+                // 显示开关
+                var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
+                showToggle.Checked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.IsVisible = true;
+                    Services.CrosshairService.Instance.SetAttackIndicatorVisible(true);
+                    SaveSettings();
+                };
+                showToggle.Unchecked += (s, e) =>
+                {
+                    EnsureHudElementExists(id);
+                    var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                    if (elem != null) elem.IsVisible = false;
+                    Services.CrosshairService.Instance.SetAttackIndicatorVisible(false);
+                    SaveSettings();
+                };
+
+                // 数据映射
+                AddDataMappingSection(id, dataMappingEnabled, dataMappingType);
+
+                // 自定义数值（无最大值输入框，固定上限100）
+                AddCustomValueSection(id, customValueEnabled, customCurrentValue, 100, hasMaxValue: false, maxValueLimit: 100);
             }
         }
 
@@ -443,7 +546,7 @@ namespace CraftSharp.Windows.Panels
                 }
 
                 SaveSettings();
-                StatusBarService.Instance.RefreshHudElement(id);
+                RefreshHudElement(id);
                 RefreshContentHeight();
             };
             _mappingToggle.Unchecked += (s, e) =>
@@ -453,7 +556,7 @@ namespace CraftSharp.Windows.Panels
                 if (elem != null) elem.DataMappingEnabled = false;
                 _mappingComboBox.Visibility = Visibility.Collapsed;
                 SaveSettings();
-                StatusBarService.Instance.RefreshHudElement(id);
+                RefreshHudElement(id);
                 RefreshContentHeight();
             };
         }
@@ -574,7 +677,7 @@ namespace CraftSharp.Windows.Panels
                     elem.CustomCurrentValue = val;
                     _currentValueTextBox.Text = val.ToString();
                     SaveSettings();
-                    StatusBarService.Instance.RefreshHudElement(id);
+                    RefreshHudElement(id);
                 }
             };
             _valueContainer.Children.Add(currentRow);
@@ -690,7 +793,7 @@ namespace CraftSharp.Windows.Panels
                         }
 
                         SaveSettings();
-                        StatusBarService.Instance.RefreshHudElement(id);
+                        RefreshHudElement(id);
                     }
                 };
             }
@@ -774,7 +877,7 @@ namespace CraftSharp.Windows.Panels
                         elem.CustomSaturationValue = val;
                         _saturationTextBox.Text = val.ToString();
                         SaveSettings();
-                        StatusBarService.Instance.RefreshHudElement(id);
+                        RefreshHudElement(id);
                     }
                 };
             }
@@ -804,7 +907,7 @@ namespace CraftSharp.Windows.Panels
                 }
 
                 SaveSettings();
-                StatusBarService.Instance.RefreshHudElement(id);
+                RefreshHudElement(id);
                 RefreshContentHeight();
             };
             _customToggle.Unchecked += (s, e) =>
@@ -814,7 +917,7 @@ namespace CraftSharp.Windows.Panels
                 if (elem != null) elem.CustomValueEnabled = false;
                 _valueContainer.Visibility = Visibility.Collapsed;
                 SaveSettings();
-                StatusBarService.Instance.RefreshHudElement(id);
+                RefreshHudElement(id);
                 RefreshContentHeight();
             };
         }
@@ -960,6 +1063,8 @@ namespace CraftSharp.Windows.Panels
                 "armor" => "armor",
                 "air" => "air",
                 "expbar" => "expbar",
+                "crosshair" => "crosshair",
+                "attackindicator" => "attackindicator",
                 _ => hudId
             };
         }
@@ -977,6 +1082,8 @@ namespace CraftSharp.Windows.Panels
                 "armor" => AssetPaths.ArmorFull,
                 "air" => AssetPaths.Air,
                 "expbar" => GetExpBarIconPath(iconStyle),
+                "crosshair" => AssetPaths.Crosshair,
+                "attackindicator" => AssetPaths.CrosshairAttackIndicatorFull,
                 _ => ""
             };
         }

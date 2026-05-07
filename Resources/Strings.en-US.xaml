@@ -75,6 +75,7 @@
     <!-- HUD Settings Panel -->
     <sys:String x:Key="HudPanelTitle">HUD Settings</sys:String>
     <sys:String x:Key="HudStatusBarSettings">Status Bar Settings</sys:String>
+    <sys:String x:Key="HudCrosshairSettings">Crosshair Settings</sys:String>
     <sys:String x:Key="HudElementStatusBar">Status Bar</sys:String>
     <sys:String x:Key="HudElementHotbar">Hotbar</sys:String>
     <sys:String x:Key="HudElementHealth">Health</sys:String>
@@ -83,6 +84,8 @@
     <sys:String x:Key="HudElementAir">Air</sys:String>
     <sys:String x:Key="HudElementArmor">Armor</sys:String>
     <sys:String x:Key="HudElementAbsorbing">Absorption</sys:String>
+    <sys:String x:Key="HudElementCrosshair">Crosshair</sys:String>
+    <sys:String x:Key="HudElementAttackIndicator">Attack Indicator</sys:String>
 
     <!-- HUD Options -->
     <sys:String x:Key="HudOptionShowStatusBar">Show Status Bar</sys:String>
@@ -101,6 +104,8 @@
     <sys:String x:Key="HudOptionElementIconDesc">The display icon for this HUD element</sys:String>
     <sys:String x:Key="HudOptionShowElement">Show Element</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">Display this HUD element on hotbar</sys:String>
+    <sys:String x:Key="HudOptionTopMost">Window Top Most</sys:String>
+    <sys:String x:Key="HudOptionTopMostDesc">Keep crosshair window above all other windows</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">Animation Effect</sys:String>
     <sys:String x:Key="HudOptionRegenAnimDesc">Show animation effect when health changes</sys:String>
     <sys:String x:Key="HudOptionAirAnim">Animation Effect</sys:String>

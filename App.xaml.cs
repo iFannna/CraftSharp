@@ -11,6 +11,7 @@ namespace CraftSharp
     public partial class App : System.Windows.Application
     {
         private StatusBarWindow? _statusBarWindow;
+        private CrosshairWindow? _crosshairWindow;
         private InventoryWindow? _inventoryWindow;
         private SettingsWindow? _settingsWindow;
         private TaskbarIcon? _taskbarIcon;
@@ -102,6 +103,17 @@ namespace CraftSharp
                 _statusBarWindow.Show();
             else
                 _statusBarWindow.Hide();
+
+            // 创建准星窗口
+            _crosshairWindow = new CrosshairWindow();
+
+            // 初始化准星服务
+            CrosshairService.Instance.Initialize(_crosshairWindow, _appSettings!);
+
+            // 准星窗口始终居中于屏幕，不需要记住位置
+
+            // 初始化准星HUD元素可见性
+            InitializeCrosshairElementsVisibility();
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow();
@@ -238,6 +250,22 @@ namespace CraftSharp
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
+                        DataMappingType = "电池电量",
+                    }
+                },
+                { "crosshair", new Models.HudElementSettings
+                    {
+                        Id = "crosshair",
+                        IsVisible = false, // 默认不显示
+                        TopMost = false,
+                    }
+                },
+                { "attackindicator", new Models.HudElementSettings
+                    {
+                        Id = "attackindicator",
+                        IsVisible = false, // 默认不显示
+                        CustomValueEnabled = true,
+                        CustomCurrentValue = 99,
                         DataMappingType = "电池电量",
                     }
                 },
@@ -465,6 +493,23 @@ namespace CraftSharp
                 var settings = _appSettings.HudElements.FirstOrDefault(h => h.Id == kvp.Key);
                 kvp.Value(settings?.IsVisible ?? true);
             }
+        }
+
+        /// <summary>
+        /// 初始化准星HUD元素可见性（根据配置文件）
+        /// </summary>
+        private void InitializeCrosshairElementsVisibility()
+        {
+            if (_appSettings == null) return;
+
+            // 准星
+            var crosshairSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+            CrosshairService.Instance.SetCrosshairVisible(crosshairSettings?.IsVisible ?? false);
+            CrosshairService.Instance.SetTopMost(crosshairSettings?.TopMost ?? false);
+
+            // 攻击指示器
+            var attackIndicatorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+            CrosshairService.Instance.SetAttackIndicatorVisible(attackIndicatorSettings?.IsVisible ?? false);
         }
 
         /// <summary>

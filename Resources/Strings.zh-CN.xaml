@@ -75,6 +75,7 @@
     <!-- HUD 设置面板 -->
     <sys:String x:Key="HudPanelTitle">HUD 设置</sys:String>
     <sys:String x:Key="HudStatusBarSettings">状态栏设置</sys:String>
+    <sys:String x:Key="HudCrosshairSettings">准星设置</sys:String>
     <sys:String x:Key="HudElementStatusBar">状态栏</sys:String>
     <sys:String x:Key="HudElementHotbar">快捷栏</sys:String>
     <sys:String x:Key="HudElementHealth">生命值</sys:String>
@@ -83,6 +84,8 @@
     <sys:String x:Key="HudElementAir">空气值</sys:String>
     <sys:String x:Key="HudElementArmor">护甲值</sys:String>
     <sys:String x:Key="HudElementAbsorbing">伤害吸收值</sys:String>
+    <sys:String x:Key="HudElementCrosshair">准星</sys:String>
+    <sys:String x:Key="HudElementAttackIndicator">攻击指示器</sys:String>
 
     <!-- HUD 选项 -->
     <sys:String x:Key="HudOptionShowStatusBar">显示状态栏</sys:String>
@@ -101,6 +104,8 @@
     <sys:String x:Key="HudOptionElementIconDesc">此HUD元素的显示图标</sys:String>
     <sys:String x:Key="HudOptionShowElement">显示元素</sys:String>
     <sys:String x:Key="HudOptionShowElementDesc">在快捷栏上显示此 HUD 元素</sys:String>
+    <sys:String x:Key="HudOptionTopMost">窗口置顶</sys:String>
+    <sys:String x:Key="HudOptionTopMostDesc">准星窗口始终保持在其他窗口之上</sys:String>
     <sys:String x:Key="HudOptionRegenAnim">动画效果</sys:String>
     <sys:String x:Key="HudOptionRegenAnimDesc">生命值变化时显示动画效果</sys:String>
     <sys:String x:Key="HudOptionAirAnim">动画效果</sys:String>

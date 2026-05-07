@@ -65,6 +65,12 @@ namespace CraftSharp
         public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/heart/absorbing_full.png";
         public const string AbsorbingHalf = "Assets/minecraft/textures/gui/sprites/heart/absorbing_half.png";
 
+        // 准星
+        public const string Crosshair = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair.png";
+        public const string CrosshairAttackIndicatorBackground = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_background.png";
+        public const string CrosshairAttackIndicatorFull = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_full.png";
+        public const string CrosshairAttackIndicatorProgress = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_progress.png";
+
         /// <summary>
         /// 根据 IconStyle 获取生命值图标路径
         /// IconStyle: full, hardcore_full, poisoned_full, withered_full, frozen_full, vehicle_full,

@@ -1,0 +1,48 @@
+<Window x:Class="CraftSharp.Windows.CrosshairWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Crosshair"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="Transparent"
+        Topmost="False"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        RenderOptions.BitmapScalingMode="NearestNeighbor"
+        WindowStartupLocation="Manual">
+
+    <!-- Canvas：元素绝对定位 -->
+    <Canvas x:Name="LayoutCanvas">
+        <!-- 准星图标 -->
+        <Grid x:Name="CrosshairGrid">
+            <Image x:Name="CrosshairImage"
+                   Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   UseLayoutRounding="True"
+                   SnapsToDevicePixels="True"/>
+        </Grid>
+
+        <!-- 攻击指示器 -->
+        <Grid x:Name="AttackIndicatorGrid">
+            <!-- 背景图片 -->
+            <Image x:Name="AttackIndicatorBackground"
+                   Stretch="Fill"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   UseLayoutRounding="True"
+                   SnapsToDevicePixels="True"/>
+            <!-- 进度图片（通过裁剪显示进度） -->
+            <Image x:Name="AttackIndicatorProgress"
+                   Stretch="Fill"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   UseLayoutRounding="True"
+                   SnapsToDevicePixels="True"
+                   HorizontalAlignment="Left"/>
+            <!-- 满进度图片（进度=100时显示） -->
+            <Image x:Name="AttackIndicatorFull"
+                   Stretch="Fill"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   UseLayoutRounding="True"
+                   SnapsToDevicePixels="True"/>
+        </Grid>
+    </Canvas>
+</Window>

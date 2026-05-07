@@ -7,10 +7,18 @@
         <TextBlock Text="{DynamicResource HudPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-        <!-- 副标题 -->
+        <!-- 状态栏设置副标题 -->
         <TextBlock Text="{DynamicResource HudStatusBarSettings}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-        <StackPanel x:Name="HudAccordionContainer"/>
+        <!-- 状态栏元素容器 -->
+        <StackPanel x:Name="HudStatusBarContainer"/>
+
+        <!-- 准星设置副标题 -->
+        <TextBlock x:Name="CrosshairSettingsTitle" Text="{DynamicResource HudCrosshairSettings}" FontSize="16" FontWeight="Medium" Margin="0,24,0,16"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+        <!-- 准星元素容器 -->
+        <StackPanel x:Name="HudCrosshairContainer"/>
     </StackPanel>
 </UserControl>

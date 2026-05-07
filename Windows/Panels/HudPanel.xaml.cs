@@ -22,13 +22,15 @@ namespace CraftSharp.Windows.Panels
         private void OnLanguageChanged()
         {
             // 清空并重新构建
-            HudAccordionContainer.Children.Clear();
+            HudStatusBarContainer.Children.Clear();
+            HudCrosshairContainer.Children.Clear();
             InitializeHudAccordion();
         }
 
         private void InitializeHudAccordion()
         {
-            var hudElements = new[]
+            // 状态栏元素
+            var statusBarElements = new[]
             {
                 ("statusbar", "HudElementStatusBar"),
                 ("hotbar", "HudElementHotbar"),
@@ -40,11 +42,25 @@ namespace CraftSharp.Windows.Panels
                 ("armor", "HudElementArmor"),
             };
 
-            foreach (var (id, resourceKey) in hudElements)
+            foreach (var (id, resourceKey) in statusBarElements)
             {
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name);
-                HudAccordionContainer.Children.Add(item);
+                HudStatusBarContainer.Children.Add(item);
+            }
+
+            // 准星元素
+            var crosshairElements = new[]
+            {
+                ("crosshair", "HudElementCrosshair"),
+                ("attackindicator", "HudElementAttackIndicator"),
+            };
+
+            foreach (var (id, resourceKey) in crosshairElements)
+            {
+                var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
+                var item = new HudAccordionItem(_settings, id, name);
+                HudCrosshairContainer.Children.Add(item);
             }
         }
     }

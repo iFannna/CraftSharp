@@ -191,6 +191,11 @@ namespace CraftSharp.Models
         /// 自定义饱和度（仅饥饿值，默认0，最大20）
         /// </summary>
         public int CustomSaturationValue { get; set; } = 0;
+
+        /// <summary>
+        /// 窗口置顶（仅准星）
+        /// </summary>
+        public bool TopMost { get; set; } = false;
     }
 
     /// <summary>
