@@ -49,17 +49,21 @@ namespace CraftSharp.Windows
             double expBarHeight = _originalExpBarHeight * _scaleFactor;
             double coreWidth = GetCoreContainerWidth();
 
+            // 获取配置值
+            var settings = GetHudElementSettings("expbar");
+            string iconStyle = settings?.IconStyle ?? "";
+
             // 设置经验条尺寸（高度按原图比例，宽度可适当调整）
             ExperienceBarGrid.Height = expBarHeight;
             ExperienceBarGrid.Width = coreWidth; // 占满核心容器
 
-            // 设置背景图片
-            ExperienceBarBackground.Source = LoadBitmapImage(AssetPaths.ExperienceBarBackground);
+            // 设置背景图片（使用动态路径）
+            ExperienceBarBackground.Source = LoadBitmapImage(AssetPaths.GetExpBarPath(iconStyle, "background"));
             ExperienceBarBackground.Width = coreWidth;
             ExperienceBarBackground.Height = expBarHeight;
 
-            // 设置进度图片
-            ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.ExperienceBarProgress);
+            // 设置进度图片（使用动态路径）
+            ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.GetExpBarPath(iconStyle, "progress"));
             ExperienceBarProgress.Height = expBarHeight;
 
             // 与下方快捷栏间距：6px基准（Margin.Bottom在上层元素上）

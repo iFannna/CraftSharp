@@ -222,8 +222,11 @@ namespace CraftSharp.Windows.Panels
             }
             else if (id == "expbar")
             {
-                // 经验条特殊：只有当前值，没有最大值
-                AddStandardHudElement(id, StatusBarService.Instance.SetExpBarVisible, hasMaxValue: false);
+                // 经验条特殊：只有当前值，没有最大值，可选经验条或跳跃进度条
+                var settings = _settings.HudElements.FirstOrDefault(h => h.Id == id);
+                string iconStyle = settings?.IconStyle ?? "";
+                string iconPath = GetExpBarIconPath(iconStyle);
+                AddStandardHudElement(id, StatusBarService.Instance.SetExpBarVisible, hasMaxValue: false, iconPath: iconPath);
             }
             else if (id == "absorbing")
             {
@@ -956,6 +959,7 @@ namespace CraftSharp.Windows.Panels
                 "absorbing" => "absorbing",
                 "armor" => "armor",
                 "air" => "air",
+                "expbar" => "expbar",
                 _ => hudId
             };
         }
@@ -972,8 +976,22 @@ namespace CraftSharp.Windows.Panels
                 "absorbing" => GetAbsorbingIconPath(iconStyle),
                 "armor" => AssetPaths.ArmorFull,
                 "air" => AssetPaths.Air,
+                "expbar" => GetExpBarIconPath(iconStyle),
                 _ => ""
             };
+        }
+
+        /// <summary>
+        /// 根据 IconStyle 获取经验条图标路径
+        /// </summary>
+        private static string GetExpBarIconPath(string iconStyle)
+        {
+            if (string.IsNullOrEmpty(iconStyle) || iconStyle == "experience_bar_progress")
+            {
+                return AssetPaths.ExperienceBarProgress;
+            }
+            // jump_bar_progress
+            return AssetPaths.JumpBarProgress;
         }
 
         /// <summary>

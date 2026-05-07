@@ -13,6 +13,23 @@ namespace CraftSharp
         // 经验条
         public const string ExperienceBarBackground = "Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_background.png";
         public const string ExperienceBarProgress = "Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_progress.png";
+        public const string JumpBarBackground = "Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_background.png";
+        public const string JumpBarProgress = "Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_progress.png";
+
+        /// <summary>
+        /// 根据 IconStyle 获取经验条图标路径
+        /// IconStyle: experience_bar_progress, jump_bar_progress
+        /// </summary>
+        public static string GetExpBarPath(string iconStyle, string suffix)
+        {
+            // suffix: background, progress
+            if (string.IsNullOrEmpty(iconStyle) || iconStyle == "experience_bar_progress")
+            {
+                return $"Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_{suffix}.png";
+            }
+            // jump_bar_progress → jump_bar_{suffix}.png
+            return $"Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_{suffix}.png";
+        }
 
         // 背包
         public const string Inventory = "Assets/minecraft/textures/gui/sprites/inventory/inventory.png";

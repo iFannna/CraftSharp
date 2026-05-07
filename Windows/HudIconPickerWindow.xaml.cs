@@ -217,6 +217,38 @@ namespace CraftSharp.Windows
                     }
                 }
             }
+            else if (_elementType == "expbar")
+            {
+                // 经验条：experience_bar_progress 和 jump_bar_progress
+                var expbarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "experience_bar");
+                var expbarStyles = new[]
+                {
+                    ("experience_bar_progress", "经验条 / Experience Bar"),
+                    ("jump_bar_progress", "跳跃进度条 / Jump Bar")
+                };
+
+                foreach (var (style, displayName) in expbarStyles)
+                {
+                    var filename = $"{style}.png";
+                    var fullPath = Path.Combine(expbarPath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
 
             IconGrid.ItemsSource = _iconItems;
             LoadingOverlay.Visibility = Visibility.Collapsed;
