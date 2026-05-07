@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 using CraftSharp.Models;
 using CraftSharp.Windows.Panels;
 using Wpf.Ui.Controls;
@@ -20,6 +21,30 @@ namespace CraftSharp.Windows
 
             _settings = settings;
 
+            // 根据设置恢复窗口位置和大小
+            if (_settings.SettingsWindowRememberPosition)
+            {
+                // 只有当位置值有效（不为 0,0）时才恢复位置
+                if (_settings.SettingsWindowPositionX != 0 || _settings.SettingsWindowPositionY != 0)
+                {
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+                    Left = _settings.SettingsWindowPositionX;
+                    Top = _settings.SettingsWindowPositionY;
+                }
+            }
+
+            if (_settings.SettingsWindowRememberSize)
+            {
+                Width = _settings.SettingsWindowWidth;
+                Height = _settings.SettingsWindowHeight;
+            }
+
+            // 监听窗口位置变化（即时保存）
+            LocationChanged += OnLocationChanged;
+
+            // 监听窗口大小变化（即时保存）
+            SizeChanged += OnSizeChanged;
+
             // 创建各个面板并添加到容器
             _panelSystem = new SystemPanel(_settings);
             _panelAppearance = new AppearancePanel(_settings);
@@ -35,6 +60,34 @@ namespace CraftSharp.Windows
             ContentContainer.Children.Add(_panelAbout);
 
             ShowPanel("system");
+        }
+
+        private void OnLocationChanged(object? sender, EventArgs e)
+        {
+            if (_settings.SettingsWindowRememberPosition)
+            {
+                _settings.SettingsWindowPositionX = Left;
+                _settings.SettingsWindowPositionY = Top;
+                SaveSettings();
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_settings.SettingsWindowRememberSize)
+            {
+                _settings.SettingsWindowWidth = Width;
+                _settings.SettingsWindowHeight = Height;
+                SaveSettings();
+            }
+        }
+
+        private void SaveSettings()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
         }
 
         private void NavListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

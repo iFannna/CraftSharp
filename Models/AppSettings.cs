@@ -25,6 +25,36 @@ namespace CraftSharp.Models
         /// </summary>
         public bool AutoStart { get; set; } = true;
 
+        /// <summary>
+        /// 记住设置窗口位置
+        /// </summary>
+        public bool SettingsWindowRememberPosition { get; set; } = true;
+
+        /// <summary>
+        /// 记住设置窗口大小
+        /// </summary>
+        public bool SettingsWindowRememberSize { get; set; } = true;
+
+        /// <summary>
+        /// 设置窗口 X 坐标
+        /// </summary>
+        public double SettingsWindowPositionX { get; set; } = 0;
+
+        /// <summary>
+        /// 设置窗口 Y 坐标
+        /// </summary>
+        public double SettingsWindowPositionY { get; set; } = 0;
+
+        /// <summary>
+        /// 设置窗口宽度
+        /// </summary>
+        public double SettingsWindowWidth { get; set; } = 1080;
+
+        /// <summary>
+        /// 设置窗口高度
+        /// </summary>
+        public double SettingsWindowHeight { get; set; } = 720;
+
         // ==================== 外观设置 ====================
         /// <summary>
         /// 主题风格

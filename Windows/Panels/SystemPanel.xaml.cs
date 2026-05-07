@@ -19,6 +19,8 @@ namespace CraftSharp.Windows.Panels
         {
             LanguageComboBox.SelectedIndex = _settings.Language == "简体中文" ? 0 : 1;
             AutoStartToggle.IsChecked = _settings.AutoStart;
+            RememberPositionToggle.IsChecked = _settings.SettingsWindowRememberPosition;
+            RememberSizeToggle.IsChecked = _settings.SettingsWindowRememberSize;
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -43,6 +45,26 @@ namespace CraftSharp.Windows.Panels
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
                 _settings.AutoStart = toggle.IsChecked ?? false;
+                // 即时保存设置
+                SaveSettings();
+            }
+        }
+
+        private void RememberPositionToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
+                _settings.SettingsWindowRememberPosition = toggle.IsChecked ?? false;
+                // 即时保存设置
+                SaveSettings();
+            }
+        }
+
+        private void RememberSizeToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
+                _settings.SettingsWindowRememberSize = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
             }
