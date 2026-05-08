@@ -30,12 +30,17 @@
 
             <!-- 中间：BOSS图标预览 + 名称 -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- BOSS血条图标预览（182x5比例，缩放显示） -->
+                <!-- BOSS血条图标预览（182x5比例，缩放显示，元素图标+等级图标叠加） -->
                 <Border Width="364" Height="10" Margin="0,0,12,0"
-                        
                         x:Name="IconPreviewBorder">
-                    <Image x:Name="IconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <Grid>
+                        <!-- 底层：元素图标 -->
+                        <Image x:Name="IconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                        <!-- 上层：等级图标 -->
+                        <Image x:Name="NotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    </Grid>
                 </Border>
                 <!-- BOSS名称 -->
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center"

@@ -71,6 +71,7 @@ namespace CraftSharp.Controls
 
         private void LoadIconPreview()
         {
+            // 加载元素图标
             var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(Settings.IconType));
             if (File.Exists(iconPath))
             {
@@ -85,6 +86,30 @@ namespace CraftSharp.Controls
             else
             {
                 IconPreviewImage.Source = null;
+            }
+
+            // 加载等级图标（叠加在元素图标上）
+            if (!string.IsNullOrEmpty(Settings.NotchType))
+            {
+                var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(Settings.NotchType));
+                if (File.Exists(notchPath))
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(notchPath, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    NotchPreviewImage.Source = bitmap;
+                }
+                else
+                {
+                    NotchPreviewImage.Source = null;
+                }
+            }
+            else
+            {
+                NotchPreviewImage.Source = null;
             }
         }
 

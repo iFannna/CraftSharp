@@ -83,12 +83,12 @@ namespace CraftSharp.Windows
             }
             else
             {
-                // 新建模式：默认配置
+                // 新建模式：默认配置（自定义数值100，数据映射关闭）
                 _iconType = "blue";
                 _notchType = "";
                 NameTextBox.Text = "";
-                DataMappingToggle.IsChecked = true;
-                CustomValueToggle.IsChecked = false;
+                DataMappingToggle.IsChecked = false;
+                CustomValueToggle.IsChecked = true;
                 CurrentValueTextBox.Text = "100";
                 SetDataMappingComboBox("电池电量");
             }
@@ -126,10 +126,13 @@ namespace CraftSharp.Windows
                 bitmap.EndInit();
                 bitmap.Freeze();
                 IconPreviewImage.Source = bitmap;
+                // 同时更新等级预览区域的底层元素图标
+                NotchIconPreviewImage.Source = bitmap;
             }
             else
             {
                 IconPreviewImage.Source = null;
+                NotchIconPreviewImage.Source = null;
             }
         }
 
@@ -137,8 +140,8 @@ namespace CraftSharp.Windows
         {
             if (string.IsNullOrEmpty(_notchType))
             {
-                // 无分段样式
-                NotchPreviewImage.Source = null;
+                // 无分段样式，只显示元素图标
+                NotchNotchPreviewImage.Source = null;
                 return;
             }
 
@@ -151,21 +154,33 @@ namespace CraftSharp.Windows
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
                 bitmap.Freeze();
-                NotchPreviewImage.Source = bitmap;
+                NotchNotchPreviewImage.Source = bitmap;
             }
             else
             {
-                NotchPreviewImage.Source = null;
+                NotchNotchPreviewImage.Source = null;
             }
         }
 
         private void DataMappingToggle_Click(object sender, RoutedEventArgs e)
         {
+            // 开启数据映射时，自动关闭自定义数值
+            if (DataMappingToggle.IsChecked == true)
+            {
+                CustomValueToggle.IsChecked = false;
+            }
             UpdateDataMappingVisibility();
+            UpdateCustomValueVisibility();
         }
 
         private void CustomValueToggle_Click(object sender, RoutedEventArgs e)
         {
+            // 开启自定义数值时，自动关闭数据映射
+            if (CustomValueToggle.IsChecked == true)
+            {
+                DataMappingToggle.IsChecked = false;
+            }
+            UpdateDataMappingVisibility();
             UpdateCustomValueVisibility();
         }
 
@@ -179,6 +194,7 @@ namespace CraftSharp.Windows
             CustomValueGrid.Visibility = CustomValueToggle.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        
         private void IconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var picker = new HudIconPickerWindow("boss_bar");

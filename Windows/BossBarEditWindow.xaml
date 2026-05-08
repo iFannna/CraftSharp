@@ -24,7 +24,7 @@
 
         <!-- 内容区域 -->
         <StackPanel Grid.Row="1" Margin="16">
-            <!-- 图标预览 -->
+            <!-- 元素图标预览 -->
             <TextBlock Text="{DynamicResource HudOptionElementIcon}" FontWeight="Medium" Margin="0,0,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
             <Border x:Name="IconPreviewBorder" Height="32" HorizontalAlignment="Stretch"
@@ -35,15 +35,21 @@
                        RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </Border>
 
-            <!-- 等级预览（分段样式） -->
+            <!-- 等级预览（元素图标+等级图标叠加） -->
             <TextBlock Text="{DynamicResource BossBarNotchLabel}" FontWeight="Medium" Margin="0,16,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
             <Border x:Name="NotchPreviewBorder" Height="32" HorizontalAlignment="Stretch"
                     Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8"
                     Cursor="Hand" MouseLeftButtonDown="NotchPreview_Click"
                     ToolTip="{DynamicResource BossBarNotchDesc}">
-                <Image x:Name="NotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                <Grid>
+                    <!-- 底层：元素图标 -->
+                    <Image x:Name="NotchIconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <!-- 上层：等级图标 -->
+                    <Image x:Name="NotchNotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </Grid>
             </Border>
 
             <!-- 名称输入 -->
@@ -69,11 +75,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{DynamicResource CustomCurrentValue}" VerticalAlignment="Center"
                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0"/>
                 <TextBox x:Name="CurrentValueTextBox" Grid.Column="1" Text="100"
                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="/100" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="4,0,0,0"/>
             </Grid>
         </StackPanel>
 
