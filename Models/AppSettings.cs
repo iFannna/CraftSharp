@@ -12,6 +12,7 @@ namespace CraftSharp.Models
             // 不在构造函数中初始化默认元素，避免 JSON 反序列化时产生重复
             // 默认元素由 App.xaml.cs 的 EnsureAllHudElementsExist 方法添加
             HudElements = new ObservableCollection<HudElementSettings>();
+            BossBars = new ObservableCollection<BossBarSettings>();
         }
 
         // ==================== 系统设置 ====================
@@ -126,6 +127,11 @@ namespace CraftSharp.Models
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; }
+
+        /// <summary>
+        /// BOSS 血条配置列表
+        /// </summary>
+        public ObservableCollection<BossBarSettings> BossBars { get; set; }
 
         // ==================== 快捷键设置 ====================
         /// <summary>
@@ -246,7 +252,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 图标类型
         /// </summary>
-        public string IconType { get; set; } = "dragon";
+        public string IconType { get; set; } = "blue";
 
         /// <summary>
         /// 是否启用

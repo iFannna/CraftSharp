@@ -148,7 +148,7 @@ namespace CraftSharp.Windows.Panels
             }
             else
             {
-                RefreshHudElement(id);
+                StatusBarService.Instance.RefreshHudElement(id);
             }
         }
 
@@ -385,6 +385,11 @@ namespace CraftSharp.Windows.Panels
 
                 // 自定义数值（无最大值输入框，固定上限100）
                 AddCustomValueSection(id, customValueEnabled, customCurrentValue, 100, hasMaxValue: false, maxValueLimit: 100);
+            }
+            else if (id == "bossbar")
+            {
+                // BOSS血条：动态列表（"+"按钮 + 列表项控件）
+                AddBossBarContent();
             }
         }
 
@@ -1150,6 +1155,172 @@ namespace CraftSharp.Windows.Panels
             bitmap.EndInit();
             bitmap.Freeze();
             return bitmap;
+        }
+
+        // ==================== BOSS血条 ====================
+
+        private StackPanel? _bossBarItemsContainer;
+
+        /// <summary>
+        /// 添加BOSS血条内容（列表项控件 + "+"按钮在最下方）
+        /// </summary>
+        private void AddBossBarContent()
+        {
+            // BOSS血条列表容器
+            _bossBarItemsContainer = new StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Vertical
+            };
+            ContentPanel.Children.Add(_bossBarItemsContainer);
+
+            // "+"按钮（在最下方）
+            var addButton = new System.Windows.Controls.Button
+            {
+                Content = "+",
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Height = 40,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Margin = new Thickness(0, 8, 0, 0),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
+            };
+            addButton.Click += AddBossBarButton_Click;
+            ContentPanel.Children.Add(addButton);
+
+            // 初始化：遍历BossBars创建BossBarItemControl
+            foreach (var bossBar in _settings.BossBars)
+            {
+                var itemControl = new Controls.BossBarItemControl(bossBar);
+                itemControl.EditRequested += BossBarItem_EditRequested;
+                itemControl.DeleteRequested += BossBarItem_DeleteRequested;
+                itemControl.EnableChanged += BossBarItem_EnableChanged;
+                itemControl.DragStarted += BossBarItem_DragStarted;
+                itemControl.Dropped += BossBarItem_Dropped;
+                _bossBarItemsContainer.Children.Add(itemControl);
+            }
+
+            // 监听BossBars集合变化，更新UI
+            _settings.BossBars.CollectionChanged += BossBars_CollectionChanged;
+        }
+
+        private void AddBossBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var editWindow = new BossBarEditWindow(null); // null = 新建模式
+            editWindow.Owner = System.Windows.Window.GetWindow(this);
+            editWindow.ShowDialog();
+            if (editWindow.Result != null)
+            {
+                _settings.BossBars.Add(editWindow.Result);
+                SaveSettings();
+            }
+        }
+
+        private void BossBarItem_EditRequested(object? sender, BossBarSettings settings)
+        {
+            var editWindow = new BossBarEditWindow(settings);
+            editWindow.Owner = System.Windows.Window.GetWindow(this);
+            editWindow.ShowDialog();
+            if (editWindow.Result != null)
+            {
+                // 更新现有配置
+                var existing = _settings.BossBars.FirstOrDefault(b => b.Id == settings.Id);
+                if (existing != null)
+                {
+                    existing.Name = editWindow.Result.Name;
+                    existing.IconType = editWindow.Result.IconType;
+                    existing.DataMappingEnabled = editWindow.Result.DataMappingEnabled;
+                    existing.DataMappingType = editWindow.Result.DataMappingType;
+                    existing.CustomValueEnabled = editWindow.Result.CustomValueEnabled;
+                    existing.CustomCurrentValue = editWindow.Result.CustomCurrentValue;
+                    SaveSettings();
+
+                    // 更新控件显示
+                    if (sender is Controls.BossBarItemControl control)
+                    {
+                        control.UpdateSettings(existing);
+                    }
+                }
+            }
+        }
+
+        private void BossBarItem_DeleteRequested(object? sender, BossBarSettings settings)
+        {
+            _settings.BossBars.Remove(settings);
+            SaveSettings();
+        }
+
+        private void BossBarItem_EnableChanged(object? sender, BossBarSettings settings)
+        {
+            SaveSettings();
+        }
+
+        private void BossBarItem_DragStarted(object? sender, Controls.BossBarItemControl control)
+        {
+            control.StartDrag();
+        }
+
+        private void BossBarItem_Dropped(object? sender, Controls.BossBarItemControl sourceControl)
+        {
+            if (sender is Controls.BossBarItemControl targetControl)
+            {
+                // 获取源和目标的索引
+                int sourceIndex = _bossBarItemsContainer!.Children.IndexOf(sourceControl);
+                int targetIndex = _bossBarItemsContainer.Children.IndexOf(targetControl);
+
+                if (sourceIndex >= 0 && targetIndex >= 0 && sourceIndex != targetIndex)
+                {
+                    // 移动BossBars集合中的项
+                    _settings.BossBars.Move(sourceIndex, targetIndex);
+                    SaveSettings();
+
+                    // 重新排列容器中的控件
+                    _bossBarItemsContainer.Children.Remove(sourceControl);
+                    _bossBarItemsContainer.Children.Insert(targetIndex, sourceControl);
+                }
+            }
+        }
+
+        private void BossBars_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (_bossBarItemsContainer == null) return;
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
+            {
+                foreach (BossBarSettings newItem in e.NewItems)
+                {
+                    var itemControl = new Controls.BossBarItemControl(newItem);
+                    itemControl.EditRequested += BossBarItem_EditRequested;
+                    itemControl.DeleteRequested += BossBarItem_DeleteRequested;
+                    itemControl.EnableChanged += BossBarItem_EnableChanged;
+                    itemControl.DragStarted += BossBarItem_DragStarted;
+                    itemControl.Dropped += BossBarItem_Dropped;
+                    _bossBarItemsContainer.Children.Add(itemControl);
+                }
+                // 刷新容器高度以显示新添加的项
+                RefreshContentHeight();
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove && e.OldItems != null)
+            {
+                foreach (BossBarSettings oldItem in e.OldItems)
+                {
+                    // 找到对应的控件并移除
+                    foreach (var child in _bossBarItemsContainer.Children)
+                    {
+                        if (child is Controls.BossBarItemControl control && control.Settings.Id == oldItem.Id)
+                        {
+                            _bossBarItemsContainer.Children.Remove(control);
+                            break;
+                        }
+                    }
+                }
+                // 刷新容器高度
+                RefreshContentHeight();
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                _bossBarItemsContainer.Children.Clear();
+                RefreshContentHeight();
+            }
         }
     }
 }

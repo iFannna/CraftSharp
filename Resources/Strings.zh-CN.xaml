@@ -90,6 +90,8 @@
     <sys:String x:Key="HudElementAbsorbing">伤害吸收值</sys:String>
     <sys:String x:Key="HudElementCrosshair">准星</sys:String>
     <sys:String x:Key="HudElementAttackIndicator">攻击指示器</sys:String>
+    <sys:String x:Key="HudBossBarSettings">BOSS血条设置</sys:String>
+    <sys:String x:Key="HudElementBossBar">BOSS血条</sys:String>
 
     <!-- HUD 选项 -->
     <sys:String x:Key="HudOptionShowStatusBar">显示状态栏</sys:String>
@@ -166,5 +168,15 @@
     <sys:String x:Key="TopMostConfirmWarningContent">绝大多数在线多人游戏（如CS2、Valorant、PUBG、Apex等）的反作弊系统（VAC、EAC、BattlEye）会将此类第三方准星软件视为作弊工具，请谨慎使用</sys:String>
     <sys:String x:Key="TopMostConfirmCancel">取消</sys:String>
     <sys:String x:Key="TopMostConfirmOk">确认</sys:String>
+
+    <!-- BOSS血条编辑弹窗 -->
+    <sys:String x:Key="BossBarEditTitle">编辑 BOSS血条</sys:String>
+    <sys:String x:Key="BossBarNameLabel">名称</sys:String>
+    <sys:String x:Key="BossBarNamePlaceholder">输入BOSS名称</sys:String>
+    <sys:String x:Key="BossBarEditSave">保存</sys:String>
+    <sys:String x:Key="BossBarItemEdit">编辑</sys:String>
+    <sys:String x:Key="BossBarItemDelete">删除</sys:String>
+    <sys:String x:Key="BossBarItemEnable">启用</sys:String>
+    <sys:String x:Key="BossBarItemDisable">禁用</sys:String>
 
 </ResourceDictionary>

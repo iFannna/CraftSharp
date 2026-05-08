@@ -203,5 +203,19 @@ namespace CraftSharp
             // 文件不存在，回退到默认图标
             return $"Assets/minecraft/textures/gui/sprites/heart/absorbing_{suffix}.png";
         }
+
+        // BOSS血条
+        /// <summary>
+        /// 根据 IconType 获取 BOSS血条图标路径
+        /// IconType: blue, green, red, pink, purple, white, yellow, notched_6, notched_10, notched_12, notched_20
+        /// </summary>
+        public static string GetBossBarPath(string iconType)
+        {
+            if (string.IsNullOrEmpty(iconType))
+            {
+                return "Assets/minecraft/textures/gui/sprites/boss_bar/blue_progress.png";
+            }
+            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{iconType}_progress.png";
+        }
     }
 }

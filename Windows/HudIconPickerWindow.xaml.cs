@@ -249,6 +249,47 @@ namespace CraftSharp.Windows
                     }
                 }
             }
+            else if (_elementType == "boss_bar")
+            {
+                // BOSS血条图标（参考经验条实现）
+                var bossBarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "boss_bar");
+                var bossBarStyles = new[]
+                {
+                    ("blue", "蓝色 / Blue"),
+                    ("green", "绿色 / Green"),
+                    ("red", "红色 / Red"),
+                    ("pink", "粉色 / Pink"),
+                    ("purple", "紫色 / Purple"),
+                    ("white", "白色 / White"),
+                    ("yellow", "黄色 / Yellow"),
+                    ("notched_6", "6格 / 6 Notches"),
+                    ("notched_10", "10格 / 10 Notches"),
+                    ("notched_12", "12格 / 12 Notches"),
+                    ("notched_20", "20格 / 20 Notches")
+                };
+
+                foreach (var (style, displayName) in bossBarStyles)
+                {
+                    var filename = $"{style}_progress.png";
+                    var fullPath = Path.Combine(bossBarPath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
 
             IconGrid.ItemsSource = _iconItems;
             LoadingOverlay.Visibility = Visibility.Collapsed;

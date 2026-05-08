@@ -90,6 +90,8 @@
     <sys:String x:Key="HudElementAbsorbing">Absorption</sys:String>
     <sys:String x:Key="HudElementCrosshair">Crosshair</sys:String>
     <sys:String x:Key="HudElementAttackIndicator">Attack Indicator</sys:String>
+    <sys:String x:Key="HudBossBarSettings">Boss Bar Settings</sys:String>
+    <sys:String x:Key="HudElementBossBar">Boss Bar</sys:String>
 
     <!-- HUD Options -->
     <sys:String x:Key="HudOptionShowStatusBar">Show Status Bar</sys:String>
@@ -166,5 +168,15 @@
     <sys:String x:Key="TopMostConfirmWarningContent">Anti-cheat systems (VAC, EAC, BattlEye) in most online multiplayer games (CS2, Valorant, PUBG, Apex, etc.) may consider third-party crosshair software as cheating tools. Please use with caution</sys:String>
     <sys:String x:Key="TopMostConfirmCancel">Cancel</sys:String>
     <sys:String x:Key="TopMostConfirmOk">Confirm</sys:String>
+
+    <!-- BOSS Bar Edit Dialog -->
+    <sys:String x:Key="BossBarEditTitle">Edit Boss Bar</sys:String>
+    <sys:String x:Key="BossBarNameLabel">Name</sys:String>
+    <sys:String x:Key="BossBarNamePlaceholder">Enter boss name</sys:String>
+    <sys:String x:Key="BossBarEditSave">Save</sys:String>
+    <sys:String x:Key="BossBarItemEdit">Edit</sys:String>
+    <sys:String x:Key="BossBarItemDelete">Delete</sys:String>
+    <sys:String x:Key="BossBarItemEnable">Enable</sys:String>
+    <sys:String x:Key="BossBarItemDisable">Disable</sys:String>
 
 </ResourceDictionary>

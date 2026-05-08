@@ -24,6 +24,7 @@ namespace CraftSharp.Windows.Panels
             // 清空并重新构建
             HudStatusBarContainer.Children.Clear();
             HudCrosshairContainer.Children.Clear();
+            HudBossBarContainer.Children.Clear();
             InitializeHudAccordion();
         }
 
@@ -61,6 +62,19 @@ namespace CraftSharp.Windows.Panels
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name);
                 HudCrosshairContainer.Children.Add(item);
+            }
+
+            // BOSS血条元素
+            var bossBarElements = new[]
+            {
+                ("bossbar", "HudElementBossBar"),
+            };
+
+            foreach (var (id, resourceKey) in bossBarElements)
+            {
+                var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
+                var item = new HudAccordionItem(_settings, id, name);
+                HudBossBarContainer.Children.Add(item);
             }
         }
     }
