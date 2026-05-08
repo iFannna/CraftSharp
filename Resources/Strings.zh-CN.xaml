@@ -178,5 +178,7 @@
     <sys:String x:Key="BossBarItemDelete">删除</sys:String>
     <sys:String x:Key="BossBarItemEnable">启用</sys:String>
     <sys:String x:Key="BossBarItemDisable">禁用</sys:String>
+    <sys:String x:Key="BossBarNotchLabel">等级</sys:String>
+    <sys:String x:Key="BossBarNotchDesc">点击预览选择分段样式</sys:String>
 
 </ResourceDictionary>

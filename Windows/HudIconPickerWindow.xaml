@@ -38,10 +38,25 @@
                                     ToolTip="{Binding DisplayName}"
                                     ToolTipService.InitialShowDelay="0"
                                     ToolTipService.ShowDuration="5000">
-                                <Image Source="{Binding BitmapImage}"
-                                       Stretch="Uniform"
-                                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                <Grid>
+                                    <Image x:Name="IconImage"
+                                           Stretch="Uniform"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           Source="{Binding BitmapImage, TargetNullValue={x:Null}}"/>
+                                    <TextBlock x:Name="NoneText" Text="无"
+                                               Visibility="Collapsed"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               FontSize="14"/>
+                                </Grid>
                             </Border>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IconStyle}" Value="">
+                                    <Setter TargetName="IconImage" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="NoneText" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

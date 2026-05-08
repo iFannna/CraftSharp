@@ -251,7 +251,7 @@ namespace CraftSharp.Windows
             }
             else if (_elementType == "boss_bar")
             {
-                // BOSS血条图标（参考经验条实现）
+                // BOSS血条颜色样式（不含notches）
                 var bossBarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "boss_bar");
                 var bossBarStyles = new[]
                 {
@@ -261,14 +261,53 @@ namespace CraftSharp.Windows
                     ("pink", "粉色 / Pink"),
                     ("purple", "紫色 / Purple"),
                     ("white", "白色 / White"),
-                    ("yellow", "黄色 / Yellow"),
+                    ("yellow", "黄色 / Yellow")
+                };
+
+                foreach (var (style, displayName) in bossBarStyles)
+                {
+                    var filename = $"{style}_progress.png";
+                    var fullPath = Path.Combine(bossBarPath, filename);
+                    if (File.Exists(fullPath))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+
+                        _iconItems.Add(new HudIconItem
+                        {
+                            IconStyle = style,
+                            DisplayName = displayName,
+                            BitmapImage = bitmap
+                        });
+                    }
+                }
+            }
+            else if (_elementType == "boss_bar_notch")
+            {
+                // BOSS血条分段样式（Notches），第一个选项为"无"
+                var bossBarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "boss_bar");
+
+                // "无"选项（空字符串表示无分段）
+                _iconItems.Add(new HudIconItem
+                {
+                    IconStyle = "",
+                    DisplayName = "无 / None",
+                    BitmapImage = null! // 无图标
+                });
+
+                var notchStyles = new[]
+                {
                     ("notched_6", "6格 / 6 Notches"),
                     ("notched_10", "10格 / 10 Notches"),
                     ("notched_12", "12格 / 12 Notches"),
                     ("notched_20", "20格 / 20 Notches")
                 };
 
-                foreach (var (style, displayName) in bossBarStyles)
+                foreach (var (style, displayName) in notchStyles)
                 {
                     var filename = $"{style}_progress.png";
                     var fullPath = Path.Combine(bossBarPath, filename);

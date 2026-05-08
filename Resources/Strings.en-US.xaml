@@ -178,5 +178,7 @@
     <sys:String x:Key="BossBarItemDelete">Delete</sys:String>
     <sys:String x:Key="BossBarItemEnable">Enable</sys:String>
     <sys:String x:Key="BossBarItemDisable">Disable</sys:String>
+    <sys:String x:Key="BossBarNotchLabel">Notches</sys:String>
+    <sys:String x:Key="BossBarNotchDesc">Click preview to select notch style</sys:String>
 
 </ResourceDictionary>

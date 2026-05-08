@@ -35,6 +35,17 @@
                        RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </Border>
 
+            <!-- 等级预览（分段样式） -->
+            <TextBlock Text="{DynamicResource BossBarNotchLabel}" FontWeight="Medium" Margin="0,16,0,8"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <Border x:Name="NotchPreviewBorder" Height="32" HorizontalAlignment="Stretch"
+                    Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8"
+                    Cursor="Hand" MouseLeftButtonDown="NotchPreview_Click"
+                    ToolTip="{DynamicResource BossBarNotchDesc}">
+                <Image x:Name="NotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            </Border>
+
             <!-- 名称输入 -->
             <TextBlock Text="{DynamicResource BossBarNameLabel}" FontWeight="Medium" Margin="0,16,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>

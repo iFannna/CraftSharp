@@ -31,8 +31,8 @@
             <!-- 中间：BOSS图标预览 + 名称 -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <!-- BOSS血条图标预览（182x5比例，缩放显示） -->
-                <Border Width="182" Height="10" Margin="0,0,12,0"
-                        Background="{DynamicResource ApplicationBackgroundBrush}" CornerRadius="2"
+                <Border Width="364" Height="10" Margin="0,0,12,0"
+                        
                         x:Name="IconPreviewBorder">
                     <Image x:Name="IconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>

@@ -1228,6 +1228,7 @@ namespace CraftSharp.Windows.Panels
                 {
                     existing.Name = editWindow.Result.Name;
                     existing.IconType = editWindow.Result.IconType;
+                    existing.NotchType = editWindow.Result.NotchType;
                     existing.DataMappingEnabled = editWindow.Result.DataMappingEnabled;
                     existing.DataMappingType = editWindow.Result.DataMappingType;
                     existing.CustomValueEnabled = editWindow.Result.CustomValueEnabled;

@@ -21,6 +21,7 @@ namespace CraftSharp.Windows
         private readonly BossBarSettings? _originalSettings;
         private readonly bool _isNew;
         private string _iconType = "blue";
+        private string _notchType = "";
 
         public BossBarEditWindow(BossBarSettings? settings = null)
         {
@@ -71,6 +72,7 @@ namespace CraftSharp.Windows
             {
                 // 编辑模式：加载现有配置
                 _iconType = _originalSettings.IconType;
+                _notchType = _originalSettings.NotchType;
                 NameTextBox.Text = _originalSettings.Name;
                 DataMappingToggle.IsChecked = _originalSettings.DataMappingEnabled;
                 CustomValueToggle.IsChecked = _originalSettings.CustomValueEnabled;
@@ -83,6 +85,7 @@ namespace CraftSharp.Windows
             {
                 // 新建模式：默认配置
                 _iconType = "blue";
+                _notchType = "";
                 NameTextBox.Text = "";
                 DataMappingToggle.IsChecked = true;
                 CustomValueToggle.IsChecked = false;
@@ -96,6 +99,7 @@ namespace CraftSharp.Windows
 
             // 加载图标预览
             LoadIconPreview();
+            LoadNotchPreview();
         }
 
         private void SetDataMappingComboBox(string dataMappingType)
@@ -125,8 +129,33 @@ namespace CraftSharp.Windows
             }
             else
             {
-                // 图标文件不存在，显示占位符
                 IconPreviewImage.Source = null;
+            }
+        }
+
+        private void LoadNotchPreview()
+        {
+            if (string.IsNullOrEmpty(_notchType))
+            {
+                // 无分段样式
+                NotchPreviewImage.Source = null;
+                return;
+            }
+
+            var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(_notchType));
+            if (File.Exists(notchPath))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(notchPath, UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                NotchPreviewImage.Source = bitmap;
+            }
+            else
+            {
+                NotchPreviewImage.Source = null;
             }
         }
 
@@ -158,6 +187,17 @@ namespace CraftSharp.Windows
             {
                 _iconType = picker.SelectedIconStyle;
                 LoadIconPreview();
+            }
+        }
+
+        private void NotchPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var picker = new HudIconPickerWindow("boss_bar_notch");
+            picker.Owner = this;
+            if (picker.ShowDialog() == true && picker.SelectedIconStyle != null)
+            {
+                _notchType = picker.SelectedIconStyle;
+                LoadNotchPreview();
             }
         }
 
@@ -196,6 +236,7 @@ namespace CraftSharp.Windows
                     Id = System.Guid.NewGuid().ToString(),
                     Name = NameTextBox.Text,
                     IconType = _iconType,
+                    NotchType = _notchType,
                     IsEnabled = true,
                     DataMappingEnabled = DataMappingToggle.IsChecked == true,
                     DataMappingType = dataMappingType,
@@ -212,6 +253,7 @@ namespace CraftSharp.Windows
                     Id = _originalSettings!.Id,
                     Name = NameTextBox.Text,
                     IconType = _iconType,
+                    NotchType = _notchType,
                     IsEnabled = _originalSettings.IsEnabled,
                     DataMappingEnabled = DataMappingToggle.IsChecked == true,
                     DataMappingType = dataMappingType,

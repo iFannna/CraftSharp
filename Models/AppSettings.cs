@@ -250,9 +250,14 @@ namespace CraftSharp.Models
         public string Name { get; set; } = "新BOSS";
 
         /// <summary>
-        /// 图标类型
+        /// 图标类型（颜色样式）
         /// </summary>
         public string IconType { get; set; } = "blue";
+
+        /// <summary>
+        /// 分段样式（Notches等级，空表示无）
+        /// </summary>
+        public string NotchType { get; set; } = "";
 
         /// <summary>
         /// 是否启用
