@@ -1,9 +1,10 @@
 using CraftSharp.Models;
-using CraftSharp.Windows;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 namespace CraftSharp.Controls
@@ -34,14 +35,18 @@ namespace CraftSharp.Controls
         public event EventHandler<BossBarSettings>? EnableChanged;
 
         /// <summary>
-        /// 拖动开始事件
+        /// 拖动事件（实时通知父容器）
         /// </summary>
-        public event EventHandler<BossBarItemControl>? DragStarted;
+        public event EventHandler<BossBarDragEventArgs>? Dragging;
 
         /// <summary>
-        /// 拖动结束事件（用于排序）
+        /// 拖动完成事件
         /// </summary>
-        public event EventHandler<BossBarItemControl>? Dropped;
+        public event EventHandler<BossBarDropEventArgs>? Dropped;
+
+        private bool _isDragging = false;
+        private double _dragStartY = 0;
+        private double _visualOffset = 0;
 
         public BossBarItemControl(BossBarSettings settings)
         {
@@ -49,16 +54,12 @@ namespace CraftSharp.Controls
             Settings = settings;
             DataContext = settings;
 
-            // 初始化UI
             InitializeUI();
         }
 
         private void InitializeUI()
         {
-            // 设置启用按钮文本
             UpdateEnableButtonText();
-
-            // 加载图标预览
             LoadIconPreview();
         }
 
@@ -71,7 +72,6 @@ namespace CraftSharp.Controls
 
         private void LoadIconPreview()
         {
-            // 加载元素图标
             var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(Settings.IconType));
             if (File.Exists(iconPath))
             {
@@ -88,7 +88,6 @@ namespace CraftSharp.Controls
                 IconPreviewImage.Source = null;
             }
 
-            // 加载等级图标（叠加在元素图标上）
             if (!string.IsNullOrEmpty(Settings.NotchType))
             {
                 var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(Settings.NotchType));
@@ -130,49 +129,97 @@ namespace CraftSharp.Controls
             EnableChanged?.Invoke(this, Settings);
         }
 
-        // ==================== 拖动排序 ====================
+        // ==================== 拖动系统 ====================
 
-        private void OnDragHandleClick(object sender, MouseButtonEventArgs e)
+        private Storyboard? _currentStoryboard;
+
+        /// <summary>
+        /// 开始拖动
+        /// </summary>
+        public void StartDrag(double startY)
         {
-            // 开始拖动
-            DragStarted?.Invoke(this, this);
+            _isDragging = true;
+            _dragStartY = startY;
+            _visualOffset = 0;
+
+            // 取消之前的动画
+            CancelCurrentAnimation();
+
+            // 拖动状态：缩小 + 半透明（直接设置，不用动画）
+            ScaleTransform.ScaleX = 0.95;
+            ScaleTransform.ScaleY = 0.95;
+            RootBorder.Opacity = 0.6;
+            TranslateTransform.Y = 0;
         }
 
-        private void OnDragStart(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// 拖动过程中更新位置
+        /// </summary>
+        public void UpdateDragPosition(double currentY)
         {
-            // 只有拖动手柄区域才能触发拖动
-            // 这里不实现，实际在 OnDragHandleClick 中触发
+            if (!_isDragging) return;
+
+            _visualOffset = currentY - _dragStartY;
+            TranslateTransform.Y = _visualOffset;
+
+            // 实时通知父容器
+            Dragging?.Invoke(this, new BossBarDragEventArgs(this, _visualOffset));
         }
 
-        public void StartDrag()
+        /// <summary>
+        /// 拖动完成
+        /// </summary>
+        public void EndDrag()
         {
-            System.Windows.DragDrop.DoDragDrop(this, this, System.Windows.DragDropEffects.Move);
+            if (!_isDragging) return;
+
+            _isDragging = false;
+
+            // 通知父容器完成拖动
+            Dropped?.Invoke(this, new BossBarDropEventArgs(this));
         }
 
-        private void OnDragOver(object sender, System.Windows.DragEventArgs e)
+        /// <summary>
+        /// 定格在当前位置（拖拽完成时调用）
+        /// </summary>
+        public void FinalizePosition()
         {
-            if (e.Data.GetDataPresent(typeof(BossBarItemControl)))
+            // 取消动画
+            CancelCurrentAnimation();
+
+            // 直接恢复正常状态
+            ScaleTransform.ScaleX = 1;
+            ScaleTransform.ScaleY = 1;
+            RootBorder.Opacity = 1;
+            TranslateTransform.Y = 0;
+        }
+
+        /// <summary>
+        /// 取消当前动画
+        /// </summary>
+        private void CancelCurrentAnimation()
+        {
+            if (_currentStoryboard != null)
             {
-                e.Effects = System.Windows.DragDropEffects.Move;
+                _currentStoryboard.Stop(this);
+                _currentStoryboard = null;
             }
-            else
-            {
-                e.Effects = System.Windows.DragDropEffects.None;
-            }
-            e.Handled = true;
+
+            // 清除所有动画
+            ScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            ScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+            RootBorder.BeginAnimation(Border.OpacityProperty, null);
+            TranslateTransform.BeginAnimation(TranslateTransform.YProperty, null);
         }
 
-        private void OnDrop(object sender, System.Windows.DragEventArgs e)
+        /// <summary>
+        /// 设置位移偏移（其他项让位时调用）
+        /// </summary>
+        public void SetShiftOffset(double offset)
         {
-            if (e.Data.GetDataPresent(typeof(BossBarItemControl)))
-            {
-                var sourceControl = e.Data.GetData(typeof(BossBarItemControl)) as BossBarItemControl;
-                if (sourceControl != null && sourceControl != this)
-                {
-                    Dropped?.Invoke(this, sourceControl);
-                }
-            }
-            e.Handled = true;
+            if (_isDragging) return;
+
+            TranslateTransform.Y = offset;
         }
 
         /// <summary>
@@ -183,6 +230,82 @@ namespace CraftSharp.Controls
             Settings = newSettings;
             DataContext = newSettings;
             InitializeUI();
+        }
+
+        // 拖动手柄点击事件
+        private void OnDragHandleMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+
+            var container = Parent as System.Windows.Controls.Panel;
+            if (container == null) return;
+
+            _dragStartY = e.GetPosition(container).Y;
+            StartDrag(_dragStartY);
+
+            // 添加全局鼠标事件
+            var window = System.Windows.Window.GetWindow(this);
+            if (window != null)
+            {
+                window.PreviewMouseMove += OnWindowMouseMove;
+                window.PreviewMouseLeftButtonUp += OnWindowMouseUp;
+            }
+
+            Mouse.Capture(this);
+        }
+
+        private void OnWindowMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!_isDragging) return;
+
+            var container = Parent as System.Windows.Controls.Panel;
+            if (container == null) return;
+
+            var currentY = e.GetPosition(container).Y;
+            UpdateDragPosition(currentY);
+        }
+
+        private void OnWindowMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!_isDragging) return;
+
+            var window = System.Windows.Window.GetWindow(this);
+            if (window != null)
+            {
+                window.PreviewMouseMove -= OnWindowMouseMove;
+                window.PreviewMouseLeftButtonUp -= OnWindowMouseUp;
+            }
+
+            Mouse.Capture(null);
+            EndDrag();
+        }
+    }
+
+    /// <summary>
+    /// 拖动事件参数（实时）
+    /// </summary>
+    public class BossBarDragEventArgs : EventArgs
+    {
+        public BossBarItemControl DraggedItem { get; }
+        public double VisualOffset { get; }
+
+        public BossBarDragEventArgs(BossBarItemControl item, double offset)
+        {
+            DraggedItem = item;
+            VisualOffset = offset;
+        }
+    }
+
+    /// <summary>
+    /// 拖动完成事件参数
+    /// </summary>
+    public class BossBarDropEventArgs : EventArgs
+    {
+        public BossBarItemControl DraggedItem { get; }
+
+        public BossBarDropEventArgs(BossBarItemControl item)
+        {
+            DraggedItem = item;
         }
     }
 }

@@ -2,12 +2,99 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             Width="Auto" Height="Auto">
+             Width="Auto" Height="Auto"
+             RenderTransformOrigin="0.5,0.5">
+
+    <UserControl.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+            <TranslateTransform x:Name="TranslateTransform" Y="0"/>
+        </TransformGroup>
+    </UserControl.RenderTransform>
+
+    <UserControl.Resources>
+        <!-- 拖动状态动画：缩小+半透明 -->
+        <Storyboard x:Key="DragStateStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleX"
+                             To="0.95" Duration="0:0:0.1">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleY"
+                             To="0.95" Duration="0:0:0.1">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             To="0.6" Duration="0:0:0.1"/>
+        </Storyboard>
+
+        <!-- 归位动画：恢复原始状态 -->
+        <Storyboard x:Key="RestoreStoryboard" FillBehavior="Stop">
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleX"
+                             To="1" Duration="0:0:0.15">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleY"
+                             To="1" Duration="0:0:0.15">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0.15"/>
+            <DoubleAnimation Storyboard.TargetName="TranslateTransform"
+                             Storyboard.TargetProperty="Y"
+                             To="0" Duration="0:0:0.15">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!-- 吸附动画：快速归位 -->
+        <Storyboard x:Key="SnapStoryboard" FillBehavior="Stop">
+            <DoubleAnimation Storyboard.TargetName="TranslateTransform"
+                             Storyboard.TargetProperty="Y"
+                             To="0" Duration="0:0:0.12">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleX"
+                             To="1" Duration="0:0:0.12">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
+                             Storyboard.TargetProperty="ScaleY"
+                             To="1" Duration="0:0:0.12">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="RootBorder"
+                             Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0.12"/>
+        </Storyboard>
+    </UserControl.Resources>
 
     <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,4,0,4"
             BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
-            AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver"
-            x:Name="RootBorder">
+            x:Name="RootBorder"
+            IsHitTestVisible="True">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -17,20 +104,24 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 左侧：排序图标 -->
-            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" Margin="0,0,12,0"
-                        Cursor="Hand" MouseLeftButtonDown="OnDragHandleClick">
-                <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
-                      Data="M0,0 L16,0 L16,2 L0,2 Z"/>
-                <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
-                      Data="M0,0 L16,0 L16,2 L0,2 Z"/>
-                <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
-                      Data="M0,0 L16,0 L16,2 L0,2 Z"/>
-            </StackPanel>
+            <!-- 左侧：排序图标（拖动手柄） -->
+            <Border Grid.Column="0" Width="32" Height="32" Margin="0,0,12,0"
+                    Background="Transparent" Cursor="Hand"
+                    MouseLeftButtonDown="OnDragHandleMouseDown"
+                    x:Name="DragHandleBorder">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
+                          Data="M0,0 L16,0 L16,2 L0,2 Z"/>
+                    <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
+                          Data="M0,0 L16,0 L16,2 L0,2 Z"/>
+                    <Path Fill="{DynamicResource TextSecondaryBrush}" Stretch="Fill" Width="16" Height="2" Margin="0,2"
+                          Data="M0,0 L16,0 L16,2 L0,2 Z"/>
+                </StackPanel>
+            </Border>
 
             <!-- 中间：BOSS图标预览 + 名称 -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- BOSS血条图标预览（182x5比例，缩放显示，元素图标+等级图标叠加） -->
+                <!-- BOSS血条图标预览 -->
                 <Border Width="364" Height="10" Margin="0,0,12,0"
                         x:Name="IconPreviewBorder">
                     <Grid>
@@ -47,7 +138,7 @@
                            Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium" TextTrimming="CharacterEllipsis"/>
             </StackPanel>
 
-            <!-- 右侧：编辑按钮（链接样式） -->
+            <!-- 右侧：编辑按钮 -->
             <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="4,0">
                 <Hyperlink x:Name="EditLink"
                            Foreground="{DynamicResource TextPrimaryBrush}"
@@ -58,7 +149,7 @@
                 </Hyperlink>
             </TextBlock>
 
-            <!-- 右侧：启用按钮（链接样式） -->
+            <!-- 右侧：启用按钮 -->
             <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="4,0">
                 <Hyperlink x:Name="EnableLink"
                            Foreground="{DynamicResource TextPrimaryBrush}"
@@ -69,7 +160,7 @@
                 </Hyperlink>
             </TextBlock>
 
-            <!-- 右侧：删除按钮（链接样式） -->
+            <!-- 右侧：删除按钮 -->
             <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="4,0">
                 <Hyperlink x:Name="DeleteLink"
                            Foreground="{DynamicResource TextPrimaryBrush}"

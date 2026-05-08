@@ -1194,7 +1194,7 @@ namespace CraftSharp.Windows.Panels
                 itemControl.EditRequested += BossBarItem_EditRequested;
                 itemControl.DeleteRequested += BossBarItem_DeleteRequested;
                 itemControl.EnableChanged += BossBarItem_EnableChanged;
-                itemControl.DragStarted += BossBarItem_DragStarted;
+                itemControl.Dragging += BossBarItem_Dragging;
                 itemControl.Dropped += BossBarItem_Dropped;
                 _bossBarItemsContainer.Children.Add(itemControl);
             }
@@ -1255,30 +1255,103 @@ namespace CraftSharp.Windows.Panels
             SaveSettings();
         }
 
-        private void BossBarItem_DragStarted(object? sender, Controls.BossBarItemControl control)
-        {
-            control.StartDrag();
-        }
+        private int _draggedOriginalIndex = -1;
+        private double _itemHeight = 0;
 
-        private void BossBarItem_Dropped(object? sender, Controls.BossBarItemControl sourceControl)
+        /// <summary>
+        /// 拖拽过程中实时更新其他项的位置（磁石效果）
+        /// </summary>
+        private void BossBarItem_Dragging(object? sender, Controls.BossBarDragEventArgs e)
         {
-            if (sender is Controls.BossBarItemControl targetControl)
+            if (_bossBarItemsContainer == null) return;
+
+            var draggedItem = e.DraggedItem;
+            int currentIndex = _bossBarItemsContainer.Children.IndexOf(draggedItem);
+
+            // 记录原始索引和高度（首次拖拽时）
+            if (_draggedOriginalIndex < 0)
             {
-                // 获取源和目标的索引
-                int sourceIndex = _bossBarItemsContainer!.Children.IndexOf(sourceControl);
-                int targetIndex = _bossBarItemsContainer.Children.IndexOf(targetControl);
+                _draggedOriginalIndex = currentIndex;
+                _itemHeight = draggedItem.ActualHeight;
+            }
 
-                if (sourceIndex >= 0 && targetIndex >= 0 && sourceIndex != targetIndex)
+            // 计算拖拽项当前位置（相对于容器的视觉位置）
+            double draggedVisualY = currentIndex * (_itemHeight + 8) + e.VisualOffset; // 8 = Margin
+
+            // 计算目标位置索引
+            int targetIndex = (int)Math.Round(draggedVisualY / (_itemHeight + 8));
+            targetIndex = Math.Clamp(targetIndex, 0, _bossBarItemsContainer.Children.Count - 1);
+
+            // 更新其他项的位移：在拖拽项当前位置和原始位置之间的项需要移动
+            for (int i = 0; i < _bossBarItemsContainer.Children.Count; i++)
+            {
+                if (_bossBarItemsContainer.Children[i] is Controls.BossBarItemControl item && item != draggedItem)
                 {
-                    // 移动BossBars集合中的项
-                    _settings.BossBars.Move(sourceIndex, targetIndex);
-                    SaveSettings();
+                    double offset = 0;
 
-                    // 重新排列容器中的控件
-                    _bossBarItemsContainer.Children.Remove(sourceControl);
-                    _bossBarItemsContainer.Children.Insert(targetIndex, sourceControl);
+                    // 确定当前项是否需要移动
+                    if (targetIndex > _draggedOriginalIndex) // 向下拖拽
+                    {
+                        // 在原始位置和目标位置之间的项需要向上移动
+                        if (i > _draggedOriginalIndex && i <= targetIndex)
+                        {
+                            offset = -(_itemHeight + 8);
+                        }
+                    }
+                    else if (targetIndex < _draggedOriginalIndex) // 向上拖拽
+                    {
+                        // 在目标位置和原始位置之间的项需要向下移动
+                        if (i >= targetIndex && i < _draggedOriginalIndex)
+                        {
+                            offset = (_itemHeight + 8);
+                        }
+                    }
+
+                    item.SetShiftOffset(offset);
                 }
             }
+        }
+
+        /// <summary>
+        /// 拖拽完成：定格在当前位置
+        /// </summary>
+        private void BossBarItem_Dropped(object? sender, Controls.BossBarDropEventArgs e)
+        {
+            if (_bossBarItemsContainer == null) return;
+
+            var draggedItem = e.DraggedItem;
+            int currentIndex = _bossBarItemsContainer.Children.IndexOf(draggedItem);
+
+            // 计算最终目标位置
+            double currentOffset = draggedItem.TranslateTransform.Y;
+            int targetIndex = currentIndex + (int)Math.Round(currentOffset / (_itemHeight + 8));
+            targetIndex = Math.Clamp(targetIndex, 0, _bossBarItemsContainer.Children.Count - 1);
+
+            // 只更新数据模型顺序，不重新排列控件
+            if (currentIndex != targetIndex)
+            {
+                _settings.BossBars.Move(currentIndex, targetIndex);
+                SaveSettings();
+            }
+
+            // 所有项直接定格：重置缩放/透明度，位移归零
+            for (int i = 0; i < _bossBarItemsContainer.Children.Count; i++)
+            {
+                if (_bossBarItemsContainer.Children[i] is Controls.BossBarItemControl item)
+                {
+                    // 拖拽项和其他项都直接恢复正常状态，位移归零
+                    item.FinalizePosition();
+                }
+            }
+
+            // 现在视觉位置已经是最终位置，需要同步容器中的控件顺序
+            // 但因为我们不移位，所以容器顺序改变不会影响视觉
+            _bossBarItemsContainer.Children.Remove(draggedItem);
+            _bossBarItemsContainer.Children.Insert(targetIndex, draggedItem);
+
+            // 重置状态
+            _draggedOriginalIndex = -1;
+            _itemHeight = 0;
         }
 
         private void BossBars_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -1293,7 +1366,7 @@ namespace CraftSharp.Windows.Panels
                     itemControl.EditRequested += BossBarItem_EditRequested;
                     itemControl.DeleteRequested += BossBarItem_DeleteRequested;
                     itemControl.EnableChanged += BossBarItem_EnableChanged;
-                    itemControl.DragStarted += BossBarItem_DragStarted;
+                    itemControl.Dragging += BossBarItem_Dragging;
                     itemControl.Dropped += BossBarItem_Dropped;
                     _bossBarItemsContainer.Children.Add(itemControl);
                 }
