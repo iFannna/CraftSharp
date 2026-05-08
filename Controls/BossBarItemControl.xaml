@@ -121,7 +121,7 @@
 
             <!-- 中间：BOSS图标预览 + 名称 -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- BOSS血条图标预览 -->
+                <!-- BOSS血条图标预览（364x10） -->
                 <Border Width="364" Height="10" Margin="0,0,12,0"
                         x:Name="IconPreviewBorder">
                     <Grid>
@@ -135,7 +135,8 @@
                 </Border>
                 <!-- BOSS名称 -->
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
-                           Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium" TextTrimming="CharacterEllipsis"/>
+                           Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium" TextTrimming="CharacterEllipsis"
+                           Margin="8,0,0,0"/>
             </StackPanel>
 
             <!-- 右侧：编辑按钮 -->

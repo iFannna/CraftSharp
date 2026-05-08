@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace CraftSharp.Models
 {
@@ -237,56 +238,184 @@ namespace CraftSharp.Models
     /// <summary>
     /// BOSS 血条配置
     /// </summary>
-    public class BossBarSettings
+    public class BossBarSettings : INotifyPropertyChanged
     {
+        private string _id = "";
+        private string _name = "新BOSS";
+        private string _iconType = "blue";
+        private string _notchType = "";
+        private bool _isEnabled = true;
+        private bool _dataMappingEnabled = true;
+        private string _dataMappingType = "电池电量";
+        private bool _customValueEnabled = false;
+        private int _customCurrentValue = 100;
+        private int _customMaxValue = 100;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         /// <summary>
         /// 唯一标识
         /// </summary>
-        public string Id { get; set; } = "";
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
 
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; } = "新BOSS";
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
 
         /// <summary>
         /// 图标类型（颜色样式）
         /// </summary>
-        public string IconType { get; set; } = "blue";
+        public string IconType
+        {
+            get => _iconType;
+            set
+            {
+                if (_iconType != value)
+                {
+                    _iconType = value;
+                    OnPropertyChanged(nameof(IconType));
+                }
+            }
+        }
 
         /// <summary>
         /// 分段样式（Notches等级，空表示无）
         /// </summary>
-        public string NotchType { get; set; } = "";
+        public string NotchType
+        {
+            get => _notchType;
+            set
+            {
+                if (_notchType != value)
+                {
+                    _notchType = value;
+                    OnPropertyChanged(nameof(NotchType));
+                }
+            }
+        }
 
         /// <summary>
         /// 是否启用
         /// </summary>
-        public bool IsEnabled { get; set; } = true;
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    OnPropertyChanged(nameof(IsEnabled));
+                }
+            }
+        }
 
         /// <summary>
         /// 数据映射开启
         /// </summary>
-        public bool DataMappingEnabled { get; set; } = true;
+        public bool DataMappingEnabled
+        {
+            get => _dataMappingEnabled;
+            set
+            {
+                if (_dataMappingEnabled != value)
+                {
+                    _dataMappingEnabled = value;
+                    OnPropertyChanged(nameof(DataMappingEnabled));
+                }
+            }
+        }
 
         /// <summary>
         /// 数据映射类型
         /// </summary>
-        public string DataMappingType { get; set; } = "电池电量";
+        public string DataMappingType
+        {
+            get => _dataMappingType;
+            set
+            {
+                if (_dataMappingType != value)
+                {
+                    _dataMappingType = value;
+                    OnPropertyChanged(nameof(DataMappingType));
+                }
+            }
+        }
 
         /// <summary>
         /// 自定义数值开启
         /// </summary>
-        public bool CustomValueEnabled { get; set; } = false;
+        public bool CustomValueEnabled
+        {
+            get => _customValueEnabled;
+            set
+            {
+                if (_customValueEnabled != value)
+                {
+                    _customValueEnabled = value;
+                    OnPropertyChanged(nameof(CustomValueEnabled));
+                }
+            }
+        }
 
         /// <summary>
         /// 自定义当前值
         /// </summary>
-        public int CustomCurrentValue { get; set; } = 100;
+        public int CustomCurrentValue
+        {
+            get => _customCurrentValue;
+            set
+            {
+                if (_customCurrentValue != value)
+                {
+                    _customCurrentValue = value;
+                    OnPropertyChanged(nameof(CustomCurrentValue));
+                }
+            }
+        }
 
         /// <summary>
         /// 自定义最大值
         /// </summary>
-        public int CustomMaxValue { get; set; } = 100;
+        public int CustomMaxValue
+        {
+            get => _customMaxValue;
+            set
+            {
+                if (_customMaxValue != value)
+                {
+                    _customMaxValue = value;
+                    OnPropertyChanged(nameof(CustomMaxValue));
+                }
+            }
+        }
     }
 }

@@ -1173,12 +1173,21 @@ namespace CraftSharp.Windows.Panels
             };
             ContentPanel.Children.Add(_bossBarItemsContainer);
 
-            // "+"按钮（在最下方）
+            // "+"按钮（在最下方）- 使用SVG加号图标
+            var addIcon = new System.Windows.Shapes.Path
+            {
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
+            };
+            addIcon.SetResourceReference(System.Windows.Shapes.Path.FillProperty, "TextPrimaryBrush");
+            addIcon.Data = Geometry.Parse("M7 0 L7 7 L0 7 L0 9 L7 9 L7 16 L9 16 L9 9 L16 9 L16 7 L9 7 L9 0 Z");
+
             var addButton = new System.Windows.Controls.Button
             {
-                Content = "+",
-                FontSize = 18,
-                FontWeight = FontWeights.Bold,
+                Content = addIcon,
                 Height = 40,
                 Cursor = System.Windows.Input.Cursors.Hand,
                 Margin = new Thickness(0, 8, 0, 0),
