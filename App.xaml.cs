@@ -13,6 +13,7 @@ namespace CraftSharp
         private StatusBarWindow? _statusBarWindow;
         private CrosshairWindow? _crosshairWindow;
         private InventoryWindow? _inventoryWindow;
+        private BossBarWindow? _bossBarWindow;
         private SettingsWindow? _settingsWindow;
         private TaskbarIcon? _taskbarIcon;
         private System.Windows.Controls.ContextMenu? _trayContextMenu;
@@ -114,6 +115,18 @@ namespace CraftSharp
 
             // 初始化准星HUD元素可见性
             InitializeCrosshairElementsVisibility();
+
+            // 创建BOSS血条窗口
+            _bossBarWindow = new BossBarWindow(_appSettings!);
+
+            // 初始化BOSS血条服务
+            BossBarService.Instance.Initialize(_bossBarWindow, _appSettings!);
+
+            // 默认显示BOSS血条窗口（如果有启用项）
+            if (_appSettings?.BossBars?.Any(b => b.IsEnabled) ?? false)
+                _bossBarWindow.Show();
+            else
+                _bossBarWindow.Hide();
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow();

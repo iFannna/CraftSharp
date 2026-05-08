@@ -116,7 +116,7 @@ namespace CraftSharp.Windows
 
         private void LoadIconPreview()
         {
-            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(_iconType));
+            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(_iconType, "progress"));
             if (File.Exists(iconPath))
             {
                 var bitmap = new BitmapImage();
@@ -145,7 +145,7 @@ namespace CraftSharp.Windows
                 return;
             }
 
-            var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(_notchType));
+            var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetNotchPath(_notchType, "progress"));
             if (File.Exists(notchPath))
             {
                 var bitmap = new BitmapImage();

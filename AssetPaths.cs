@@ -207,15 +207,30 @@ namespace CraftSharp
         // BOSS血条
         /// <summary>
         /// 根据 IconType 获取 BOSS血条图标路径
-        /// IconType: blue, green, red, pink, purple, white, yellow, notched_6, notched_10, notched_12, notched_20
+        /// IconType: blue, green, red, pink, purple, white, yellow
+        /// suffix: background, progress
         /// </summary>
-        public static string GetBossBarPath(string iconType)
+        public static string GetBossBarPath(string iconType, string suffix = "progress")
         {
             if (string.IsNullOrEmpty(iconType))
             {
-                return "Assets/minecraft/textures/gui/sprites/boss_bar/blue_progress.png";
+                return $"Assets/minecraft/textures/gui/sprites/boss_bar/blue_{suffix}.png";
             }
-            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{iconType}_progress.png";
+            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{iconType}_{suffix}.png";
+        }
+
+        /// <summary>
+        /// 根据 NotchType 获取 Notch图标路径
+        /// NotchType: notched_6, notched_10, notched_12, notched_20
+        /// suffix: background, progress
+        /// </summary>
+        public static string GetNotchPath(string notchType, string suffix = "progress")
+        {
+            if (string.IsNullOrEmpty(notchType))
+            {
+                return "";
+            }
+            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{notchType}_{suffix}.png";
         }
     }
 }
