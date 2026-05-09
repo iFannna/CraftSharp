@@ -68,8 +68,8 @@ namespace CraftSharp.Windows.StatusBar
             ExperienceBarProgress.Source = LoadBitmapImage(AssetPaths.GetExpBarPath(iconStyle, "progress"));
             ExperienceBarProgress.Height = expBarHeight;
 
-            // 与下方快捷栏间距：6px基准（Margin.Bottom在上层元素上）
-            ExperienceBarGrid.Margin = new Thickness(0, 0, 0, BaseVerticalSpacing * _scaleFactor);
+            // 与下方快捷栏间距：2px（Margin.Bottom在上层元素上）
+            ExperienceBarGrid.Margin = new Thickness(0, 0, 0, 2 * _scaleFactor);
             ExperienceBarGrid.Visibility = _expBarVisible ? Visibility.Visible : Visibility.Collapsed;
 
             UpdateExpBarProgress();
