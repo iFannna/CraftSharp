@@ -39,7 +39,9 @@
                 <Border x:Name="SlotLeftOffhand" Background="Transparent"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="IconLeftOffhand" Stretch="Uniform" Visibility="Collapsed"/>
+                    <Image x:Name="IconLeftOffhand" Stretch="Uniform"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Visibility="Collapsed"/>
                 </Border>
             </Grid>
 
@@ -162,7 +164,9 @@
                 <Border x:Name="SlotRightOffhand" Background="Transparent"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
-                    <Image x:Name="IconRightOffhand" Stretch="Uniform" Visibility="Collapsed"/>
+                    <Image x:Name="IconRightOffhand" Stretch="Uniform"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Visibility="Collapsed"/>
                 </Border>
             </Grid>
         </Grid>

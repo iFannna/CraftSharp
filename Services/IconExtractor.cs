@@ -172,37 +172,17 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 加载图片文件并缩放到目标尺寸
-        /// 使用Magick.NET高质量缩放
+        /// 加载图片文件，保持原始尺寸
+        /// 让WPF自己进行高质量缩放，避免二次缩放导致质量损失
         /// </summary>
         private static ImageSource? LoadImageFile(string filePath, int targetSize)
         {
             try
             {
-                using var magickImage = new MagickImage(filePath);
-
-                // 获取原始尺寸
-                uint originalWidth = magickImage.Width;
-                uint originalHeight = magickImage.Height;
-
-                // 计算缩放后的尺寸（保持比例，不超过目标尺寸）
-                double scale = Math.Min((double)targetSize / originalWidth, (double)targetSize / originalHeight);
-                uint newWidth = (uint)(originalWidth * scale);
-                uint newHeight = (uint)(originalHeight * scale);
-
-                // 高质量缩放
-                magickImage.FilterType = FilterType.Lanczos;
-                magickImage.Resize(newWidth, newHeight);
-
-                // 转换为PNG格式输出
-                using var pngStream = new MemoryStream();
-                magickImage.Write(pngStream, MagickFormat.Png);
-                pngStream.Position = 0;
-
-                // 创建WPF BitmapImage
+                // 直接加载原图，不预先缩放
                 var bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();
-                bitmapImage.StreamSource = pngStream;
+                bitmapImage.UriSource = new Uri(filePath, UriKind.Absolute);
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.EndInit();
                 bitmapImage.Freeze();

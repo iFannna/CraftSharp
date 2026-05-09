@@ -199,6 +199,8 @@ namespace CraftSharp.Windows.StatusBar
                     Height = iconSize,
                     Visibility = Visibility.Collapsed
                 };
+                // HighQuality模式进行高质量缩放
+                RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
 
                 border.Child = icon;
                 HotbarSlotsGrid.Children.Add(border);
