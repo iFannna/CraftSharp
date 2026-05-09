@@ -460,7 +460,7 @@ namespace CraftSharp.Windows
             // 从图片文件读取原始尺寸
             LoadDimensions();
 
-            // BOSS名称（无背景，使用Unifont字体）
+            // BOSS名称（无背景，使用Unifont字体，带右下角阴影）
             _nameText = new TextBlock
             {
                 Text = settings.Name,
@@ -468,7 +468,15 @@ namespace CraftSharp.Windows
                 FontSize = 8 * scaleFactor,
                 FontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont"),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor)
+                Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor),
+                Effect = new System.Windows.Media.Effects.DropShadowEffect
+                {
+                    Color = System.Windows.Media.Colors.Black,
+                    Direction = 315, // 右下角45°方向
+                    ShadowDepth = 0.75 * scaleFactor,
+                    BlurRadius = 0, // 硬阴影，适合像素风格
+                    Opacity = 1.0
+                }
             };
             this.Children.Add(_nameText);
 
