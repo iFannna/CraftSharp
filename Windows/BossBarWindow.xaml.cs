@@ -199,7 +199,20 @@ namespace CraftSharp.Windows
 
             var panel = new BossBarPanel(settings, _scaleFactor, this);
             _bossBarPanels[settings.Id] = panel;
-            BossBarsContainer.Children.Add(panel);
+
+            // 计算正确的插入位置：找到该BOSS血条在BossBars中的索引，
+            // 然后统计该索引之前有多少启用的BOSS血条，作为插入位置
+            int bossBarIndex = _settings.BossBars.IndexOf(settings);
+            int insertIndex = 0;
+            for (int i = 0; i < bossBarIndex; i++)
+            {
+                if (_settings.BossBars[i].IsEnabled)
+                {
+                    insertIndex++;
+                }
+            }
+
+            BossBarsContainer.Children.Insert(insertIndex, panel);
         }
 
         /// <summary>
@@ -296,6 +309,27 @@ namespace CraftSharp.Windows
                     {
                         panel.UpdateSettings(newItem);
                     }
+                }
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
+            {
+                // 拖动排序：同步调整BossBarsContainer中panel的顺序
+                // 注意：BossBarsContainer.Children只包含启用的panel，需要计算正确的插入索引
+                var movedItem = _settings.BossBars[e.NewStartingIndex];
+                if (_bossBarPanels.TryGetValue(movedItem.Id, out var panel) && movedItem.IsEnabled)
+                {
+                    // 计算在新位置之前有多少启用的BOSS血条
+                    int enabledIndex = 0;
+                    for (int i = 0; i < e.NewStartingIndex; i++)
+                    {
+                        if (_settings.BossBars[i].IsEnabled)
+                        {
+                            enabledIndex++;
+                        }
+                    }
+
+                    BossBarsContainer.Children.Remove(panel);
+                    BossBarsContainer.Children.Insert(enabledIndex, panel);
                 }
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
