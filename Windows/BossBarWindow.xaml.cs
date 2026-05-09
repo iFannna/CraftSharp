@@ -460,14 +460,15 @@ namespace CraftSharp.Windows
             // 从图片文件读取原始尺寸
             LoadDimensions();
 
-            // BOSS名称（无背景）
+            // BOSS名称（无背景，使用Unifont字体）
             _nameText = new TextBlock
             {
                 Text = settings.Name,
                 Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 12 * scaleFactor,
+                FontSize = 8 * scaleFactor,
+                FontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont"),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 2)
+                Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor)
             };
             this.Children.Add(_nameText);
 
@@ -764,7 +765,8 @@ namespace CraftSharp.Windows
         public void SetScaleFactor(double scaleFactor)
         {
             _scaleFactor = scaleFactor;
-            _nameText.FontSize = 12 * scaleFactor;
+            _nameText.FontSize = 8 * scaleFactor;
+            _nameText.Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor);
 
             double width = _originalWidth * scaleFactor;
             double height = _originalHeight * scaleFactor;
