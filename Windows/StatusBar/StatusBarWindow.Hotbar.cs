@@ -129,21 +129,22 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void SetupSlots()
         {
-            double offhandWidth = _originalOffhandWidth * _scaleFactor;
-            double offhandHeight = _originalOffhandHeight * _scaleFactor;
-
-            // 副手格子尺寸和图标尺寸
-            double offhandIconSize = offhandHeight * 0.73;
+            // 副手格子布局参数（基于原图22×22）
+            // Margin=3px，格子=16×16
+            double margin = 3 * _scaleFactor;
+            double slotSize = 16 * _scaleFactor;
+            double iconSize = slotSize; // 图标刚好填满格子
 
             // 设置左副手格子
             var leftOffhandBorder = GetSlotBorder("LeftOffhand");
             var leftOffhandIcon = GetIconImage("LeftOffhand");
             if (leftOffhandBorder != null && leftOffhandIcon != null)
             {
-                leftOffhandBorder.Width = offhandWidth;
-                leftOffhandBorder.Height = offhandHeight;
-                leftOffhandIcon.Width = offhandIconSize;
-                leftOffhandIcon.Height = offhandIconSize;
+                leftOffhandBorder.Margin = new Thickness(margin);
+                leftOffhandBorder.Width = slotSize;
+                leftOffhandBorder.Height = slotSize;
+                leftOffhandIcon.Width = iconSize;
+                leftOffhandIcon.Height = iconSize;
                 leftOffhandBorder.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
@@ -152,21 +153,19 @@ namespace CraftSharp.Windows.StatusBar
             var rightOffhandIcon = GetIconImage("RightOffhand");
             if (rightOffhandBorder != null && rightOffhandIcon != null)
             {
-                rightOffhandBorder.Width = offhandWidth;
-                rightOffhandBorder.Height = offhandHeight;
-                rightOffhandIcon.Width = offhandIconSize;
-                rightOffhandIcon.Height = offhandIconSize;
+                rightOffhandBorder.Margin = new Thickness(margin);
+                rightOffhandBorder.Width = slotSize;
+                rightOffhandBorder.Height = slotSize;
+                rightOffhandIcon.Width = iconSize;
+                rightOffhandIcon.Height = iconSize;
                 rightOffhandBorder.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
             // 主快捷栏格子精确布局参数（基于原图182×22）
-            // 外边距：3px，格子尺寸：16×16，格子间距：4px
+            // 格子尺寸：16×16，格子间距：4px（margin已在副手槽部分定义）
             // 容器可用宽度 = 182-6 = 176px = 9×16 + 8×4
-            double margin = 3 * _scaleFactor;
-            double slotSize = 16 * _scaleFactor;
             double slotSpacing = 4 * _scaleFactor;
             double columnWidth = slotSize + slotSpacing; // 每列宽度 = 格子 + 间距
-            double iconSize = slotSize; // 图标刚好填满格子
 
             // 设置格子容器的Margin
             HotbarSlotsGrid.Margin = new Thickness(margin);

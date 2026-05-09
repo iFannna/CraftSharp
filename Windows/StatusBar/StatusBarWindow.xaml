@@ -28,6 +28,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- ===== 左副手槽（Column=0） ===== -->
+            <!-- 原图22×22，Margin=3px，格子16×16 -->
             <Grid x:Name="LeftOffhandGrid" Grid.Column="0"
                   VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Image x:Name="LeftOffhandImage"
@@ -35,8 +36,9 @@
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        UseLayoutRounding="True"
                        SnapsToDevicePixels="True"/>
-                <!-- 左副手格子 -->
+                <!-- 左副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotLeftOffhand" Background="Transparent"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconLeftOffhand" Stretch="Uniform"
@@ -152,6 +154,7 @@
             <Grid x:Name="RightOffhandSpacingGrid" Grid.Column="3"/>
 
             <!-- ===== 右副手槽（Column=4） ===== -->
+            <!-- 原图22×22，Margin=3px，格子16×16 -->
             <Grid x:Name="RightOffhandGrid" Grid.Column="4"
                   VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Image x:Name="RightOffhandImage"
@@ -164,8 +167,9 @@
                         <ScaleTransform x:Name="RightOffhandScaleTransform" ScaleX="-1"/>
                     </Image.RenderTransform>
                 </Image>
-                <!-- 右副手格子 -->
+                <!-- 右副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotRightOffhand" Background="Transparent"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
                         MouseLeftButtonDown="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconRightOffhand" Stretch="Uniform"
