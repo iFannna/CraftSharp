@@ -125,12 +125,10 @@ namespace CraftSharp.Windows.StatusBar
 
         /// <summary>
         /// 设置格子位置和大小
-        /// 使用Grid布局，不使用Canvas定位
+        /// 使用Grid布局，固定列宽
         /// </summary>
         private void SetupSlots()
         {
-            double coreWidth = GetCoreContainerWidth();
-            double hotbarHeight = _originalHotbarHeight * _scaleFactor;
             double offhandWidth = _originalOffhandWidth * _scaleFactor;
             double offhandHeight = _originalOffhandHeight * _scaleFactor;
 
@@ -161,17 +159,29 @@ namespace CraftSharp.Windows.StatusBar
                 rightOffhandBorder.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            // 设置主快捷栏格子容器列定义
-            HotbarSlotsGrid.ColumnDefinitions.Clear();
-            for (int i = 0; i < 9; i++)
-            {
-                HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            }
+            // 主快捷栏格子精确布局参数（基于原图182×22）
+            // 外边距：3px，格子尺寸：16×16，格子间距：4px
+            // 容器可用宽度 = 182-6 = 176px = 9×16 + 8×4
+            double margin = 3 * _scaleFactor;
+            double slotSize = 16 * _scaleFactor;
+            double slotSpacing = 4 * _scaleFactor;
+            double columnWidth = slotSize + slotSpacing; // 每列宽度 = 格子 + 间距
+            double iconSize = slotSize; // 图标刚好填满格子
 
-            // 主快捷栏格子尺寸
-            double slotWidth = coreWidth / 9.0;
-            double slotHeight = hotbarHeight;
-            double iconSize = hotbarHeight * 0.73;
+            // 设置格子容器的Margin
+            HotbarSlotsGrid.Margin = new Thickness(margin);
+
+            // 设置列定义：前8列宽度=格子+间距，最后一列宽度=格子
+            HotbarSlotsGrid.ColumnDefinitions.Clear();
+            for (int i = 0; i < 8; i++)
+            {
+                HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(columnWidth) });
+            }
+            HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(slotSize) });
+
+            // 设置行定义：单行，高度=格子尺寸
+            HotbarSlotsGrid.RowDefinitions.Clear();
+            HotbarSlotsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(slotSize) });
 
             // 清除现有格子并重新添加
             HotbarSlotsGrid.Children.Clear();
@@ -182,8 +192,10 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     Name = $"Slot{i}",
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Width = slotWidth,
-                    Height = slotHeight,
+                    Width = slotSize,
+                    Height = slotSize,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
                     Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed
                 };
                 border.MouseLeftButtonDown += Slot_Click;
@@ -199,12 +211,12 @@ namespace CraftSharp.Windows.StatusBar
                     Height = iconSize,
                     Visibility = Visibility.Collapsed
                 };
-                // HighQuality模式进行高质量缩放
                 RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
 
                 border.Child = icon;
                 HotbarSlotsGrid.Children.Add(border);
                 Grid.SetColumn(border, i);
+                Grid.SetRow(border, 0);
             }
         }
 

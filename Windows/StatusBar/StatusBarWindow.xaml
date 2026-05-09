@@ -131,13 +131,17 @@
                     <!-- ===== 快捷栏（最后写，显示在最下方） ===== -->
                     <!-- 无Margin.Bottom（下方无元素） -->
                     <!-- Margin.Top会在经验条和快捷栏之间创建间距（使用0） -->
+                    <!-- 快捷栏原图182×22，格子布局：外边距3px，格子16×16，间距4px -->
                     <Grid x:Name="HotbarGrid" HorizontalAlignment="Center" Height="Auto">
                         <Image x:Name="HotbarImage"
                                Stretch="Fill"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"
                                UseLayoutRounding="True"
                                SnapsToDevicePixels="True"/>
-                        <Grid x:Name="HotbarSlotsGrid">
+                        <!-- 格子容器Grid：Margin在代码中动态设置 -->
+                        <Grid x:Name="HotbarSlotsGrid"
+                              UseLayoutRounding="True"
+                              SnapsToDevicePixels="True">
                             <!-- 主快捷栏格子 (9个) - 动态添加 -->
                         </Grid>
                     </Grid>
