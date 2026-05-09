@@ -26,6 +26,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\zpix.ttf" />
+    <Resource Include="Fonts\unifont-16.0.04.ttf" />
   </ItemGroup>
 
 </Project>

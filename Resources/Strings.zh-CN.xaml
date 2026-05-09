@@ -41,6 +41,7 @@
     <sys:String x:Key="FontHeiTi">黑体</sys:String>
     <sys:String x:Key="FontKaiTi">楷体</sys:String>
     <sys:String x:Key="FontPixel">像素字体</sys:String>
+    <sys:String x:Key="FontUnifont">统一字体</sys:String>
     <sys:String x:Key="FontSizeLabel">字体大小</sys:String>
     <sys:String x:Key="FontSizeDesc">选择界面字体大小</sys:String>
     <sys:String x:Key="IconStyleLabel">图标</sys:String>

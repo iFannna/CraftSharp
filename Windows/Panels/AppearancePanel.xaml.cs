@@ -40,7 +40,22 @@ namespace CraftSharp.Windows.Panels
         }
 
         private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
-        private static int GetFontIndex(string font) => font switch { "像素字体" => 1, "宋体" => 2, "楷体" => 3, "黑体" => 4, _ => 0 };
+
+        private static int GetFontIndex(string fontTag)
+        {
+            // 处理旧版本存储的中文名称
+            var tag = fontTag switch
+            {
+                "像素字体" => "pixel",
+                "统一字体" => "unifont",
+                "宋体" => "songti",
+                "黑体" => "heiti",
+                "楷体" => "kaiti",
+                _ => fontTag
+            };
+            return tag switch { "pixel" => 1, "unifont" => 2, "songti" => 3, "kaiti" => 4, "heiti" => 5, _ => 0 };
+        }
+
         private static int GetFontSizeIndex(int fontSize) => fontSize switch { 10 => 0, 12 => 1, 16 => 3, 18 => 4, 20 => 5, _ => 2 };
 
         private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -71,20 +86,12 @@ namespace CraftSharp.Windows.Panels
             if (_settings == null) return;
             if (FontComboBox.SelectedItem is ComboBoxItem item)
             {
-                // 根据 Tag 获取实际的字体值
+                // 直接使用 Tag 作为字体标识符存储
                 var tag = item.Tag?.ToString() ?? "yahei";
-                var fontValue = tag switch
-                {
-                    "songti" => "宋体",
-                    "heiti" => "黑体",
-                    "kaiti" => "楷体",
-                    "pixel" => "像素字体",
-                    _ => "微软雅黑"
-                };
-                _settings.Font = fontValue;
+                _settings.Font = tag;
 
-                // 切换字体
-                FontService.Instance.SetFont(fontValue);
+                // 切换字体（使用标识符）
+                FontService.Instance.SetFont(tag);
 
                 // 即时保存设置
                 SaveSettings();

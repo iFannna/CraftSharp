@@ -41,6 +41,7 @@
     <sys:String x:Key="FontHeiTi">SimHei</sys:String>
     <sys:String x:Key="FontKaiTi">KaiTi</sys:String>
     <sys:String x:Key="FontPixel">Pixel Font</sys:String>
+    <sys:String x:Key="FontUnifont">Unifont</sys:String>
     <sys:String x:Key="FontSizeLabel">Font Size</sys:String>
     <sys:String x:Key="FontSizeDesc">Select interface font size</sys:String>
     <sys:String x:Key="IconStyleLabel">Icon</sys:String>

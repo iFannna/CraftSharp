@@ -11,9 +11,9 @@ namespace CraftSharp.Services
         public static FontService Instance => _instance ??= new FontService();
 
         /// <summary>
-        /// 当前字体设置
+        /// 当前字体标识符
         /// </summary>
-        public string CurrentFont { get; private set; } = "微软雅黑";
+        public string CurrentFontTag { get; private set; } = "yahei";
 
         /// <summary>
         /// 当前字体大小
@@ -26,13 +26,13 @@ namespace CraftSharp.Services
         public event Action? FontChanged;
 
         /// <summary>
-        /// 设置字体
+        /// 设置字体（使用标识符）
         /// </summary>
-        public void SetFont(string displayName)
+        public void SetFont(string fontTag)
         {
-            if (displayName == CurrentFont) return;
+            if (fontTag == CurrentFontTag) return;
 
-            CurrentFont = displayName;
+            CurrentFontTag = fontTag;
             ApplyFont();
             FontChanged?.Invoke();
         }
@@ -57,19 +57,7 @@ namespace CraftSharp.Services
             var app = System.Windows.Application.Current;
             if (app == null) return;
 
-            System.Windows.Media.FontFamily fontFamily;
-
-            // 像素字体使用嵌入资源
-            if (CurrentFont == "像素字体")
-            {
-                // 加载嵌入的像素字体 Zpix
-                fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/zpix.ttf#Zpix");
-            }
-            else
-            {
-                var fontFamilyName = GetSystemFontName(CurrentFont);
-                fontFamily = new System.Windows.Media.FontFamily(fontFamilyName);
-            }
+            System.Windows.Media.FontFamily fontFamily = GetFontFamilyByTag(CurrentFontTag);
 
             if (app.Resources.Contains("GlobalFontFamily"))
             {
@@ -79,6 +67,22 @@ namespace CraftSharp.Services
             {
                 app.Resources.Add("GlobalFontFamily", fontFamily);
             }
+        }
+
+        /// <summary>
+        /// 根据标识符获取字体
+        /// </summary>
+        private System.Windows.Media.FontFamily GetFontFamilyByTag(string tag)
+        {
+            return tag switch
+            {
+                "pixel" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/zpix.ttf#Zpix"),
+                "unifont" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont"),
+                "songti" => new System.Windows.Media.FontFamily("SimSun"),
+                "heiti" => new System.Windows.Media.FontFamily("SimHei"),
+                "kaiti" => new System.Windows.Media.FontFamily("KaiTi"),
+                _ => new System.Windows.Media.FontFamily("Microsoft YaHei")
+            };
         }
 
         /// <summary>
@@ -100,29 +104,31 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 获取系统字体名称
+        /// 初始化字体（使用标识符）
         /// </summary>
-        private string GetSystemFontName(string displayName)
+        public void Initialize(string savedFontTag, double savedFontSize = 14)
         {
-            return displayName switch
-            {
-                "微软雅黑" => "Microsoft YaHei",
-                "宋体" => "SimSun",
-                "黑体" => "SimHei",
-                "楷体" => "KaiTi",
-                _ => "Microsoft YaHei"
-            };
-        }
-
-        /// <summary>
-        /// 初始化字体（字体名称和大小）
-        /// </summary>
-        public void Initialize(string savedFont, double savedFontSize = 14)
-        {
-            CurrentFont = savedFont;
+            // 处理旧版本存储的中文名称，转换为标识符
+            CurrentFontTag = ConvertToTag(savedFontTag);
             CurrentFontSize = savedFontSize;
             ApplyFont();
             ApplyFontSize();
+        }
+
+        /// <summary>
+        /// 将旧版本的中文名称转换为标识符
+        /// </summary>
+        private string ConvertToTag(string oldName)
+        {
+            return oldName switch
+            {
+                "像素字体" => "pixel",
+                "统一字体" => "unifont",
+                "宋体" => "songti",
+                "黑体" => "heiti",
+                "楷体" => "kaiti",
+                _ => oldName // 如果已经是标识符，直接返回
+            };
         }
     }
 }

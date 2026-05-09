@@ -64,9 +64,9 @@ namespace CraftSharp.Models
         public string Theme { get; set; } = "跟随系统";
 
         /// <summary>
-        /// 字体
+        /// 字体（使用标识符：yahei/pixel/unifont/songti/heiti/kaiti）
         /// </summary>
-        public string Font { get; set; } = "微软雅黑";
+        public string Font { get; set; } = "yahei";
 
         /// <summary>
         /// 字体大小
