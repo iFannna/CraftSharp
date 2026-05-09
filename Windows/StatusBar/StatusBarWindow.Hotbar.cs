@@ -137,7 +137,8 @@ namespace CraftSharp.Windows.StatusBar
             double slotSize = 16 * _scaleFactor; // 格子显示尺寸
             double dropZoneSize = slotSize + 2 * dropZoneExpansion; // 拖拽热区尺寸 = 20
             double iconSize = slotSize; // 图标显示尺寸 = 16
-            double selectionSize = 24 * _scaleFactor; // selection 图片尺寸
+            double selectionSize = 24 * _scaleFactor; // selection 图片宽度 = 24
+            double selectionHeight = 23 * _scaleFactor; // selection 图片高度 = 23（底部对齐快捷栏）
 
             // 设置左副手格子
             var leftOffhandBorder = GetSlotBorder("LeftOffhand");
@@ -193,12 +194,19 @@ namespace CraftSharp.Windows.StatusBar
 
             SelectionOverlayCanvas.Children.Clear();
 
-            // 创建 9 个 selection 图片，使用 Canvas.Left 定位，居中于每列
-            // 每列宽度 = columnWidth = 20，selection 宽度 = 24
-            // 居中位置 = i * columnWidth + (columnWidth - selectionSize) / 2
+            // 创建 9 个 selection 图片，使用 Canvas.Left/Top 定位
+            // 水平：居中于每列（列宽20，selection宽24，左右各扩展2）
+            // 垂直：底部对齐快捷栏（hotbar高22，selection高23，向上超出1）
+            double hotbarHeight = _originalHotbarHeight * _scaleFactor; // 22
+            double canvasMarginTop = margin - dropZoneExpansion; // 1
             for (int i = 0; i < 9; i++)
             {
+                // 水平居中于列
                 double leftPosition = i * columnWidth + (columnWidth - selectionSize) / 2;
+
+                // 垂直底部对齐快捷栏
+                // Canvas.SetTop = hotbarHeight - canvasMarginTop - selectionHeight
+                double topPosition = hotbarHeight - canvasMarginTop - selectionHeight;
 
                 var selection = new System.Windows.Controls.Image
                 {
@@ -206,13 +214,13 @@ namespace CraftSharp.Windows.StatusBar
                     Source = LoadBitmapImage(AssetPaths.HotbarSelection),
                     Stretch = Stretch.Uniform,
                     Width = selectionSize, // 24
-                    Height = selectionSize, // 24
+                    Height = selectionHeight, // 23
                     Visibility = Visibility.Collapsed
                 };
                 RenderOptions.SetBitmapScalingMode(selection, BitmapScalingMode.NearestNeighbor);
                 SelectionOverlayCanvas.Children.Add(selection);
                 Canvas.SetLeft(selection, leftPosition);
-                Canvas.SetTop(selection, (dropZoneSize - selectionSize) / 2); // 垂直居中
+                Canvas.SetTop(selection, topPosition); // 底部对齐快捷栏
             }
 
             // 创建 9 个格子 Border
