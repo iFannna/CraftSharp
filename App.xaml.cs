@@ -1,7 +1,11 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using CraftSharp.Windows;
+using CraftSharp.Windows.StatusBar;
+using CraftSharp.Windows.BossBar;
+using CraftSharp.Windows.Crosshair;
+using CraftSharp.Windows.Settings;
+using CraftSharp.Windows.Inventory;
 using CraftSharp.Services;
 using Newtonsoft.Json;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -51,7 +55,7 @@ namespace CraftSharp
             // 如果开启"记住位置"，在创建窗口前设置跳过默认定位
             if (_appSettings?.StatusBarRememberPosition ?? false)
             {
-                CraftSharp.Windows.StatusBarWindow.ShouldSkipDefaultPositioning = true;
+                StatusBarWindow.ShouldSkipDefaultPositioning = true;
             }
 
             // 创建快捷栏窗口

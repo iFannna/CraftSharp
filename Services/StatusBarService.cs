@@ -1,5 +1,6 @@
 using System;
 using CraftSharp.Models;
+using CraftSharp.Windows.StatusBar;
 
 namespace CraftSharp.Services
 {
@@ -11,7 +12,7 @@ namespace CraftSharp.Services
         private static StatusBarService? _instance;
         public static StatusBarService Instance => _instance ??= new StatusBarService();
 
-        private Windows.StatusBarWindow? _statusBarWindow;
+        private StatusBarWindow? _statusBarWindow;
         private AppSettings? _appSettings;
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace CraftSharp.Services
         /// <summary>
         /// 初始化服务
         /// </summary>
-        public void Initialize(Windows.StatusBarWindow statusBarWindow, AppSettings settings)
+        public void Initialize(StatusBarWindow statusBarWindow, AppSettings settings)
         {
             _statusBarWindow = statusBarWindow;
             _appSettings = settings;
@@ -37,7 +38,7 @@ namespace CraftSharp.Services
         /// <summary>
         /// 初始化服务（无参数版本，兼容旧调用）
         /// </summary>
-        public void Initialize(Windows.StatusBarWindow statusBarWindow)
+        public void Initialize(StatusBarWindow statusBarWindow)
         {
             _statusBarWindow = statusBarWindow;
         }

@@ -1,0 +1,93 @@
+<UserControl x:Class="CraftSharp.Windows.Settings.Panels.SystemPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <StackPanel>
+        <!-- 标题 -->
+        <TextBlock Text="{DynamicResource SystemPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+        <!-- 语言设置卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource LanguageLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource LanguageDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ComboBox Grid.Column="1" Width="160" x:Name="LanguageComboBox"
+                          SelectedIndex="0" SelectionChanged="LanguageComboBox_SelectionChanged">
+                    <ComboBoxItem Content="{DynamicResource LangZhCN}" Tag="zh-CN"/>
+                    <ComboBoxItem Content="{DynamicResource LangEnUS}" Tag="en-US"/>
+                </ComboBox>
+            </Grid>
+        </ui:Card>
+
+        <!-- 开机自启动卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource AutoStartLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource AutoStartDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ui:ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsChecked="True"
+                                 Click="AutoStartToggle_Click"/>
+            </Grid>
+        </ui:Card>
+
+        <!-- 记住窗口位置卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource RememberWindowPositionLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource RememberWindowPositionDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ui:ToggleSwitch Grid.Column="1" x:Name="RememberPositionToggle" IsChecked="True"
+                                 Click="RememberPositionToggle_Click"/>
+            </Grid>
+        </ui:Card>
+
+        <!-- 记住窗口大小卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource RememberWindowSizeLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource RememberWindowSizeDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ui:ToggleSwitch Grid.Column="1" x:Name="RememberSizeToggle" IsChecked="True"
+                                 Click="RememberSizeToggle_Click"/>
+            </Grid>
+        </ui:Card>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,215 @@
+<ui:FluentWindow x:Class="CraftSharp.Windows.Dialogs.IconPickerWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource IconPickerTitle}"
+                 Height="500" Width="700" MinHeight="400" MinWidth="500"
+                 WindowStartupLocation="CenterOwner"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 Foreground="{DynamicResource TextPrimaryBrush}"
+                 ResizeMode="CanResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <ui:TitleBar Grid.Row="0" Title="{DynamicResource IconPickerTitle}" ShowMinimize="False" ShowMaximize="True" ShowClose="True"
+                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+
+        <!-- 主内容区 -->
+        <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧二级分类树 -->
+            <Border Grid.Column="0" Background="{DynamicResource ApplicationBackgroundBrush}"
+                    BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,1,0">
+                <TreeView x:Name="CategoryTreeView"
+                          Margin="8" Background="Transparent" BorderThickness="0"
+                          Foreground="{DynamicResource TextPrimaryBrush}"
+                          SelectedItemChanged="CategoryTreeView_SelectedItemChanged">
+                    <TreeView.Resources>
+                        <!-- 展开按钮样式 - 必须放在TreeViewItem样式之前 -->
+                        <Style x:Key="TreeViewExpanderStyle" TargetType="ToggleButton">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent" Width="16" Height="16">
+                                            <TextBlock x:Name="Arrow" Text="▶" FontSize="10"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Arrow" Property="Text" Value="▼"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <!-- TreeViewItem样式 -->
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="Padding" Value="8,6"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TreeViewItem">
+                                        <StackPanel>
+                                            <Border x:Name="Bd" Background="Transparent" CornerRadius="4"
+                                                    Padding="{TemplateBinding Padding}"
+                                                    Cursor="Hand"
+                                                    MouseLeftButtonDown="TreeViewHeader_Click">
+                                                <DockPanel>
+                                                    <ToggleButton x:Name="Expander" DockPanel.Dock="Left"
+                                                                  Width="16" Height="16"
+                                                                  Margin="0,0,4,0"
+                                                                  ClickMode="Press"
+                                                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                                  Style="{StaticResource TreeViewExpanderStyle}"/>
+                                                    <ContentPresenter ContentSource="Header" VerticalAlignment="Center"/>
+                                                </DockPanel>
+                                            </Border>
+                                            <ItemsPresenter x:Name="ItemsHost" Margin="16,0,0,0"/>
+                                        </StackPanel>
+                                        <ControlTemplate.Triggers>
+                                            <!-- 关键：控制子项可见性 -->
+                                            <Trigger Property="IsExpanded" Value="False">
+                                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                                            </Trigger>
+                                            <Trigger Property="HasItems" Value="False">
+                                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TreeView.Resources>
+
+                    <!-- 方块分类 -->
+                    <TreeViewItem IsExpanded="True" Tag="block_root">
+                        <TreeViewItem.Header>
+                            <TextBlock Text="{DynamicResource IconPickerCategoryBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </TreeViewItem.Header>
+                        <TreeViewItem Tag="block_all">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryBlockAll}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="block/building_block">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryBuildingBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="block/colored_block">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryColoredBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="block/functional_block">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryFunctionalBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="block/natural_block">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryNaturalBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="block/redstone_block">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryRedstoneBlock}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                    </TreeViewItem>
+
+                    <!-- 物品分类 -->
+                    <TreeViewItem IsExpanded="True" Tag="item_root">
+                        <TreeViewItem.Header>
+                            <TextBlock Text="{DynamicResource IconPickerCategoryItem}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </TreeViewItem.Header>
+                        <TreeViewItem Tag="item_all">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryItemAll}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="item/combat">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryCombat}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="item/food_and_drink">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryFood}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="item/ingredient">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryIngredient}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="item/spawn_egg">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategorySpawnEgg}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="item/tool_and_utility">
+                            <TreeViewItem.Header>
+                                <TextBlock Text="{DynamicResource IconPickerCategoryTool}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
+                    </TreeViewItem>
+                </TreeView>
+            </Border>
+
+            <!-- 右侧图标网格 -->
+            <Grid Grid.Column="1">
+                <ScrollViewer Padding="16">
+                    <ItemsControl x:Name="IconGrid" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="80" Height="80" Margin="4"
+                                        Background="{DynamicResource CardBackgroundBrush}"
+                                         Cursor="Hand"
+                                        MouseLeftButtonDown="IconItem_Click"
+                                        ToolTip="{Binding Name}"
+                                        ToolTipService.InitialShowDelay="0"
+                                        ToolTipService.ShowDuration="5000">
+                                    <Image Source="{Binding BitmapImage}"
+                                           Stretch="Uniform"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- 加载指示器 -->
+                <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource IconPickerLoading}"
+                           Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

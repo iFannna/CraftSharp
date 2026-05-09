@@ -1,5 +1,6 @@
 using System;
 using CraftSharp.Models;
+using CraftSharp.Windows.BossBar;
 
 namespace CraftSharp.Services
 {
@@ -11,7 +12,7 @@ namespace CraftSharp.Services
         private static BossBarService? _instance;
         public static BossBarService Instance => _instance ??= new BossBarService();
 
-        private Windows.BossBarWindow? _bossBarWindow;
+        private BossBarWindow? _bossBarWindow;
         private AppSettings? _appSettings;
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace CraftSharp.Services
         /// <summary>
         /// 初始化服务
         /// </summary>
-        public void Initialize(Windows.BossBarWindow bossBarWindow, AppSettings settings)
+        public void Initialize(BossBarWindow bossBarWindow, AppSettings settings)
         {
             _bossBarWindow = bossBarWindow;
             _appSettings = settings;

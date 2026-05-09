@@ -1,5 +1,6 @@
 using System;
 using CraftSharp.Models;
+using CraftSharp.Windows.Crosshair;
 
 namespace CraftSharp.Services
 {
@@ -11,13 +12,13 @@ namespace CraftSharp.Services
         private static CrosshairService? _instance;
         public static CrosshairService Instance => _instance ??= new CrosshairService();
 
-        private Windows.CrosshairWindow? _crosshairWindow;
+        private CrosshairWindow? _crosshairWindow;
         private AppSettings? _appSettings;
 
         /// <summary>
         /// 初始化服务
         /// </summary>
-        public void Initialize(Windows.CrosshairWindow crosshairWindow, AppSettings settings)
+        public void Initialize(CrosshairWindow crosshairWindow, AppSettings settings)
         {
             _crosshairWindow = crosshairWindow;
             _appSettings = settings;

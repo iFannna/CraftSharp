@@ -1,0 +1,114 @@
+<ui:FluentWindow x:Class="CraftSharp.Windows.Settings.SettingsWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource SettingsTitle}"
+                 Height="720" Width="1080"
+                 WindowStartupLocation="CenterScreen"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 Foreground="{DynamicResource TextPrimaryBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <ui:TitleBar Grid.Row="0" Title="{DynamicResource AppTitle}" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
+                     FontSize="16" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+
+        <!-- 主内容区 -->
+        <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧导航栏 -->
+            <Border Grid.Column="0" Background="{DynamicResource ApplicationBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 导航列表 -->
+                    <ListBox x:Name="NavListBox" SelectionChanged="NavListBox_SelectionChanged"
+                             Margin="8" Background="Transparent" BorderThickness="0"
+                             Foreground="{DynamicResource TextPrimaryBrush}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="12,10"/>
+                                <Setter Property="Margin" Value="0,2"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd" Background="Transparent" CornerRadius="6"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <ListBoxItem x:Name="NavSystem" Tag="system" IsSelected="True">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Settings20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavSystem}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem x:Name="NavAppearance" Tag="appearance">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="PaintBrush20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavAppearance}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem x:Name="NavHud" Tag="hud">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Grid20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavHud}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem x:Name="NavHotkey" Tag="hotkey">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Keyboard20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavHotkey}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem x:Name="NavAbout" Tag="about">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Info20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavAbout}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+
+                    <!-- 版本信息 -->
+                    <Border Grid.Row="1" BorderBrush="{DynamicResource DividerBrush}"
+                             Padding="16,12">
+                        <TextBlock Text="v1.0.0 Craft#" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 右侧内容区 -->
+            <ScrollViewer Grid.Column="1" Background="{DynamicResource ApplicationBackgroundBrush}" Padding="32,24">
+                <StackPanel x:Name="ContentContainer" MaxWidth="800"/>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
