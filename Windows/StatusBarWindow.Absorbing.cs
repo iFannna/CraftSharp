@@ -198,8 +198,27 @@ namespace CraftSharp.Windows
             // 获取配置值
             var settings = GetHudElementSettings("absorbing");
             int maxValue = settings?.CustomMaxValue ?? 20;
-            int currentValue = settings?.CustomCurrentValue ?? 20;
             int slotCount = maxValue / 2;
+
+            // 计算当前值
+            int currentValue;
+            bool dataMappingEnabled = settings?.CustomValueEnabled != true;
+
+            if (dataMappingEnabled)
+            {
+                // 数据映射开启：从数据源获取百分比，转换为伤害吸收值
+                string mappingType = settings?.DataMappingType ?? "电池电量";
+                double percent = GetDataMappingValue(mappingType);
+                currentValue = (int)(percent * maxValue);
+            }
+            else
+            {
+                // 自定义数值开启：使用配置的当前值
+                currentValue = settings?.CustomCurrentValue ?? 20;
+            }
+
+            // 当前值不超过最大值
+            currentValue = Math.Max(0, Math.Min(currentValue, maxValue));
 
             // 计算完整和半吸收数量
             // currentValue: 半吸收=1, 满吸收=2
