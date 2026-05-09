@@ -38,7 +38,7 @@ namespace CraftSharp.Windows.Dialogs
             LoadCategoryConfig();
 
             // 设置窗口图标（使用当前应用图标）
-            SetWindowIcon();
+            IconService.Instance.ApplyWindowIcon(this);
 
             // 手动触发加载"全部方块"
             LoadIconsForTagAsync("block_all");
@@ -59,15 +59,6 @@ namespace CraftSharp.Windows.Dialogs
                     _categoryConfig = JsonSerializer.Deserialize<IconCategoriesConfig>(json, options);
                 }
                 catch { }
-            }
-        }
-
-        private void SetWindowIcon()
-        {
-            var icon = IconService.Instance.GetWindowIcon();
-            if (icon != null)
-            {
-                this.Icon = icon;
             }
         }
 

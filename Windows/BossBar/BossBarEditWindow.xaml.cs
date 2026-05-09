@@ -32,7 +32,7 @@ namespace CraftSharp.Windows.BossBar
             _isNew = settings == null;
 
             // 设置窗口图标
-            SetWindowIcon();
+            IconService.Instance.ApplyWindowIcon(this);
 
             // 初始化UI
             InitializeUI();
@@ -57,15 +57,6 @@ namespace CraftSharp.Windows.BossBar
                 else
                     e.CancelCommand();
             });
-        }
-
-        private void SetWindowIcon()
-        {
-            var icon = IconService.Instance.GetWindowIcon();
-            if (icon != null)
-            {
-                this.Icon = icon;
-            }
         }
 
         private void InitializeUI()

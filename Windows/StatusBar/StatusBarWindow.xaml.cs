@@ -22,10 +22,6 @@ namespace CraftSharp.Windows.StatusBar
     /// </summary>
     public partial class StatusBarWindow : Window
     {
-        // 基准分辨率：2560下放大6倍
-        private const double BaseScreenWidth = 2560;
-        private const double BaseScaleMultiplier = 6;
-
         // 核心容器基准宽度：182像素（182×6=1092px）
         private const double BaseCoreContainerWidth = 182;
 
@@ -91,11 +87,14 @@ namespace CraftSharp.Windows.StatusBar
             // 初始化数据映射服务
             DataMappingService.Instance.Initialize();
 
+            // 初始化缩放服务
+            ScaleService.Instance.Initialize();
+
+            // 获取缩放比例
+            _scaleFactor = ScaleService.Instance.ScaleFactor;
+
             // 获取原始图片尺寸（调用各模块的加载方法）
             GetOriginalImageSize();
-
-            // 计算缩放比例
-            CalculateScale();
 
             // 设置窗口尺寸
             SetWindowSize();
@@ -196,15 +195,6 @@ namespace CraftSharp.Windows.StatusBar
             LoadAirDimensions();
             LoadAbsorbingDimensions();
             LoadArmorDimensions();
-        }
-
-        /// <summary>
-        /// 根据屏幕分辨率计算缩放比例
-        /// </summary>
-        private void CalculateScale()
-        {
-            var screenWidth = SystemParameters.PrimaryScreenWidth;
-            _scaleFactor = (screenWidth / BaseScreenWidth) * BaseScaleMultiplier;
         }
 
         /// <summary>

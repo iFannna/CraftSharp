@@ -38,20 +38,17 @@ namespace CraftSharp.Windows.BossBar
         private const double DefaultBossBarWidth = 182;
         private const double DefaultBossBarHeight = 5;
 
-        // 缩放基准值（与StatusBarWindow一致）
-        private const double BaseScreenWidth = 2560;
-        private const double BaseScaleMultiplier = 6;
-
         public BossBarWindow(AppSettings settings)
         {
             InitializeComponent();
             _settings = settings;
 
             // 设置窗口图标
-            SetWindowIcon();
+            IconService.Instance.ApplyWindowIcon(this);
 
-            // 根据屏幕分辨率计算缩放比例
-            CalculateScale();
+            // 初始化缩放服务
+            ScaleService.Instance.Initialize();
+            _scaleFactor = ScaleService.Instance.ScaleFactor;
 
             // 初始化更新定时器
             _updateTimer = new DispatcherTimer
@@ -74,24 +71,6 @@ namespace CraftSharp.Windows.BossBar
 
             // 启动更新定时器
             _updateTimer.Start();
-        }
-
-        /// <summary>
-        /// 根据屏幕分辨率计算缩放比例
-        /// </summary>
-        private void CalculateScale()
-        {
-            var screenWidth = SystemParameters.PrimaryScreenWidth;
-            _scaleFactor = (screenWidth / BaseScreenWidth) * BaseScaleMultiplier;
-        }
-
-        private void SetWindowIcon()
-        {
-            var icon = IconService.Instance.GetWindowIcon();
-            if (icon != null)
-            {
-                this.Icon = icon;
-            }
         }
 
         /// <summary>

@@ -26,15 +26,9 @@ namespace CraftSharp.Windows.Crosshair
     /// </summary>
     public partial class CrosshairWindow : Window
     {
-        // 基准分辨率：2560下放大6倍
-        private const double BaseScreenWidth = 2560;
-        private const double BaseScaleMultiplier = 6;
-
         private double _scaleFactor;
         private double _screenWidth;  // WPF 逻辑像素
         private double _screenHeight; // WPF 逻辑像素
-        private double _dpiScaleX;
-        private double _dpiScaleY;
         private AppSettings? _appSettings;
 
         // 原始图片尺寸
@@ -69,17 +63,15 @@ namespace CraftSharp.Windows.Crosshair
         /// </summary>
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
+            // 初始化缩放服务（使用DPI缩放，用于覆盖全屏的窗口）
+            var presentationSource = PresentationSource.FromVisual(this);
+            ScaleService.Instance.InitializeWithDpi(presentationSource);
+            _scaleFactor = ScaleService.Instance.ScaleFactor;
+            _screenWidth = ScaleService.Instance.ScreenWidth;
+            _screenHeight = ScaleService.Instance.ScreenHeight;
+
             // 加载图片尺寸
             LoadImageDimensions();
-
-            // 获取 DPI 缩放因子
-            GetDpiScale();
-
-            // 获取完整屏幕尺寸（包括任务栏），转换为 WPF 逻辑像素
-            GetFullScreenSize();
-
-            // 计算缩放比例
-            CalculateScale();
 
             // 设置窗口覆盖整个屏幕
             SetupWindow();
@@ -89,40 +81,6 @@ namespace CraftSharp.Windows.Crosshair
 
             // 设置攻击指示器位置（准星下方）
             SetupAttackIndicator();
-        }
-
-        /// <summary>
-        /// 获取 DPI 缩放因子
-        /// </summary>
-        private void GetDpiScale()
-        {
-            var presentationSource = PresentationSource.FromVisual(this);
-            if (presentationSource != null)
-            {
-                _dpiScaleX = presentationSource.CompositionTarget.TransformToDevice.M11;
-                _dpiScaleY = presentationSource.CompositionTarget.TransformToDevice.M22;
-            }
-            else
-            {
-                // 默认值（无 DPI 缩放）
-                _dpiScaleX = 1.0;
-                _dpiScaleY = 1.0;
-            }
-        }
-
-        /// <summary>
-        /// 获取完整屏幕尺寸（包括任务栏区域），转换为 WPF 逻辑像素
-        /// </summary>
-        private void GetFullScreenSize()
-        {
-            // 使用 System.Windows.Forms.Screen 获取物理像素尺寸
-            var screen = System.Windows.Forms.Screen.PrimaryScreen;
-            double physicalWidth = screen.Bounds.Width;
-            double physicalHeight = screen.Bounds.Height;
-
-            // 转换为 WPF 逻辑像素
-            _screenWidth = physicalWidth / _dpiScaleX;
-            _screenHeight = physicalHeight / _dpiScaleY;
         }
 
         /// <summary>
@@ -195,14 +153,6 @@ namespace CraftSharp.Windows.Crosshair
             var (fw, fh) = ImageService.Instance.GetImageDimensions(AssetPaths.CrosshairAttackIndicatorFull);
             _originalAttackIndicatorFullWidth = fw;
             _originalAttackIndicatorFullHeight = fh;
-        }
-
-        /// <summary>
-        /// 计算缩放比例
-        /// </summary>
-        private void CalculateScale()
-        {
-            _scaleFactor = (_screenWidth / BaseScreenWidth) * BaseScaleMultiplier;
         }
 
         /// <summary>

@@ -16,10 +16,6 @@ namespace CraftSharp.Windows.Inventory
         private readonly SlotDataService _slotService;
         private readonly string[] _slotIds;
 
-        // 基准分辨率：2560下放大6倍
-        private const double BaseScreenWidth = 2560;
-        private const double BaseScaleMultiplier = 6;
-
         private double _scaleFactor;
         private double _originalImageWidth;
         private double _originalImageHeight;
@@ -40,14 +36,15 @@ namespace CraftSharp.Windows.Inventory
                 _slotIds[i] = $"inventory_{i}";
             }
 
+            // 初始化缩放服务
+            ScaleService.Instance.Initialize();
+            _scaleFactor = ScaleService.Instance.ScaleFactor;
+
             // 获取原始图片尺寸
             GetOriginalImageSize();
 
             // 加载背景图片
             InventoryImage.Source = LoadBitmapImage(AssetPaths.Inventory);
-
-            // 计算缩放比例
-            CalculateScale();
 
             // 设置窗口尺寸
             SetWindowSize();
@@ -75,17 +72,6 @@ namespace CraftSharp.Windows.Inventory
         protected static BitmapImage LoadBitmapImage(string relativePath)
         {
             return ImageService.Instance.LoadBitmapImage(relativePath)!;
-        }
-
-        /// <summary>
-        /// 根据屏幕分辨率计算缩放比例
-        /// </summary>
-        private void CalculateScale()
-        {
-            var screenWidth = SystemParameters.PrimaryScreenWidth;
-
-            // 基于屏幕宽度与2560的比例，乘以基准倍数6
-            _scaleFactor = (screenWidth / BaseScreenWidth) * BaseScaleMultiplier;
         }
 
         /// <summary>

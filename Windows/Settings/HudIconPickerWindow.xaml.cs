@@ -26,19 +26,10 @@ namespace CraftSharp.Windows.Settings
             _elementType = elementType;
 
             // 设置窗口图标
-            SetWindowIcon();
+            IconService.Instance.ApplyWindowIcon(this);
 
             // 加载图标
             LoadIcons();
-        }
-
-        private void SetWindowIcon()
-        {
-            var icon = IconService.Instance.GetWindowIcon();
-            if (icon != null)
-            {
-                this.Icon = icon;
-            }
         }
 
         private void LoadIcons()

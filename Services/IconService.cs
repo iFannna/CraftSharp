@@ -231,5 +231,17 @@ namespace CraftSharp.Services
                 return null;
             }
         }
+
+        /// <summary>
+        /// 应用窗口图标（用于子窗口）
+        /// </summary>
+        public void ApplyWindowIcon(Window window)
+        {
+            var icon = GetWindowIcon();
+            if (icon != null)
+            {
+                window.Icon = icon;
+            }
+        }
     }
 }
