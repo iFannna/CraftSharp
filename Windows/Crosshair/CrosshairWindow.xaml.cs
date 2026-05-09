@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Models;
 using CraftSharp.Helpers;
+using CraftSharp.Services;
 
 namespace CraftSharp.Windows.Crosshair
 {
@@ -346,57 +347,7 @@ namespace CraftSharp.Windows.Crosshair
 
             // 否则使用数据映射
             string mappingType = settings?.DataMappingType ?? "电池电量";
-            return GetDataMappingValue(mappingType);
-        }
-
-        /// <summary>
-        /// 获取数据映射值（百分比 0.0 - 1.0）
-        /// </summary>
-        private double GetDataMappingValue(string mappingType)
-        {
-            switch (mappingType)
-            {
-                case "电池电量":
-                    var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return powerStatus.BatteryLifePercent;
-
-                case "内存占用率":
-                    try
-                    {
-                        var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
-                        double totalMB = computerInfo.TotalPhysicalMemory / (1024.0 * 1024.0);
-                        double availableMB = computerInfo.AvailablePhysicalMemory / (1024.0 * 1024.0);
-                        double usedPercent = (totalMB - availableMB) / totalMB;
-                        return Math.Min(1.0, Math.Max(0.0, usedPercent));
-                    }
-                    catch
-                    {
-                        return 0;
-                    }
-
-                case "CPU利用率":
-                    try
-                    {
-                        using (var cpuCounter = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", "_Total"))
-                        {
-                            cpuCounter.NextValue(); // 第一次调用返回0
-                            System.Threading.Thread.Sleep(100);
-                            return Math.Min(1.0, cpuCounter.NextValue() / 100.0);
-                        }
-                    }
-                    catch
-                    {
-                        return 0;
-                    }
-
-                case "GPU利用率":
-                    // GPU利用率需要特殊API，暂时返回电池电量
-                    var ps = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return ps.BatteryLifePercent;
-
-                default:
-                    return 0;
-            }
+            return DataMappingService.Instance.GetValue(mappingType);
         }
 
         /// <summary>

@@ -34,10 +34,6 @@ namespace CraftSharp.Windows.BossBar
         private readonly DispatcherTimer _updateTimer;
         private double _scaleFactor;
 
-        // 性能计数器（缓存以避免每次调用NextValue的延迟）
-        private System.Diagnostics.PerformanceCounter? _cpuCounter;
-        private System.Diagnostics.PerformanceCounter? _availableMemoryCounter;
-
         // 默认尺寸（当无法从图片读取时使用，与实际图片尺寸一致）
         private const double DefaultBossBarWidth = 182;
         private const double DefaultBossBarHeight = 5;
@@ -67,8 +63,8 @@ namespace CraftSharp.Windows.BossBar
             // 监听BossBars集合变化
             _settings.BossBars.CollectionChanged += BossBars_CollectionChanged;
 
-            // 初始化性能计数器
-            InitializePerformanceCounters();
+            // 初始化数据映射服务
+            DataMappingService.Instance.Initialize();
 
             // 初始化窗口位置
             UpdateWindowPosition();
@@ -95,26 +91,6 @@ namespace CraftSharp.Windows.BossBar
             if (icon != null)
             {
                 this.Icon = icon;
-            }
-        }
-
-        /// <summary>
-        /// 初始化性能计数器
-        /// </summary>
-        private void InitializePerformanceCounters()
-        {
-            try
-            {
-                _cpuCounter = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", "_Total");
-                _availableMemoryCounter = new System.Diagnostics.PerformanceCounter("Memory", "Available MBytes");
-
-                // 第一次调用NextValue返回0，需要预热
-                _cpuCounter.NextValue();
-                _availableMemoryCounter.NextValue();
-            }
-            catch
-            {
-                // 如果初始化失败，计数器将为null
             }
         }
 
@@ -383,66 +359,10 @@ namespace CraftSharp.Windows.BossBar
             this.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        /// <summary>
-        /// 获取数据映射值（百分比 0.0 - 1.0）
-        /// </summary>
-        public double GetDataMappingValue(string mappingType)
-        {
-            switch (mappingType)
-            {
-                case "电池电量":
-                    var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return powerStatus.BatteryLifePercent;
-
-                case "内存占用率":
-                    try
-                    {
-                        if (_availableMemoryCounter != null)
-                        {
-                            double availableMB = _availableMemoryCounter.NextValue();
-                            double totalMB = new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory / (1024.0 * 1024.0);
-                            double usedPercent = (totalMB - availableMB) / totalMB;
-                            return Math.Min(1.0, Math.Max(0.0, usedPercent));
-                        }
-                        return 0;
-                    }
-                    catch
-                    {
-                        return 0;
-                    }
-
-                case "CPU利用率":
-                    try
-                    {
-                        if (_cpuCounter != null)
-                        {
-                            return Math.Min(1.0, _cpuCounter.NextValue() / 100.0);
-                        }
-                        return 0;
-                    }
-                    catch
-                    {
-                        return 0;
-                    }
-
-                case "GPU利用率":
-                    // GPU利用率需要特殊API，暂时返回电池电量
-                    var ps = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return ps.BatteryLifePercent;
-
-                default:
-                    return 0;
-            }
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             _updateTimer.Stop();
             _settings.BossBars.CollectionChanged -= BossBars_CollectionChanged;
-
-            // 释放性能计数器
-            _cpuCounter?.Dispose();
-            _availableMemoryCounter?.Dispose();
 
             base.OnClosed(e);
         }
@@ -749,7 +669,7 @@ namespace CraftSharp.Windows.BossBar
             // 如果启用数据映射，使用映射数据
             if (_settings.DataMappingEnabled)
             {
-                return _parentWindow.GetDataMappingValue(_settings.DataMappingType);
+                return DataMappingService.Instance.GetValue(_settings.DataMappingType);
             }
 
             // 默认100%

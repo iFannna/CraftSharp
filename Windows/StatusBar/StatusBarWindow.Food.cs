@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Models;
 using CraftSharp.Helpers;
+using CraftSharp.Services;
 
 namespace CraftSharp.Windows.StatusBar
 {
@@ -249,7 +250,7 @@ namespace CraftSharp.Windows.StatusBar
             {
                 // 数据映射开启：从数据源获取百分比，转换为饥饿值
                 string mappingType = settings?.DataMappingType ?? "电池电量";
-                double percent = GetDataMappingValue(mappingType);
+                double percent = DataMappingService.Instance.GetValue(mappingType);
                 currentValue = (int)(percent * maxValue);
             }
             else

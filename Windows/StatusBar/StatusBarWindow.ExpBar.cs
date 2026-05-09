@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Helpers;
+using CraftSharp.Services;
 
 namespace CraftSharp.Windows.StatusBar
 {
@@ -108,7 +109,7 @@ namespace CraftSharp.Windows.StatusBar
 
             // 否则使用数据映射
             string mappingType = settings?.DataMappingType ?? "电池电量";
-            return GetDataMappingValue(mappingType);
+            return DataMappingService.Instance.GetValue(mappingType);
         }
     }
 }
