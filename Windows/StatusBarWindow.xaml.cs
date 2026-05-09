@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
+using LibreHardwareMonitor.Hardware;
 
 namespace CraftSharp.Windows
 {
@@ -35,6 +37,11 @@ namespace CraftSharp.Windows
         private System.Diagnostics.PerformanceCounter? _cpuCounter;
         private System.Diagnostics.PerformanceCounter? _availableMemoryCounter;
         private bool _performanceCountersInitialized = false;
+
+        // LibreHardwareMonitor实例（用于GPU利用率）
+        private Computer? _computer;
+        private ISensor? _gpuLoadSensor;
+        private bool _libreHardwareInitialized = false;
 
         // 副手槽状态
         private bool _leftOffhandEnabled = false;
@@ -84,6 +91,9 @@ namespace CraftSharp.Windows
 
             // 监听窗口位置变化（用于即时保存位置）
             LocationChanged += OnLocationChanged;
+
+            // 监听窗口关闭事件（释放LibreHardwareMonitor资源）
+            Closed += OnWindowClosed;
 
             // 初始化槽位数据服务
             _slotService = new Services.SlotDataService();
@@ -156,6 +166,26 @@ namespace CraftSharp.Windows
         private void OnLocationChanged(object? sender, EventArgs e)
         {
             PositionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 窗口关闭事件处理（释放资源）
+        /// </summary>
+        private void OnWindowClosed(object? sender, EventArgs e)
+        {
+            // 关闭LibreHardwareMonitor
+            if (_computer != null)
+            {
+                _computer.Close();
+                _computer = null;
+            }
+
+            // 停止定时器
+            if (_batteryTimer != null)
+            {
+                _batteryTimer.Stop();
+                _batteryTimer = null;
+            }
         }
 
         /// <summary>
@@ -605,9 +635,31 @@ namespace CraftSharp.Windows
                     }
 
                 case "GPU利用率":
-                    // GPU利用率需要特殊API，暂时返回电池电量
-                    var ps = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return ps.BatteryLifePercent;
+                    try
+                    {
+                        // 初始化LibreHardwareMonitor（仅第一次）
+                        if (!_libreHardwareInitialized)
+                        {
+                            InitializeLibreHardwareMonitor();
+                            _libreHardwareInitialized = true;
+                        }
+
+                        if (_gpuLoadSensor != null)
+                        {
+                            // 更新传感器值
+                            _gpuLoadSensor.Hardware.Update();
+                            float? gpuLoad = _gpuLoadSensor.Value;
+                            if (gpuLoad.HasValue)
+                            {
+                                return Math.Min(1.0, Math.Max(0.0, gpuLoad.Value / 100.0));
+                            }
+                        }
+                        return 0;
+                    }
+                    catch
+                    {
+                        return 0;
+                    }
 
                 default:
                     return 0;
@@ -631,6 +683,45 @@ namespace CraftSharp.Windows
             catch
             {
                 // 如果初始化失败，计数器将为null，GetDataMappingValue将返回0
+            }
+        }
+
+        /// <summary>
+        /// 初始化LibreHardwareMonitor（用于GPU利用率）
+        /// </summary>
+        private void InitializeLibreHardwareMonitor()
+        {
+            try
+            {
+                _computer = new Computer
+                {
+                    IsGpuEnabled = true
+                };
+                _computer.Open();
+
+                // 查找GPU负载传感器
+                foreach (var hardware in _computer.Hardware)
+                {
+                    if (hardware.HardwareType == HardwareType.GpuNvidia ||
+                        hardware.HardwareType == HardwareType.GpuAmd ||
+                        hardware.HardwareType == HardwareType.GpuIntel)
+                    {
+                        foreach (var sensor in hardware.Sensors)
+                        {
+                            if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("Core"))
+                            {
+                                _gpuLoadSensor = sensor;
+                                break;
+                            }
+                        }
+                        if (_gpuLoadSensor != null)
+                            break;
+                    }
+                }
+            }
+            catch
+            {
+                // 如果初始化失败，_gpuLoadSensor将为null
             }
         }
 
