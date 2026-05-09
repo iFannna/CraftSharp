@@ -489,6 +489,14 @@ namespace CraftSharp
         }
 
         /// <summary>
+        /// 获取 AppSettings 实例（供其他组件调用）
+        /// </summary>
+        public Models.AppSettings? GetAppSettings()
+        {
+            return _appSettings;
+        }
+
+        /// <summary>
         /// 初始化HUD元素可见性（根据配置文件）
         /// </summary>
         private void InitializeHudElementsVisibility()

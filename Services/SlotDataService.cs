@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
 using CraftSharp.Models;
 
 namespace CraftSharp.Services
 {
     /// <summary>
-    /// 格子数据存储服务
+    /// 格子数据存储服务 - 数据存储在 settings.json 中
     /// </summary>
     public class SlotDataService
     {
-        private static readonly string DataFilePath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "slot_data.json");
-
         private readonly Dictionary<string, SlotItem> _slots = new();
 
         public SlotDataService()
@@ -56,45 +51,47 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 加载数据
+        /// 加载数据 - 从 AppSettings.Slots 加载
         /// </summary>
         private void LoadData()
         {
-            if (!File.Exists(DataFilePath))
-                return;
-
-            try
+            var appSettings = GetAppSettings();
+            if (appSettings?.Slots != null)
             {
-                var json = File.ReadAllText(DataFilePath);
-                var data = JsonConvert.DeserializeObject<Dictionary<string, SlotItem>>(json);
-                if (data != null)
+                foreach (var kvp in appSettings.Slots)
                 {
-                    foreach (var kvp in data)
-                    {
-                        _slots[kvp.Key] = kvp.Value;
-                    }
+                    _slots[kvp.Key] = kvp.Value;
                 }
-            }
-            catch
-            {
-                // 加载失败时使用空数据
             }
         }
 
         /// <summary>
-        /// 保存数据
+        /// 保存数据 - 保存到 AppSettings.Slots 并触发 settings.json 保存
         /// </summary>
         private void SaveData()
         {
-            try
+            var appSettings = GetAppSettings();
+            if (appSettings != null)
             {
-                var json = JsonConvert.SerializeObject(_slots, Formatting.Indented);
-                File.WriteAllText(DataFilePath, json);
+                appSettings.Slots = new Dictionary<string, SlotItem>(_slots);
+                // 触发 App.xaml.cs 的 SaveSettings
+                if (App.Current is App app)
+                {
+                    app.SaveSettings();
+                }
             }
-            catch
+        }
+
+        /// <summary>
+        /// 获取 AppSettings 实例
+        /// </summary>
+        private AppSettings? GetAppSettings()
+        {
+            if (App.Current is App app)
             {
-                // 保存失败时忽略
+                return app.GetAppSettings();
             }
+            return null;
         }
     }
 }

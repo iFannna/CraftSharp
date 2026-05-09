@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -149,6 +150,12 @@ namespace CraftSharp.Models
         /// 显示/隐藏快捷栏快捷键
         /// </summary>
         public string HotbarToggleHotkey { get; set; } = "";
+
+        // ==================== 槽位数据 ====================
+        /// <summary>
+        /// 快捷栏槽位数据
+        /// </summary>
+        public Dictionary<string, SlotItem> Slots { get; set; } = new Dictionary<string, SlotItem>();
 
         // ==================== 关于 ====================
         /// <summary>
