@@ -48,28 +48,12 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadAbsorbingDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.AbsorbingFull);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalAbsorbingFullWidth = frame.PixelWidth;
-                    _originalAbsorbingFullHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.AbsorbingFull);
+            _originalAbsorbingFullWidth = width;
+            _originalAbsorbingFullHeight = height;
 
-            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.AbsorbingHalf);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalAbsorbingHalfWidth = frame.PixelWidth;
-                }
-            }
+            var (halfWidth, _) = ImageService.Instance.GetImageDimensions(AssetPaths.AbsorbingHalf);
+            _originalAbsorbingHalfWidth = halfWidth;
         }
 
         /// <summary>

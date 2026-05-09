@@ -46,28 +46,12 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadFoodDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.FoodFull);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalFoodWidth = frame.PixelWidth;
-                    _originalFoodHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.FoodFull);
+            _originalFoodWidth = width;
+            _originalFoodHeight = height;
 
-            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.FoodHalf);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalHalfFoodWidth = frame.PixelWidth;
-                }
-            }
+            var (halfWidth, _) = ImageService.Instance.GetImageDimensions(AssetPaths.FoodHalf);
+            _originalHalfFoodWidth = halfWidth;
         }
 
         /// <summary>
@@ -75,28 +59,12 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadSaturationDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.SaturationFull);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalSaturationWidth = frame.PixelWidth;
-                    _originalSaturationHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.SaturationFull);
+            _originalSaturationWidth = width;
+            _originalSaturationHeight = height;
 
-            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.SaturationHalf);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalHalfSaturationWidth = frame.PixelWidth;
-                }
-            }
+            var (halfWidth, _) = ImageService.Instance.GetImageDimensions(AssetPaths.SaturationHalf);
+            _originalHalfSaturationWidth = halfWidth;
         }
 
         /// <summary>

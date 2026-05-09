@@ -51,28 +51,12 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadHeartDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartFull);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalHeartWidth = frame.PixelWidth;
-                    _originalHeartHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.HeartFull);
+            _originalHeartWidth = width;
+            _originalHeartHeight = height;
 
-            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.HeartHalf);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalHalfHeartWidth = frame.PixelWidth;
-                }
-            }
+            var (halfWidth, _) = ImageService.Instance.GetImageDimensions(AssetPaths.HeartHalf);
+            _originalHalfHeartWidth = halfWidth;
         }
 
         /// <summary>

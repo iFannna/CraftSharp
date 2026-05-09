@@ -175,18 +175,11 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 从文件路径加载 BitmapImage（用于 Content 配置的资源）
+        /// 从文件路径加载 BitmapImage（使用 ImageService）
         /// </summary>
         protected static BitmapImage LoadBitmapImage(string relativePath)
         {
-            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
+            return ImageService.Instance.LoadBitmapImage(relativePath)!;
         }
 
         /// <summary>

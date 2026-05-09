@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -48,7 +47,7 @@ namespace CraftSharp.Windows.Settings
 
             // 确定图标目录路径（absorbing 使用 heart 目录）
             string spriteDir = _elementType == "absorbing" ? "heart" : _elementType;
-            var basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", spriteDir);
+            string basePath = $"Assets/minecraft/textures/gui/sprites/{spriteDir}";
 
             if (_elementType == "heart")
             {
@@ -75,17 +74,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in heartStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(basePath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -106,17 +97,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in foodStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(basePath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -137,17 +120,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in absorbingStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(basePath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -167,17 +142,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in armorStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(basePath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -197,17 +164,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in airStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(basePath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -220,7 +179,6 @@ namespace CraftSharp.Windows.Settings
             else if (_elementType == "expbar")
             {
                 // 经验条：experience_bar_progress 和 jump_bar_progress
-                var expbarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "experience_bar");
                 var expbarStyles = new[]
                 {
                     ("experience_bar_progress", "经验条 / Experience Bar"),
@@ -229,17 +187,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in expbarStyles)
                 {
-                    var filename = $"{style}.png";
-                    var fullPath = Path.Combine(expbarPath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/experience_bar/{style}.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -252,7 +202,6 @@ namespace CraftSharp.Windows.Settings
             else if (_elementType == "boss_bar")
             {
                 // BOSS血条颜色样式（不含notches）
-                var bossBarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "boss_bar");
                 var bossBarStyles = new[]
                 {
                     ("blue", "蓝色 / Blue"),
@@ -266,17 +215,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in bossBarStyles)
                 {
-                    var filename = $"{style}_progress.png";
-                    var fullPath = Path.Combine(bossBarPath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/boss_bar/{style}_progress.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
@@ -289,8 +230,6 @@ namespace CraftSharp.Windows.Settings
             else if (_elementType == "boss_bar_notch")
             {
                 // BOSS血条分段样式（Notches），第一个选项为"无"
-                var bossBarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "minecraft", "textures", "gui", "sprites", "boss_bar");
-
                 // "无"选项（空字符串表示无分段）
                 _iconItems.Add(new HudIconItem
                 {
@@ -309,17 +248,9 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in notchStyles)
                 {
-                    var filename = $"{style}_progress.png";
-                    var fullPath = Path.Combine(bossBarPath, filename);
-                    if (File.Exists(fullPath))
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/boss_bar/{style}_progress.png");
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,

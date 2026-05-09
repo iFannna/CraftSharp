@@ -129,15 +129,9 @@ namespace CraftSharp.Windows.Dialogs
                 var batch = iconDataList.Skip(i).Take(batchSize);
                 foreach (var data in batch)
                 {
-                    try
+                    var bitmap = ImageService.Instance.LoadBitmapImageFromPath(data.FilePath);
+                    if (bitmap != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(data.FilePath, UriKind.Absolute);
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-
                         _iconItems.Add(new IconItem
                         {
                             Name = data.Name,
@@ -145,7 +139,6 @@ namespace CraftSharp.Windows.Dialogs
                             RelativePath = data.RelativePath
                         });
                     }
-                    catch { }
                 }
 
                 // 让UI有机会更新

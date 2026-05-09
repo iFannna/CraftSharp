@@ -49,17 +49,9 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadAirDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Air);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalAirWidth = frame.PixelWidth;
-                    _originalAirHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.Air);
+            _originalAirWidth = width;
+            _originalAirHeight = height;
         }
 
         /// <summary>

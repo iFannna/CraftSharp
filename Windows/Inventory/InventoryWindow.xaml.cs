@@ -64,32 +64,17 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void GetOriginalImageSize()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Inventory);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalImageWidth = frame.PixelWidth;
-                    _originalImageHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.Inventory);
+            _originalImageWidth = width;
+            _originalImageHeight = height;
         }
 
         /// <summary>
-        /// 加载位图图片
+        /// 加载位图图片（使用 ImageService）
         /// </summary>
         protected static BitmapImage LoadBitmapImage(string relativePath)
         {
-            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
+            return ImageService.Instance.LoadBitmapImage(relativePath)!;
         }
 
         /// <summary>

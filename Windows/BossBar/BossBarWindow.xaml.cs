@@ -4,7 +4,7 @@ using CraftSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -492,43 +492,25 @@ namespace CraftSharp.Windows.BossBar
             _originalNotchWidth = DefaultWidth;
             _originalNotchHeight = DefaultHeight;
 
-            try
+            // 读取BOSS血条背景图片尺寸
+            var barBgPath = AssetPaths.GetBossBarPath(_settings.IconType, "background");
+            var (barW, barH) = ImageService.Instance.GetImageDimensions(barBgPath);
+            if (barW > 0 && barH > 0)
             {
-                // 读取BOSS血条背景图片尺寸
-                var barBgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                    AssetPaths.GetBossBarPath(_settings.IconType, "background"));
-                if (File.Exists(barBgPath))
-                {
-                    using (var stream = File.OpenRead(barBgPath))
-                    {
-                        var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                        var frame = decoder.Frames[0];
-                        _originalWidth = frame.PixelWidth;
-                        _originalHeight = frame.PixelHeight;
-                    }
-                }
+                _originalWidth = barW;
+                _originalHeight = barH;
             }
-            catch { }
 
             // 读取Notch图片尺寸（如果启用）
             if (!string.IsNullOrEmpty(_settings.NotchType))
             {
-                try
+                var notchBgPath = AssetPaths.GetNotchPath(_settings.NotchType, "background");
+                var (notchW, notchH) = ImageService.Instance.GetImageDimensions(notchBgPath);
+                if (notchW > 0 && notchH > 0)
                 {
-                    var notchBgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                        AssetPaths.GetNotchPath(_settings.NotchType, "background"));
-                    if (File.Exists(notchBgPath))
-                    {
-                        using (var stream = File.OpenRead(notchBgPath))
-                        {
-                            var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                            var frame = decoder.Frames[0];
-                            _originalNotchWidth = frame.PixelWidth;
-                            _originalNotchHeight = frame.PixelHeight;
-                        }
-                    }
+                    _originalNotchWidth = notchW;
+                    _originalNotchHeight = notchH;
                 }
-                catch { }
             }
         }
 
@@ -557,24 +539,14 @@ namespace CraftSharp.Windows.BossBar
             double height = _originalHeight * _scaleFactor;
 
             // BOSS血条背景
-            var barBgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                AssetPaths.GetBossBarPath(_settings.IconType, "background"));
-            if (File.Exists(barBgPath))
-            {
-                _barBackground.Source = LoadBitmapImage(barBgPath);
-                _barBackground.Width = width;
-                _barBackground.Height = height;
-            }
+            _barBackground.Source = ImageService.Instance.LoadBitmapImage(AssetPaths.GetBossBarPath(_settings.IconType, "background"));
+            _barBackground.Width = width;
+            _barBackground.Height = height;
 
             // BOSS血条进度
-            var barProgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                AssetPaths.GetBossBarPath(_settings.IconType, "progress"));
-            if (File.Exists(barProgPath))
-            {
-                _barProgress.Source = LoadBitmapImage(barProgPath);
-                _barProgress.Width = width;
-                _barProgress.Height = height;
-            }
+            _barProgress.Source = ImageService.Instance.LoadBitmapImage(AssetPaths.GetBossBarPath(_settings.IconType, "progress"));
+            _barProgress.Width = width;
+            _barProgress.Height = height;
 
             // Notch图层（如果启用）
             if (!string.IsNullOrEmpty(_settings.NotchType))
@@ -583,26 +555,16 @@ namespace CraftSharp.Windows.BossBar
                 double notchHeight = _originalNotchHeight * _scaleFactor;
 
                 // Notch背景
-                var notchBgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                    AssetPaths.GetNotchPath(_settings.NotchType, "background"));
-                if (File.Exists(notchBgPath))
-                {
-                    _notchBackground.Source = LoadBitmapImage(notchBgPath);
-                    _notchBackground.Width = notchWidth;
-                    _notchBackground.Height = notchHeight;
-                    _notchBackground.Visibility = Visibility.Visible;
-                }
+                _notchBackground.Source = ImageService.Instance.LoadBitmapImage(AssetPaths.GetNotchPath(_settings.NotchType, "background"));
+                _notchBackground.Width = notchWidth;
+                _notchBackground.Height = notchHeight;
+                _notchBackground.Visibility = Visibility.Visible;
 
                 // Notch进度
-                var notchProgPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                    AssetPaths.GetNotchPath(_settings.NotchType, "progress"));
-                if (File.Exists(notchProgPath))
-                {
-                    _notchProgress.Source = LoadBitmapImage(notchProgPath);
-                    _notchProgress.Width = notchWidth;
-                    _notchProgress.Height = notchHeight;
-                    _notchProgress.Visibility = Visibility.Visible;
-                }
+                _notchProgress.Source = ImageService.Instance.LoadBitmapImage(AssetPaths.GetNotchPath(_settings.NotchType, "progress"));
+                _notchProgress.Width = notchWidth;
+                _notchProgress.Height = notchHeight;
+                _notchProgress.Visibility = Visibility.Visible;
             }
             else
             {
@@ -611,20 +573,7 @@ namespace CraftSharp.Windows.BossBar
             }
         }
 
-        /// <summary>
-        /// 加载BitmapImage
-        /// </summary>
-        private BitmapImage LoadBitmapImage(string path)
-        {
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(path, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
-        }
-
+        
         /// <summary>
         /// 更新进度显示
         /// </summary>

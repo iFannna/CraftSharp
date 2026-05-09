@@ -182,43 +182,19 @@ namespace CraftSharp.Windows.Crosshair
         private void LoadImageDimensions()
         {
             // 加载准星图片尺寸
-            var crosshairPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.Crosshair);
-            if (System.IO.File.Exists(crosshairPath))
-            {
-                using (var stream = System.IO.File.OpenRead(crosshairPath))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalCrosshairWidth = frame.PixelWidth;
-                    _originalCrosshairHeight = frame.PixelHeight;
-                }
-            }
+            var (cw, ch) = ImageService.Instance.GetImageDimensions(AssetPaths.Crosshair);
+            _originalCrosshairWidth = cw;
+            _originalCrosshairHeight = ch;
 
             // 加载攻击指示器图片尺寸（background/progress: 16x4）
-            var attackIndicatorPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.CrosshairAttackIndicatorBackground);
-            if (System.IO.File.Exists(attackIndicatorPath))
-            {
-                using (var stream = System.IO.File.OpenRead(attackIndicatorPath))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalAttackIndicatorWidth = frame.PixelWidth;
-                    _originalAttackIndicatorHeight = frame.PixelHeight;
-                }
-            }
+            var (bgw, bgh) = ImageService.Instance.GetImageDimensions(AssetPaths.CrosshairAttackIndicatorBackground);
+            _originalAttackIndicatorWidth = bgw;
+            _originalAttackIndicatorHeight = bgh;
 
             // 加载攻击指示器满进度图片尺寸（full: 16x16）
-            var attackIndicatorFullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.CrosshairAttackIndicatorFull);
-            if (System.IO.File.Exists(attackIndicatorFullPath))
-            {
-                using (var stream = System.IO.File.OpenRead(attackIndicatorFullPath))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalAttackIndicatorFullWidth = frame.PixelWidth;
-                    _originalAttackIndicatorFullHeight = frame.PixelHeight;
-                }
-            }
+            var (fw, fh) = ImageService.Instance.GetImageDimensions(AssetPaths.CrosshairAttackIndicatorFull);
+            _originalAttackIndicatorFullWidth = fw;
+            _originalAttackIndicatorFullHeight = fh;
         }
 
         /// <summary>
@@ -404,18 +380,11 @@ namespace CraftSharp.Windows.Crosshair
         }
 
         /// <summary>
-        /// 从文件路径加载 BitmapImage
+        /// 从相对路径加载 BitmapImage（使用 ImageService）
         /// </summary>
         private static BitmapImage LoadBitmapImage(string relativePath)
         {
-            var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(fullPath, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
+            return ImageService.Instance.LoadBitmapImage(relativePath)!;
         }
     }
 }

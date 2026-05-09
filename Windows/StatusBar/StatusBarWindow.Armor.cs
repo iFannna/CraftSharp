@@ -37,28 +37,12 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void LoadArmorDimensions()
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.ArmorFull);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalArmorWidth = frame.PixelWidth;
-                    _originalArmorHeight = frame.PixelHeight;
-                }
-            }
+            var (width, height) = ImageService.Instance.GetImageDimensions(AssetPaths.ArmorFull);
+            _originalArmorWidth = width;
+            _originalArmorHeight = height;
 
-            path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.ArmorHalf);
-            if (System.IO.File.Exists(path))
-            {
-                using (var stream = System.IO.File.OpenRead(path))
-                {
-                    var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
-                    var frame = decoder.Frames[0];
-                    _originalHalfArmorWidth = frame.PixelWidth;
-                }
-            }
+            var (halfWidth, _) = ImageService.Instance.GetImageDimensions(AssetPaths.ArmorHalf);
+            _originalHalfArmorWidth = halfWidth;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@ using CraftSharp.Models;
 using CraftSharp.Services;
 using CraftSharp.Windows.Settings;
 using CraftSharp.Helpers;
-using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -118,24 +118,10 @@ namespace CraftSharp.Windows.BossBar
 
         private void LoadIconPreview()
         {
-            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetBossBarPath(_iconType, "progress"));
-            if (File.Exists(iconPath))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(iconPath, UriKind.Absolute);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                IconPreviewImage.Source = bitmap;
-                // 同时更新等级预览区域的底层元素图标
-                NotchIconPreviewImage.Source = bitmap;
-            }
-            else
-            {
-                IconPreviewImage.Source = null;
-                NotchIconPreviewImage.Source = null;
-            }
+            var bitmap = ImageService.Instance.LoadBitmapImage(AssetPaths.GetBossBarPath(_iconType, "progress"));
+            IconPreviewImage.Source = bitmap;
+            // 同时更新等级预览区域的底层元素图标
+            NotchIconPreviewImage.Source = bitmap;
         }
 
         private void LoadNotchPreview()
@@ -147,21 +133,8 @@ namespace CraftSharp.Windows.BossBar
                 return;
             }
 
-            var notchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.GetNotchPath(_notchType, "progress"));
-            if (File.Exists(notchPath))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(notchPath, UriKind.Absolute);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                NotchNotchPreviewImage.Source = bitmap;
-            }
-            else
-            {
-                NotchNotchPreviewImage.Source = null;
-            }
+            var bitmap = ImageService.Instance.LoadBitmapImage(AssetPaths.GetNotchPath(_notchType, "progress"));
+            NotchNotchPreviewImage.Source = bitmap;
         }
 
         private void DataMappingToggle_Click(object sender, RoutedEventArgs e)
