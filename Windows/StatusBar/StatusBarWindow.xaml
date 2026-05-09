@@ -146,6 +146,13 @@
                               SnapsToDevicePixels="True">
                             <!-- 主快捷栏格子 (9个) - 动态添加 -->
                         </Grid>
+                        <!-- 选中框叠加层：Canvas 允许内容超出边界不被裁剪 -->
+                        <Canvas x:Name="SelectionOverlayCanvas"
+                              UseLayoutRounding="True"
+                              SnapsToDevicePixels="True"
+                              IsHitTestVisible="False">
+                            <!-- selection 图片动态添加 -->
+                        </Canvas>
                     </Grid>
                 </StackPanel>
             </Grid>

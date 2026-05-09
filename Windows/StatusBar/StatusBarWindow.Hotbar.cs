@@ -137,6 +137,7 @@ namespace CraftSharp.Windows.StatusBar
             double slotSize = 16 * _scaleFactor; // 格子显示尺寸
             double dropZoneSize = slotSize + 2 * dropZoneExpansion; // 拖拽热区尺寸 = 20
             double iconSize = slotSize; // 图标显示尺寸 = 16
+            double selectionSize = 24 * _scaleFactor; // selection 图片尺寸
 
             // 设置左副手格子
             var leftOffhandBorder = GetSlotBorder("LeftOffhand");
@@ -187,6 +188,34 @@ namespace CraftSharp.Windows.StatusBar
             // 清除现有格子并重新添加
             HotbarSlotsGrid.Children.Clear();
 
+            // ===== 设置选中框叠加层（Canvas 允许超出边界） =====
+            SelectionOverlayCanvas.Margin = new Thickness(margin - dropZoneExpansion); // 与格子容器相同
+
+            SelectionOverlayCanvas.Children.Clear();
+
+            // 创建 9 个 selection 图片，使用 Canvas.Left 定位，居中于每列
+            // 每列宽度 = columnWidth = 20，selection 宽度 = 24
+            // 居中位置 = i * columnWidth + (columnWidth - selectionSize) / 2
+            for (int i = 0; i < 9; i++)
+            {
+                double leftPosition = i * columnWidth + (columnWidth - selectionSize) / 2;
+
+                var selection = new System.Windows.Controls.Image
+                {
+                    Name = $"Selection{i}",
+                    Source = LoadBitmapImage(AssetPaths.HotbarSelection),
+                    Stretch = Stretch.Uniform,
+                    Width = selectionSize, // 24
+                    Height = selectionSize, // 24
+                    Visibility = Visibility.Collapsed
+                };
+                RenderOptions.SetBitmapScalingMode(selection, BitmapScalingMode.NearestNeighbor);
+                SelectionOverlayCanvas.Children.Add(selection);
+                Canvas.SetLeft(selection, leftPosition);
+                Canvas.SetTop(selection, (dropZoneSize - selectionSize) / 2); // 垂直居中
+            }
+
+            // 创建 9 个格子 Border
             for (int i = 0; i < 9; i++)
             {
                 var border = new Border
@@ -203,6 +232,8 @@ namespace CraftSharp.Windows.StatusBar
                 border.AllowDrop = true;
                 border.Drop += Slot_Drop;
                 border.DragOver += Slot_DragOver;
+                border.MouseEnter += Slot_MouseEnter;
+                border.MouseLeave += Slot_MouseLeave;
 
                 var icon = new System.Windows.Controls.Image
                 {
@@ -219,6 +250,71 @@ namespace CraftSharp.Windows.StatusBar
                 Grid.SetColumn(border, i);
                 Grid.SetRow(border, 0);
             }
+        }
+
+        /// <summary>
+        /// 鼠标进入格子 - 显示选中框
+        /// </summary>
+        private void Slot_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var border = (Border)sender;
+            int slotIndex = -1;
+            for (int i = 0; i < 9; i++)
+            {
+                if (border.Name == $"Slot{i}")
+                {
+                    slotIndex = i;
+                    break;
+                }
+            }
+            if (slotIndex >= 0)
+            {
+                var selection = GetSelectionImage(slotIndex);
+                if (selection != null)
+                {
+                    selection.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 鼠标离开格子 - 隐藏选中框
+        /// </summary>
+        private void Slot_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var border = (Border)sender;
+            int slotIndex = -1;
+            for (int i = 0; i < 9; i++)
+            {
+                if (border.Name == $"Slot{i}")
+                {
+                    slotIndex = i;
+                    break;
+                }
+            }
+            if (slotIndex >= 0)
+            {
+                var selection = GetSelectionImage(slotIndex);
+                if (selection != null)
+                {
+                    selection.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取选中框 Image 控件
+        /// </summary>
+        private System.Windows.Controls.Image GetSelectionImage(int index)
+        {
+            foreach (var child in SelectionOverlayCanvas.Children)
+            {
+                if (child is System.Windows.Controls.Image image && image.Name == $"Selection{index}")
+                {
+                    return image;
+                }
+            }
+            return null;
         }
 
         /// <summary>
