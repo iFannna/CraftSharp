@@ -430,8 +430,8 @@ namespace CraftSharp.Windows
         private double _originalNotchWidth;
         private double _originalNotchHeight;
 
-        // 名称文本
-        private readonly TextBlock _nameText;
+        // 名称文本容器（横向排列多个字符TextBlock）
+        private readonly StackPanel _nameContainer;
 
         // 血条图层Grid
         private readonly Grid _barGrid;
@@ -460,25 +460,15 @@ namespace CraftSharp.Windows
             // 从图片文件读取原始尺寸
             LoadDimensions();
 
-            // BOSS名称（无背景，使用Unifont字体，带右下角阴影）
-            _nameText = new TextBlock
+            // BOSS名称容器（横向排列，每个字符独立TextBlock以控制间距）
+            _nameContainer = new StackPanel
             {
-                Text = settings.Name,
-                Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 8 * scaleFactor,
-                FontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont"),
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor),
-                Effect = new System.Windows.Media.Effects.DropShadowEffect
-                {
-                    Color = System.Windows.Media.Colors.Black,
-                    Direction = 315, // 右下角45°方向
-                    ShadowDepth = 0.75 * scaleFactor,
-                    BlurRadius = 0, // 硬阴影，适合像素风格
-                    Opacity = 1.0
-                }
+                Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor)
             };
-            this.Children.Add(_nameText);
+            CreateNameCharacters(settings.Name, scaleFactor);
+            this.Children.Add(_nameContainer);
 
             // 血条图层Grid
             double width = _originalWidth * scaleFactor;
@@ -732,12 +722,47 @@ namespace CraftSharp.Windows
         }
 
         /// <summary>
+        /// 创建BOSS名称字符（逐字符实现字间距）
+        /// </summary>
+        private void CreateNameCharacters(string name, double scaleFactor)
+        {
+            _nameContainer.Children.Clear();
+
+            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
+            var shadowEffect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = Colors.Black,
+                Direction = 315, // 45°右下角
+                ShadowDepth = 0.75 * scaleFactor,
+                BlurRadius = 0,
+                Opacity = 1.0
+            };
+
+            foreach (char c in name)
+            {
+                var charBlock = new TextBlock
+                {
+                    Text = c.ToString(),
+                    FontFamily = fontFamily,
+                    FontSize = 8 * scaleFactor,
+                    Foreground = System.Windows.Media.Brushes.White,
+                    Effect = shadowEffect,
+                    Margin = new Thickness(0, 0, 1 * scaleFactor, 0) // 字间距
+                };
+                _nameContainer.Children.Add(charBlock);
+            }
+
+            // 更新容器Margin
+            _nameContainer.Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor);
+        }
+
+        /// <summary>
         /// 更新配置
         /// </summary>
         public void UpdateSettings(BossBarSettings newSettings)
         {
             _settings = newSettings;
-            _nameText.Text = newSettings.Name;
+            CreateNameCharacters(newSettings.Name, _scaleFactor);
             LoadDimensions();
             LoadImages();
             UpdateProgress();
@@ -749,7 +774,7 @@ namespace CraftSharp.Windows
         /// </summary>
         public void UpdateFromSettings()
         {
-            _nameText.Text = _settings.Name;
+            CreateNameCharacters(_settings.Name, _scaleFactor);
             LoadDimensions();
             LoadImages();
             UpdateProgress();
@@ -773,8 +798,9 @@ namespace CraftSharp.Windows
         public void SetScaleFactor(double scaleFactor)
         {
             _scaleFactor = scaleFactor;
-            _nameText.FontSize = 8 * scaleFactor;
-            _nameText.Margin = new Thickness(0, 3 * scaleFactor, 0, 1 * scaleFactor);
+
+            // 重新创建名称字符以应用新缩放
+            CreateNameCharacters(_settings.Name, scaleFactor);
 
             double width = _originalWidth * scaleFactor;
             double height = _originalHeight * scaleFactor;
