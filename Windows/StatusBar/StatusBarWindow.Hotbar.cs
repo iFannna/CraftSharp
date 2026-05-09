@@ -126,25 +126,29 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 设置格子位置和大小
         /// 使用Grid布局，固定列宽
+        /// 拖拽热区比格子显示区域大（上下左右各+2），覆盖边框
         /// </summary>
         private void SetupSlots()
         {
             // 副手格子布局参数（基于原图22×22）
-            // Margin=3px，格子=16×16
+            // 格子显示区域=16×16，拖拽热区=20×20（上下左右各+2）
             double margin = 3 * _scaleFactor;
-            double slotSize = 16 * _scaleFactor;
-            double iconSize = slotSize; // 图标刚好填满格子
+            double dropZoneExpansion = 2 * _scaleFactor;
+            double slotSize = 16 * _scaleFactor; // 格子显示尺寸
+            double dropZoneSize = slotSize + 2 * dropZoneExpansion; // 拖拽热区尺寸 = 20
+            double iconSize = slotSize; // 图标显示尺寸 = 16
 
             // 设置左副手格子
             var leftOffhandBorder = GetSlotBorder("LeftOffhand");
             var leftOffhandIcon = GetIconImage("LeftOffhand");
             if (leftOffhandBorder != null && leftOffhandIcon != null)
             {
-                leftOffhandBorder.Margin = new Thickness(margin);
-                leftOffhandBorder.Width = slotSize;
-                leftOffhandBorder.Height = slotSize;
-                leftOffhandIcon.Width = iconSize;
-                leftOffhandIcon.Height = iconSize;
+                // Border居中于副手槽Grid，热区覆盖边框
+                leftOffhandBorder.Margin = new Thickness(margin - dropZoneExpansion); // 1px margin
+                leftOffhandBorder.Width = dropZoneSize; // 20
+                leftOffhandBorder.Height = dropZoneSize; // 20
+                leftOffhandIcon.Width = iconSize; // 16
+                leftOffhandIcon.Height = iconSize; // 16
                 leftOffhandBorder.Visibility = _leftOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
@@ -153,34 +157,32 @@ namespace CraftSharp.Windows.StatusBar
             var rightOffhandIcon = GetIconImage("RightOffhand");
             if (rightOffhandBorder != null && rightOffhandIcon != null)
             {
-                rightOffhandBorder.Margin = new Thickness(margin);
-                rightOffhandBorder.Width = slotSize;
-                rightOffhandBorder.Height = slotSize;
-                rightOffhandIcon.Width = iconSize;
-                rightOffhandIcon.Height = iconSize;
+                rightOffhandBorder.Margin = new Thickness(margin - dropZoneExpansion); // 1px margin
+                rightOffhandBorder.Width = dropZoneSize; // 20
+                rightOffhandBorder.Height = dropZoneSize; // 20
+                rightOffhandIcon.Width = iconSize; // 16
+                rightOffhandIcon.Height = iconSize; // 16
                 rightOffhandBorder.Visibility = _rightOffhandEnabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            // 主快捷栏格子精确布局参数（基于原图182×22）
-            // 格子尺寸：16×16，格子间距：4px（margin已在副手槽部分定义）
-            // 容器可用宽度 = 182-6 = 176px = 9×16 + 8×4
+            // 主快捷栏格子布局参数（基于原图182×22）
+            // 格子显示区域=16×16，格子间距=4px，拖拽热区=20×20
             double slotSpacing = 4 * _scaleFactor;
-            double columnWidth = slotSize + slotSpacing; // 每列宽度 = 格子 + 间距
+            double columnWidth = slotSize + slotSpacing; // 每列宽度 = 20（格子+间距）
 
-            // 设置格子容器的Margin
-            HotbarSlotsGrid.Margin = new Thickness(margin);
+            // 设置格子容器的Margin（热区需要向外扩展2）
+            HotbarSlotsGrid.Margin = new Thickness(margin - dropZoneExpansion); // 1px
 
-            // 设置列定义：前8列宽度=格子+间距，最后一列宽度=格子
+            // 设置列定义：每列宽度=格子+间距=20
             HotbarSlotsGrid.ColumnDefinitions.Clear();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 9; i++)
             {
                 HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(columnWidth) });
             }
-            HotbarSlotsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(slotSize) });
 
-            // 设置行定义：单行，高度=格子尺寸
+            // 设置行定义：单行，高度=热区尺寸
             HotbarSlotsGrid.RowDefinitions.Clear();
-            HotbarSlotsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(slotSize) });
+            HotbarSlotsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(dropZoneSize) });
 
             // 清除现有格子并重新添加
             HotbarSlotsGrid.Children.Clear();
@@ -191,10 +193,10 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     Name = $"Slot{i}",
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Width = slotSize,
-                    Height = slotSize,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    Width = dropZoneSize, // 20（拖拽热区）
+                    Height = dropZoneSize, // 20（拖拽热区）
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center, // 居中于列
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center, // 居中于行
                     Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed
                 };
                 border.MouseLeftButtonDown += Slot_Click;
@@ -206,8 +208,8 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     Name = $"Icon{i}",
                     Stretch = Stretch.Uniform,
-                    Width = iconSize,
-                    Height = iconSize,
+                    Width = iconSize, // 16（图标显示）
+                    Height = iconSize, // 16（图标显示）
                     Visibility = Visibility.Collapsed
                 };
                 RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
