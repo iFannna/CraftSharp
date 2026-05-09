@@ -4,14 +4,18 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ImageMagick;
 
 namespace CraftSharp.Services
 {
     /// <summary>
     /// 图标提取服务 - 使用 Windows Shell API 获取高质量大尺寸图标
+    /// 同时支持图片文件的高质量加载
     /// </summary>
     public static class IconExtractor
     {
+        // 支持的图片扩展名
+        private static readonly string[] ImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".webp" };
         #region Shell32 P/Invoke
 
         // 图标尺寸级别常量
@@ -125,7 +129,10 @@ namespace CraftSharp.Services
         #endregion
 
         /// <summary>
-        /// 从文件路径提取图标（支持指定尺寸）
+        /// 从文件路径提取图标或图片（支持指定尺寸）
+        /// 自动识别文件类型：
+        /// - 图片文件(.png/.jpg等)：直接加载图片
+        /// - 其他文件/文件夹：获取系统图标
         /// </summary>
         /// <param name="filePath">文件或文件夹路径</param>
         /// <param name="size">目标尺寸（像素）</param>
@@ -134,6 +141,13 @@ namespace CraftSharp.Services
         {
             if (!File.Exists(filePath) && !Directory.Exists(filePath))
                 return null;
+
+            // 检查是否是图片文件
+            string extension = Path.GetExtension(filePath).ToLowerInvariant();
+            if (ImageExtensions.Contains(extension))
+            {
+                return LoadImageFile(filePath, size);
+            }
 
             try
             {
@@ -154,6 +168,50 @@ namespace CraftSharp.Services
             {
                 // 任何异常都回退到传统方法
                 return GetIconFallback(filePath, size);
+            }
+        }
+
+        /// <summary>
+        /// 加载图片文件并缩放到目标尺寸
+        /// 使用Magick.NET高质量缩放
+        /// </summary>
+        private static ImageSource? LoadImageFile(string filePath, int targetSize)
+        {
+            try
+            {
+                using var magickImage = new MagickImage(filePath);
+
+                // 获取原始尺寸
+                uint originalWidth = magickImage.Width;
+                uint originalHeight = magickImage.Height;
+
+                // 计算缩放后的尺寸（保持比例，不超过目标尺寸）
+                double scale = Math.Min((double)targetSize / originalWidth, (double)targetSize / originalHeight);
+                uint newWidth = (uint)(originalWidth * scale);
+                uint newHeight = (uint)(originalHeight * scale);
+
+                // 高质量缩放
+                magickImage.FilterType = FilterType.Lanczos;
+                magickImage.Resize(newWidth, newHeight);
+
+                // 转换为PNG格式输出
+                using var pngStream = new MemoryStream();
+                magickImage.Write(pngStream, MagickFormat.Png);
+                pngStream.Position = 0;
+
+                // 创建WPF BitmapImage
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = pngStream;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
+            }
+            catch
+            {
+                return null;
             }
         }
 
