@@ -82,6 +82,9 @@ namespace CraftSharp.Windows.StatusBar
             // 监听窗口关闭事件（释放LibreHardwareMonitor资源）
             Closed += OnWindowClosed;
 
+            // 监听窗口失焦事件（清除快捷栏格子选中状态）
+            Deactivated += OnWindowDeactivated;
+
             // 初始化槽位数据服务
             _slotService = new Services.SlotDataService();
 
@@ -172,6 +175,14 @@ namespace CraftSharp.Windows.StatusBar
                 _batteryTimer.Stop();
                 _batteryTimer = null;
             }
+        }
+
+        /// <summary>
+        /// 窗口失焦事件处理（清除快捷栏格子选中状态）
+        /// </summary>
+        private void OnWindowDeactivated(object? sender, EventArgs e)
+        {
+            ClearSelection();
         }
 
         /// <summary>
