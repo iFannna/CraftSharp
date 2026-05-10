@@ -39,7 +39,7 @@
                 <!-- 左副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotLeftOffhand" Background="Transparent"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                        MouseLeftButtonDown="Slot_Click"
+                        MouseLeftButtonUp="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconLeftOffhand" Stretch="Uniform"
                         RenderOptions.BitmapScalingMode="HighQuality"
@@ -177,7 +177,7 @@
                 <!-- 右副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotRightOffhand" Background="Transparent"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                        MouseLeftButtonDown="Slot_Click"
+                        MouseLeftButtonUp="Slot_Click"
                         AllowDrop="True" Drop="Slot_Drop" DragOver="Slot_DragOver">
                     <Image x:Name="IconRightOffhand" Stretch="Uniform"
                         RenderOptions.BitmapScalingMode="HighQuality"

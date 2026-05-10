@@ -219,13 +219,16 @@ namespace CraftSharp.Windows.Settings.Panels
             }
             else if (id == "hotbar")
             {
+                // 打开动作下拉框（在显示快捷栏开关上方）
+                AddClickModeComboBox();
+
                 var hotbarToggle = AddToggleRow("HudOptionShowHotbar", "HudOptionShowHotbarDesc", _settings.HotbarVisible);
                 hotbarToggle.Checked += (s, e) => { _settings.HotbarVisible = true; StatusBarService.Instance.SetHotbarVisible(true); SaveSettings(); };
                 hotbarToggle.Unchecked += (s, e) => { _settings.HotbarVisible = false; StatusBarService.Instance.SetHotbarVisible(false); SaveSettings(); };
 
-                var selectionToggle = AddToggleRow("HudOptionSelectionEffect", "HudOptionSelectionEffectDesc", _settings.HotbarSelectionEffect);
-                selectionToggle.Checked += (s, e) => { _settings.HotbarSelectionEffect = true; StatusBarService.Instance.SetHotbarSelectionEffect(true); SaveSettings(); };
-                selectionToggle.Unchecked += (s, e) => { _settings.HotbarSelectionEffect = false; StatusBarService.Instance.SetHotbarSelectionEffect(false); SaveSettings(); };
+                var hoverToggle = AddToggleRow("HudOptionHoverEffect", "HudOptionHoverEffectDesc", _settings.HotbarHoverEffect);
+                hoverToggle.Checked += (s, e) => { _settings.HotbarHoverEffect = true; StatusBarService.Instance.SetHotbarHoverEffect(true); SaveSettings(); };
+                hoverToggle.Unchecked += (s, e) => { _settings.HotbarHoverEffect = false; StatusBarService.Instance.SetHotbarHoverEffect(false); SaveSettings(); };
 
                 var leftOffhandToggle = AddToggleRow("HudOptionLeftOffhand", "HudOptionLeftOffhandDesc", _settings.HotbarLeftOffhand);
                 leftOffhandToggle.Checked += (s, e) => { _settings.HotbarLeftOffhand = true; StatusBarService.Instance.SetOffhandConfig(true, _settings.HotbarRightOffhand); SaveSettings(); };
@@ -988,6 +991,74 @@ namespace CraftSharp.Windows.Settings.Panels
             ContentPanel.Children.Add(grid);
 
             return toggle;
+        }
+
+        /// <summary>
+        /// 添加点击模式下拉框（打开动作：单击/双击）
+        /// </summary>
+        private void AddClickModeComboBox()
+        {
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var left = new StackPanel();
+            var titleLabel = new System.Windows.Controls.TextBlock
+            {
+                Text = GetResourceString("HudOptionClickMode"),
+                FontWeight = FontWeights.Medium,
+                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+            };
+            var descLabel = new System.Windows.Controls.TextBlock
+            {
+                Text = GetResourceString("HudOptionClickModeDesc"),
+                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            left.Children.Add(titleLabel);
+            left.Children.Add(descLabel);
+            grid.Children.Add(left);
+
+            var comboBox = new System.Windows.Controls.ComboBox
+            {
+                Width = 100,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+            };
+
+            var singleItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = GetResourceString("HudOptionClickModeSingle"),
+                Tag = "single"
+            };
+            var doubleItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = GetResourceString("HudOptionClickModeDouble"),
+                Tag = "double"
+            };
+            comboBox.Items.Add(singleItem);
+            comboBox.Items.Add(doubleItem);
+
+            // 设置默认选中项
+            if (_settings.HotbarClickMode == "single")
+                comboBox.SelectedIndex = 0;
+            else
+                comboBox.SelectedIndex = 1;
+
+            comboBox.SelectionChanged += (s, e) =>
+            {
+                if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
+                {
+                    var mode = item.Tag?.ToString() ?? "double";
+                    _settings.HotbarClickMode = mode;
+                    StatusBarService.Instance.SetHotbarClickMode(mode);
+                    SaveSettings();
+                }
+            };
+
+            grid.Children.Add(comboBox);
+            Grid.SetColumn(comboBox, 1);
+
+            ContentPanel.Children.Add(grid);
         }
 
         // 图标预览 Border（用于点击打开选择器）

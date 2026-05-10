@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
@@ -429,10 +430,19 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 根Grid鼠标按下事件 - 开始自定义拖动（允许拖出屏幕）
+        /// 根Grid鼠标按下事件 - 开始自定义拖动 + 清除格子选中状态
         /// </summary>
         private void RootGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            // 检查点击目标是否是格子（如果是格子，不清除选中也不捕获鼠标）
+            if (IsClickOnSlot(e.OriginalSource))
+            {
+                return; // 让格子处理点击事件
+            }
+
+            // 清除快捷栏格子选中状态（点击空白区域）
+            ClearSelection();
+
             if (!_isLocked)
             {
                 _isDragging = true;
@@ -442,6 +452,49 @@ namespace CraftSharp.Windows.StatusBar
                 _dragOffsetY = mousePos.Y;
                 CaptureMouse();
             }
+        }
+
+        /// <summary>
+        /// 检查点击目标是否是格子
+        /// </summary>
+        private bool IsClickOnSlot(object originalSource)
+        {
+            // 检查是否是 Border（格子）
+            if (originalSource is Border border)
+            {
+                // 检查是否是主快捷栏格子
+                for (int i = 0; i < 9; i++)
+                {
+                    if (border.Name == $"Slot{i}")
+                        return true;
+                }
+                // 检查是否是副手槽格子
+                if (border.Name == "SlotLeftOffhand" || border.Name == "SlotRightOffhand")
+                    return true;
+            }
+
+            // 检查是否是格子内的 Image（图标）
+            if (originalSource is System.Windows.Controls.Image image)
+            {
+                // 检查父元素是否是格子 Border
+                var parent = VisualTreeHelper.GetParent(image);
+                while (parent != null)
+                {
+                    if (parent is Border parentBorder)
+                    {
+                        for (int i = 0; i < 9; i++)
+                        {
+                            if (parentBorder.Name == $"Slot{i}")
+                                return true;
+                        }
+                        if (parentBorder.Name == "SlotLeftOffhand" || parentBorder.Name == "SlotRightOffhand")
+                            return true;
+                    }
+                    parent = VisualTreeHelper.GetParent(parent);
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

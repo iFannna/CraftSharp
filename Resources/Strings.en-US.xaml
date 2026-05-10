@@ -99,10 +99,14 @@
     <sys:String x:Key="HudOptionShowStatusBarDesc">Display status bar window on desktop</sys:String>
     <sys:String x:Key="HudOptionRememberPosition">Remember Position</sys:String>
     <sys:String x:Key="HudOptionRememberPositionDesc">Restore status bar window position on next launch</sys:String>
+    <sys:String x:Key="HudOptionClickMode">Open Action</sys:String>
+    <sys:String x:Key="HudOptionClickModeDesc">Select the action to open hotbar slot</sys:String>
+    <sys:String x:Key="HudOptionClickModeSingle">Single Click</sys:String>
+    <sys:String x:Key="HudOptionClickModeDouble">Double Click</sys:String>
     <sys:String x:Key="HudOptionShowHotbar">Show Hotbar</sys:String>
     <sys:String x:Key="HudOptionShowHotbarDesc">Display hotbar window on desktop</sys:String>
-    <sys:String x:Key="HudOptionSelectionEffect">Selection Effect</sys:String>
-    <sys:String x:Key="HudOptionSelectionEffectDesc">Show selection frame when hovering over slot</sys:String>
+    <sys:String x:Key="HudOptionHoverEffect">Hover Effect</sys:String>
+    <sys:String x:Key="HudOptionHoverEffectDesc">Show selection frame when hovering over slot</sys:String>
     <sys:String x:Key="HudOptionLockPosition">Lock Position</sys:String>
     <sys:String x:Key="HudOptionLockPositionDesc">Prevent hotbar from being accidentally dragged</sys:String>
     <sys:String x:Key="HudOptionLeftOffhand">Left Offhand</sys:String>

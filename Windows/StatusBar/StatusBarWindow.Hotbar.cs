@@ -41,9 +41,19 @@ namespace CraftSharp.Windows.StatusBar
         private const double BaseVerticalSpacing = 1;
 
         /// <summary>
-        /// 选中效果是否启用（hover显示selection框）
+        /// 悬浮效果是否启用（hover显示selection框）
         /// </summary>
-        private bool _selectionEffectEnabled = true;
+        private bool _hoverEffectEnabled = true;
+
+        /// <summary>
+        /// 点击模式（"single"单击/"double"双击）
+        /// </summary>
+        private string _clickMode = "double";
+
+        /// <summary>
+        /// 当前选中的格子全局索引（-1表示无选中，0=左副手槽，1=右副手槽，2-10=主快捷栏Slot0-8）
+        /// </summary>
+        private int _selectedSlotIndex = -1;
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -241,7 +251,7 @@ namespace CraftSharp.Windows.StatusBar
                     VerticalAlignment = System.Windows.VerticalAlignment.Center, // 居中于行
                     Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed
                 };
-                border.MouseLeftButtonDown += Slot_Click;
+                border.MouseLeftButtonUp += Slot_Click;
                 border.AllowDrop = true;
                 border.Drop += Slot_Drop;
                 border.DragOver += Slot_DragOver;
@@ -266,55 +276,69 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 鼠标进入格子 - 显示选中框
+        /// 鼠标进入格子 - 显示悬浮框
         /// </summary>
         private void Slot_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (!_selectionEffectEnabled) return;
+            if (!_hoverEffectEnabled) return;
 
             var border = (Border)sender;
-            int slotIndex = -1;
+            int hotbarIndex = -1; // 主快捷栏索引（0-8）
             for (int i = 0; i < 9; i++)
             {
                 if (border.Name == $"Slot{i}")
                 {
-                    slotIndex = i;
+                    hotbarIndex = i;
                     break;
                 }
             }
-            if (slotIndex >= 0)
+            // 仅主快捷栏格子显示悬浮效果
+            if (hotbarIndex >= 0)
             {
-                var selection = GetSelectionImage(slotIndex);
-                if (selection != null)
+                // 全局索引：主快捷栏格子 = hotbarIndex + 2
+                int globalIndex = hotbarIndex + 2;
+                // 有选中格子时不显示其他格子的悬浮效果
+                if (_selectedSlotIndex == -1 || globalIndex == _selectedSlotIndex)
                 {
-                    selection.Visibility = Visibility.Visible;
+                    var selection = GetSelectionImage(hotbarIndex);
+                    if (selection != null)
+                    {
+                        selection.Visibility = Visibility.Visible;
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// 鼠标离开格子 - 隐藏选中框
+        /// 鼠标离开格子 - 隐藏悬浮框（但不隐藏选中格子的框）
         /// </summary>
         private void Slot_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (!_selectionEffectEnabled) return;
+            if (!_hoverEffectEnabled) return;
 
             var border = (Border)sender;
-            int slotIndex = -1;
+            int hotbarIndex = -1; // 主快捷栏索引（0-8）
             for (int i = 0; i < 9; i++)
             {
                 if (border.Name == $"Slot{i}")
                 {
-                    slotIndex = i;
+                    hotbarIndex = i;
                     break;
                 }
             }
-            if (slotIndex >= 0)
+            // 仅主快捷栏格子处理
+            if (hotbarIndex >= 0)
             {
-                var selection = GetSelectionImage(slotIndex);
-                if (selection != null)
+                // 全局索引：主快捷栏格子 = hotbarIndex + 2
+                int globalIndex = hotbarIndex + 2;
+                // 不是当前选中的格子才隐藏悬浮框
+                if (globalIndex != _selectedSlotIndex)
                 {
-                    selection.Visibility = Visibility.Collapsed;
+                    var selection = GetSelectionImage(hotbarIndex);
+                    if (selection != null)
+                    {
+                        selection.Visibility = Visibility.Collapsed;
+                    }
                 }
             }
         }
@@ -449,22 +473,89 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 点击格子 - 打开文件/程序
+        /// 点击格子 - 根据点击模式处理
+        /// 单击模式：直接执行操作
+        /// 双击模式：第一次选中，第二次执行
         /// </summary>
         private void Slot_Click(object sender, MouseButtonEventArgs e)
         {
             var border = (Border)sender;
-            var slotIndex = GetSlotIndex(border);
+            var slotIndex = GetSlotIndex(border); // 获取全局索引（0=左副手槽，1=右副手槽，2-10=主快捷栏Slot0-8）
 
             if (slotIndex >= 0)
             {
-                var item = _slotService.GetSlot(_slotIds[slotIndex]);
+                // 获取主快捷栏格子索引（仅用于selection框显示，2-10转换为0-8）
+                int hotbarSlotIndex = slotIndex >= 2 ? slotIndex - 2 : -1;
 
-                if (!item.IsEmpty)
+                if (_clickMode == "single")
                 {
-                    OpenFile(item.FilePath);
+                    // 单击模式：直接执行操作
+                    var item = _slotService.GetSlot(_slotIds[slotIndex]);
+                    if (!item.IsEmpty)
+                    {
+                        OpenFile(item.FilePath);
+                    }
+                }
+                else // double
+                {
+                    // 双击模式：第一次选中（不显示selection框），第二次执行
+                    if (_selectedSlotIndex == slotIndex)
+                    {
+                        // 再次点击同一格子 → 执行操作
+                        var item = _slotService.GetSlot(_slotIds[slotIndex]);
+                        if (!item.IsEmpty)
+                        {
+                            OpenFile(item.FilePath);
+                        }
+                        // 执行后清除选中
+                        ClearSlotSelection();
+                    }
+                    else
+                    {
+                        // 点击不同格子 → 切换选中到新格子
+                        ClearSlotSelection();
+                        _selectedSlotIndex = slotIndex;
+                        // 只有主快捷栏格子显示selection框（副手槽不显示）
+                        if (hotbarSlotIndex >= 0)
+                        {
+                            var selection = GetSelectionImage(hotbarSlotIndex);
+                            if (selection != null)
+                            {
+                                selection.Visibility = Visibility.Visible;
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// 清除格子选中状态
+        /// </summary>
+        private void ClearSlotSelection()
+        {
+            if (_selectedSlotIndex >= 0)
+            {
+                // 只有主快捷栏格子需要隐藏selection框（全局索引2-10对应主快捷栏0-8）
+                if (_selectedSlotIndex >= 2)
+                {
+                    int hotbarIndex = _selectedSlotIndex - 2;
+                    var selection = GetSelectionImage(hotbarIndex);
+                    if (selection != null)
+                    {
+                        selection.Visibility = Visibility.Collapsed;
+                    }
+                }
+                _selectedSlotIndex = -1;
+            }
+        }
+
+        /// <summary>
+        /// 公开方法：清除选中状态（供外部调用）
+        /// </summary>
+        public void ClearSelection()
+        {
+            ClearSlotSelection();
         }
 
         /// <summary>
@@ -587,11 +678,21 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 设置选中效果启用状态（hover显示selection框）
+        /// 设置悬浮效果启用状态（hover显示selection框）
         /// </summary>
-        public void SetSelectionEffectEnabled(bool enabled)
+        public void SetHoverEffectEnabled(bool enabled)
         {
-            _selectionEffectEnabled = enabled;
+            _hoverEffectEnabled = enabled;
+        }
+
+        /// <summary>
+        /// 设置点击模式（"single"单击/"double"双击）
+        /// </summary>
+        public void SetClickMode(string mode)
+        {
+            _clickMode = mode;
+            // 切换模式时清除选中状态
+            ClearSlotSelection();
         }
 
         /// <summary>

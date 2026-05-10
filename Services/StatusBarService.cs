@@ -124,12 +124,21 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 设置快捷栏选中效果（hover显示selection框）
+        /// 设置快捷栏点击模式（"single"单击/"double"双击）
         /// </summary>
-        public void SetHotbarSelectionEffect(bool enabled)
+        public void SetHotbarClickMode(string mode)
         {
             if (_statusBarWindow == null) return;
-            _statusBarWindow.SetSelectionEffectEnabled(enabled);
+            _statusBarWindow.SetClickMode(mode);
+        }
+
+        /// <summary>
+        /// 设置快捷栏悬浮效果（hover显示selection框）
+        /// </summary>
+        public void SetHotbarHoverEffect(bool enabled)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetHoverEffectEnabled(enabled);
         }
 
         /// <summary>

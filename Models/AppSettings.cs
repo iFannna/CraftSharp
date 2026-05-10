@@ -126,9 +126,14 @@ namespace CraftSharp.Models
         public bool HotbarVisible { get; set; } = true;
 
         /// <summary>
-        /// 快捷栏选中效果（hover显示selection框）
+        /// 打开动作（单击/双击，默认双击）
         /// </summary>
-        public bool HotbarSelectionEffect { get; set; } = true;
+        public string HotbarClickMode { get; set; } = "double";
+
+        /// <summary>
+        /// 快捷栏悬浮效果（hover显示selection框）
+        /// </summary>
+        public bool HotbarHoverEffect { get; set; } = true;
 
         /// <summary>
         /// HUD 元素配置列表
