@@ -126,6 +126,11 @@ namespace CraftSharp.Models
         public bool HotbarVisible { get; set; } = true;
 
         /// <summary>
+        /// 快捷栏选中效果（hover显示selection框）
+        /// </summary>
+        public bool HotbarSelectionEffect { get; set; } = true;
+
+        /// <summary>
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; }

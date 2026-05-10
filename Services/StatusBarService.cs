@@ -124,6 +124,15 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
+        /// 设置快捷栏选中效果（hover显示selection框）
+        /// </summary>
+        public void SetHotbarSelectionEffect(bool enabled)
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.SetSelectionEffectEnabled(enabled);
+        }
+
+        /// <summary>
         /// 设置经验条可见性
         /// </summary>
         public void SetExpBarVisible(bool visible)

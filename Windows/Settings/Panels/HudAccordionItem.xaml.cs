@@ -223,6 +223,10 @@ namespace CraftSharp.Windows.Settings.Panels
                 hotbarToggle.Checked += (s, e) => { _settings.HotbarVisible = true; StatusBarService.Instance.SetHotbarVisible(true); SaveSettings(); };
                 hotbarToggle.Unchecked += (s, e) => { _settings.HotbarVisible = false; StatusBarService.Instance.SetHotbarVisible(false); SaveSettings(); };
 
+                var selectionToggle = AddToggleRow("HudOptionSelectionEffect", "HudOptionSelectionEffectDesc", _settings.HotbarSelectionEffect);
+                selectionToggle.Checked += (s, e) => { _settings.HotbarSelectionEffect = true; StatusBarService.Instance.SetHotbarSelectionEffect(true); SaveSettings(); };
+                selectionToggle.Unchecked += (s, e) => { _settings.HotbarSelectionEffect = false; StatusBarService.Instance.SetHotbarSelectionEffect(false); SaveSettings(); };
+
                 var leftOffhandToggle = AddToggleRow("HudOptionLeftOffhand", "HudOptionLeftOffhandDesc", _settings.HotbarLeftOffhand);
                 leftOffhandToggle.Checked += (s, e) => { _settings.HotbarLeftOffhand = true; StatusBarService.Instance.SetOffhandConfig(true, _settings.HotbarRightOffhand); SaveSettings(); };
                 leftOffhandToggle.Unchecked += (s, e) => { _settings.HotbarLeftOffhand = false; StatusBarService.Instance.SetOffhandConfig(false, _settings.HotbarRightOffhand); SaveSettings(); };

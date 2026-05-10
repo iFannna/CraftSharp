@@ -41,6 +41,11 @@ namespace CraftSharp.Windows.StatusBar
         private const double BaseVerticalSpacing = 1;
 
         /// <summary>
+        /// 选中效果是否启用（hover显示selection框）
+        /// </summary>
+        private bool _selectionEffectEnabled = true;
+
+        /// <summary>
         /// 加载快捷栏图片尺寸
         /// </summary>
         private void LoadHotbarDimensions()
@@ -265,6 +270,8 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void Slot_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (!_selectionEffectEnabled) return;
+
             var border = (Border)sender;
             int slotIndex = -1;
             for (int i = 0; i < 9; i++)
@@ -290,6 +297,8 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void Slot_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            if (!_selectionEffectEnabled) return;
+
             var border = (Border)sender;
             int slotIndex = -1;
             for (int i = 0; i < 9; i++)
@@ -575,6 +584,14 @@ namespace CraftSharp.Windows.StatusBar
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 设置选中效果启用状态（hover显示selection框）
+        /// </summary>
+        public void SetSelectionEffectEnabled(bool enabled)
+        {
+            _selectionEffectEnabled = enabled;
         }
 
         /// <summary>
