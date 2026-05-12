@@ -178,6 +178,12 @@
     <sys:String x:Key="TopMostConfirmCancel">Cancel</sys:String>
     <sys:String x:Key="TopMostConfirmOk">Confirm</sys:String>
 
+    <!-- Slot File Missing Confirm Dialog -->
+    <sys:String x:Key="SlotMissingConfirmTitle">File Missing Confirmation</sys:String>
+    <sys:String x:Key="SlotMissingConfirmHint">The original path is missing. Do you want to remove this slot?</sys:String>
+    <sys:String x:Key="SlotMissingConfirmCancel">Cancel</sys:String>
+    <sys:String x:Key="SlotMissingConfirmOk">Confirm</sys:String>
+
     <!-- BOSS Bar Edit Dialog -->
     <sys:String x:Key="BossBarEditTitle">Edit Boss Bar</sys:String>
     <sys:String x:Key="BossBarNameLabel">Name</sys:String>

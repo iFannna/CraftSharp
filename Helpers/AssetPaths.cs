@@ -65,6 +65,9 @@ namespace CraftSharp.Helpers
         public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/heart/absorbing_full.png";
         public const string AbsorbingHalf = "Assets/minecraft/textures/gui/sprites/heart/absorbing_half.png";
 
+        // 占位图标（用于文件丢失时显示）
+        public const string PlaceholderBarrier = "Assets/minecraft/textures/item/item/barrier.png";
+
         // 准星
         public const string Crosshair = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair.png";
         public const string CrosshairAttackIndicatorBackground = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_background.png";

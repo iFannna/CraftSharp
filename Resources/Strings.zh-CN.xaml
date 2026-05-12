@@ -178,6 +178,12 @@
     <sys:String x:Key="TopMostConfirmCancel">取消</sys:String>
     <sys:String x:Key="TopMostConfirmOk">确认</sys:String>
 
+    <!-- 格子文件丢失确认弹窗 -->
+    <sys:String x:Key="SlotMissingConfirmTitle">文件丢失确认</sys:String>
+    <sys:String x:Key="SlotMissingConfirmHint">检测到原路径内容已丢失，是否移除该格子？</sys:String>
+    <sys:String x:Key="SlotMissingConfirmCancel">取消</sys:String>
+    <sys:String x:Key="SlotMissingConfirmOk">确定</sys:String>
+
     <!-- BOSS血条编辑弹窗 -->
     <sys:String x:Key="BossBarEditTitle">编辑 BOSS血条</sys:String>
     <sys:String x:Key="BossBarNameLabel">名称</sys:String>

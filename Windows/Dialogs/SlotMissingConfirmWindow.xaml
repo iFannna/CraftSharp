@@ -1,0 +1,57 @@
+<ui:FluentWindow x:Class="CraftSharp.Windows.Dialogs.SlotMissingConfirmWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource SlotMissingConfirmTitle}"
+                 Height="Auto" Width="420" MinWidth="320"
+                 WindowStartupLocation="CenterOwner"
+                 SizeToContent="Height"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 Foreground="{DynamicResource TextPrimaryBrush}"
+                 ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <ui:TitleBar Grid.Row="0" Title="{DynamicResource SlotMissingConfirmTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
+                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+
+        <!-- 内容区域 -->
+        <StackPanel Grid.Row="1" Margin="16">
+            <!-- 提示信息 -->
+            <TextBlock Text="{DynamicResource SlotMissingConfirmHint}" FontWeight="Medium" Margin="0,0,0,8"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+            <!-- 原路径 -->
+            <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+                <TextBlock x:Name="FilePathText" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Border>
+        </StackPanel>
+
+        <!-- 按钮区域 -->
+        <Grid Grid.Row="2" Margin="16,0,16,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:Button Grid.Column="1" x:Name="CancelButton"
+                       Content="{DynamicResource SlotMissingConfirmCancel}"
+                       Appearance="Secondary"
+                       Margin="0,0,8,0"
+                       Click="CancelButton_Click"/>
+            <ui:Button Grid.Column="2" x:Name="ConfirmButton"
+                       Content="{DynamicResource SlotMissingConfirmOk}"
+                       Appearance="Primary"
+                       Click="ConfirmButton_Click"/>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
