@@ -1093,8 +1093,8 @@ namespace CraftSharp.Windows.Settings.Panels
             // 图标预览
             _iconPreviewBorder = new System.Windows.Controls.Border
             {
-                Width = 32,
                 Height = 32,
+                MaxWidth = 256,
                 CornerRadius = new CornerRadius(6),
                 Cursor = System.Windows.Input.Cursors.Hand,
                 ToolTip = GetResourceString("AppIconTooltip")

@@ -22,7 +22,8 @@
 
         <!-- 图标网格 -->
         <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
-            <ScrollViewer Padding="16" VerticalContentAlignment="Center">
+            <!-- 网格布局（心形、饥饿等） -->
+            <ScrollViewer x:Name="GridScrollViewer" Padding="16" VerticalContentAlignment="Center" Visibility="Visible">
                 <ItemsControl x:Name="IconGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -33,6 +34,7 @@
                         <DataTemplate>
                             <Border Width="64" Height="64" Margin="8"
                                     Background="{DynamicResource CardBackgroundBrush}"
+                                    CornerRadius="8"
                                     Cursor="Hand"
                                     MouseLeftButtonDown="IconItem_Click"
                                     ToolTip="{Binding DisplayName}"
@@ -55,6 +57,55 @@
                                 <DataTrigger Binding="{Binding IconStyle}" Value="">
                                     <Setter TargetName="IconImage" Property="Visibility" Value="Collapsed"/>
                                     <Setter TargetName="NoneText" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 纵向布局（经验条、BOSS血条等） -->
+            <ScrollViewer x:Name="VerticalScrollViewer" Padding="16"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalContentAlignment="Center">
+                <ItemsControl x:Name="VerticalIconGrid" VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="VerticalItemBorder"
+                                    Height="32" Margin="0,0,0,8"
+                                    HorizontalAlignment="Stretch"
+                                    MaxWidth="{Binding MaxWidth}"
+                                    Background="{DynamicResource CardBackgroundBrush}"
+                                    CornerRadius="8"
+                                    Cursor="Hand"
+                                    MouseLeftButtonDown="IconItem_Click"
+                                    ToolTip="{Binding DisplayName}"
+                                    ToolTipService.InitialShowDelay="0"
+                                    ToolTipService.ShowDuration="5000">
+                                <Grid>
+                                    <Image x:Name="VerticalIconImage"
+                                           Stretch="Uniform"
+                                           HorizontalAlignment="Center"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           Source="{Binding BitmapImage, TargetNullValue={x:Null}}"/>
+                                    <TextBlock x:Name="VerticalNoneText" Text="无"
+                                               Visibility="Collapsed"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               FontSize="14"/>
+                                </Grid>
+                            </Border>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IconStyle}" Value="">
+                                    <Setter TargetName="VerticalIconImage" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="VerticalNoneText" Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>

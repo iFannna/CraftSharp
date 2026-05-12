@@ -21,6 +21,8 @@ namespace CraftSharp.Windows.Settings
 
         private readonly string _elementType; // "heart" 或 "food"
         private readonly ObservableCollection<HudIconItem> _iconItems = new();
+        private readonly bool _useVerticalLayout;
+        private readonly double _scaleFactor;
 
         // 原生拖放目标（支持 Windows 拖拽缩略图）
         private IDisposable? _nativeDropTarget;
@@ -29,6 +31,20 @@ namespace CraftSharp.Windows.Settings
         {
             InitializeComponent();
             _elementType = elementType;
+
+            // 初始化缩放因子
+            ScaleService.Instance.Initialize();
+            _scaleFactor = ScaleService.Instance.ScaleFactor;
+
+            // 纵向布局元素类型（经验条、BOSS血条、BOSS等级）
+            _useVerticalLayout = elementType == "expbar" || elementType == "boss_bar" || elementType == "boss_bar_notch";
+
+            // 切换布局
+            if (_useVerticalLayout)
+            {
+                GridScrollViewer.Visibility = Visibility.Collapsed;
+                VerticalScrollViewer.Visibility = Visibility.Visible;
+            }
 
             // 设置窗口图标
             IconService.Instance.ApplyWindowIcon(this);
@@ -211,7 +227,8 @@ namespace CraftSharp.Windows.Settings
                         {
                             IconStyle = style,
                             DisplayName = displayName,
-                            BitmapImage = bitmap
+                            BitmapImage = bitmap,
+                            MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
                     }
                 }
@@ -239,7 +256,8 @@ namespace CraftSharp.Windows.Settings
                         {
                             IconStyle = style,
                             DisplayName = displayName,
-                            BitmapImage = bitmap
+                            BitmapImage = bitmap,
+                            MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
                     }
                 }
@@ -272,13 +290,23 @@ namespace CraftSharp.Windows.Settings
                         {
                             IconStyle = style,
                             DisplayName = displayName,
-                            BitmapImage = bitmap
+                            BitmapImage = bitmap,
+                            MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
                     }
                 }
             }
 
-            IconGrid.ItemsSource = _iconItems;
+            // 绑定到对应的 ItemsControl
+            if (_useVerticalLayout)
+            {
+                VerticalIconGrid.ItemsSource = _iconItems;
+            }
+            else
+            {
+                IconGrid.ItemsSource = _iconItems;
+            }
+
             LoadingOverlay.Visibility = Visibility.Collapsed;
         }
 
@@ -301,5 +329,6 @@ namespace CraftSharp.Windows.Settings
         public string IconStyle { get; set; } = "";
         public string DisplayName { get; set; } = "";
         public BitmapImage BitmapImage { get; set; } = null!;
+        public double MaxWidth { get; set; } = double.PositiveInfinity;
     }
 }
