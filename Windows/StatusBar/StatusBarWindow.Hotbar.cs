@@ -28,9 +28,9 @@ namespace CraftSharp.Windows.StatusBar
 
         // ===== 长按拖动相关状态 =====
         /// <summary>
-        /// 长按判定时间（200ms）
+        /// 长按判定时间（50ms）
         /// </summary>
-        private const int LongPressDurationMs = 200;
+        private const int LongPressDurationMs = 150;
 
         /// <summary>
         /// 拖动触发移动阈值（10像素）
