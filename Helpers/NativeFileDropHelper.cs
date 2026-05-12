@@ -17,10 +17,11 @@ namespace CraftSharp.Helpers
     {
         /// <summary>
         /// 为窗口注册原生拖放（仅显示缩略图，不接受文件）
+        /// 鼠标光标始终显示为禁止状态
         /// </summary>
         public static IDisposable RegisterForThumbnail(Window window)
         {
-            var target = new NativeFileDropTarget(window, (_, _) => { });
+            var target = new NativeFileDropTarget(window, (_, _) => { }, _ => false);
             target.Attach();
             return target;
         }
@@ -28,9 +29,15 @@ namespace CraftSharp.Helpers
         /// <summary>
         /// 为窗口注册原生拖放（显示缩略图 + 处理文件放置）
         /// </summary>
-        public static IDisposable RegisterWithDropHandler(Window window, Action<IReadOnlyList<string>, System.Windows.Point> onDrop)
+        /// <param name="window">目标窗口</param>
+        /// <param name="onDrop">文件放置回调</param>
+        /// <param name="canDropAt">判断鼠标位置是否接受文件（返回true显示箭头光标，false显示禁止光标）</param>
+        public static IDisposable RegisterWithDropHandler(
+            Window window,
+            Action<IReadOnlyList<string>, System.Windows.Point> onDrop,
+            Func<System.Windows.Point, bool> canDropAt)
         {
-            var target = new NativeFileDropTarget(window, onDrop);
+            var target = new NativeFileDropTarget(window, onDrop, canDropAt);
             target.Attach();
             return target;
         }
@@ -40,14 +47,19 @@ namespace CraftSharp.Helpers
     {
         private readonly Window _window;
         private readonly Action<IReadOnlyList<string>, System.Windows.Point> _onDrop;
+        private readonly Func<System.Windows.Point, bool> _canDropAt;
         private readonly nint _hwnd;
         private readonly NativeMethods.IDropTargetHelper? _dropTargetHelper;
         private bool _isAttached;
 
-        public NativeFileDropTarget(Window window, Action<IReadOnlyList<string>, System.Windows.Point> onDrop)
+        public NativeFileDropTarget(
+            Window window,
+            Action<IReadOnlyList<string>, System.Windows.Point> onDrop,
+            Func<System.Windows.Point, bool> canDropAt)
         {
             _window = window;
             _onDrop = onDrop;
+            _canDropAt = canDropAt;
             _hwnd = new WindowInteropHelper(window).Handle;
             _dropTargetHelper = NativeMethods.TryCreateDropTargetHelper();
         }
@@ -82,14 +94,14 @@ namespace CraftSharp.Helpers
 
         int NativeMethods.IDropTarget.DragEnter(ComDataObject pDataObj, uint grfKeyState, NativeMethods.POINTL pt, ref uint pdwEffect)
         {
-            pdwEffect = ResolveEffect(pDataObj, pdwEffect);
+            pdwEffect = ResolveEffect(pDataObj, pdwEffect, pt);
             _dropTargetHelper?.DragEnter(_hwnd, pDataObj, ref pt, pdwEffect);
             return NativeMethods.S_OK;
         }
 
         int NativeMethods.IDropTarget.DragOver(uint grfKeyState, NativeMethods.POINTL pt, ref uint pdwEffect)
         {
-            pdwEffect = ResolveEffect(null, pdwEffect);
+            pdwEffect = ResolveEffect(null, pdwEffect, pt);
             _dropTargetHelper?.DragOver(ref pt, pdwEffect);
             return NativeMethods.S_OK;
         }
@@ -102,23 +114,37 @@ namespace CraftSharp.Helpers
 
         int NativeMethods.IDropTarget.Drop(ComDataObject pDataObj, uint grfKeyState, NativeMethods.POINTL pt, ref uint pdwEffect)
         {
-            pdwEffect = ResolveEffect(pDataObj, pdwEffect);
+            pdwEffect = ResolveEffect(pDataObj, pdwEffect, pt);
             _dropTargetHelper?.Drop(pDataObj, ref pt, pdwEffect);
 
-            string[] paths = NativeMethods.ReadFileDropList(pDataObj);
-            if (paths.Length > 0)
+            // 只有在有效区域才处理放置
+            if (pdwEffect != NativeMethods.DROPEFFECT_NONE)
             {
-                // 将屏幕坐标转换为 WPF 窗口坐标
-                var screenPoint = new System.Windows.Point(pt.X, pt.Y);
-                _window.Dispatcher.Invoke(() => _onDrop(paths, screenPoint));
+                string[] paths = NativeMethods.ReadFileDropList(pDataObj);
+                if (paths.Length > 0)
+                {
+                    // 将屏幕坐标转换为 WPF 窗口坐标
+                    var screenPoint = new System.Windows.Point(pt.X, pt.Y);
+                    _window.Dispatcher.Invoke(() => _onDrop(paths, screenPoint));
+                }
             }
 
             return NativeMethods.S_OK;
         }
 
-        private static uint ResolveEffect(ComDataObject? dataObject, uint allowedEffects)
+        private uint ResolveEffect(ComDataObject? dataObject, uint allowedEffects, NativeMethods.POINTL pt)
         {
+            // 检查数据格式
             if (dataObject is not null && !NativeMethods.ContainsFileDrop(dataObject))
+            {
+                return NativeMethods.DROPEFFECT_NONE;
+            }
+
+            // 调用回调判断鼠标位置是否接受文件
+            var screenPoint = new System.Windows.Point(pt.X, pt.Y);
+            bool canDrop = _window.Dispatcher.Invoke(() => _canDropAt(screenPoint));
+
+            if (!canDrop)
             {
                 return NativeMethods.DROPEFFECT_NONE;
             }

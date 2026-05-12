@@ -35,7 +35,10 @@ namespace CraftSharp.Windows.Inventory
                 // 注册原生拖放（支持 Windows 拖拽缩略图显示 + 处理文件放置）
                 try
                 {
-                    _nativeDropTarget = NativeDropHelper.RegisterWithDropHandler(this, HandleNativeDrop);
+                    _nativeDropTarget = NativeDropHelper.RegisterWithDropHandler(
+                        this,
+                        HandleNativeDrop,
+                        CanDropAtPosition);
                 }
                 catch (Exception)
                 {
@@ -285,6 +288,17 @@ namespace CraftSharp.Windows.Inventory
                 PositionWindow();
                 Show();
             }
+        }
+
+        /// <summary>
+        /// 判断鼠标位置是否可以接受文件放置（用于设置拖拽光标）
+        /// </summary>
+        private bool CanDropAtPosition(System.Windows.Point screenPoint)
+        {
+            // 将屏幕坐标转换为窗口坐标
+            var mousePos = PointFromScreen(screenPoint);
+            // 判断是否在格子区域内
+            return GetSlotIndexAtPosition(mousePos) >= 0;
         }
 
         /// <summary>
