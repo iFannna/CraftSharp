@@ -1099,19 +1099,67 @@ namespace CraftSharp.Windows.Settings.Panels
                 Cursor = System.Windows.Input.Cursors.Hand,
                 ToolTip = GetResourceString("AppIconTooltip")
             };
-            var iconImage = new System.Windows.Controls.Image
+
+            // 判断是否需要添加背景图标（生命值、饥饿值、伤害吸收值）
+            string? backgroundPath = GetBackgroundIconPath(_hudId);
+            if (backgroundPath != null)
             {
-                Name = "IconPreviewImage",
-                Source = LoadBitmapImage(iconPath),
-                Stretch = Stretch.Uniform
-            };
-            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
-            _iconPreviewBorder.Child = iconImage;
+                // 使用 Grid叠加背景和前景图标
+                var iconGrid = new Grid();
+
+                // 背景图标
+                var backgroundImage = new System.Windows.Controls.Image
+                {
+                    Source = LoadBitmapImage(backgroundPath),
+                    Stretch = Stretch.Uniform
+                };
+                RenderOptions.SetBitmapScalingMode(backgroundImage, BitmapScalingMode.NearestNeighbor);
+                iconGrid.Children.Add(backgroundImage);
+
+                // 前景图标
+                var iconImage = new System.Windows.Controls.Image
+                {
+                    Name = "IconPreviewImage",
+                    Source = LoadBitmapImage(iconPath),
+                    Stretch = Stretch.Uniform
+                };
+                RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
+                iconGrid.Children.Add(iconImage);
+
+                _iconPreviewBorder.Child = iconGrid;
+            }
+            else
+            {
+                // 无背景，直接显示前景图标
+                var iconImage = new System.Windows.Controls.Image
+                {
+                    Name = "IconPreviewImage",
+                    Source = LoadBitmapImage(iconPath),
+                    Stretch = Stretch.Uniform
+                };
+                RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
+                _iconPreviewBorder.Child = iconImage;
+            }
+
             _iconPreviewBorder.MouseLeftButtonDown += IconPreview_Click;
             grid.Children.Add(_iconPreviewBorder);
             Grid.SetColumn(_iconPreviewBorder, 1);
 
             ContentPanel.Children.Add(grid);
+        }
+
+        /// <summary>
+        /// 根据 hudId 获取背景图标路径（生命值、饥饿值、伤害吸收值需要背景）
+        /// </summary>
+        private static string? GetBackgroundIconPath(string hudId)
+        {
+            return hudId switch
+            {
+                "health" => AssetPaths.HeartContainer,
+                "food" => AssetPaths.FoodEmpty,
+                "absorbing" => AssetPaths.HeartContainer,
+                _ => null
+            };
         }
 
         /// <summary>
@@ -1143,7 +1191,18 @@ namespace CraftSharp.Windows.Settings.Panels
                 // 更新图标预览
                 if (_iconPreviewBorder != null)
                 {
-                    var iconImage = _iconPreviewBorder.Child as System.Windows.Controls.Image;
+                    // 查找前景图标（可能在Grid中或直接在Border中）
+                    System.Windows.Controls.Image? iconImage = null;
+                    if (_iconPreviewBorder.Child is Grid iconGrid)
+                    {
+                        // 从Grid中找前景图标（最后一个Image元素）
+                        iconImage = iconGrid.Children.OfType<System.Windows.Controls.Image>().LastOrDefault();
+                    }
+                    else if (_iconPreviewBorder.Child is System.Windows.Controls.Image directImage)
+                    {
+                        iconImage = directImage;
+                    }
+
                     if (iconImage != null)
                     {
                         string newIconPath = GetIconPathFromStyle(_hudId, picker.SelectedIconStyle);
