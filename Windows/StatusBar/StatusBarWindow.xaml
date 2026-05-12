@@ -11,23 +11,11 @@
         RenderOptions.BitmapScalingMode="NearestNeighbor"
         WindowStartupLocation="Manual">
 
-    <!-- 根Grid：整个状态栏水平居中，垂直紧贴窗口底部 -->
-    <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
-          HorizontalAlignment="Center" VerticalAlignment="Bottom">
-
-        <!-- 拖动图标层：用于显示拖动时的图标副本（最上层，IsHitTestVisible=False） -->
-        <Canvas x:Name="DragIconCanvas"
-                IsHitTestVisible="False"
-                Visibility="Collapsed"
-                Background="Transparent"
-                Width="{Binding ActualWidth, ElementName=RootGrid}"
-                Height="{Binding ActualHeight, ElementName=RootGrid}">
-            <Image x:Name="DragIconImage"
-                   Stretch="Uniform"
-                   RenderOptions.BitmapScalingMode="HighQuality"
-                   Width="32"
-                   Height="32"/>
-        </Canvas>
+    <!-- 包装Grid：用于包含拖动图标层和主内容 -->
+    <Grid>
+        <!-- 根Grid：整个状态栏水平居中，垂直紧贴窗口底部 -->
+        <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
+              HorizontalAlignment="Center" VerticalAlignment="Bottom">
 
         <!-- 主容器Grid：包含副手槽和核心容器 -->
         <!-- 使用五列布局：左副手槽 | 左间距 | 核心容器 | 右间距 | 右副手槽 -->
@@ -201,5 +189,16 @@
                 </Border>
             </Grid>
         </Grid>
+        </Grid>
+
+        <!-- 拖动图标层：覆盖整个窗口区域（最上层，IsHitTestVisible=False） -->
+        <Canvas x:Name="DragIconCanvas"
+                IsHitTestVisible="False"
+                Visibility="Collapsed"
+                Background="Transparent">
+            <Image x:Name="DragIconImage"
+                   Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Canvas>
     </Grid>
 </Window>

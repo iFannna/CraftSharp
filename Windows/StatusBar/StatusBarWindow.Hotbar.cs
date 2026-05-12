@@ -494,12 +494,16 @@ namespace CraftSharp.Windows.StatusBar
                 if (iconSource != null)
                 {
                     DragIconImage.Source = iconSource;
+                    // 图标大小和快捷栏格子图标一样：16 * scaleFactor
+                    double iconSize = 16 * _scaleFactor;
+                    DragIconImage.Width = iconSize;
+                    DragIconImage.Height = iconSize;
                     DragIconCanvas.Visibility = Visibility.Visible;
 
                     // 初始位置设在鼠标附近（将在 OnMouseMove 中更新）
                     var mousePos = System.Windows.Input.Mouse.GetPosition(this);
-                    Canvas.SetLeft(DragIconImage, mousePos.X - DragIconImage.Width / 2);
-                    Canvas.SetTop(DragIconImage, mousePos.Y - DragIconImage.Height / 2);
+                    Canvas.SetLeft(DragIconImage, mousePos.X - iconSize / 2);
+                    Canvas.SetTop(DragIconImage, mousePos.Y - iconSize / 2);
                 }
             }
             else
