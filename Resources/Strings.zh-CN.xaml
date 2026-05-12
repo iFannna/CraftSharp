@@ -107,6 +107,8 @@
     <sys:String x:Key="HudOptionShowHotbarDesc">在桌面显示快捷栏窗口</sys:String>
     <sys:String x:Key="HudOptionHoverEffect">悬浮效果</sys:String>
     <sys:String x:Key="HudOptionHoverEffectDesc">鼠标悬停时显示选中框</sys:String>
+    <sys:String x:Key="HudOptionShowTargetIcon">显示目标程序图标</sys:String>
+    <sys:String x:Key="HudOptionShowTargetIconDesc">仅对快捷方式生效，可能因为权限问题失效</sys:String>
     <sys:String x:Key="HudOptionLockPosition">锁定位置</sys:String>
     <sys:String x:Key="HudOptionLockPositionDesc">防止快捷栏被意外拖动</sys:String>
     <sys:String x:Key="HudOptionLeftOffhand">左副手槽</sys:String>

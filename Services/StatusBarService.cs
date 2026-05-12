@@ -203,5 +203,14 @@ namespace CraftSharp.Services
             if (_statusBarWindow == null) return;
             _statusBarWindow.RefreshHudElement(id);
         }
+
+        /// <summary>
+        /// 刷新快捷栏图标（用于设置切换后重新加载）
+        /// </summary>
+        public void RefreshHotbarIcons()
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.RefreshHotbarIcons();
+        }
     }
 }

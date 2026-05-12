@@ -393,7 +393,7 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void SetSlotIcon(int index, string filePath)
         {
-            var icon = IconExtractor.GetIcon(filePath, (int)(32 * _scaleFactor));
+            var icon = GetHotbarIcon(filePath);
             if (icon != null)
             {
                 var iconImage = GetIconImage(index);
@@ -410,7 +410,7 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void SetSlotIcon(string name, string filePath)
         {
-            var icon = IconExtractor.GetIcon(filePath, (int)(32 * _scaleFactor));
+            var icon = GetHotbarIcon(filePath);
             if (icon != null)
             {
                 var iconImage = GetIconImage(name);
@@ -420,6 +420,42 @@ namespace CraftSharp.Windows.StatusBar
                     iconImage.Visibility = Visibility.Visible;
                 }
             }
+        }
+
+        /// <summary>
+        /// 根据设置获取快捷栏图标
+        /// 对于快捷方式：根据 HotbarShowTargetIcon 设置决定显示快捷方式图标还是目标程序图标
+        /// </summary>
+        private ImageSource? GetHotbarIcon(string filePath)
+        {
+            int iconSize = (int)(32 * _scaleFactor);
+
+            // 检查是否为快捷方式
+            if (IconExtractor.IsShortcut(filePath))
+            {
+                bool showTargetIcon = _appSettings?.HotbarShowTargetIcon ?? false;
+                if (showTargetIcon)
+                {
+                    // 显示目标程序图标
+                    return IconExtractor.GetTargetIcon(filePath, iconSize);
+                }
+                else
+                {
+                    // 显示快捷方式图标
+                    return IconExtractor.GetShortcutIcon(filePath, iconSize);
+                }
+            }
+
+            // 普通文件，使用默认图标提取
+            return IconExtractor.GetIcon(filePath, iconSize);
+        }
+
+        /// <summary>
+        /// 刷新快捷栏所有图标（用于设置切换后重新加载）
+        /// </summary>
+        public void RefreshHotbarIcons()
+        {
+            LoadSlots();
         }
 
         /// <summary>

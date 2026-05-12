@@ -107,6 +107,8 @@
     <sys:String x:Key="HudOptionShowHotbarDesc">Display hotbar window on desktop</sys:String>
     <sys:String x:Key="HudOptionHoverEffect">Hover Effect</sys:String>
     <sys:String x:Key="HudOptionHoverEffectDesc">Show selection frame when hovering over slot</sys:String>
+    <sys:String x:Key="HudOptionShowTargetIcon">Show Target Icon</sys:String>
+    <sys:String x:Key="HudOptionShowTargetIconDesc">Only applies to shortcuts. May fail due to permission issues</sys:String>
     <sys:String x:Key="HudOptionLockPosition">Lock Position</sys:String>
     <sys:String x:Key="HudOptionLockPositionDesc">Prevent hotbar from being accidentally dragged</sys:String>
     <sys:String x:Key="HudOptionLeftOffhand">Left Offhand</sys:String>

@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ImageMagick;
@@ -16,6 +17,277 @@ namespace CraftSharp.Services
     {
         // 支持的图片扩展名
         private static readonly string[] ImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff", ".webp" };
+
+        #region Shell32 Shortcut Parsing - Method 1: Shell.Application
+
+        /// <summary>
+        /// 解析快捷方式获取目标路径 - 方法1：使用 Shell.Application COM
+        /// </summary>
+        private static string? GetShortcutTargetPath_ShellApp(string shortcutPath)
+        {
+            try
+            {
+                var shellType = Type.GetTypeFromProgID("Shell.Application");
+                if (shellType == null) return null;
+
+                dynamic? shell = Activator.CreateInstance(shellType);
+                if (shell == null) return null;
+
+                dynamic? folder = shell.NameSpace(Path.GetDirectoryName(shortcutPath));
+                if (folder == null) return null;
+
+                dynamic? folderItem = folder.ParseName(Path.GetFileName(shortcutPath));
+                if (folderItem == null) return null;
+
+                if (folderItem.IsLink)
+                {
+                    dynamic? link = folderItem.GetLink;
+                    if (link != null)
+                    {
+                        string targetPath = link.Target?.Path ?? "";
+                        if (!string.IsNullOrEmpty(targetPath) && File.Exists(targetPath))
+                        {
+                            return targetPath;
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region Shell32 Shortcut Parsing - Method 2: IShellLinkW
+
+        [ComImport]
+        [Guid("000214F9-0000-0000-C000-000000000046")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IShellLinkW
+        {
+            void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMax, out _WIN32_FIND_DATAW pfd, uint fFlags);
+            void GetIDList(out IntPtr ppidl);
+            void SetIDList(IntPtr pidl);
+            void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cchMaxName);
+            void SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);
+            void GetWorkingDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir, int cchMax);
+            void SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);
+            void GetArguments([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs, int cchMax);
+            void SetArguments([MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
+            void GetHotkey(out ushort pwHotkey);
+            void SetHotkey(ushort wHotkey);
+            void GetShowCmd(out int piShowCmd);
+            void SetShowCmd(int iShowCmd);
+            void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath, int cchIconPath, out int piIconIndex);
+            void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIconIndex);
+            void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPathRel, uint dwReserved);
+            void Resolve(IntPtr hwnd, uint fFlags);
+            void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct _WIN32_FIND_DATAW
+        {
+            public uint dwFileAttributes;
+            public long ftCreationTime;
+            public long ftLastAccessTime;
+            public long ftLastWriteTime;
+            public uint nFileSizeHigh;
+            public uint nFileSizeLow;
+            public uint dwReserved0;
+            public uint dwReserved1;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string cFileName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+            public string cAlternateFileName;
+        }
+
+        [ComImport]
+        [Guid("00021401-0000-0000-C000-000000000046")]
+        [ClassInterface(ClassInterfaceType.None)]
+        private class ShellLink
+        {
+        }
+
+        private const uint SLGP_SHORTPATH = 0x1;
+        private const uint SLGP_UNCPRIORITY = 0x2;
+        private const uint SLGP_RAWPATH = 0x4;
+
+        /// <summary>
+        /// 解析快捷方式获取目标路径 - 方法2：使用 IShellLinkW COM 接口
+        /// </summary>
+        private static string? GetShortcutTargetPath_IShellLink(string shortcutPath)
+        {
+            try
+            {
+                var link = new ShellLink() as IShellLinkW;
+                if (link == null) return null;
+
+                // 加载快捷方式文件
+                ((IPersistFile)link).Load(shortcutPath, 0);
+
+                // 解析快捷方式（获取目标路径）
+                link.Resolve(IntPtr.Zero, 0);
+
+                // 获取目标路径
+                StringBuilder sb = new StringBuilder(260);
+                link.GetPath(sb, sb.Capacity, out _, SLGP_RAWPATH);
+
+                string targetPath = sb.ToString();
+                if (!string.IsNullOrEmpty(targetPath) && File.Exists(targetPath))
+                {
+                    return targetPath;
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [ComImport]
+        [Guid("0000010b-0000-0000-C000-000000000046")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IPersistFile
+        {
+            void GetClassID(out Guid pClassID);
+            void IsDirty();
+            void Load([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, uint dwMode);
+            void Save([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, bool fRemember);
+            void SaveCompleted([MarshalAs(UnmanagedType.LPWStr)] string pszFileName);
+            void GetCurFile([MarshalAs(UnmanagedType.LPWStr)] StringBuilder ppszFileName);
+        }
+
+        #endregion
+
+        #region Shell32 Shortcut Parsing - Method 3: SHGetFileInfo + Icon.ExtractAssociatedIcon
+
+        /// <summary>
+        /// 解析快捷方式获取目标路径 - 方法3：使用 ExtractAssociatedIcon 回退
+        /// 这个方法不返回目标路径，而是直接获取目标程序图标
+        /// </summary>
+        private static ImageSource? GetTargetIconFromShortcut(string shortcutPath, int size)
+        {
+            try
+            {
+                // Icon.ExtractAssociatedIcon 对于快捷方式会返回目标程序的图标
+                using var icon = Icon.ExtractAssociatedIcon(shortcutPath);
+                if (icon == null) return null;
+
+                return ConvertIconToImageSourceInternal(icon);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 解析快捷方式获取目标路径（尝试多种方法）
+        /// </summary>
+        /// <param name="shortcutPath">快捷方式文件路径(.lnk)</param>
+        /// <returns>目标路径，如果解析失败返回null</returns>
+        public static string? GetShortcutTargetPath(string shortcutPath)
+        {
+            if (!File.Exists(shortcutPath) || !shortcutPath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // 方法1: Shell.Application COM
+            string? targetPath = GetShortcutTargetPath_ShellApp(shortcutPath);
+            if (!string.IsNullOrEmpty(targetPath) && File.Exists(targetPath))
+                return targetPath;
+
+            // 方法2: IShellLinkW COM 接口
+            targetPath = GetShortcutTargetPath_IShellLink(shortcutPath);
+            if (!string.IsNullOrEmpty(targetPath) && File.Exists(targetPath))
+                return targetPath;
+
+            return null;
+        }
+
+        /// <summary>
+        /// 判断文件是否为快捷方式
+        /// </summary>
+        public static bool IsShortcut(string filePath)
+        {
+            return filePath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// 获取快捷方式自身的图标（不考虑目标程序）
+        /// </summary>
+        public static ImageSource? GetShortcutIcon(string shortcutPath, int size = 32)
+        {
+            if (!File.Exists(shortcutPath))
+                return null;
+
+            try
+            {
+                // 使用 Shell API 获取快捷方式图标
+                var icon = GetIconFromShell(shortcutPath, GetImageListLevel(size));
+                if (icon != null)
+                {
+                    return icon;
+                }
+
+                // 回退到 ExtractAssociatedIcon
+                using var extractedIcon = Icon.ExtractAssociatedIcon(shortcutPath);
+                if (extractedIcon == null) return null;
+
+                return ConvertIconToImageSourceInternal(extractedIcon);
+            }
+            catch (Exception)
+            {
+                return null;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 获取目标程序图标（尝试多种方法）
+        /// </summary>
+        public static ImageSource? GetTargetIcon(string shortcutPath, int size = 32)
+        {
+            // 方法1: 先尝试解析目标路径，再获取图标
+            string? targetPath = GetShortcutTargetPath(shortcutPath);
+            if (!string.IsNullOrEmpty(targetPath) && File.Exists(targetPath))
+            {
+                return GetIcon(targetPath, size);
+            }
+
+            // 方法2: 使用 ExtractAssociatedIcon 直接从快捷方式获取目标图标
+            // 对于某些快捷方式，ExtractAssociatedIcon 会直接返回目标程序的图标
+            return GetTargetIconFromShortcut(shortcutPath, size);
+        }
+
+        private static ImageSource? ConvertIconToImageSourceInternal(Icon icon)
+        {
+            using var bitmap = icon.ToBitmap();
+            using var memoryStream = new MemoryStream();
+
+            bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+            memoryStream.Position = 0;
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            return bitmapImage;
+        }
+
         #region Shell32 P/Invoke
 
         // 图标尺寸级别常量

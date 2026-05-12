@@ -237,6 +237,10 @@ namespace CraftSharp.Windows.Settings.Panels
                 var rightOffhandToggle = AddToggleRow("HudOptionRightOffhand", "HudOptionRightOffhandDesc", _settings.HotbarRightOffhand);
                 rightOffhandToggle.Checked += (s, e) => { _settings.HotbarRightOffhand = true; StatusBarService.Instance.SetOffhandConfig(_settings.HotbarLeftOffhand, true); SaveSettings(); };
                 rightOffhandToggle.Unchecked += (s, e) => { _settings.HotbarRightOffhand = false; StatusBarService.Instance.SetOffhandConfig(_settings.HotbarLeftOffhand, false); SaveSettings(); };
+
+                var showTargetIconToggle = AddToggleRow("HudOptionShowTargetIcon", "HudOptionShowTargetIconDesc", _settings.HotbarShowTargetIcon);
+                showTargetIconToggle.Checked += (s, e) => { _settings.HotbarShowTargetIcon = true; StatusBarService.Instance.RefreshHotbarIcons(); SaveSettings(); };
+                showTargetIconToggle.Unchecked += (s, e) => { _settings.HotbarShowTargetIcon = false; StatusBarService.Instance.RefreshHotbarIcons(); SaveSettings(); };
             }
             else if (id == "health")
             {

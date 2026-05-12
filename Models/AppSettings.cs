@@ -136,6 +136,11 @@ namespace CraftSharp.Models
         public bool HotbarHoverEffect { get; set; } = true;
 
         /// <summary>
+        /// 显示目标程序图标（仅对快捷方式生效，默认false显示快捷方式自身图标）
+        /// </summary>
+        public bool HotbarShowTargetIcon { get; set; } = false;
+
+        /// <summary>
         /// HUD 元素配置列表
         /// </summary>
         public ObservableCollection<HudElementSettings> HudElements { get; set; }
