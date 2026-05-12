@@ -487,6 +487,17 @@ namespace CraftSharp.Windows.StatusBar
         {
             _isDraggingSlot = true;
 
+            // 清除源格子的图标显示（拖动时源格子变为空）
+            if (!sourceItem.IsEmpty)
+            {
+                if (sourceSlotIndex == 0)
+                    HideSlotIcon("LeftOffhand");
+                else if (sourceSlotIndex == 1)
+                    HideSlotIcon("RightOffhand");
+                else
+                    HideSlotIcon(sourceSlotIndex - 2);
+            }
+
             // 设置拖动图标副本
             if (!sourceItem.IsEmpty)
             {
@@ -514,6 +525,30 @@ namespace CraftSharp.Windows.StatusBar
 
             // 捕获鼠标（确保 OnMouseMove/OnMouseLeftButtonUp 能收到事件）
             CaptureMouse();
+        }
+
+        /// <summary>
+        /// 隐藏格子图标
+        /// </summary>
+        private void HideSlotIcon(string name)
+        {
+            var iconImage = GetIconImage(name);
+            if (iconImage != null)
+            {
+                iconImage.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// 隐藏格子图标
+        /// </summary>
+        private void HideSlotIcon(int index)
+        {
+            var iconImage = GetIconImage(index);
+            if (iconImage != null)
+            {
+                iconImage.Visibility = Visibility.Collapsed;
+            }
         }
 
         /// <summary>
@@ -596,12 +631,74 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     SwapSlotContents(_dragSourceSlotIndex, _dragTargetSlotIndex);
                 }
+                else
+                {
+                    // 拖回到同一个格子：恢复图标显示
+                    RestoreSlotIcon(_dragSourceSlotIndex);
+                }
             }
-            // 拖动到无效位置 → 回到原格子（不做任何操作）
+            else
+            {
+                // 拖动到无效位置：恢复源格子图标
+                RestoreSlotIcon(_dragSourceSlotIndex);
+            }
 
             // 清理状态
             _dragSourceSlotIndex = -1;
             _dragTargetSlotIndex = -1;
+        }
+
+        /// <summary>
+        /// 恢复格子图标显示（拖动取消时）
+        /// </summary>
+        private void RestoreSlotIcon(int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= _slotIds.Length) return;
+
+            var item = _slotService.GetSlot(_slotIds[slotIndex]);
+            if (!item.IsEmpty)
+            {
+                if (slotIndex == 0)
+                    ShowSlotIcon("LeftOffhand", item.FilePath);
+                else if (slotIndex == 1)
+                    ShowSlotIcon("RightOffhand", item.FilePath);
+                else
+                    ShowSlotIcon(slotIndex - 2, item.FilePath);
+            }
+        }
+
+        /// <summary>
+        /// 显示格子图标
+        /// </summary>
+        private void ShowSlotIcon(string name, string filePath)
+        {
+            var icon = GetHotbarIcon(filePath);
+            if (icon != null)
+            {
+                var iconImage = GetIconImage(name);
+                if (iconImage != null)
+                {
+                    iconImage.Source = icon;
+                    iconImage.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 显示格子图标
+        /// </summary>
+        private void ShowSlotIcon(int index, string filePath)
+        {
+            var icon = GetHotbarIcon(filePath);
+            if (icon != null)
+            {
+                var iconImage = GetIconImage(index);
+                if (iconImage != null)
+                {
+                    iconImage.Source = icon;
+                    iconImage.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         /// <summary>
