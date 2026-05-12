@@ -505,15 +505,15 @@ namespace CraftSharp.Windows.Settings.Panels
             var titleLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionDataMapping"),
-                FontWeight = FontWeights.Medium,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+                FontWeight = FontWeights.Medium
             };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
             var descLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionDataMappingDesc"),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             left.Children.Add(titleLabel);
             left.Children.Add(descLabel);
             grid.Children.Add(left);
@@ -614,15 +614,15 @@ namespace CraftSharp.Windows.Settings.Panels
             var titleLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionCustomValue"),
-                FontWeight = FontWeights.Medium,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+                FontWeight = FontWeights.Medium
             };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
             var descLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionCustomValueDesc"),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             left.Children.Add(titleLabel);
             left.Children.Add(descLabel);
             grid.Children.Add(left);
@@ -650,9 +650,9 @@ namespace CraftSharp.Windows.Settings.Panels
             var currentLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("CustomCurrentValue") + ":",
-                VerticalAlignment = VerticalAlignment.Center,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                VerticalAlignment = VerticalAlignment.Center
             };
+            currentLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             currentRow.Children.Add(currentLabel);
 
             // 输入框 + 最大值显示容器
@@ -693,9 +693,9 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 Text = "/" + (hasMaxValue ? maxValue : 100),
                 VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(4, 0, 0, 0),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                Margin = new Thickness(4, 0, 0, 0)
             };
+            _maxValueDisplay.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             inputContainer.Children.Add(_maxValueDisplay);
 
             currentRow.Children.Add(inputContainer);
@@ -732,9 +732,9 @@ namespace CraftSharp.Windows.Settings.Panels
                 var maxLabel = new System.Windows.Controls.TextBlock
                 {
                     Text = GetResourceString("CustomMaxValue") + ":",
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                    VerticalAlignment = VerticalAlignment.Center
                 };
+                maxLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
                 maxRow.Children.Add(maxLabel);
 
                 // 输入框 + 最大上限显示容器
@@ -775,9 +775,9 @@ namespace CraftSharp.Windows.Settings.Panels
                 {
                     Text = "/" + maxValueLimit,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(4, 0, 0, 0),
-                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                    Margin = new Thickness(4, 0, 0, 0)
                 };
+                maxValueLimitDisplay.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
                 maxInputContainer.Children.Add(maxValueLimitDisplay);
 
                 maxRow.Children.Add(maxInputContainer);
@@ -848,9 +848,9 @@ namespace CraftSharp.Windows.Settings.Panels
                 var saturationLabel = new System.Windows.Controls.TextBlock
                 {
                     Text = GetResourceString("CustomSaturationValue") + ":",
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                    VerticalAlignment = VerticalAlignment.Center
                 };
+                saturationLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
                 saturationRow.Children.Add(saturationLabel);
 
                 // 输入框 + 最大值显示容器
@@ -891,9 +891,9 @@ namespace CraftSharp.Windows.Settings.Panels
                 {
                     Text = "/" + maxValue,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(4, 0, 0, 0),
-                    Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush")
+                    Margin = new Thickness(4, 0, 0, 0)
                 };
+                _saturationLimitDisplay.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
                 saturationInputContainer.Children.Add(_saturationLimitDisplay);
 
                 saturationRow.Children.Add(saturationInputContainer);
@@ -971,15 +971,15 @@ namespace CraftSharp.Windows.Settings.Panels
             var titleLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString(labelKey),
-                FontWeight = FontWeights.Medium,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+                FontWeight = FontWeights.Medium
             };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
             var descLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString(descKey),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             left.Children.Add(titleLabel);
             left.Children.Add(descLabel);
             grid.Children.Add(left);
@@ -1006,15 +1006,15 @@ namespace CraftSharp.Windows.Settings.Panels
             var titleLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionClickMode"),
-                FontWeight = FontWeights.Medium,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+                FontWeight = FontWeights.Medium
             };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
             var descLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString("HudOptionClickModeDesc"),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             left.Children.Add(titleLabel);
             left.Children.Add(descLabel);
             grid.Children.Add(left);
@@ -1077,15 +1077,15 @@ namespace CraftSharp.Windows.Settings.Panels
             var titleLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString(labelKey),
-                FontWeight = FontWeights.Medium,
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextPrimaryBrush")
+                FontWeight = FontWeights.Medium
             };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
             var descLabel = new System.Windows.Controls.TextBlock
             {
                 Text = GetResourceString(labelKey + "Desc"),
-                Foreground = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextSecondaryBrush"),
                 Margin = new Thickness(0, 4, 0, 0)
             };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
             left.Children.Add(titleLabel);
             left.Children.Add(descLabel);
             grid.Children.Add(left);
@@ -1096,7 +1096,6 @@ namespace CraftSharp.Windows.Settings.Panels
                 Width = 32,
                 Height = 32,
                 CornerRadius = new CornerRadius(6),
-                Background = (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("CardBackgroundBrush"),
                 Cursor = System.Windows.Input.Cursors.Hand,
                 ToolTip = GetResourceString("AppIconTooltip")
             };
