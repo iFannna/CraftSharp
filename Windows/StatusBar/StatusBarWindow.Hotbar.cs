@@ -507,7 +507,22 @@ namespace CraftSharp.Windows.StatusBar
             // 设置拖动图标副本
             if (!sourceItem.IsEmpty)
             {
-                var iconSource = GetHotbarIcon(sourceItem.FilePath);
+                // 检查是否是占位图格子，如果是则使用占位图
+                bool isPlaceholder = _placeholderSlotIndexes.Contains(sourceSlotIndex);
+                ImageSource iconSource;
+
+                if (isPlaceholder)
+                {
+                    // 使用占位图作为拖动图标
+                    var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
+                    iconSource = LoadBitmapImage(placeholderPath);
+                }
+                else
+                {
+                    // 使用正常图标
+                    iconSource = GetHotbarIcon(sourceItem.FilePath);
+                }
+
                 if (iconSource != null)
                 {
                     DragIconImage.Source = iconSource;
@@ -1207,7 +1222,8 @@ namespace CraftSharp.Windows.StatusBar
         /// 注意：
         /// - 如果真正启动了拖动（_isDraggingSlot），结束拖动并处理交换
         /// - 如果定时器触发但没移动（_isDragReady），视为点击
-        /// - 如果格子显示占位图（文件丢失），单击/双击均无效
+        /// - 空格子：可选中，不能打开
+        /// - 占位图格子：尝试执行，成功则恢复正常图标，失败则弹出确认窗口
         /// </summary>
         private void Slot_Click(object sender, MouseButtonEventArgs e)
         {
@@ -1240,46 +1256,80 @@ namespace CraftSharp.Windows.StatusBar
             if (slotIndex >= 0)
             {
                 var item = _slotService.GetSlot(_slotIds[slotIndex]);
-
-                // 如果格子为空，不处理
-                if (item.IsEmpty)
-                    return;
-
-                // 检查文件是否存在（包括占位图状态）
-                bool isPlaceholder = _placeholderSlotIndexes.Contains(slotIndex);
-                bool fileExists = IsFilePathValid(item.FilePath);
-
-                if (!fileExists)
-                {
-                    // 文件丢失（无论是否已有占位图），弹出确认窗口
-                    HandleMissingFileSlot(slotIndex, item.FilePath, isPlaceholder);
-                    return;
-                }
-
-                // 文件存在，正常处理点击
-                // 获取主快捷栏格子索引（仅用于selection框显示，2-10转换为0-8）
                 int hotbarSlotIndex = slotIndex >= 2 ? slotIndex - 2 : -1;
+
+                // 检查格子状态
+                bool isEmpty = item.IsEmpty;
+                bool isPlaceholder = _placeholderSlotIndexes.Contains(slotIndex);
 
                 if (_clickMode == "single")
                 {
                     // 单击模式：直接执行操作
-                    OpenFile(item.FilePath);
+                    if (isEmpty)
+                    {
+                        // 空格子：单击无效果
+                        return;
+                    }
+
+                    // 尝试执行文件
+                    bool executeSuccess = TryExecuteFile(item.FilePath);
+
+                    if (executeSuccess)
+                    {
+                        // 执行成功：如果之前是占位图状态，恢复正常图标
+                        if (isPlaceholder)
+                        {
+                            RestoreNormalIcon(slotIndex, item.FilePath);
+                        }
+                    }
+                    else
+                    {
+                        // 执行失败：如果不是占位图状态，显示占位图；占位图状态单击无效果
+                        if (!isPlaceholder)
+                        {
+                            ShowPlaceholderIcon(slotIndex);
+                        }
+                    }
                 }
                 else // double
                 {
-                    // 双击模式：第一次选中（不显示selection框），第二次执行
+                    // 双击模式
                     if (_selectedSlotIndex == slotIndex)
                     {
-                        // 再次点击同一格子 → 执行操作
-                        OpenFile(item.FilePath);
-                        // 执行后清除选中
+                        // 第二次点击同一格子
+                        if (isEmpty)
+                        {
+                            // 空格子：第二次点击也无效果，清除选中
+                            ClearSlotSelection();
+                            return;
+                        }
+
+                        // 尝试执行文件
+                        bool executeSuccess = TryExecuteFile(item.FilePath);
+
+                        if (executeSuccess)
+                        {
+                            // 执行成功：如果之前是占位图状态，恢复正常图标
+                            if (isPlaceholder)
+                            {
+                                RestoreNormalIcon(slotIndex, item.FilePath);
+                            }
+                        }
+                        else
+                        {
+                            // 执行失败：弹出确认窗口
+                            HandleMissingFileSlot(slotIndex, item.FilePath, isPlaceholder);
+                        }
+
+                        // 清除选中
                         ClearSlotSelection();
                     }
                     else
                     {
-                        // 点击不同格子 → 切换选中到新格子
+                        // 第一次点击（选中格子）
                         ClearSlotSelection();
                         _selectedSlotIndex = slotIndex;
+
                         // 只有主快捷栏格子显示selection框（副手槽不显示）
                         if (hotbarSlotIndex >= 0)
                         {
@@ -1289,6 +1339,56 @@ namespace CraftSharp.Windows.StatusBar
                                 selection.Visibility = Visibility.Visible;
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 恢复格子的正常图标显示（从占位图状态恢复）
+        /// </summary>
+        private void RestoreNormalIcon(int slotIndex, string filePath)
+        {
+            // 清除占位图状态
+            _placeholderSlotIndexes.Remove(slotIndex);
+
+            // 显示正常图标
+            if (slotIndex == 0)
+            {
+                var icon = GetIconImage("LeftOffhand");
+                if (icon != null)
+                {
+                    var iconSource = GetHotbarIcon(filePath);
+                    if (iconSource != null)
+                    {
+                        icon.Source = iconSource;
+                        icon.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            else if (slotIndex == 1)
+            {
+                var icon = GetIconImage("RightOffhand");
+                if (icon != null)
+                {
+                    var iconSource = GetHotbarIcon(filePath);
+                    if (iconSource != null)
+                    {
+                        icon.Source = iconSource;
+                        icon.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            else
+            {
+                var icon = GetIconImage(slotIndex - 2);
+                if (icon != null)
+                {
+                    var iconSource = GetHotbarIcon(filePath);
+                    if (iconSource != null)
+                    {
+                        icon.Source = iconSource;
+                        icon.Visibility = Visibility.Visible;
                     }
                 }
             }
@@ -1418,6 +1518,30 @@ namespace CraftSharp.Windows.StatusBar
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"无法打开: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// 尝试执行文件/程序，返回是否成功
+        /// </summary>
+        private bool TryExecuteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath) || Directory.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = filePath,
+                        UseShellExecute = true
+                    });
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
 

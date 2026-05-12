@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  Title="{DynamicResource SlotMissingConfirmTitle}"
-                 Height="Auto" Width="420" MinWidth="320"
+                 Height="Auto" MinHeight="0" Width="420" MinWidth="320"
                  WindowStartupLocation="CenterOwner"
                  SizeToContent="Height"
                  Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -29,7 +29,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
 
             <!-- 原路径 -->
-            <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+            <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="12">
                 <TextBlock x:Name="FilePathText" TextWrapping="Wrap"
                            Foreground="{DynamicResource TextSecondaryBrush}"/>
             </Border>
