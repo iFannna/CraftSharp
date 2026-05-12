@@ -15,6 +15,20 @@
     <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
           HorizontalAlignment="Center" VerticalAlignment="Bottom">
 
+        <!-- 拖动图标层：用于显示拖动时的图标副本（最上层，IsHitTestVisible=False） -->
+        <Canvas x:Name="DragIconCanvas"
+                IsHitTestVisible="False"
+                Visibility="Collapsed"
+                Background="Transparent"
+                Width="{Binding ActualWidth, ElementName=RootGrid}"
+                Height="{Binding ActualHeight, ElementName=RootGrid}">
+            <Image x:Name="DragIconImage"
+                   Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Width="32"
+                   Height="32"/>
+        </Canvas>
+
         <!-- 主容器Grid：包含副手槽和核心容器 -->
         <!-- 使用五列布局：左副手槽 | 左间距 | 核心容器 | 右间距 | 右副手槽 -->
         <!-- 所有列使用固定宽度，避免Collapsed时列收缩导致位置偏移 -->
@@ -39,7 +53,9 @@
                 <!-- 左副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotLeftOffhand" Background="Transparent"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                        MouseLeftButtonUp="Slot_Click">
+                        MouseLeftButtonDown="Slot_MouseLeftButtonDown"
+                        MouseLeftButtonUp="Slot_Click"
+                        MouseMove="Slot_MouseMove">
                     <Image x:Name="IconLeftOffhand" Stretch="Uniform"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Visibility="Collapsed"/>
@@ -176,7 +192,9 @@
                 <!-- 右副手格子，Margin在代码中动态设置 -->
                 <Border x:Name="SlotRightOffhand" Background="Transparent"
                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                        MouseLeftButtonUp="Slot_Click">
+                        MouseLeftButtonDown="Slot_MouseLeftButtonDown"
+                        MouseLeftButtonUp="Slot_Click"
+                        MouseMove="Slot_MouseMove">
                     <Image x:Name="IconRightOffhand" Stretch="Uniform"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Visibility="Collapsed"/>

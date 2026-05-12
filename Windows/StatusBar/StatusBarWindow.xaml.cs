@@ -479,12 +479,11 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 处理原生拖放回调（Windows 拖拽缩略图支持）
         /// 根据鼠标位置判断落在哪个格子，处理文件放置
+        /// 仅处理外部文件拖入
         /// </summary>
         private void HandleNativeDrop(IReadOnlyList<string> paths, System.Windows.Point screenPoint)
         {
             if (paths.Count == 0) return;
-
-            var filePath = paths[0];
 
             // 将屏幕坐标转换为窗口坐标
             var mousePos = PointFromScreen(screenPoint);
@@ -494,7 +493,8 @@ namespace CraftSharp.Windows.StatusBar
 
             if (slotIndex >= 0)
             {
-                // 调用 Hotbar.cs 中的方法处理放置
+                // 外部文件拖入：添加到格子
+                var filePath = paths[0];
                 ProcessFileDrop(slotIndex, filePath);
             }
         }
@@ -568,11 +568,18 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 鼠标移动事件 - 执行自定义拖动
+        /// 鼠标移动事件 - 执行自定义拖动 + 处理格子拖动
         /// </summary>
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
         {
-            if (_isDragging && e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            // 处理格子拖动（优先级高于窗口拖动）
+            if (_isDraggingSlot)
+            {
+                var mousePos = e.GetPosition(this);
+                UpdateDragIconPosition(mousePos);
+            }
+            // 处理窗口拖动
+            else if (_isDragging && e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
                 // 获取鼠标在屏幕上的位置（WPF单位）
                 System.Windows.Point screenPoint = PointToScreen(new System.Windows.Point(0, 0));
@@ -587,11 +594,17 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 鼠标左键释放事件 - 结束拖动
+        /// 鼠标左键释放事件 - 结束拖动（窗口拖动或格子拖动）
         /// </summary>
         protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (_isDragging)
+            // 处理格子拖动结束
+            if (_isDraggingSlot)
+            {
+                EndSlotDrag();
+            }
+            // 处理窗口拖动结束
+            else if (_isDragging)
             {
                 _isDragging = false;
                 ReleaseMouseCapture();
