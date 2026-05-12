@@ -252,9 +252,7 @@ namespace CraftSharp.Windows.StatusBar
                     Visibility = _hotbarVisible ? Visibility.Visible : Visibility.Collapsed
                 };
                 border.MouseLeftButtonUp += Slot_Click;
-                border.AllowDrop = true;
-                border.Drop += Slot_Drop;
-                border.DragOver += Slot_DragOver;
+                // 原生拖放已接管 AllowDrop/Drop/DragOver，不再使用 WPF 拖放
                 border.MouseEnter += Slot_MouseEnter;
                 border.MouseLeave += Slot_MouseLeave;
 
@@ -601,45 +599,6 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 拖拽进入格子
-        /// </summary>
-        private void Slot_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            e.Effects = System.Windows.DragDropEffects.Copy;
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// 拖拽放下 - 添加到格子
-        /// </summary>
-        private void Slot_Drop(object sender, System.Windows.DragEventArgs e)
-        {
-            var border = (Border)sender;
-            var slotIndex = GetSlotIndex(border);
-
-            if (slotIndex >= 0 && e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
-            {
-                var files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                if (files.Length > 0)
-                {
-                    var filePath = files[0];
-
-                    _slotService.SetSlot(_slotIds[slotIndex], new SlotItem
-                    {
-                        FilePath = filePath
-                    });
-
-                    if (slotIndex == 0)
-                        SetSlotIcon("LeftOffhand", filePath);
-                    else if (slotIndex == 1)
-                        SetSlotIcon("RightOffhand", filePath);
-                    else
-                        SetSlotIcon(slotIndex - 2, filePath);
-                }
-            }
-        }
-
-        /// <summary>
         /// 右键菜单 - 移除格子内容
         /// </summary>
         public void RemoveSlot(int index)
@@ -714,6 +673,98 @@ namespace CraftSharp.Windows.StatusBar
 
             // 更新布局（窗口位置不变）
             UpdateLayout();
+        }
+
+        /// <summary>
+        /// 根据鼠标位置判断落在哪个格子
+        /// 返回全局索引（0=左副手，1=右副手，2-10=主快捷栏Slot0-8），-1表示不在格子区域
+        /// </summary>
+        public int GetSlotIndexAtPosition(System.Windows.Point mousePos)
+        {
+            double margin = 3 * _scaleFactor;
+            double dropZoneExpansion = 2 * _scaleFactor;
+            double slotSize = 16 * _scaleFactor;
+            double dropZoneSize = slotSize + 2 * dropZoneExpansion; // 20
+            double slotSpacing = 4 * _scaleFactor;
+            double columnWidth = slotSize + slotSpacing; // 20
+
+            // 计算主快捷栏格子区域（相对于窗口）
+            // HotbarSlotsGrid 位于 HotbarGrid 内，HotbarGrid 位于 CoreContainerGrid 内
+            // 需要计算 HotbarSlotsGrid 相对于窗口的位置
+
+            // 获取 HotbarGrid 相对于窗口的位置
+            var hotbarGridPos = HotbarGrid.TransformToAncestor(this).Transform(new System.Windows.Point(0, 0));
+            double hotbarLeft = hotbarGridPos.X;
+            double hotbarTop = hotbarGridPos.Y;
+            double hotbarHeight = _originalHotbarHeight * _scaleFactor;
+
+            // HotbarSlotsGrid 的 Margin = margin - dropZoneExpansion = 1
+            double slotsGridLeft = hotbarLeft + margin - dropZoneExpansion;
+            double slotsGridTop = hotbarTop + hotbarHeight - dropZoneSize - (margin - dropZoneExpansion);
+
+            // 检查主快捷栏格子（Slot0-8）
+            for (int i = 0; i < 9; i++)
+            {
+                double slotLeft = slotsGridLeft + i * columnWidth;
+                double slotRight = slotLeft + dropZoneSize;
+                double slotTop = slotsGridTop;
+                double slotBottom = slotTop + dropZoneSize;
+
+                if (mousePos.X >= slotLeft && mousePos.X <= slotRight &&
+                    mousePos.Y >= slotTop && mousePos.Y <= slotBottom)
+                {
+                    return i + 2; // 主快捷栏索引 = i + 2
+                }
+            }
+
+            // 检查副手槽
+            if (_leftOffhandEnabled)
+            {
+                var leftOffhandGridPos = LeftOffhandGrid.TransformToAncestor(this).Transform(new System.Windows.Point(0, 0));
+                double leftSlotLeft = leftOffhandGridPos.X + margin - dropZoneExpansion;
+                double leftSlotTop = leftOffhandGridPos.Y + _originalOffhandHeight * _scaleFactor - dropZoneSize - (margin - dropZoneExpansion);
+
+                if (mousePos.X >= leftSlotLeft && mousePos.X <= leftSlotLeft + dropZoneSize &&
+                    mousePos.Y >= leftSlotTop && mousePos.Y <= leftSlotTop + dropZoneSize)
+                {
+                    return 0; // 左副手槽
+                }
+            }
+
+            if (_rightOffhandEnabled)
+            {
+                var rightOffhandGridPos = RightOffhandGrid.TransformToAncestor(this).Transform(new System.Windows.Point(0, 0));
+                double rightSlotLeft = rightOffhandGridPos.X + margin - dropZoneExpansion;
+                double rightSlotTop = rightOffhandGridPos.Y + _originalOffhandHeight * _scaleFactor - dropZoneSize - (margin - dropZoneExpansion);
+
+                if (mousePos.X >= rightSlotLeft && mousePos.X <= rightSlotLeft + dropZoneSize &&
+                    mousePos.Y >= rightSlotTop && mousePos.Y <= rightSlotTop + dropZoneSize)
+                {
+                    return 1; // 右副手槽
+                }
+            }
+
+            return -1; // 不在任何格子区域
+        }
+
+        /// <summary>
+        /// 处理文件拖放（原生拖放回调调用）
+        /// </summary>
+        public void ProcessFileDrop(int slotIndex, string filePath)
+        {
+            if (slotIndex < 0 || slotIndex >= _slotIds.Length) return;
+
+            _slotService.SetSlot(_slotIds[slotIndex], new Models.SlotItem
+            {
+                FilePath = filePath
+            });
+
+            if (slotIndex == 0)
+                SetSlotIcon("LeftOffhand", filePath);
+            else if (slotIndex == 1)
+                SetSlotIcon("RightOffhand", filePath);
+            else
+                SetSlotIcon(slotIndex - 2, filePath);
         }
     }
 }

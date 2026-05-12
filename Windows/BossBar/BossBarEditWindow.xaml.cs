@@ -1,7 +1,8 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services;
 using CraftSharp.Windows.Settings;
-using CraftSharp.Helpers;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,9 @@ namespace CraftSharp.Windows.BossBar
         private string _iconType = "blue";
         private string _notchType = "";
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         public BossBarEditWindow(BossBarSettings? settings = null)
         {
             InitializeComponent();
@@ -33,6 +37,27 @@ namespace CraftSharp.Windows.BossBar
 
             // 设置窗口图标
             IconService.Instance.ApplyWindowIcon(this);
+
+            // 注册原生拖放（仅显示缩略图，不接受文件）
+            SourceInitialized += (s, e) =>
+            {
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
+
+            // 窗口关闭时释放资源
+            Closed += (s, e) =>
+            {
+                _nativeDropTarget?.Dispose();
+                _nativeDropTarget = null;
+            };
 
             // 初始化UI
             InitializeUI();

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -51,6 +52,9 @@ namespace CraftSharp.Windows.StatusBar
         private double _dragOffsetX;  // 鼠标相对于窗口左上角的偏移
         private double _dragOffsetY;
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         // 应用设置
         private Models.AppSettings? _appSettings;
 
@@ -74,7 +78,21 @@ namespace CraftSharp.Windows.StatusBar
             InitializeComponent();
 
             // 设置窗口到桌面层级
-            SourceInitialized += (s, e) => DesktopWindowHelper.SetWindowToDesktopLevel(this);
+            SourceInitialized += (s, e) =>
+            {
+                DesktopWindowHelper.SetWindowToDesktopLevel(this);
+
+                // 注册原生拖放（支持 Windows 拖拽缩略图显示 + 处理文件放置）
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterWithDropHandler(this, HandleNativeDrop);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
 
             // 监听窗口位置变化（用于即时保存位置）
             LocationChanged += OnLocationChanged;
@@ -175,6 +193,10 @@ namespace CraftSharp.Windows.StatusBar
                 _batteryTimer.Stop();
                 _batteryTimer = null;
             }
+
+            // 释放原生拖放资源
+            _nativeDropTarget?.Dispose();
+            _nativeDropTarget = null;
         }
 
         /// <summary>
@@ -438,6 +460,29 @@ namespace CraftSharp.Windows.StatusBar
         private Models.HudElementSettings? GetHudElementSettings(string id)
         {
             return _appSettings?.HudElements.FirstOrDefault(h => h.Id == id);
+        }
+
+        /// <summary>
+        /// 处理原生拖放回调（Windows 拖拽缩略图支持）
+        /// 根据鼠标位置判断落在哪个格子，处理文件放置
+        /// </summary>
+        private void HandleNativeDrop(IReadOnlyList<string> paths, System.Windows.Point screenPoint)
+        {
+            if (paths.Count == 0) return;
+
+            var filePath = paths[0];
+
+            // 将屏幕坐标转换为窗口坐标
+            var mousePos = PointFromScreen(screenPoint);
+
+            // 判断鼠标落在哪个格子
+            int slotIndex = GetSlotIndexAtPosition(mousePos);
+
+            if (slotIndex >= 0)
+            {
+                // 调用 Hotbar.cs 中的方法处理放置
+                ProcessFileDrop(slotIndex, filePath);
+            }
         }
 
         /// <summary>

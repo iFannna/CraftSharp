@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Windows.Settings.Panels;
 using Wpf.Ui.Controls;
@@ -15,11 +16,35 @@ namespace CraftSharp.Windows.Settings
         private HotkeyPanel _panelHotkey = null!;
         private AboutPanel _panelAbout = null!;
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         public SettingsWindow(AppSettings settings)
         {
             InitializeComponent();
 
             _settings = settings;
+
+            // 注册原生拖放（仅显示缩略图，不接受文件）
+            SourceInitialized += (s, e) =>
+            {
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
+
+            // 窗口关闭时释放资源
+            Closed += (s, e) =>
+            {
+                _nativeDropTarget?.Dispose();
+                _nativeDropTarget = null;
+            };
 
             // 根据设置恢复窗口位置和大小
             if (_settings.SettingsWindowRememberPosition)

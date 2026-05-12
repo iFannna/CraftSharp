@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
@@ -5,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CraftSharp.Helpers;
 using CraftSharp.Services;
 using Wpf.Ui.Controls;
 
@@ -29,6 +31,9 @@ namespace CraftSharp.Windows.Dialogs
         private readonly ObservableCollection<IconItem> _iconItems = new();
         private IconCategoriesConfig? _categoryConfig;
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         public IconPickerWindow()
         {
             InitializeComponent();
@@ -39,6 +44,27 @@ namespace CraftSharp.Windows.Dialogs
 
             // 设置窗口图标（使用当前应用图标）
             IconService.Instance.ApplyWindowIcon(this);
+
+            // 注册原生拖放（仅显示缩略图，不接受文件）
+            SourceInitialized += (s, e) =>
+            {
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
+
+            // 窗口关闭时释放资源
+            Closed += (s, e) =>
+            {
+                _nativeDropTarget?.Dispose();
+                _nativeDropTarget = null;
+            };
 
             // 手动触发加载"全部方块"
             LoadIconsForTagAsync("block_all");

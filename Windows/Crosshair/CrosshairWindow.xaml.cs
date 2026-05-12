@@ -46,6 +46,9 @@ namespace CraftSharp.Windows.Crosshair
         // 窗口置顶
         private bool _topMost = false;
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         public CrosshairWindow()
         {
             InitializeComponent();
@@ -56,6 +59,27 @@ namespace CraftSharp.Windows.Crosshair
 
             // 窗口加载后设置位置和尺寸（此时可以获取 DPI 信息）
             Loaded += OnWindowLoaded;
+
+            // 注册原生拖放（仅显示缩略图，不接受文件）
+            SourceInitialized += (s, e) =>
+            {
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
+
+            // 窗口关闭时释放资源
+            Closed += (s, e) =>
+            {
+                _nativeDropTarget?.Dispose();
+                _nativeDropTarget = null;
+            };
         }
 
         /// <summary>

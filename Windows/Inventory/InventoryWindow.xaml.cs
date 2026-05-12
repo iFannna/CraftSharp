@@ -20,12 +20,36 @@ namespace CraftSharp.Windows.Inventory
         private double _originalImageWidth;
         private double _originalImageHeight;
 
+        // 原生拖放目标（支持 Windows 拖拽缩略图）
+        private IDisposable? _nativeDropTarget;
+
         public InventoryWindow()
         {
             InitializeComponent();
 
-            // 设置窗口到桌面层级
-            SourceInitialized += (s, e) => DesktopWindowHelper.SetWindowToDesktopLevel(this);
+            // 设置窗口到桌面层级 + 注册原生拖放
+            SourceInitialized += (s, e) =>
+            {
+                DesktopWindowHelper.SetWindowToDesktopLevel(this);
+
+                // 注册原生拖放（支持 Windows 拖拽缩略图显示 + 处理文件放置）
+                try
+                {
+                    _nativeDropTarget = NativeDropHelper.RegisterWithDropHandler(this, HandleNativeDrop);
+                }
+                catch (Exception)
+                {
+                    _nativeDropTarget?.Dispose();
+                    _nativeDropTarget = null;
+                }
+            };
+
+            // 监听窗口关闭事件（释放原生拖放资源）
+            Closed += (s, e) =>
+            {
+                _nativeDropTarget?.Dispose();
+                _nativeDropTarget = null;
+            };
 
             _slotService = new SlotDataService();
 
@@ -103,7 +127,6 @@ namespace CraftSharp.Windows.Inventory
                 {
                     Name = $"Slot{i}",
                     Background = System.Windows.Media.Brushes.Transparent,
-                    AllowDrop = true,
                     Width = slotWidth,
                     Height = slotHeight
                 };
@@ -119,8 +142,7 @@ namespace CraftSharp.Windows.Inventory
 
                 border.Child = icon;
                 border.MouseLeftButtonDown += Slot_Click;
-                border.Drop += Slot_Drop;
-                border.DragOver += Slot_DragOver;
+                // 原生拖放已接管，不再使用 WPF AllowDrop/Drop/DragOver
 
                 Canvas.SetLeft(border, col * slotWidth);
                 Canvas.SetTop(border, row * slotHeight);
@@ -250,42 +272,6 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 拖拽进入格子
-        /// </summary>
-        private void Slot_DragOver(object sender, System.Windows.DragEventArgs e)
-        {
-            e.Effects = System.Windows.DragDropEffects.Copy;
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// 拖拽放下 - 添加到格子
-        /// </summary>
-        private void Slot_Drop(object sender, System.Windows.DragEventArgs e)
-        {
-            var border = (Border)sender;
-            var slotIndex = GetSlotIndex(border);
-
-            if (slotIndex >= 0 && e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
-            {
-                var files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-                if (files.Length > 0)
-                {
-                    var filePath = files[0];
-
-                    // 保存数据
-                    _slotService.SetSlot(_slotIds[slotIndex], new Models.SlotItem
-                    {
-                        FilePath = filePath
-                    });
-
-                    // 显示图标
-                    SetSlotIcon(slotIndex, filePath);
-                }
-            }
-        }
-
-        /// <summary>
         /// 切换显示/隐藏
         /// </summary>
         public void Toggle()
@@ -299,6 +285,61 @@ namespace CraftSharp.Windows.Inventory
                 PositionWindow();
                 Show();
             }
+        }
+
+        /// <summary>
+        /// 处理原生拖放回调（Windows 拖拽缩略图支持）
+        /// </summary>
+        private void HandleNativeDrop(IReadOnlyList<string> paths, System.Windows.Point screenPoint)
+        {
+            if (paths.Count == 0) return;
+
+            var filePath = paths[0];
+
+            // 将屏幕坐标转换为窗口坐标
+            var mousePos = PointFromScreen(screenPoint);
+
+            // 判断鼠标落在哪个格子
+            int slotIndex = GetSlotIndexAtPosition(mousePos);
+
+            if (slotIndex >= 0)
+            {
+                // 保存数据
+                _slotService.SetSlot(_slotIds[slotIndex], new Models.SlotItem
+                {
+                    FilePath = filePath
+                });
+
+                // 显示图标
+                SetSlotIcon(slotIndex, filePath);
+            }
+        }
+
+        /// <summary>
+        /// 根据鼠标位置判断落在哪个格子（返回0-26，-1表示不在格子区域）
+        /// </summary>
+        private int GetSlotIndexAtPosition(System.Windows.Point mousePos)
+        {
+            double slotWidth = _originalImageWidth / 9.0 * _scaleFactor;
+            double slotHeight = _originalImageHeight / 3.0 * _scaleFactor;
+
+            // 格子容器相对于窗口的位置
+            var canvasPos = SlotCanvas.TransformToAncestor(this).Transform(new System.Windows.Point(0, 0));
+
+            // 计算鼠标相对于 Canvas 的位置
+            double relativeX = mousePos.X - canvasPos.X;
+            double relativeY = mousePos.Y - canvasPos.Y;
+
+            // 判断落在哪个格子
+            int col = (int)(relativeX / slotWidth);
+            int row = (int)(relativeY / slotHeight);
+
+            if (col >= 0 && col < 9 && row >= 0 && row < 3)
+            {
+                return row * 9 + col;
+            }
+
+            return -1;
         }
     }
 }
