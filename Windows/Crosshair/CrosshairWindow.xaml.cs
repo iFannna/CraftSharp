@@ -60,9 +60,11 @@ namespace CraftSharp.Windows.Crosshair
             // 窗口加载后设置位置和尺寸（此时可以获取 DPI 信息）
             Loaded += OnWindowLoaded;
 
-            // 注册原生拖放（仅显示缩略图，不接受文件）
+            // 注册原生拖放（仅显示缩略图，不接受文件） + 隐藏 Alt+Tab
             SourceInitialized += (s, e) =>
             {
+                DesktopWindowHelper.HideFromAltTab(this);
+
                 try
                 {
                     _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);

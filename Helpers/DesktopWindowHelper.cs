@@ -27,9 +27,26 @@ namespace CraftSharp.Helpers
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
         private const int WM_COMMAND = 0x0111;
         private const int WM_USER = 0x0400;
         private const int SW_SHOW = 5;
+
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOZORDER = 0x0004;
+        private const uint SWP_FRAMECHANGED = 0x0020;
 
         #endregion
 
@@ -102,6 +119,74 @@ namespace CraftSharp.Helpers
 
             // 设置窗口父级为 WorkerW
             SetParent(hwnd, workerw);
+
+            // SetParent 会重置样式，需要重新设置 WS_EX_TOOLWINDOW
+            ApplyToolWindowStyle(hwnd);
+        }
+
+        /// <summary>
+        /// 将窗口设置为桌面层级并同时隐藏 Alt+Tab
+        /// </summary>
+        public static void SetWindowToDesktopLevelAndHideAltTab(Window window)
+        {
+            if (window == null) return;
+
+            // 确保窗口已显示
+            if (!window.IsVisible)
+            {
+                window.Show();
+            }
+
+            // 获取窗口句柄
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd == IntPtr.Zero)
+            {
+                // 等待窗口初始化完成
+                window.SourceInitialized += (s, e) =>
+                {
+                    var handle = new WindowInteropHelper(window).Handle;
+                    SetParentToDesktop(handle);
+                };
+            }
+            else
+            {
+                SetParentToDesktop(hwnd);
+            }
+        }
+
+        /// <summary>
+        /// 隐藏窗口在 Alt+Tab 列表中（设置 WS_EX_TOOLWINDOW 样式）
+        /// 如果窗口已初始化则立即执行，否则等待 SourceInitialized 事件
+        /// </summary>
+        public static void HideFromAltTab(Window window)
+        {
+            if (window == null) return;
+
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd != IntPtr.Zero)
+            {
+                // 窗口已初始化，立即设置样式
+                ApplyToolWindowStyle(hwnd);
+            }
+            else
+            {
+                // 等待窗口初始化
+                window.SourceInitialized += (s, e) =>
+                {
+                    var handle = new WindowInteropHelper(window).Handle;
+                    ApplyToolWindowStyle(handle);
+                };
+            }
+        }
+
+        /// <summary>
+        /// 应用 WS_EX_TOOLWINDOW 样式
+        /// </summary>
+        private static void ApplyToolWindowStyle(IntPtr hwnd)
+        {
+            int extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TOOLWINDOW);
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
     }
 }

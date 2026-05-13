@@ -49,9 +49,11 @@ namespace CraftSharp.Windows.BossBar
             // 设置窗口图标
             IconService.Instance.ApplyWindowIcon(this);
 
-            // 注册原生拖放（仅显示缩略图，不接受文件）
+            // 注册原生拖放（仅显示缩略图，不接受文件） + 隐藏 Alt+Tab
             SourceInitialized += (s, e) =>
             {
+                DesktopWindowHelper.HideFromAltTab(this);
+
                 try
                 {
                     _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);

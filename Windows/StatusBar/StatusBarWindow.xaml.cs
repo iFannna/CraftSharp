@@ -79,10 +79,10 @@ namespace CraftSharp.Windows.StatusBar
 
             InitializeComponent();
 
-            // 设置窗口到桌面层级
+            // 设置窗口到桌面层级 + 隐藏 Alt+Tab
             SourceInitialized += (s, e) =>
             {
-                DesktopWindowHelper.SetWindowToDesktopLevel(this);
+                DesktopWindowHelper.SetWindowToDesktopLevelAndHideAltTab(this);
 
                 // 注册原生拖放（支持 Windows 拖拽缩略图显示 + 处理文件放置）
                 try
