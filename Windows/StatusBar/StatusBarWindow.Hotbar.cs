@@ -669,39 +669,27 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 恢复格子图标显示（拖动取消时）
-        /// 如果格子是占位图状态，恢复占位图显示
+        /// 恢复格子图标显示（拖动取消时）使用缓存的拖动图标Source
         /// </summary>
         private void RestoreSlotIcon(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex >= _slotIds.Length) return;
 
-            var item = _slotService.GetSlot(_slotIds[slotIndex]);
-            if (!item.IsEmpty)
-            {
-                // 检查路径是否在丢失集合中
-                bool isMissing = _missingFilePaths.Contains(item.FilePath);
+            // 使用缓存的拖动图标Source恢复显示（不做路径检测）
+            ImageSource? cachedIconSource = DragIconImage.Source;
 
-                if (isMissing)
-                {
-                    // 显示占位图
-                    if (slotIndex == 0)
-                        ShowPlaceholderIcon("LeftOffhand");
-                    else if (slotIndex == 1)
-                        ShowPlaceholderIcon("RightOffhand");
-                    else
-                        ShowPlaceholderIcon(slotIndex - 2);
-                }
-                else
-                {
-                    // 显示正常图标
-                    if (slotIndex == 0)
-                        SetSlotIcon("LeftOffhand", item.FilePath);
-                    else if (slotIndex == 1)
-                        SetSlotIcon("RightOffhand", item.FilePath);
-                    else
-                        SetSlotIcon(slotIndex - 2, item.FilePath);
-                }
+            System.Windows.Controls.Image? iconImage;
+            if (slotIndex == 0)
+                iconImage = GetIconImage("LeftOffhand");
+            else if (slotIndex == 1)
+                iconImage = GetIconImage("RightOffhand");
+            else
+                iconImage = GetIconImage(slotIndex - 2);
+
+            if (iconImage != null && cachedIconSource != null)
+            {
+                iconImage.Source = cachedIconSource;
+                iconImage.Visibility = Visibility.Visible;
             }
         }
 
@@ -758,8 +746,7 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 交换两个格子的内容
-        /// 同时更新占位图状态
+        /// 交换两个格子的内容，使用缓存的图标Source
         /// </summary>
         private void SwapSlotContents(int sourceIndex, int targetIndex)
         {
@@ -768,82 +755,65 @@ namespace CraftSharp.Windows.StatusBar
             // 获取目标格子内容
             var targetItem = _slotService.GetSlot(_slotIds[targetIndex]);
 
+            // 获取交换前的图标Source（缓存）
+            ImageSource? sourceIconSource = GetSlotIconSource(sourceIndex);
+            ImageSource? targetIconSource = GetSlotIconSource(targetIndex);
+
             // 交换数据存储
             _slotService.SetSlot(_slotIds[sourceIndex], targetItem);
             _slotService.SetSlot(_slotIds[targetIndex], sourceItem);
 
-            // 更新显示：根据交换后的路径是否在丢失集合中决定显示占位图还是正常图标
-            // 注意：路径本身的有效性没有变化，只是换到了不同的格子
-            UpdateSlotDisplayByPath(sourceIndex, targetItem.FilePath);
-            UpdateSlotDisplayByPath(targetIndex, sourceItem.FilePath);
+            // 交换图标显示（使用缓存的图标Source，不做路径检测）
+            SetSlotIconSource(sourceIndex, targetIconSource, targetItem.IsEmpty);
+            SetSlotIconSource(targetIndex, sourceIconSource, sourceItem.IsEmpty);
         }
 
         /// <summary>
-        /// 根据路径更新格子显示（检查是否在丢失集合中）
+        /// 获取格子的图标Source
         /// </summary>
-        private void UpdateSlotDisplayByPath(int slotIndex, string filePath)
+        private ImageSource? GetSlotIconSource(int slotIndex)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (slotIndex == 0)
             {
-                // 空路径：隐藏图标
-                if (slotIndex == 0)
-                {
-                    var iconImage = GetIconImage("LeftOffhand");
-                    if (iconImage != null)
-                    {
-                        iconImage.Source = null;
-                        iconImage.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else if (slotIndex == 1)
-                {
-                    var iconImage = GetIconImage("RightOffhand");
-                    if (iconImage != null)
-                    {
-                        iconImage.Source = null;
-                        iconImage.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else
-                {
-                    var iconImage = GetIconImage(slotIndex - 2);
-                    if (iconImage != null)
-                    {
-                        iconImage.Source = null;
-                        iconImage.Visibility = Visibility.Collapsed;
-                    }
-                }
+                var iconImage = GetIconImage("LeftOffhand");
+                return iconImage?.Source;
             }
-            else if (_missingFilePaths.Contains(filePath))
+            else if (slotIndex == 1)
             {
-                // 路径丢失：显示占位图
-                if (slotIndex == 0)
-                {
-                    ShowPlaceholderIcon("LeftOffhand");
-                }
-                else if (slotIndex == 1)
-                {
-                    ShowPlaceholderIcon("RightOffhand");
-                }
-                else
-                {
-                    ShowPlaceholderIcon(slotIndex - 2);
-                }
+                var iconImage = GetIconImage("RightOffhand");
+                return iconImage?.Source;
             }
             else
             {
-                // 路径正常：显示正常图标
-                if (slotIndex == 0)
+                var iconImage = GetIconImage(slotIndex - 2);
+                return iconImage?.Source;
+            }
+        }
+
+        /// <summary>
+        /// 设置格子的图标Source（使用缓存的图标）
+        /// </summary>
+        private void SetSlotIconSource(int slotIndex, ImageSource? iconSource, bool isEmpty)
+        {
+            System.Windows.Controls.Image? iconImage;
+            if (slotIndex == 0)
+                iconImage = GetIconImage("LeftOffhand");
+            else if (slotIndex == 1)
+                iconImage = GetIconImage("RightOffhand");
+            else
+                iconImage = GetIconImage(slotIndex - 2);
+
+            if (iconImage != null)
+            {
+                if (isEmpty || iconSource == null)
                 {
-                    SetSlotIcon("LeftOffhand", filePath);
-                }
-                else if (slotIndex == 1)
-                {
-                    SetSlotIcon("RightOffhand", filePath);
+                    iconImage.Source = null;
+                    iconImage.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    SetSlotIcon(slotIndex - 2, filePath);
+                    iconImage.Source = iconSource;
+                    iconImage.Visibility = Visibility.Visible;
                 }
             }
         }
