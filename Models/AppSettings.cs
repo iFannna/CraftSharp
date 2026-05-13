@@ -116,6 +116,11 @@ namespace CraftSharp.Models
         public bool InventoryWindowGrayOverlay { get; set; } = true;
 
         /// <summary>
+        /// 物品栏灰色蒙版透明度（0-100，默认50）
+        /// </summary>
+        public int InventoryWindowGrayOverlayOpacity { get; set; } = 50;
+
+        /// <summary>
         /// 隐藏状态栏（打开物品栏时隐藏状态栏窗口）
         /// </summary>
         public bool InventoryWindowHideStatusBar { get; set; } = false;

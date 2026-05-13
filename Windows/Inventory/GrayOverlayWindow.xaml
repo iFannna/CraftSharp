@@ -5,12 +5,12 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="#80000000"
-        Topmost="True"
+        Topmost="False"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         IsHitTestVisible="False">
 
-    <!-- 全屏灰色蒙版，不响应鼠标点击 -->
+    <!-- 全屏灰色蒙版，鼠标穿透 -->
     <Grid>
     </Grid>
 </Window>
