@@ -493,6 +493,24 @@ namespace CraftSharp.Windows.StatusBar
         {
             _isDraggingSlot = true;
 
+            // 先获取格子中已显示的图标（直接从 Image 控件获取，避免文件丢失时重新加载失败）
+            ImageSource iconSource = null;
+            if (!sourceItem.IsEmpty)
+            {
+                System.Windows.Controls.Image slotIconImage;
+                if (sourceSlotIndex == 0)
+                    slotIconImage = GetIconImage("LeftOffhand");
+                else if (sourceSlotIndex == 1)
+                    slotIconImage = GetIconImage("RightOffhand");
+                else
+                    slotIconImage = GetIconImage(sourceSlotIndex - 2);
+
+                if (slotIconImage != null && slotIconImage.Source != null)
+                {
+                    iconSource = slotIconImage.Source;
+                }
+            }
+
             // 清除源格子的图标显示（拖动时源格子变为空）
             if (!sourceItem.IsEmpty)
             {
@@ -505,42 +523,23 @@ namespace CraftSharp.Windows.StatusBar
             }
 
             // 设置拖动图标副本
-            if (!sourceItem.IsEmpty)
+            if (iconSource != null)
             {
-                // 检查是否是占位图格子，如果是则使用占位图
-                bool isPlaceholder = _placeholderSlotIndexes.Contains(sourceSlotIndex);
-                ImageSource iconSource;
+                DragIconImage.Source = iconSource;
+                // 图标大小和快捷栏格子图标一样：16 * scaleFactor
+                double iconSize = 16 * _scaleFactor;
+                DragIconImage.Width = iconSize;
+                DragIconImage.Height = iconSize;
+                DragIconCanvas.Visibility = Visibility.Visible;
 
-                if (isPlaceholder)
-                {
-                    // 使用占位图作为拖动图标
-                    var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-                    iconSource = LoadBitmapImage(placeholderPath);
-                }
-                else
-                {
-                    // 使用正常图标
-                    iconSource = GetHotbarIcon(sourceItem.FilePath);
-                }
-
-                if (iconSource != null)
-                {
-                    DragIconImage.Source = iconSource;
-                    // 图标大小和快捷栏格子图标一样：16 * scaleFactor
-                    double iconSize = 16 * _scaleFactor;
-                    DragIconImage.Width = iconSize;
-                    DragIconImage.Height = iconSize;
-                    DragIconCanvas.Visibility = Visibility.Visible;
-
-                    // 初始位置设在鼠标附近（将在 OnMouseMove 中更新）
-                    var mousePos = System.Windows.Input.Mouse.GetPosition(this);
-                    Canvas.SetLeft(DragIconImage, mousePos.X - iconSize / 2);
-                    Canvas.SetTop(DragIconImage, mousePos.Y - iconSize / 2);
-                }
+                // 初始位置设在鼠标附近（将在 OnMouseMove 中更新）
+                var mousePos = System.Windows.Input.Mouse.GetPosition(this);
+                Canvas.SetLeft(DragIconImage, mousePos.X - iconSize / 2);
+                Canvas.SetTop(DragIconImage, mousePos.Y - iconSize / 2);
             }
             else
             {
-                // 空格子拖动不显示图标副本
+                // 无法获取图标（空格子或图标加载失败）不显示图标副本
                 DragIconCanvas.Visibility = Visibility.Collapsed;
             }
 
