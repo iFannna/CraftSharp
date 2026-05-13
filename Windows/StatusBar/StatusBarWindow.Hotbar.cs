@@ -104,9 +104,9 @@ namespace CraftSharp.Windows.StatusBar
         private int _selectedSlotIndex = -1;
 
         /// <summary>
-        /// 显示占位图的格子索引集合（启动时检测到文件丢失）
+        /// 文件丢失的路径集合（启动时检测 + 点击执行失败时添加）
         /// </summary>
-        private readonly HashSet<int> _placeholderSlotIndexes = new();
+        private readonly HashSet<string> _missingFilePaths = new();
 
         /// <summary>
         /// 加载快捷栏图片尺寸
@@ -679,55 +679,29 @@ namespace CraftSharp.Windows.StatusBar
             var item = _slotService.GetSlot(_slotIds[slotIndex]);
             if (!item.IsEmpty)
             {
-                // 如果是占位图格子，恢复占位图
-                if (_placeholderSlotIndexes.Contains(slotIndex))
+                // 检查路径是否在丢失集合中
+                bool isMissing = _missingFilePaths.Contains(item.FilePath);
+
+                if (isMissing)
                 {
+                    // 显示占位图
                     if (slotIndex == 0)
-                        ShowPlaceholderIconForName("LeftOffhand");
+                        ShowPlaceholderIcon("LeftOffhand");
                     else if (slotIndex == 1)
-                        ShowPlaceholderIconForName("RightOffhand");
+                        ShowPlaceholderIcon("RightOffhand");
                     else
-                        ShowPlaceholderIconForIndex(slotIndex - 2);
+                        ShowPlaceholderIcon(slotIndex - 2);
                 }
                 else
                 {
+                    // 显示正常图标
                     if (slotIndex == 0)
-                        ShowSlotIcon("LeftOffhand", item.FilePath);
+                        SetSlotIcon("LeftOffhand", item.FilePath);
                     else if (slotIndex == 1)
-                        ShowSlotIcon("RightOffhand", item.FilePath);
+                        SetSlotIcon("RightOffhand", item.FilePath);
                     else
-                        ShowSlotIcon(slotIndex - 2, item.FilePath);
+                        SetSlotIcon(slotIndex - 2, item.FilePath);
                 }
-            }
-        }
-
-        /// <summary>
-        /// 显示占位图（使用名称）
-        /// </summary>
-        private void ShowPlaceholderIconForName(string name)
-        {
-            var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-            var icon = LoadBitmapImage(placeholderPath);
-            var iconImage = GetIconImage(name);
-            if (iconImage != null)
-            {
-                iconImage.Source = icon;
-                iconImage.Visibility = Visibility.Visible;
-            }
-        }
-
-        /// <summary>
-        /// 显示占位图（使用索引）
-        /// </summary>
-        private void ShowPlaceholderIconForIndex(int index)
-        {
-            var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-            var icon = LoadBitmapImage(placeholderPath);
-            var iconImage = GetIconImage(index);
-            if (iconImage != null)
-            {
-                iconImage.Source = icon;
-                iconImage.Visibility = Visibility.Visible;
             }
         }
 
@@ -798,116 +772,78 @@ namespace CraftSharp.Windows.StatusBar
             _slotService.SetSlot(_slotIds[sourceIndex], targetItem);
             _slotService.SetSlot(_slotIds[targetIndex], sourceItem);
 
-            // 更新占位图状态
-            bool sourceWasPlaceholder = _placeholderSlotIndexes.Contains(sourceIndex);
-            bool targetWasPlaceholder = _placeholderSlotIndexes.Contains(targetIndex);
-
-            // 清除原有的占位图状态
-            _placeholderSlotIndexes.Remove(sourceIndex);
-            _placeholderSlotIndexes.Remove(targetIndex);
-
-            // 根据交换后的路径有效性更新占位图状态
-            bool sourceNowValid = IsFilePathValid(sourceItem.FilePath);
-            bool targetNowValid = IsFilePathValid(targetItem.FilePath);
-
-            if (!sourceNowValid && !string.IsNullOrEmpty(sourceItem.FilePath))
-            {
-                _placeholderSlotIndexes.Add(targetIndex); // 源格子内容移到目标格子
-            }
-            if (!targetNowValid && !string.IsNullOrEmpty(targetItem.FilePath))
-            {
-                _placeholderSlotIndexes.Add(sourceIndex); // 目标格子内容移到源格子
-            }
-
-            // 更新显示（使用专门处理占位图的方法）
-            UpdateSlotDisplayAfterSwap(sourceIndex, targetItem.FilePath, !targetNowValid && !string.IsNullOrEmpty(targetItem.FilePath));
-            UpdateSlotDisplayAfterSwap(targetIndex, sourceItem.FilePath, !sourceNowValid && !string.IsNullOrEmpty(sourceItem.FilePath));
+            // 更新显示：根据交换后的路径是否在丢失集合中决定显示占位图还是正常图标
+            // 注意：路径本身的有效性没有变化，只是换到了不同的格子
+            UpdateSlotDisplayByPath(sourceIndex, targetItem.FilePath);
+            UpdateSlotDisplayByPath(targetIndex, sourceItem.FilePath);
         }
 
         /// <summary>
-        /// 交换后更新格子显示（处理占位图情况）
+        /// 根据路径更新格子显示（检查是否在丢失集合中）
         /// </summary>
-        private void UpdateSlotDisplayAfterSwap(int slotIndex, string filePath, bool showPlaceholder)
+        private void UpdateSlotDisplayByPath(int slotIndex, string filePath)
         {
-            if (slotIndex == 0)
+            if (string.IsNullOrEmpty(filePath))
             {
-                var iconImage = GetIconImage("LeftOffhand");
-                if (iconImage != null)
+                // 空路径：隐藏图标
+                if (slotIndex == 0)
                 {
-                    if (showPlaceholder)
-                    {
-                        var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-                        iconImage.Source = LoadBitmapImage(placeholderPath);
-                        iconImage.Visibility = Visibility.Visible;
-                    }
-                    else if (string.IsNullOrEmpty(filePath))
+                    var iconImage = GetIconImage("LeftOffhand");
+                    if (iconImage != null)
                     {
                         iconImage.Source = null;
                         iconImage.Visibility = Visibility.Collapsed;
                     }
-                    else
+                }
+                else if (slotIndex == 1)
+                {
+                    var iconImage = GetIconImage("RightOffhand");
+                    if (iconImage != null)
                     {
-                        var icon = GetHotbarIcon(filePath);
-                        if (icon != null)
-                        {
-                            iconImage.Source = icon;
-                            iconImage.Visibility = Visibility.Visible;
-                        }
+                        iconImage.Source = null;
+                        iconImage.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    var iconImage = GetIconImage(slotIndex - 2);
+                    if (iconImage != null)
+                    {
+                        iconImage.Source = null;
+                        iconImage.Visibility = Visibility.Collapsed;
                     }
                 }
             }
-            else if (slotIndex == 1)
+            else if (_missingFilePaths.Contains(filePath))
             {
-                var iconImage = GetIconImage("RightOffhand");
-                if (iconImage != null)
+                // 路径丢失：显示占位图
+                if (slotIndex == 0)
                 {
-                    if (showPlaceholder)
-                    {
-                        var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-                        iconImage.Source = LoadBitmapImage(placeholderPath);
-                        iconImage.Visibility = Visibility.Visible;
-                    }
-                    else if (string.IsNullOrEmpty(filePath))
-                    {
-                        iconImage.Source = null;
-                        iconImage.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        var icon = GetHotbarIcon(filePath);
-                        if (icon != null)
-                        {
-                            iconImage.Source = icon;
-                            iconImage.Visibility = Visibility.Visible;
-                        }
-                    }
+                    ShowPlaceholderIcon("LeftOffhand");
+                }
+                else if (slotIndex == 1)
+                {
+                    ShowPlaceholderIcon("RightOffhand");
+                }
+                else
+                {
+                    ShowPlaceholderIcon(slotIndex - 2);
                 }
             }
             else
             {
-                var iconImage = GetIconImage(slotIndex - 2);
-                if (iconImage != null)
+                // 路径正常：显示正常图标
+                if (slotIndex == 0)
                 {
-                    if (showPlaceholder)
-                    {
-                        var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
-                        iconImage.Source = LoadBitmapImage(placeholderPath);
-                        iconImage.Visibility = Visibility.Visible;
-                    }
-                    else if (string.IsNullOrEmpty(filePath))
-                    {
-                        iconImage.Source = null;
-                        iconImage.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        var icon = GetHotbarIcon(filePath);
-                        if (icon != null)
-                        {
-                            iconImage.Source = icon;
-                            iconImage.Visibility = Visibility.Visible;
-                        }
-                    }
+                    SetSlotIcon("LeftOffhand", filePath);
+                }
+                else if (slotIndex == 1)
+                {
+                    SetSlotIcon("RightOffhand", filePath);
+                }
+                else
+                {
+                    SetSlotIcon(slotIndex - 2, filePath);
                 }
             }
         }
@@ -977,12 +913,12 @@ namespace CraftSharp.Windows.StatusBar
 
         /// <summary>
         /// 加载已保存的格子数据
-        /// 启动时检查文件是否存在，不存在则显示占位图
+        /// 启动时检查文件是否存在，不存在则显示占位图并记录丢失路径
         /// </summary>
         private void LoadSlots()
         {
-            // 清空占位图记录
-            _placeholderSlotIndexes.Clear();
+            // 清空丢失路径记录
+            _missingFilePaths.Clear();
 
             // 加载左副手格子
             var leftOffhandItem = _slotService.GetSlot(_slotIds[0]);
@@ -994,8 +930,9 @@ namespace CraftSharp.Windows.StatusBar
                 }
                 else
                 {
-                    // 文件丢失，显示占位图
-                    ShowPlaceholderIcon(0);
+                    // 文件丢失，记录路径并显示占位图
+                    _missingFilePaths.Add(leftOffhandItem.FilePath);
+                    ShowPlaceholderIcon("LeftOffhand");
                 }
             }
 
@@ -1009,8 +946,9 @@ namespace CraftSharp.Windows.StatusBar
                 }
                 else
                 {
-                    // 文件丢失，显示占位图
-                    ShowPlaceholderIcon(1);
+                    // 文件丢失，记录路径并显示占位图
+                    _missingFilePaths.Add(rightOffhandItem.FilePath);
+                    ShowPlaceholderIcon("RightOffhand");
                 }
             }
 
@@ -1028,8 +966,9 @@ namespace CraftSharp.Windows.StatusBar
                     }
                     else
                     {
-                        // 文件丢失，显示占位图
-                        ShowPlaceholderIcon(i);
+                        // 文件丢失，记录路径并显示占位图
+                        _missingFilePaths.Add(item.FilePath);
+                        ShowPlaceholderIcon(i - 2);
                     }
                 }
             }
@@ -1058,41 +997,34 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 显示占位图（barrier.png）
+        /// 显示占位图（barrier.png）- 基于主快捷栏索引（0-8）
         /// </summary>
-        private void ShowPlaceholderIcon(int slotIndex)
+        private void ShowPlaceholderIcon(int hotbarIndex)
         {
-            _placeholderSlotIndexes.Add(slotIndex);
-
             var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
             var icon = LoadBitmapImage(placeholderPath);
 
-            if (slotIndex == 0)
+            var iconImage = GetIconImage(hotbarIndex);
+            if (iconImage != null)
             {
-                var iconImage = GetIconImage("LeftOffhand");
-                if (iconImage != null)
-                {
-                    iconImage.Source = icon;
-                    iconImage.Visibility = Visibility.Visible;
-                }
+                iconImage.Source = icon;
+                iconImage.Visibility = Visibility.Visible;
             }
-            else if (slotIndex == 1)
+        }
+
+        /// <summary>
+        /// 显示占位图（barrier.png）- 基于名称（LeftOffhand/RightOffhand）
+        /// </summary>
+        private void ShowPlaceholderIcon(string name)
+        {
+            var placeholderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlaceholderBarrier);
+            var icon = LoadBitmapImage(placeholderPath);
+
+            var iconImage = GetIconImage(name);
+            if (iconImage != null)
             {
-                var iconImage = GetIconImage("RightOffhand");
-                if (iconImage != null)
-                {
-                    iconImage.Source = icon;
-                    iconImage.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                var iconImage = GetIconImage(slotIndex - 2);
-                if (iconImage != null)
-                {
-                    iconImage.Source = icon;
-                    iconImage.Visibility = Visibility.Visible;
-                }
+                iconImage.Source = icon;
+                iconImage.Visibility = Visibility.Visible;
             }
         }
 
@@ -1126,6 +1058,78 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     iconImage.Source = icon;
                     iconImage.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 更新所有使用指定路径的格子为占位图
+        /// </summary>
+        private void UpdateSlotsToPlaceholder(string filePath)
+        {
+            // 检查左副手
+            if (_leftOffhandEnabled)
+            {
+                var leftItem = _slotService.GetSlot(_slotIds[0]);
+                if (!leftItem.IsEmpty && leftItem.FilePath == filePath)
+                {
+                    ShowPlaceholderIcon("LeftOffhand");
+                }
+            }
+
+            // 检查右副手
+            if (_rightOffhandEnabled)
+            {
+                var rightItem = _slotService.GetSlot(_slotIds[1]);
+                if (!rightItem.IsEmpty && rightItem.FilePath == filePath)
+                {
+                    ShowPlaceholderIcon("RightOffhand");
+                }
+            }
+
+            // 检查主快捷栏格子
+            for (int i = 2; i <= 10; i++)
+            {
+                var item = _slotService.GetSlot(_slotIds[i]);
+                if (!item.IsEmpty && item.FilePath == filePath)
+                {
+                    ShowPlaceholderIcon(i - 2);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 更新所有使用指定路径的格子为正常图标
+        /// </summary>
+        private void UpdateSlotsToNormal(string filePath)
+        {
+            // 检查左副手
+            if (_leftOffhandEnabled)
+            {
+                var leftItem = _slotService.GetSlot(_slotIds[0]);
+                if (!leftItem.IsEmpty && leftItem.FilePath == filePath)
+                {
+                    SetSlotIcon("LeftOffhand", filePath);
+                }
+            }
+
+            // 检查右副手
+            if (_rightOffhandEnabled)
+            {
+                var rightItem = _slotService.GetSlot(_slotIds[1]);
+                if (!rightItem.IsEmpty && rightItem.FilePath == filePath)
+                {
+                    SetSlotIcon("RightOffhand", filePath);
+                }
+            }
+
+            // 检查主快捷栏格子
+            for (int i = 2; i <= 10; i++)
+            {
+                var item = _slotService.GetSlot(_slotIds[i]);
+                if (!item.IsEmpty && item.FilePath == filePath)
+                {
+                    SetSlotIcon(i - 2, filePath);
                 }
             }
         }
@@ -1222,7 +1226,7 @@ namespace CraftSharp.Windows.StatusBar
         /// - 如果真正启动了拖动（_isDraggingSlot），结束拖动并处理交换
         /// - 如果定时器触发但没移动（_isDragReady），视为点击
         /// - 空格子：可选中，不能打开
-        /// - 占位图格子：尝试执行，成功则恢复正常图标，失败则弹出确认窗口
+        /// - 占位图格子：尝试执行，成功则恢复所有相同路径格子，失败则弹出确认窗口
         /// </summary>
         private void Slot_Click(object sender, MouseButtonEventArgs e)
         {
@@ -1259,7 +1263,7 @@ namespace CraftSharp.Windows.StatusBar
 
                 // 检查格子状态
                 bool isEmpty = item.IsEmpty;
-                bool isPlaceholder = _placeholderSlotIndexes.Contains(slotIndex);
+                bool isMissing = _missingFilePaths.Contains(item.FilePath);
 
                 if (_clickMode == "single")
                 {
@@ -1275,18 +1279,20 @@ namespace CraftSharp.Windows.StatusBar
 
                     if (executeSuccess)
                     {
-                        // 执行成功：如果之前是占位图状态，恢复正常图标
-                        if (isPlaceholder)
+                        // 执行成功：如果之前是丢失状态，恢复所有相同路径格子
+                        if (isMissing)
                         {
-                            RestoreNormalIcon(slotIndex, item.FilePath);
+                            _missingFilePaths.Remove(item.FilePath);
+                            UpdateSlotsToNormal(item.FilePath);
                         }
                     }
                     else
                     {
-                        // 执行失败：如果不是占位图状态，显示占位图；占位图状态单击无效果
-                        if (!isPlaceholder)
+                        // 执行失败：如果不是丢失状态，标记丢失并更新所有相同路径格子
+                        if (!isMissing)
                         {
-                            ShowPlaceholderIcon(slotIndex);
+                            _missingFilePaths.Add(item.FilePath);
+                            UpdateSlotsToPlaceholder(item.FilePath);
                         }
                     }
                 }
@@ -1308,16 +1314,17 @@ namespace CraftSharp.Windows.StatusBar
 
                         if (executeSuccess)
                         {
-                            // 执行成功：如果之前是占位图状态，恢复正常图标
-                            if (isPlaceholder)
+                            // 执行成功：如果之前是丢失状态，恢复所有相同路径格子
+                            if (isMissing)
                             {
-                                RestoreNormalIcon(slotIndex, item.FilePath);
+                                _missingFilePaths.Remove(item.FilePath);
+                                UpdateSlotsToNormal(item.FilePath);
                             }
                         }
                         else
                         {
                             // 执行失败：弹出确认窗口
-                            HandleMissingFileSlot(slotIndex, item.FilePath, isPlaceholder);
+                            HandleMissingFileSlot(slotIndex, item.FilePath, isMissing);
                         }
 
                         // 清除选中
@@ -1344,59 +1351,9 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 恢复格子的正常图标显示（从占位图状态恢复）
-        /// </summary>
-        private void RestoreNormalIcon(int slotIndex, string filePath)
-        {
-            // 清除占位图状态
-            _placeholderSlotIndexes.Remove(slotIndex);
-
-            // 显示正常图标
-            if (slotIndex == 0)
-            {
-                var icon = GetIconImage("LeftOffhand");
-                if (icon != null)
-                {
-                    var iconSource = GetHotbarIcon(filePath);
-                    if (iconSource != null)
-                    {
-                        icon.Source = iconSource;
-                        icon.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-            else if (slotIndex == 1)
-            {
-                var icon = GetIconImage("RightOffhand");
-                if (icon != null)
-                {
-                    var iconSource = GetHotbarIcon(filePath);
-                    if (iconSource != null)
-                    {
-                        icon.Source = iconSource;
-                        icon.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-            else
-            {
-                var icon = GetIconImage(slotIndex - 2);
-                if (icon != null)
-                {
-                    var iconSource = GetHotbarIcon(filePath);
-                    if (iconSource != null)
-                    {
-                        icon.Source = iconSource;
-                        icon.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// 处理文件丢失的格子点击
         /// </summary>
-        private void HandleMissingFileSlot(int slotIndex, string filePath, bool isPlaceholder)
+        private void HandleMissingFileSlot(int slotIndex, string filePath, bool isMissing)
         {
             // 弹出确认窗口
             var confirmWindow = new SlotMissingConfirmWindow();
@@ -1408,9 +1365,27 @@ namespace CraftSharp.Windows.StatusBar
             {
                 // 用户确认移除：清空格子数据，隐藏图标
                 _slotService.ClearSlot(_slotIds[slotIndex]);
-                _placeholderSlotIndexes.Remove(slotIndex);
 
-                // 清空图标显示
+                // 检查是否有其他格子使用相同路径
+                bool hasOtherSlotsWithSamePath = false;
+                for (int i = 0; i < _slotIds.Length; i++)
+                {
+                    if (i == slotIndex) continue;
+                    var otherItem = _slotService.GetSlot(_slotIds[i]);
+                    if (!otherItem.IsEmpty && otherItem.FilePath == filePath)
+                    {
+                        hasOtherSlotsWithSamePath = true;
+                        break;
+                    }
+                }
+
+                // 如果没有其他格子使用该路径，从丢失路径集合中移除
+                if (!hasOtherSlotsWithSamePath)
+                {
+                    _missingFilePaths.Remove(filePath);
+                }
+
+                // 清空当前格子图标显示
                 if (slotIndex == 0)
                 {
                     var icon = GetIconImage("LeftOffhand");
@@ -1441,10 +1416,11 @@ namespace CraftSharp.Windows.StatusBar
             }
             else
             {
-                // 用户取消：显示占位图（如果没有显示的话）
-                if (!isPlaceholder)
+                // 用户取消：如果路径不在丢失集合中，添加并更新所有格子
+                if (!isMissing)
                 {
-                    ShowPlaceholderIcon(slotIndex);
+                    _missingFilePaths.Add(filePath);
+                    UpdateSlotsToPlaceholder(filePath);
                 }
             }
         }
