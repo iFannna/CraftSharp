@@ -10,6 +10,7 @@
     <sys:String x:Key="NavSystem">System</sys:String>
     <sys:String x:Key="NavAppearance">Appearance</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
+    <sys:String x:Key="NavInventory">Inventory</sys:String>
     <sys:String x:Key="NavHotkey">Hotkeys</sys:String>
     <sys:String x:Key="NavAbout">About</sys:String>
 
@@ -195,5 +196,38 @@
     <sys:String x:Key="BossBarItemDisable">Disable</sys:String>
     <sys:String x:Key="BossBarNotchLabel">Notches</sys:String>
     <sys:String x:Key="BossBarNotchDesc">Click preview to select notch style</sys:String>
+
+    <!-- Inventory Settings Panel -->
+    <sys:String x:Key="InventoryPanelTitle">Inventory Settings</sys:String>
+    <sys:String x:Key="InventoryPlayerSettings">Player Inventory</sys:String>
+    <sys:String x:Key="InventoryContainerPanelSettings">Container Panel</sys:String>
+    <sys:String x:Key="InventoryFunctionalBlockSettings">Functional Block Panel</sys:String>
+    <sys:String x:Key="InventoryCreatureSettings">Creature Inventory</sys:String>
+    <sys:String x:Key="InventoryTitle">Inventory</sys:String>
+    <sys:String x:Key="InventoryOptionVisible">Show Inventory</sys:String>
+    <sys:String x:Key="InventoryOptionVisibleDesc">Display inventory window on desktop</sys:String>
+    <sys:String x:Key="InventoryOptionLocked">Lock Position</sys:String>
+    <sys:String x:Key="InventoryOptionLockedDesc">Prevent inventory window from being accidentally dragged</sys:String>
+    <sys:String x:Key="InventoryOptionRememberPosition">Remember Position</sys:String>
+    <sys:String x:Key="InventoryOptionRememberPositionDesc">Restore inventory window position on next launch</sys:String>
+    <sys:String x:Key="SurvivalInventoryTitle">Survival Inventory</sys:String>
+    <sys:String x:Key="CreativeInventoryTitle">Creative Inventory</sys:String>
+    <sys:String x:Key="ChestTitle">Chest</sys:String>
+    <sys:String x:Key="LargeChestTitle">Large Chest</sys:String>
+    <sys:String x:Key="CraftingTableTitle">Crafting Table</sys:String>
+    <sys:String x:Key="EnchantmentTableTitle">Enchantment Table</sys:String>
+    <sys:String x:Key="BeaconTitle">Beacon</sys:String>
+    <sys:String x:Key="AnvilTitle">Anvil</sys:String>
+    <sys:String x:Key="GrindstoneTitle">Grindstone</sys:String>
+    <sys:String x:Key="CartographyTableTitle">Cartography Table</sys:String>
+    <sys:String x:Key="StonecutterTitle">Stonecutter</sys:String>
+    <sys:String x:Key="LoomTitle">Loom</sys:String>
+    <sys:String x:Key="SmithingTableTitle">Smithing Table</sys:String>
+    <sys:String x:Key="VillagerTitle">Villager</sys:String>
+    <sys:String x:Key="HorseTitle">Horse</sys:String>
+    <sys:String x:Key="DonkeyTitle">Donkey</sys:String>
+    <sys:String x:Key="CamelTitle">Camel</sys:String>
+    <sys:String x:Key="LlamaTitle">Llama</sys:String>
+    <sys:String x:Key="NautilusTitle">Nautilus</sys:String>
 
 </ResourceDictionary>

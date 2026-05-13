@@ -13,6 +13,7 @@ namespace CraftSharp.Windows.Settings
         private SystemPanel _panelSystem = null!;
         private AppearancePanel _panelAppearance = null!;
         private HudPanel _panelHud = null!;
+        private InventoryPanel _panelInventory = null!;
         private HotkeyPanel _panelHotkey = null!;
         private AboutPanel _panelAbout = null!;
 
@@ -76,12 +77,14 @@ namespace CraftSharp.Windows.Settings
             _panelAppearance = new AppearancePanel(_settings);
             _panelAppearance.SetParentWindow(this);
             _panelHud = new HudPanel(_settings);
+            _panelInventory = new InventoryPanel(_settings);
             _panelHotkey = new HotkeyPanel(_settings);
             _panelAbout = new AboutPanel();
 
             ContentContainer.Children.Add(_panelSystem);
             ContentContainer.Children.Add(_panelAppearance);
             ContentContainer.Children.Add(_panelHud);
+            ContentContainer.Children.Add(_panelInventory);
             ContentContainer.Children.Add(_panelHotkey);
             ContentContainer.Children.Add(_panelAbout);
 
@@ -152,6 +155,7 @@ namespace CraftSharp.Windows.Settings
             _panelSystem.Visibility = tag == "system" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelAppearance.Visibility = tag == "appearance" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHud.Visibility = tag == "hud" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            _panelInventory.Visibility = tag == "inventory" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHotkey.Visibility = tag == "hotkey" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelAbout.Visibility = tag == "about" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         }

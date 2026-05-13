@@ -82,6 +82,12 @@
                                 <TextBlock Text="{DynamicResource NavHud}" Margin="12,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
+                        <ListBoxItem x:Name="NavInventory" Tag="inventory">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Box20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavInventory}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem x:Name="NavHotkey" Tag="hotkey">
                             <StackPanel Orientation="Horizontal">
                                 <ui:SymbolIcon Symbol="Keyboard20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>

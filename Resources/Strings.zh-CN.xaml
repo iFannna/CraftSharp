@@ -10,6 +10,7 @@
     <sys:String x:Key="NavSystem">系统</sys:String>
     <sys:String x:Key="NavAppearance">外观</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
+    <sys:String x:Key="NavInventory">物品栏</sys:String>
     <sys:String x:Key="NavHotkey">快捷键</sys:String>
     <sys:String x:Key="NavAbout">关于</sys:String>
 
@@ -195,5 +196,38 @@
     <sys:String x:Key="BossBarItemDisable">禁用</sys:String>
     <sys:String x:Key="BossBarNotchLabel">等级</sys:String>
     <sys:String x:Key="BossBarNotchDesc">点击预览选择分段样式</sys:String>
+
+    <!-- 物品栏设置面板 -->
+    <sys:String x:Key="InventoryPanelTitle">物品栏设置</sys:String>
+    <sys:String x:Key="InventoryPlayerSettings">玩家物品栏</sys:String>
+    <sys:String x:Key="InventoryContainerPanelSettings">容器面板</sys:String>
+    <sys:String x:Key="InventoryFunctionalBlockSettings">功能方块面板</sys:String>
+    <sys:String x:Key="InventoryCreatureSettings">生物物品栏</sys:String>
+    <sys:String x:Key="InventoryTitle">物品栏</sys:String>
+    <sys:String x:Key="InventoryOptionVisible">显示物品栏</sys:String>
+    <sys:String x:Key="InventoryOptionVisibleDesc">在桌面显示物品栏窗口</sys:String>
+    <sys:String x:Key="InventoryOptionLocked">锁定位置</sys:String>
+    <sys:String x:Key="InventoryOptionLockedDesc">防止物品栏窗口被意外拖动</sys:String>
+    <sys:String x:Key="InventoryOptionRememberPosition">记住位置</sys:String>
+    <sys:String x:Key="InventoryOptionRememberPositionDesc">下次启动时恢复物品栏窗口位置</sys:String>
+    <sys:String x:Key="SurvivalInventoryTitle">生存物品栏</sys:String>
+    <sys:String x:Key="CreativeInventoryTitle">创造物品栏</sys:String>
+    <sys:String x:Key="ChestTitle">箱子</sys:String>
+    <sys:String x:Key="LargeChestTitle">大箱子</sys:String>
+    <sys:String x:Key="CraftingTableTitle">工作台</sys:String>
+    <sys:String x:Key="EnchantmentTableTitle">附魔台</sys:String>
+    <sys:String x:Key="BeaconTitle">信标</sys:String>
+    <sys:String x:Key="AnvilTitle">铁砧</sys:String>
+    <sys:String x:Key="GrindstoneTitle">砂轮</sys:String>
+    <sys:String x:Key="CartographyTableTitle">制图台</sys:String>
+    <sys:String x:Key="StonecutterTitle">切石机</sys:String>
+    <sys:String x:Key="LoomTitle">织布机</sys:String>
+    <sys:String x:Key="SmithingTableTitle">锻造台</sys:String>
+    <sys:String x:Key="VillagerTitle">村民</sys:String>
+    <sys:String x:Key="HorseTitle">马</sys:String>
+    <sys:String x:Key="DonkeyTitle">驴</sys:String>
+    <sys:String x:Key="CamelTitle">骆驼</sys:String>
+    <sys:String x:Key="LlamaTitle">羊驼</sys:String>
+    <sys:String x:Key="NautilusTitle">鹦鹉螺</sys:String>
 
 </ResourceDictionary>
