@@ -50,10 +50,16 @@ namespace CraftSharp.Windows.Settings
             // 根据设置恢复窗口位置和大小
             if (_settings.SettingsWindowRememberPosition)
             {
-                // 只有当位置值有效时才恢复位置
-                // Windows 有时会在窗口最小化/隐藏时保存无效坐标（如 -25600）
-                if (IsValidScreenPosition(_settings.SettingsWindowPositionX, _settings.SettingsWindowPositionY))
+                // 特殊值判断：位置为(0,0)时视为首次启动，居中显示
+                // IsValidScreenPosition 可能会误判(0,0)为有效位置（多显示器环境下可能为负值）
+                if (_settings.SettingsWindowPositionX == 0 && _settings.SettingsWindowPositionY == 0)
                 {
+                    // 首次启动：居中显示
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+                }
+                else if (IsValidScreenPosition(_settings.SettingsWindowPositionX, _settings.SettingsWindowPositionY))
+                {
+                    // 已保存位置：恢复位置
                     WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
                     Left = _settings.SettingsWindowPositionX;
                     Top = _settings.SettingsWindowPositionY;

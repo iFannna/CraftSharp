@@ -97,21 +97,22 @@ namespace CraftSharp.Windows.Settings.Panels
                 string stateKey = $"HudElement_{card.HudId}";
                 if (rememberEnabled)
                 {
-                    // 开关开启：从配置读取状态并应用
-                    if (_settings.CardExpandedStates.TryGetValue(stateKey, out bool savedExpanded))
-                    {
-                        card.SetExpanded(savedExpanded, animate: false);
-                    }
-                    else
-                    {
-                        // 配置中没有此卡片状态，使用默认值（折叠）
-                        card.SetExpanded(false, animate: false);
-                    }
+                    // 开关开启：保存当前状态到配置
+                    _settings.CardExpandedStates[stateKey] = card.IsExpanded;
                 }
                 else
                 {
                     // 开关关闭：恢复默认状态（折叠）
                     card.SetExpanded(false, animate: false);
+                }
+            }
+
+            // 开关开启后保存配置
+            if (rememberEnabled)
+            {
+                if (System.Windows.Application.Current is App app)
+                {
+                    app.SaveSettings();
                 }
             }
         }

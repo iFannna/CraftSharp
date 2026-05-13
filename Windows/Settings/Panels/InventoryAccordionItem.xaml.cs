@@ -31,6 +31,11 @@ namespace CraftSharp.Windows.Settings.Panels
         /// </summary>
         public string TitleResourceKey => _titleResourceKey;
 
+        /// <summary>
+        /// 当前是否展开
+        /// </summary>
+        public bool IsExpanded => _isExpanded;
+
         public InventoryAccordionItem(AppSettings? settings, string titleResourceKey)
         {
             InitializeComponent();

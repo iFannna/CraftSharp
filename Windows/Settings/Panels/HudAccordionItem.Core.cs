@@ -41,6 +41,11 @@ namespace CraftSharp.Windows.Settings.Panels
         /// </summary>
         public string HudId => _hudId;
 
+        /// <summary>
+        /// 当前是否展开
+        /// </summary>
+        public bool IsExpanded => _isExpanded;
+
         public HudAccordionItem(AppSettings settings, string id, string name)
         {
             InitializeComponent();

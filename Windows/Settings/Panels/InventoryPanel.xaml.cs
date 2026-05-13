@@ -135,27 +135,28 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             foreach (var card in _cards)
             {
+                string key = card.TitleResourceKey;
                 if (rememberEnabled)
                 {
-                    // 开关开启：从配置读取状态并应用
-                    // 通过 titleResourceKey 获取状态
-                    // 由于 InventoryAccordionItem 内部已经处理了状态读取，
-                    // 这里只需要让卡片重新应用配置中的状态
-                    string key = card.TitleResourceKey;
-                    if (_settings != null && _settings.CardExpandedStates.TryGetValue(key, out bool savedExpanded))
+                    // 开关开启：保存当前状态到配置
+                    if (_settings != null)
                     {
-                        card.SetExpanded(savedExpanded, animate: false);
-                    }
-                    else
-                    {
-                        // 配置中没有此卡片状态，使用默认值
-                        card.SetExpanded(key == "InventoryTitle", animate: false);
+                        _settings.CardExpandedStates[key] = card.IsExpanded;
                     }
                 }
                 else
                 {
                     // 开关关闭：恢复默认状态（只有 InventoryTitle 展开）
-                    card.SetExpanded(card.TitleResourceKey == "InventoryTitle", animate: false);
+                    card.SetExpanded(key == "InventoryTitle", animate: false);
+                }
+            }
+
+            // 开关开启后保存配置
+            if (rememberEnabled && _settings != null)
+            {
+                if (System.Windows.Application.Current is App app)
+                {
+                    app.SaveSettings();
                 }
             }
         }
