@@ -166,7 +166,8 @@
     <sys:String x:Key="TrayShowMain">显示主窗口</sys:String>
     <sys:String x:Key="TrayShowStatusBar">显示状态栏</sys:String>
     <sys:String x:Key="TrayHideStatusBar">隐藏状态栏</sys:String>
-    <sys:String x:Key="TrayOpenInventory">打开背包</sys:String>
+    <sys:String x:Key="TrayOpenInventory">打开物品栏</sys:String>
+    <sys:String x:Key="TrayCloseInventory">关闭物品栏</sys:String>
     <sys:String x:Key="TrayExit">退出</sys:String>
     <sys:String x:Key="TrayMinimized">程序已最小化到系统托盘</sys:String>
 

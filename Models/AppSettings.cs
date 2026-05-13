@@ -88,17 +88,17 @@ namespace CraftSharp.Models
         /// <summary>
         /// 显示物品栏窗口
         /// </summary>
-        public bool InventoryWindowVisible { get; set; } = false;
+        public bool InventoryWindowVisible { get; set; } = true;
 
         /// <summary>
         /// 锁定物品栏窗口位置
         /// </summary>
-        public bool InventoryWindowLocked { get; set; } = false;
+        public bool InventoryWindowLocked { get; set; } = true;
 
         /// <summary>
         /// 记住物品栏窗口位置
         /// </summary>
-        public bool InventoryWindowRememberPosition { get; set; } = false;
+        public bool InventoryWindowRememberPosition { get; set; } = true;
 
         /// <summary>
         /// 物品栏窗口 X 坐标

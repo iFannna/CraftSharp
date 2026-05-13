@@ -101,7 +101,7 @@ namespace CraftSharp.Services
             UpdateBrush(app, "DividerBrush",
                 isLight ? System.Windows.Media.Color.FromRgb(0xE0, 0xE0, 0xE0) : System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40));
             UpdateBrush(app, "HoverBackgroundBrush",
-                isLight ? System.Windows.Media.Color.FromRgb(0xE8, 0xE8, 0xE8) : System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A));
+                isLight ? System.Windows.Media.Color.FromRgb(0xE8, 0xE8, 0xE8) : System.Windows.Media.Color.FromRgb(0x3D, 0x3D, 0x3D));
         }
 
         private void UpdateBrush(System.Windows.Application app, string key, System.Windows.Media.Color color)

@@ -25,6 +25,7 @@ namespace CraftSharp
         private System.Windows.Controls.MenuItem? _showStatusBarItem;
         private System.Windows.Controls.MenuItem? _hideStatusBarItem;
         private System.Windows.Controls.MenuItem? _openInventoryItem;
+        private System.Windows.Controls.MenuItem? _closeInventoryItem;
         private System.Windows.Controls.MenuItem? _exitItem;
         private string _settingsPath = "";
         private Models.AppSettings? _appSettings;
@@ -377,10 +378,10 @@ namespace CraftSharp
             };
             _trayContextMenu.Items.Add(_hideStatusBarItem);
 
-            // 打开背包
+            // 打开物品栏
             _openInventoryItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayOpenInventory") as string ?? "打开背包",
+                Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
             _openInventoryItem.Click += (s, e) =>
@@ -389,6 +390,19 @@ namespace CraftSharp
                 _inventoryWindow?.Show();
             };
             _trayContextMenu.Items.Add(_openInventoryItem);
+
+            // 关闭物品栏
+            _closeInventoryItem = new System.Windows.Controls.MenuItem
+            {
+                Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏",
+                Style = (Style)FindResource("WpfUiMenuItemStyle")
+            };
+            _closeInventoryItem.Click += (s, e) =>
+            {
+                _trayContextMenu.IsOpen = false;
+                _inventoryWindow?.Hide();
+            };
+            _trayContextMenu.Items.Add(_closeInventoryItem);
 
             // 退出
             _exitItem = new System.Windows.Controls.MenuItem
@@ -418,7 +432,9 @@ namespace CraftSharp
             if (_hideStatusBarItem != null)
                 _hideStatusBarItem.Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏";
             if (_openInventoryItem != null)
-                _openInventoryItem.Header = TryFindResource("TrayOpenInventory") as string ?? "打开背包";
+                _openInventoryItem.Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏";
+            if (_closeInventoryItem != null)
+                _closeInventoryItem.Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏";
             if (_exitItem != null)
                 _exitItem.Header = TryFindResource("TrayExit") as string ?? "退出";
         }
@@ -449,8 +465,8 @@ namespace CraftSharp
         /// </summary>
         private void GlobalKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            // E键 - 切换背包显示
-            if (e.Key == Key.E)
+            // E键 - 切换背包显示（仅当显示物品栏开启时）
+            if (e.Key == Key.E && (_appSettings?.InventoryWindowVisible ?? true))
             {
                 _inventoryWindow?.Toggle();
                 e.Handled = true;
@@ -549,7 +565,7 @@ namespace CraftSharp
             Resources.Add("TextSecondaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x99, 0x99, 0x99)));
             Resources.Add("TextTertiaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66)));
             Resources.Add("DividerBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40)));
-            Resources.Add("HoverBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A)));
+            Resources.Add("HoverBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x3D, 0x3D, 0x3D)));
         }
     }
 }
