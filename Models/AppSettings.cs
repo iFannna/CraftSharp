@@ -58,6 +58,16 @@ namespace CraftSharp.Models
         /// </summary>
         public double SettingsWindowHeight { get; set; } = 720;
 
+        /// <summary>
+        /// 记住卡片状态
+        /// </summary>
+        public bool RememberCardStates { get; set; } = true;
+
+        /// <summary>
+        /// 卡片展开状态字典（Key: titleResourceKey, Value: 是否展开）
+        /// </summary>
+        public Dictionary<string, bool> CardExpandedStates { get; set; } = new Dictionary<string, bool>();
+
         // ==================== 外观设置 ====================
         /// <summary>
         /// 主题风格

@@ -10,6 +10,9 @@ namespace CraftSharp.Windows.Settings.Panels
     {
         private AppSettings? _settings;
 
+        // 保存所有卡片的引用
+        private System.Collections.Generic.List<InventoryAccordionItem> _cards = new();
+
         public InventoryPanel(AppSettings? settings)
         {
             InitializeComponent();
@@ -32,57 +35,129 @@ namespace CraftSharp.Windows.Settings.Panels
         private void AddPlayerInventoryCards()
         {
             // 物品栏
-            PlayerInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "InventoryTitle"));
+            var card1 = new InventoryAccordionItem(_settings, "InventoryTitle");
+            _cards.Add(card1);
+            PlayerInventoryContainer.Children.Add(card1);
             // 生存物品栏
-            PlayerInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "SurvivalInventoryTitle"));
+            var card2 = new InventoryAccordionItem(_settings, "SurvivalInventoryTitle");
+            _cards.Add(card2);
+            PlayerInventoryContainer.Children.Add(card2);
             // 创造物品栏
-            PlayerInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "CreativeInventoryTitle"));
+            var card3 = new InventoryAccordionItem(_settings, "CreativeInventoryTitle");
+            _cards.Add(card3);
+            PlayerInventoryContainer.Children.Add(card3);
         }
 
         private void AddContainerCards()
         {
             // 箱子
-            ContainerInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "ChestTitle"));
+            var card4 = new InventoryAccordionItem(_settings, "ChestTitle");
+            _cards.Add(card4);
+            ContainerInventoryContainer.Children.Add(card4);
             // 大箱子
-            ContainerInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "LargeChestTitle"));
+            var card5 = new InventoryAccordionItem(_settings, "LargeChestTitle");
+            _cards.Add(card5);
+            ContainerInventoryContainer.Children.Add(card5);
         }
 
         private void AddFunctionalBlockCards()
         {
             // 工作台
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "CraftingTableTitle"));
+            var card6 = new InventoryAccordionItem(_settings, "CraftingTableTitle");
+            _cards.Add(card6);
+            FunctionalBlockContainer.Children.Add(card6);
             // 附魔台
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "EnchantmentTableTitle"));
+            var card7 = new InventoryAccordionItem(_settings, "EnchantmentTableTitle");
+            _cards.Add(card7);
+            FunctionalBlockContainer.Children.Add(card7);
             // 信标
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "BeaconTitle"));
+            var card8 = new InventoryAccordionItem(_settings, "BeaconTitle");
+            _cards.Add(card8);
+            FunctionalBlockContainer.Children.Add(card8);
             // 铁砧
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "AnvilTitle"));
+            var card9 = new InventoryAccordionItem(_settings, "AnvilTitle");
+            _cards.Add(card9);
+            FunctionalBlockContainer.Children.Add(card9);
             // 砂轮
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "GrindstoneTitle"));
+            var card10 = new InventoryAccordionItem(_settings, "GrindstoneTitle");
+            _cards.Add(card10);
+            FunctionalBlockContainer.Children.Add(card10);
             // 制图台
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "CartographyTableTitle"));
+            var card11 = new InventoryAccordionItem(_settings, "CartographyTableTitle");
+            _cards.Add(card11);
+            FunctionalBlockContainer.Children.Add(card11);
             // 切石机
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "StonecutterTitle"));
+            var card12 = new InventoryAccordionItem(_settings, "StonecutterTitle");
+            _cards.Add(card12);
+            FunctionalBlockContainer.Children.Add(card12);
             // 织布机
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "LoomTitle"));
+            var card13 = new InventoryAccordionItem(_settings, "LoomTitle");
+            _cards.Add(card13);
+            FunctionalBlockContainer.Children.Add(card13);
             // 锻造台
-            FunctionalBlockContainer.Children.Add(new InventoryAccordionItem(_settings, "SmithingTableTitle"));
+            var card14 = new InventoryAccordionItem(_settings, "SmithingTableTitle");
+            _cards.Add(card14);
+            FunctionalBlockContainer.Children.Add(card14);
         }
 
         private void AddCreatureInventoryCards()
         {
             // 村民
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "VillagerTitle"));
+            var card15 = new InventoryAccordionItem(_settings, "VillagerTitle");
+            _cards.Add(card15);
+            CreatureInventoryContainer.Children.Add(card15);
             // 马
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "HorseTitle"));
+            var card16 = new InventoryAccordionItem(_settings, "HorseTitle");
+            _cards.Add(card16);
+            CreatureInventoryContainer.Children.Add(card16);
             // 驴
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "DonkeyTitle"));
+            var card17 = new InventoryAccordionItem(_settings, "DonkeyTitle");
+            _cards.Add(card17);
+            CreatureInventoryContainer.Children.Add(card17);
             // 骆驼
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "CamelTitle"));
+            var card18 = new InventoryAccordionItem(_settings, "CamelTitle");
+            _cards.Add(card18);
+            CreatureInventoryContainer.Children.Add(card18);
             // 羊驼
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "LlamaTitle"));
+            var card19 = new InventoryAccordionItem(_settings, "LlamaTitle");
+            _cards.Add(card19);
+            CreatureInventoryContainer.Children.Add(card19);
             // 鹦鹉螺
-            CreatureInventoryContainer.Children.Add(new InventoryAccordionItem(_settings, "NautilusTitle"));
+            var card20 = new InventoryAccordionItem(_settings, "NautilusTitle");
+            _cards.Add(card20);
+            CreatureInventoryContainer.Children.Add(card20);
+        }
+
+        /// <summary>
+        /// 刷新所有卡片状态（响应记住卡片状态开关变化）
+        /// </summary>
+        public void RefreshCardStates(bool rememberEnabled)
+        {
+            foreach (var card in _cards)
+            {
+                if (rememberEnabled)
+                {
+                    // 开关开启：从配置读取状态并应用
+                    // 通过 titleResourceKey 获取状态
+                    // 由于 InventoryAccordionItem 内部已经处理了状态读取，
+                    // 这里只需要让卡片重新应用配置中的状态
+                    string key = card.TitleResourceKey;
+                    if (_settings != null && _settings.CardExpandedStates.TryGetValue(key, out bool savedExpanded))
+                    {
+                        card.SetExpanded(savedExpanded, animate: false);
+                    }
+                    else
+                    {
+                        // 配置中没有此卡片状态，使用默认值
+                        card.SetExpanded(key == "InventoryTitle", animate: false);
+                    }
+                }
+                else
+                {
+                    // 开关关闭：恢复默认状态（只有 InventoryTitle 展开）
+                    card.SetExpanded(card.TitleResourceKey == "InventoryTitle", animate: false);
+                }
+            }
         }
     }
 }

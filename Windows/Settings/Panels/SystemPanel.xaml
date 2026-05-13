@@ -89,5 +89,25 @@
                                  Click="RememberSizeToggle_Click"/>
             </Grid>
         </ui:Card>
+
+        <!-- 记住卡片状态卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource RememberCardStatesLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource RememberCardStatesDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ui:ToggleSwitch Grid.Column="1" x:Name="RememberCardStatesToggle" IsChecked="True"
+                                 Click="RememberCardStatesToggle_Click"/>
+            </Grid>
+        </ui:Card>
     </StackPanel>
 </UserControl>

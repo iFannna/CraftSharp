@@ -1,6 +1,7 @@
 using CraftSharp.Models;
 using CraftSharp.Services;
 using CraftSharp.Helpers;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -30,6 +31,16 @@ namespace CraftSharp.Windows.Settings.Panels
         private System.Windows.Controls.TextBox? _saturationTextBox;
         private System.Windows.Controls.TextBlock? _saturationLimitDisplay;
 
+        /// <summary>
+        /// 展开状态变化事件
+        /// </summary>
+        public event EventHandler<(string Key, bool IsExpanded)>? ExpandedChanged;
+
+        /// <summary>
+        /// HUD 元素 ID
+        /// </summary>
+        public string HudId => _hudId;
+
         public HudAccordionItem(AppSettings settings, string id, string name)
         {
             InitializeComponent();
@@ -37,9 +48,47 @@ namespace CraftSharp.Windows.Settings.Panels
             _hudId = id;
 
             TitleText.Text = name;
+
+            // 读取保存的展开状态（如果启用了记住卡片状态）
+            // 使用 HudElement_xxx 作为 Key（因为 HudAccordionItem 使用 hudId）
+            string stateKey = $"HudElement_{id}";
+            if (_settings.RememberCardStates)
+            {
+                if (_settings.CardExpandedStates.TryGetValue(stateKey, out bool savedExpanded))
+                {
+                    _isExpanded = savedExpanded;
+                }
+                else
+                {
+                    _isExpanded = false; // HUD 卡片默认折叠
+                }
+            }
+            else
+            {
+                _isExpanded = false; // HUD 卡片默认折叠
+            }
+
             AddHudContent(id);
 
             LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+
+            // 窗口加载后设置初始展开状态
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            // 根据初始展开状态设置 UI（不执行动画）
+            if (_isExpanded)
+            {
+                ContentBorder.Height = double.NaN;
+                ArrowRotate.Angle = 0;
+            }
+            else
+            {
+                ContentBorder.Height = 0;
+                ArrowRotate.Angle = -90;
+            }
         }
 
         private void OnLanguageChanged()
@@ -66,6 +115,17 @@ namespace CraftSharp.Windows.Settings.Panels
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
             };
             ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
+
+            // 如果启用了记住卡片状态，保存到配置
+            string stateKey = $"HudElement_{_hudId}";
+            if (_settings.RememberCardStates)
+            {
+                _settings.CardExpandedStates[stateKey] = _isExpanded;
+                SaveSettings();
+            }
+
+            // 触发展开状态变化事件
+            ExpandedChanged?.Invoke(this, (stateKey, _isExpanded));
         }
 
         private void AnimateExpand()
@@ -192,6 +252,46 @@ namespace CraftSharp.Windows.Settings.Panels
                 "absorbing" => StatusBarService.Instance.SetAbsorbingVisible,
                 _ => null
             };
+        }
+
+        /// <summary>
+        /// 设置展开状态（用于外部控制，不触发保存）
+        /// </summary>
+        public void SetExpanded(bool expanded, bool animate = true)
+        {
+            if (_isAnimating) return;
+
+            _isExpanded = expanded;
+
+            if (animate)
+            {
+                if (_isExpanded)
+                    AnimateExpand();
+                else
+                    AnimateCollapse();
+
+                var arrowAnimation = new DoubleAnimation
+                {
+                    To = _isExpanded ? 0 : -90,
+                    Duration = TimeSpan.FromMilliseconds(_isExpanded ? 200 : 150),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+                };
+                ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
+            }
+            else
+            {
+                // 不执行动画，直接设置状态
+                if (_isExpanded)
+                {
+                    ContentBorder.Height = double.NaN;
+                    ArrowRotate.Angle = 0;
+                }
+                else
+                {
+                    ContentBorder.Height = 0;
+                    ArrowRotate.Angle = -90;
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using CraftSharp.Models;
 using CraftSharp.Services;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -8,6 +9,9 @@ namespace CraftSharp.Windows.Settings.Panels
     public partial class HudPanel : System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
+
+        // 保存所有卡片的引用
+        private List<HudAccordionItem> _cards = new();
 
         public HudPanel(AppSettings settings)
         {
@@ -22,6 +26,7 @@ namespace CraftSharp.Windows.Settings.Panels
         private void OnLanguageChanged()
         {
             // 清空并重新构建
+            _cards.Clear();
             HudStatusBarContainer.Children.Clear();
             HudCrosshairContainer.Children.Clear();
             HudBossBarContainer.Children.Clear();
@@ -47,6 +52,7 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name);
+                _cards.Add(item);
                 HudStatusBarContainer.Children.Add(item);
             }
 
@@ -61,6 +67,7 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name);
+                _cards.Add(item);
                 HudCrosshairContainer.Children.Add(item);
             }
 
@@ -74,7 +81,38 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 var name = System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? id;
                 var item = new HudAccordionItem(_settings, id, name);
+                _cards.Add(item);
                 HudBossBarContainer.Children.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// 刷新所有卡片状态（响应记住卡片状态开关变化）
+        /// </summary>
+        public void RefreshCardStates(bool rememberEnabled)
+        {
+            foreach (var card in _cards)
+            {
+                // 获取卡片 Key（HudElement_xxx）
+                string stateKey = $"HudElement_{card.HudId}";
+                if (rememberEnabled)
+                {
+                    // 开关开启：从配置读取状态并应用
+                    if (_settings.CardExpandedStates.TryGetValue(stateKey, out bool savedExpanded))
+                    {
+                        card.SetExpanded(savedExpanded, animate: false);
+                    }
+                    else
+                    {
+                        // 配置中没有此卡片状态，使用默认值（折叠）
+                        card.SetExpanded(false, animate: false);
+                    }
+                }
+                else
+                {
+                    // 开关关闭：恢复默认状态（折叠）
+                    card.SetExpanded(false, animate: false);
+                }
             }
         }
     }

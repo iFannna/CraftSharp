@@ -1,5 +1,6 @@
 using CraftSharp.Models;
 using CraftSharp.Services;
+using System;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Settings.Panels
@@ -7,6 +8,11 @@ namespace CraftSharp.Windows.Settings.Panels
     public partial class SystemPanel : System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
+
+        /// <summary>
+        /// 卡片状态记忆开关变化事件
+        /// </summary>
+        public event EventHandler<bool>? CardStatesRememberChanged;
 
         public SystemPanel(AppSettings settings)
         {
@@ -21,6 +27,7 @@ namespace CraftSharp.Windows.Settings.Panels
             AutoStartToggle.IsChecked = _settings.AutoStart;
             RememberPositionToggle.IsChecked = _settings.SettingsWindowRememberPosition;
             RememberSizeToggle.IsChecked = _settings.SettingsWindowRememberSize;
+            RememberCardStatesToggle.IsChecked = _settings.RememberCardStates; // 默认开启
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -67,6 +74,27 @@ namespace CraftSharp.Windows.Settings.Panels
                 _settings.SettingsWindowRememberSize = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
+            }
+        }
+
+        private void RememberCardStatesToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
+                bool isChecked = toggle.IsChecked ?? false;
+                _settings.RememberCardStates = isChecked;
+
+                // 如果关闭开关，清空已保存的状态
+                if (!isChecked)
+                {
+                    _settings.CardExpandedStates.Clear();
+                }
+
+                // 即时保存设置
+                SaveSettings();
+
+                // 触发事件，通知其他 Panel 刷新卡片状态
+                CardStatesRememberChanged?.Invoke(this, isChecked);
             }
         }
 

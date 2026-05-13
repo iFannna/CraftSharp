@@ -74,6 +74,7 @@ namespace CraftSharp.Windows.Settings
 
             // 创建各个面板并添加到容器
             _panelSystem = new SystemPanel(_settings);
+            _panelSystem.CardStatesRememberChanged += OnCardStatesRememberChanged;
             _panelAppearance = new AppearancePanel(_settings);
             _panelAppearance.SetParentWindow(this);
             _panelHud = new HudPanel(_settings);
@@ -147,6 +148,13 @@ namespace CraftSharp.Windows.Settings
             {
                 ShowPanel(tag);
             }
+        }
+
+        private void OnCardStatesRememberChanged(object? sender, bool rememberEnabled)
+        {
+            // 当开关状态变化时，刷新两个 Panel 的卡片状态
+            _panelHud.RefreshCardStates(rememberEnabled);
+            _panelInventory.RefreshCardStates(rememberEnabled);
         }
 
         private void ShowPanel(string tag)
