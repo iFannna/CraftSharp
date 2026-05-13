@@ -17,6 +17,9 @@ namespace CraftSharp.Windows.Settings.Panels
         private bool _isExpanded = false;
         private bool _isAnimating = false;
 
+        // 灰色蒙版透明度输入框容器
+        private StackPanel? _grayOverlayOpacityContainer;
+
         public InventoryAccordionItem(AppSettings? settings, string titleResourceKey)
         {
             InitializeComponent();
@@ -39,8 +42,9 @@ namespace CraftSharp.Windows.Settings.Panels
                 AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.InventoryWindowVisible, v => _settings.InventoryWindowVisible = v);
                 AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.InventoryWindowLocked, v => _settings.InventoryWindowLocked = v);
                 AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.InventoryWindowRememberPosition, v => _settings.InventoryWindowRememberPosition = v);
-                // 灰色蒙版开关
-                AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.InventoryWindowGrayOverlay, v => _settings.InventoryWindowGrayOverlay = v);
+                // 灰色蒙版开关 + 透明度输入框
+                var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.InventoryWindowGrayOverlay, v => _settings.InventoryWindowGrayOverlay = v);
+                AddGrayOverlayOpacitySection(grayOverlayToggle);
                 // 隐藏状态栏开关
                 AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.InventoryWindowHideStatusBar, v => _settings.InventoryWindowHideStatusBar = v);
             }
@@ -91,11 +95,151 @@ namespace CraftSharp.Windows.Settings.Panels
             return toggle;
         }
 
+        /// <summary>
+        /// 添加灰色蒙版透明度输入区域（HUD风格）
+        /// </summary>
+        private void AddGrayOverlayOpacitySection(ToggleSwitch grayOverlayToggle)
+        {
+            // 创建容器（用于控制可见性）
+            _grayOverlayOpacityContainer = new StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Vertical,
+                Margin = new Thickness(0, 0, 0, 12),
+                Visibility = _settings!.InventoryWindowGrayOverlay ? Visibility.Visible : Visibility.Collapsed
+            };
+
+            // 创建输入行 Grid
+            var inputRow = new Grid();
+            inputRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            inputRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            inputRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            // Label
+            var opacityLabel = new System.Windows.Controls.TextBlock
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            opacityLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "InventoryOptionGrayOverlayOpacity");
+            opacityLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
+            inputRow.Children.Add(opacityLabel);
+
+            // 输入容器：TextBox + /100
+            var inputContainer = new StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
+                Margin = new Thickness(8, 0, 0, 0)
+            };
+
+            var opacityTextBox = new System.Windows.Controls.TextBox
+            {
+                Text = _settings!.InventoryWindowGrayOverlayOpacity.ToString(),
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
+
+            // 输入验证：只允许数字
+            opacityTextBox.PreviewTextInput += (s, e) =>
+            {
+                e.Handled = !e.Text.All(c => char.IsDigit(c));
+            };
+            System.Windows.DataObject.AddPastingHandler(opacityTextBox, (s, e) =>
+            {
+                if (e.DataObject.GetDataPresent(typeof(string)))
+                {
+                    var text = (string)e.DataObject.GetData(typeof(string));
+                    if (!text.All(c => char.IsDigit(c)))
+                        e.CancelCommand();
+                }
+                else
+                    e.CancelCommand();
+            });
+
+            inputContainer.Children.Add(opacityTextBox);
+
+            var maxDisplay = new System.Windows.Controls.TextBlock
+            {
+                Text = "/100%",
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(4, 0, 0, 0)
+            };
+            maxDisplay.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
+            inputContainer.Children.Add(maxDisplay);
+
+            inputRow.Children.Add(inputContainer);
+            Grid.SetColumn(inputContainer, 1);
+
+            _grayOverlayOpacityContainer.Children.Add(inputRow);
+            ContentPanel.Children.Add(_grayOverlayOpacityContainer);
+
+            // LostFocus 时保存值
+            opacityTextBox.LostFocus += (s, e) =>
+            {
+                int val;
+                if (!int.TryParse(opacityTextBox.Text, out val) || opacityTextBox.Text.Length == 0)
+                    val = 50; // 默认值
+                if (val < 0) val = 0;
+                if (val > 100) val = 100;
+                _settings!.InventoryWindowGrayOverlayOpacity = val;
+                opacityTextBox.Text = val.ToString();
+                SaveSettings();
+                // 下次打开物品栏时会自动应用新透明度
+            };
+
+            // 监听灰色蒙版开关控制透明度输入框可见性
+            grayOverlayToggle.Checked += (s, e) =>
+            {
+                if (_grayOverlayOpacityContainer != null)
+                {
+                    _grayOverlayOpacityContainer.Visibility = Visibility.Visible;
+                    RefreshContentHeight();
+                }
+            };
+            grayOverlayToggle.Unchecked += (s, e) =>
+            {
+                if (_grayOverlayOpacityContainer != null)
+                {
+                    _grayOverlayOpacityContainer.Visibility = Visibility.Collapsed;
+                    RefreshContentHeight();
+                }
+            };
+        }
+
         private void SaveSettings()
         {
             if (System.Windows.Application.Current is App app)
             {
                 app.SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// 刷新内容区域高度（用于动画）
+        /// </summary>
+        private void RefreshContentHeight()
+        {
+            if (!_isExpanded || _isAnimating) return;
+
+            ContentPanel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            double newHeight = ContentPanel.DesiredSize.Height + 32;
+            double currentHeight = ContentBorder.ActualHeight;
+
+            if (Math.Abs(newHeight - currentHeight) > 5)
+            {
+                _isAnimating = true;
+                var animation = new DoubleAnimation
+                {
+                    From = currentHeight,
+                    To = newHeight,
+                    Duration = TimeSpan.FromMilliseconds(150),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+                };
+                animation.Completed += (s, e) =>
+                {
+                    ContentBorder.Height = double.NaN;
+                    _isAnimating = false;
+                };
+                ContentBorder.BeginAnimation(FrameworkElement.HeightProperty, animation);
             }
         }
 

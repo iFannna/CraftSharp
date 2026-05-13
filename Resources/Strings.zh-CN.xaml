@@ -213,6 +213,8 @@
     <sys:String x:Key="InventoryOptionRememberPositionDesc">下次启动时恢复物品栏窗口位置</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlay">灰色蒙版</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">打开物品栏时显示全屏灰色遮罩</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlayOpacity">不透明度</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlayOpacityDesc">调节灰色蒙版不透明度（0-100）</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBar">隐藏状态栏</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBarDesc">打开物品栏时隐藏状态栏窗口</sys:String>
     <sys:String x:Key="SurvivalInventoryTitle">生存物品栏</sys:String>
