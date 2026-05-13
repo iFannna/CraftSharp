@@ -189,7 +189,7 @@ namespace CraftSharp
                     // 确保所有HUD元素都存在（不存在则添加默认配置）
                     EnsureAllHudElementsExist();
                 }
-                catch { _appSettings = new Models.AppSettings(); }
+                catch { _appSettings = new Models.AppSettings(); EnsureAllHudElementsExist(); }
             }
             else
             {
