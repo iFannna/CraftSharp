@@ -9,6 +9,8 @@ using System.Windows.Threading;
 using CraftSharp.Helpers;
 using CraftSharp.Services;
 
+#pragma warning disable CS8618 // 服务字段在 partial class 的 InitializeSlotServices 中初始化
+
 namespace CraftSharp.Windows.StatusBar
 {
     /// <summary>
@@ -117,6 +119,9 @@ namespace CraftSharp.Windows.StatusBar
 
             // 获取缩放比例
             _scaleFactor = ScaleService.Instance.ScaleFactor;
+
+            // 初始化格子相关服务（需要在 _scaleFactor 和 _appSettings 初始化后）
+            InitializeSlotServices();
 
             // 获取原始图片尺寸（调用各模块的加载方法）
             GetOriginalImageSize();
@@ -573,7 +578,7 @@ namespace CraftSharp.Windows.StatusBar
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
         {
             // 处理格子拖动（优先级高于窗口拖动）
-            if (_isDraggingSlot)
+            if (_dragService.IsDragging)
             {
                 var mousePos = e.GetPosition(this);
                 UpdateDragIconPosition(mousePos);
@@ -599,7 +604,7 @@ namespace CraftSharp.Windows.StatusBar
         protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
         {
             // 处理格子拖动结束
-            if (_isDraggingSlot)
+            if (_dragService.IsDragging)
             {
                 EndSlotDrag();
             }
@@ -717,3 +722,5 @@ namespace CraftSharp.Windows.StatusBar
         }
     }
 }
+
+#pragma warning restore CS8618
