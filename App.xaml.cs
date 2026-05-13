@@ -134,7 +134,7 @@ namespace CraftSharp
                 _bossBarWindow.Hide();
 
             // 创建背包窗口（隐藏，按E键打开）
-            _inventoryWindow = new InventoryWindow();
+            _inventoryWindow = new InventoryWindow(_appSettings!);
             _inventoryWindow.Hide();
 
             // 创建系统托盘图标（使用纯 WPF 实现）

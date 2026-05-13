@@ -5,7 +5,7 @@
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent"
-        Topmost="False"
+        Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         RenderOptions.BitmapScalingMode="NearestNeighbor">

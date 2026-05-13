@@ -211,6 +211,10 @@
     <sys:String x:Key="InventoryOptionLockedDesc">Prevent inventory window from being accidentally dragged</sys:String>
     <sys:String x:Key="InventoryOptionRememberPosition">Remember Position</sys:String>
     <sys:String x:Key="InventoryOptionRememberPositionDesc">Restore inventory window position on next launch</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlay">Gray Overlay</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlayDesc">Show fullscreen gray overlay when inventory is open</sys:String>
+    <sys:String x:Key="InventoryOptionHideStatusBar">Hide Status Bar</sys:String>
+    <sys:String x:Key="InventoryOptionHideStatusBarDesc">Hide status bar window when inventory is open</sys:String>
     <sys:String x:Key="SurvivalInventoryTitle">Survival Inventory</sys:String>
     <sys:String x:Key="CreativeInventoryTitle">Creative Inventory</sys:String>
     <sys:String x:Key="ChestTitle">Chest</sys:String>

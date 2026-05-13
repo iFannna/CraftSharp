@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Services;
 using CraftSharp.Helpers;
+using CraftSharp.Models;
 
 namespace CraftSharp.Windows.Inventory
 {
@@ -15,6 +16,7 @@ namespace CraftSharp.Windows.Inventory
     {
         private readonly SlotDataService _slotService;
         private readonly string[] _slotIds;
+        private readonly AppSettings? _settings;
 
         private double _scaleFactor;
         private double _originalImageWidth;
@@ -23,15 +25,21 @@ namespace CraftSharp.Windows.Inventory
         // 原生拖放目标（支持 Windows 拖拽缩略图）
         private IDisposable? _nativeDropTarget;
 
-        public InventoryWindow()
+        // 灰色蒙版窗口
+        private GrayOverlayWindow? _grayOverlayWindow;
+
+        // 状态栏隐藏前的可见性状态
+        private bool _statusBarWasVisible = false;
+
+        public InventoryWindow(AppSettings? settings = null)
         {
             InitializeComponent();
 
-            // 设置窗口到桌面层级 + 注册原生拖放
+            _settings = settings;
+
+            // 设置窗口层级 + 注册原生拖放
             SourceInitialized += (s, e) =>
             {
-                DesktopWindowHelper.SetWindowToDesktopLevel(this);
-
                 // 注册原生拖放（支持 Windows 拖拽缩略图显示 + 处理文件放置）
                 try
                 {
@@ -281,12 +289,58 @@ namespace CraftSharp.Windows.Inventory
         {
             if (IsVisible)
             {
-                Hide();
+                HideInventory();
             }
             else
             {
-                PositionWindow();
-                Show();
+                ShowInventory();
+            }
+        }
+
+        /// <summary>
+        /// 显示物品栏（处理灰色蒙版和隐藏状态栏）
+        /// </summary>
+        private void ShowInventory()
+        {
+            // 1. 灰色蒙版
+            if (_settings?.InventoryWindowGrayOverlay ?? true)
+            {
+                _grayOverlayWindow = new GrayOverlayWindow();
+                _grayOverlayWindow.Show();
+            }
+
+            // 2. 隐藏状态栏
+            if (_settings?.InventoryWindowHideStatusBar ?? false)
+            {
+                _statusBarWasVisible = StatusBarService.Instance.IsVisible();
+                if (_statusBarWasVisible)
+                {
+                    StatusBarService.Instance.SetVisible(false);
+                }
+            }
+
+            PositionWindow();
+            Show();
+        }
+
+        /// <summary>
+        /// 隐藏物品栏（恢复灰色蒙版和状态栏）
+        /// </summary>
+        private void HideInventory()
+        {
+            Hide();
+
+            // 1. 关闭灰色蒙版
+            if (_grayOverlayWindow != null)
+            {
+                _grayOverlayWindow.Close();
+                _grayOverlayWindow = null;
+            }
+
+            // 2. 恢复状态栏
+            if ((_settings?.InventoryWindowHideStatusBar ?? false) && _statusBarWasVisible)
+            {
+                StatusBarService.Instance.SetVisible(true);
             }
         }
 

@@ -110,6 +110,16 @@ namespace CraftSharp.Models
         /// </summary>
         public double InventoryWindowPositionY { get; set; } = 0;
 
+        /// <summary>
+        /// 物品栏灰色蒙版（打开物品栏时显示全屏灰色遮罩）
+        /// </summary>
+        public bool InventoryWindowGrayOverlay { get; set; } = true;
+
+        /// <summary>
+        /// 隐藏状态栏（打开物品栏时隐藏状态栏窗口）
+        /// </summary>
+        public bool InventoryWindowHideStatusBar { get; set; } = false;
+
         // ==================== HUD 设置 ====================
         /// <summary>
         /// 显示状态栏

@@ -211,6 +211,10 @@
     <sys:String x:Key="InventoryOptionLockedDesc">防止物品栏窗口被意外拖动</sys:String>
     <sys:String x:Key="InventoryOptionRememberPosition">记住位置</sys:String>
     <sys:String x:Key="InventoryOptionRememberPositionDesc">下次启动时恢复物品栏窗口位置</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlay">灰色蒙版</sys:String>
+    <sys:String x:Key="InventoryOptionGrayOverlayDesc">打开物品栏时显示全屏灰色遮罩</sys:String>
+    <sys:String x:Key="InventoryOptionHideStatusBar">隐藏状态栏</sys:String>
+    <sys:String x:Key="InventoryOptionHideStatusBarDesc">打开物品栏时隐藏状态栏窗口</sys:String>
     <sys:String x:Key="SurvivalInventoryTitle">生存物品栏</sys:String>
     <sys:String x:Key="CreativeInventoryTitle">创造物品栏</sys:String>
     <sys:String x:Key="ChestTitle">箱子</sys:String>

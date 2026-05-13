@@ -39,6 +39,10 @@ namespace CraftSharp.Windows.Settings.Panels
                 AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.InventoryWindowVisible, v => _settings.InventoryWindowVisible = v);
                 AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.InventoryWindowLocked, v => _settings.InventoryWindowLocked = v);
                 AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.InventoryWindowRememberPosition, v => _settings.InventoryWindowRememberPosition = v);
+                // 灰色蒙版开关
+                AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.InventoryWindowGrayOverlay, v => _settings.InventoryWindowGrayOverlay = v);
+                // 隐藏状态栏开关
+                AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.InventoryWindowHideStatusBar, v => _settings.InventoryWindowHideStatusBar = v);
             }
         }
 
