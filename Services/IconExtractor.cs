@@ -249,7 +249,6 @@ namespace CraftSharp.Services
             catch (Exception)
             {
                 return null;
-                return null;
             }
         }
 
@@ -486,15 +485,28 @@ namespace CraftSharp.Services
         private static ImageSource? GetIconFromShell(string filePath, int imageListLevel)
         {
             // 获取文件属性（用于文件夹识别）
-            uint fileAttributes = Directory.Exists(filePath)
-                ? FILE_ATTRIBUTE_DIRECTORY
-                : FILE_ATTRIBUTE_NORMAL;
+            bool isDirectory = Directory.Exists(filePath);
+            uint fileAttributes = isDirectory ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
 
-            // 调用 SHGetFileInfo 获取图标索引
+            // 方案1：直接使用 SHGFI_ICON 获取图标句柄（更可靠，不需要 COM）
+            // 对于文件夹和大尺寸图标，这是更稳定的方案
+            uint iconFlags = SHGFI_ICON | SHGFI_LARGEICON | SHGFI_USEFILEATTRIBUTES;
+
             var shfi = new SHFILEINFOW();
+            IntPtr result = SHGetFileInfoW(filePath, fileAttributes, ref shfi, (uint)Marshal.SizeOf(shfi), iconFlags);
+
+            if (result != IntPtr.Zero && shfi.hIcon != IntPtr.Zero)
+            {
+                var imageSource = ConvertIconToImageSource(shfi.hIcon);
+                DestroyIcon(shfi.hIcon);
+                return imageSource;
+            }
+
+            // 方案2：尝试使用 SYSICONINDEX + IImageList（可能因 COM 未初始化而失败）
+            shfi = new SHFILEINFOW();
             uint flags = SHGFI_SYSICONINDEX | SHGFI_USEFILEATTRIBUTES;
 
-            IntPtr result = SHGetFileInfoW(filePath, fileAttributes, ref shfi, (uint)Marshal.SizeOf(shfi), flags);
+            result = SHGetFileInfoW(filePath, fileAttributes, ref shfi, (uint)Marshal.SizeOf(shfi), flags);
 
             if (result == IntPtr.Zero || shfi.iIcon < 0)
                 return null;
@@ -507,12 +519,14 @@ namespace CraftSharp.Services
             {
                 var iid = IID_IImageList;
                 int hr = SHGetImageList(imageListLevel, ref iid, out imageList);
+
                 if (hr != 0 || imageList == null)
                     return null;
 
                 // 从列表中获取图标
                 IntPtr hIcon = IntPtr.Zero;
                 hr = imageList.GetImage(iconIndex, 0, out hIcon);
+
                 if (hr != 0 || hIcon == IntPtr.Zero)
                     return null;
 
@@ -576,6 +590,8 @@ namespace CraftSharp.Services
         {
             try
             {
+                // 注意: ExtractAssociatedIcon 不支持文件夹路径！
+                // 对于文件夹，会抛出异常或返回 null
                 using var icon = Icon.ExtractAssociatedIcon(filePath);
                 if (icon == null)
                     return null;
