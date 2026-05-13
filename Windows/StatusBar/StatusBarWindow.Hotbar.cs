@@ -495,6 +495,7 @@ namespace CraftSharp.Windows.StatusBar
 
             // 先获取格子中已显示的图标（直接从 Image 控件获取，避免文件丢失时重新加载失败）
             ImageSource iconSource = null;
+            BitmapScalingMode renderMode = BitmapScalingMode.Linear;
             if (!sourceItem.IsEmpty)
             {
                 System.Windows.Controls.Image slotIconImage;
@@ -508,6 +509,8 @@ namespace CraftSharp.Windows.StatusBar
                 if (slotIconImage != null && slotIconImage.Source != null)
                 {
                     iconSource = slotIconImage.Source;
+                    // 获取源格子的渲染模式
+                    renderMode = RenderOptions.GetBitmapScalingMode(slotIconImage);
                 }
             }
 
@@ -526,6 +529,8 @@ namespace CraftSharp.Windows.StatusBar
             if (iconSource != null)
             {
                 DragIconImage.Source = iconSource;
+                // 设置渲染模式（跟随源格子的渲染模式）
+                RenderOptions.SetBitmapScalingMode(DragIconImage, renderMode);
                 // 图标大小和快捷栏格子图标一样：16 * scaleFactor
                 double iconSize = 16 * _scaleFactor;
                 DragIconImage.Width = iconSize;
