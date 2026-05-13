@@ -670,6 +670,7 @@ namespace CraftSharp.Windows.StatusBar
 
         /// <summary>
         /// 恢复格子图标显示（拖动取消时）使用缓存的拖动图标Source
+        /// 根据图标是否是占位图设置对应的渲染模式
         /// </summary>
         private void RestoreSlotIcon(int slotIndex)
         {
@@ -690,6 +691,16 @@ namespace CraftSharp.Windows.StatusBar
             {
                 iconImage.Source = cachedIconSource;
                 iconImage.Visibility = Visibility.Visible;
+
+                // 判断是否是占位图：检查UriSource是否包含"barrier.png"
+                bool isPlaceholder = false;
+                if (cachedIconSource is BitmapImage bitmapImage && bitmapImage.UriSource != null)
+                {
+                    isPlaceholder = bitmapImage.UriSource.AbsolutePath.Contains("barrier.png");
+                }
+
+                // 设置渲染模式：占位图用像素模式，正常图标用默认模式
+                RenderOptions.SetBitmapScalingMode(iconImage, isPlaceholder ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.Linear);
             }
         }
 
@@ -746,7 +757,7 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 交换两个格子的内容，使用缓存的图标Source
+        /// 交换两个格子的内容，使用缓存的图标Source和渲染模式
         /// </summary>
         private void SwapSlotContents(int sourceIndex, int targetIndex)
         {
@@ -755,17 +766,19 @@ namespace CraftSharp.Windows.StatusBar
             // 获取目标格子内容
             var targetItem = _slotService.GetSlot(_slotIds[targetIndex]);
 
-            // 获取交换前的图标Source（缓存）
+            // 获取交换前的图标Source和渲染模式（缓存）
             ImageSource? sourceIconSource = GetSlotIconSource(sourceIndex);
             ImageSource? targetIconSource = GetSlotIconSource(targetIndex);
+            BitmapScalingMode sourceRenderMode = GetSlotRenderMode(sourceIndex);
+            BitmapScalingMode targetRenderMode = GetSlotRenderMode(targetIndex);
 
             // 交换数据存储
             _slotService.SetSlot(_slotIds[sourceIndex], targetItem);
             _slotService.SetSlot(_slotIds[targetIndex], sourceItem);
 
-            // 交换图标显示（使用缓存的图标Source，不做路径检测）
-            SetSlotIconSource(sourceIndex, targetIconSource, targetItem.IsEmpty);
-            SetSlotIconSource(targetIndex, sourceIconSource, sourceItem.IsEmpty);
+            // 交换图标显示（使用缓存的图标Source和渲染模式，不做路径检测）
+            SetSlotIconSource(sourceIndex, targetIconSource, targetRenderMode, targetItem.IsEmpty);
+            SetSlotIconSource(targetIndex, sourceIconSource, sourceRenderMode, sourceItem.IsEmpty);
         }
 
         /// <summary>
@@ -791,9 +804,29 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 设置格子的图标Source（使用缓存的图标）
+        /// 获取格子的渲染模式
         /// </summary>
-        private void SetSlotIconSource(int slotIndex, ImageSource? iconSource, bool isEmpty)
+        private BitmapScalingMode GetSlotRenderMode(int slotIndex)
+        {
+            System.Windows.Controls.Image? iconImage;
+            if (slotIndex == 0)
+                iconImage = GetIconImage("LeftOffhand");
+            else if (slotIndex == 1)
+                iconImage = GetIconImage("RightOffhand");
+            else
+                iconImage = GetIconImage(slotIndex - 2);
+
+            if (iconImage != null)
+            {
+                return RenderOptions.GetBitmapScalingMode(iconImage);
+            }
+            return BitmapScalingMode.Linear; // 默认模式
+        }
+
+        /// <summary>
+        /// 设置格子的图标Source和渲染模式（使用缓存的图标和渲染模式）
+        /// </summary>
+        private void SetSlotIconSource(int slotIndex, ImageSource? iconSource, BitmapScalingMode renderMode, bool isEmpty)
         {
             System.Windows.Controls.Image? iconImage;
             if (slotIndex == 0)
@@ -809,11 +842,13 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     iconImage.Source = null;
                     iconImage.Visibility = Visibility.Collapsed;
+                    RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Linear);
                 }
                 else
                 {
                     iconImage.Source = iconSource;
                     iconImage.Visibility = Visibility.Visible;
+                    RenderOptions.SetBitmapScalingMode(iconImage, renderMode);
                 }
             }
         }
@@ -968,6 +1003,7 @@ namespace CraftSharp.Windows.StatusBar
 
         /// <summary>
         /// 显示占位图（barrier.png）- 基于主快捷栏索引（0-8）
+        /// 使用像素模式渲染
         /// </summary>
         private void ShowPlaceholderIcon(int hotbarIndex)
         {
@@ -978,12 +1014,14 @@ namespace CraftSharp.Windows.StatusBar
             if (iconImage != null)
             {
                 iconImage.Source = icon;
+                RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
                 iconImage.Visibility = Visibility.Visible;
             }
         }
 
         /// <summary>
         /// 显示占位图（barrier.png）- 基于名称（LeftOffhand/RightOffhand）
+        /// 使用像素模式渲染
         /// </summary>
         private void ShowPlaceholderIcon(string name)
         {
@@ -994,6 +1032,7 @@ namespace CraftSharp.Windows.StatusBar
             if (iconImage != null)
             {
                 iconImage.Source = icon;
+                RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
                 iconImage.Visibility = Visibility.Visible;
             }
         }
