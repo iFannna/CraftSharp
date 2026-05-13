@@ -89,7 +89,7 @@ namespace CraftSharp.Windows.Settings.Panels
             comboBox.Items.Add(singleItem);
             comboBox.Items.Add(doubleItem);
 
-            if (_settings.HotbarClickMode == "single")
+            if (_settings.Hotbar.ClickMode == "single")
                 comboBox.SelectedIndex = 0;
             else
                 comboBox.SelectedIndex = 1;
@@ -99,7 +99,7 @@ namespace CraftSharp.Windows.Settings.Panels
                 if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
                 {
                     var mode = item.Tag?.ToString() ?? "double";
-                    _settings.HotbarClickMode = mode;
+                    _settings.Hotbar.ClickMode = mode;
                     StatusBarService.Instance.SetHotbarClickMode(mode);
                     SaveSettings();
                 }

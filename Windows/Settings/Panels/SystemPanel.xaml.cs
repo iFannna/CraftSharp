@@ -23,11 +23,11 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void InitializeControls()
         {
-            LanguageComboBox.SelectedIndex = _settings.Language == "简体中文" ? 0 : 1;
-            AutoStartToggle.IsChecked = _settings.AutoStart;
-            RememberPositionToggle.IsChecked = _settings.SettingsWindowRememberPosition;
-            RememberSizeToggle.IsChecked = _settings.SettingsWindowRememberSize;
-            RememberCardStatesToggle.IsChecked = _settings.RememberCardStates; // 默认开启
+            LanguageComboBox.SelectedIndex = _settings.System.Language == "简体中文" ? 0 : 1;
+            AutoStartToggle.IsChecked = _settings.System.AutoStart;
+            RememberPositionToggle.IsChecked = _settings.System.RememberWindowPosition;
+            RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
+            RememberCardStatesToggle.IsChecked = _settings.System.RememberCardStates; // 默认开启
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -37,7 +37,7 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 // 使用显示名称作为设置值
                 var language = item.Content.ToString() ?? "简体中文";
-                _settings.Language = language;
+                _settings.System.Language = language;
 
                 // 切换语言
                 LocalizationService.Instance.SetLanguage(language);
@@ -51,7 +51,7 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
-                _settings.AutoStart = toggle.IsChecked ?? false;
+                _settings.System.AutoStart = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
             }
@@ -61,7 +61,7 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
-                _settings.SettingsWindowRememberPosition = toggle.IsChecked ?? false;
+                _settings.System.RememberWindowPosition = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
             }
@@ -71,7 +71,7 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
-                _settings.SettingsWindowRememberSize = toggle.IsChecked ?? false;
+                _settings.System.RememberWindowSize = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
             }
@@ -82,12 +82,12 @@ namespace CraftSharp.Windows.Settings.Panels
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
                 bool isChecked = toggle.IsChecked ?? false;
-                _settings.RememberCardStates = isChecked;
+                _settings.System.RememberCardStates = isChecked;
 
                 // 如果关闭开关，清空已保存的状态
                 if (!isChecked)
                 {
-                    _settings.CardExpandedStates.Clear();
+                    _settings.System.CardExpandedStates.Clear();
                 }
 
                 // 即时保存设置

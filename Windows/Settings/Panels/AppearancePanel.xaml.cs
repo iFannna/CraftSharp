@@ -24,15 +24,15 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void InitializeControls()
         {
-            ThemeComboBox.SelectedIndex = GetThemeIndex(_settings.Theme);
-            FontComboBox.SelectedIndex = GetFontIndex(_settings.Font);
-            FontSizeComboBox.SelectedIndex = GetFontSizeIndex(_settings.FontSize);
+            ThemeComboBox.SelectedIndex = GetThemeIndex(_settings.Appearance.Theme);
+            FontComboBox.SelectedIndex = GetFontIndex(_settings.Appearance.Font);
+            FontSizeComboBox.SelectedIndex = GetFontSizeIndex(_settings.Appearance.FontSize);
             LoadAppIconPreview();
         }
 
         private void LoadAppIconPreview()
         {
-            var preview = IconService.Instance.GetIconPreview(_settings.AppIconPath);
+            var preview = IconService.Instance.GetIconPreview(_settings.Appearance.AppIconPath);
             if (preview != null)
             {
                 AppIconPreview.Source = preview;
@@ -71,7 +71,7 @@ namespace CraftSharp.Windows.Settings.Panels
                     "light" => "亮色",
                     _ => "跟随系统"
                 };
-                _settings.Theme = themeValue;
+                _settings.Appearance.Theme = themeValue;
 
                 // 使用新的 SetThemeMode 方法切换主题模式
                 ThemeService.Instance.SetThemeMode(themeValue);
@@ -88,7 +88,7 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 // 直接使用 Tag 作为字体标识符存储
                 var tag = item.Tag?.ToString() ?? "yahei";
-                _settings.Font = tag;
+                _settings.Appearance.Font = tag;
 
                 // 切换字体（使用标识符）
                 FontService.Instance.SetFont(tag);
@@ -107,7 +107,7 @@ namespace CraftSharp.Windows.Settings.Panels
                 var tag = item.Tag?.ToString() ?? "14";
                 if (int.TryParse(tag, out var fontSize))
                 {
-                    _settings.FontSize = fontSize;
+                    _settings.Appearance.FontSize = fontSize;
 
                     // 切换字体大小
                     FontService.Instance.SetFontSize(fontSize);
@@ -126,7 +126,7 @@ namespace CraftSharp.Windows.Settings.Panels
             if (picker.ShowDialog() == true && picker.SelectedIconPath != null)
             {
                 // 更新设置
-                _settings.AppIconPath = picker.SelectedIconPath;
+                _settings.Appearance.AppIconPath = picker.SelectedIconPath;
 
                 // 更新图标
                 IconService.Instance.SetAppIcon(picker.SelectedIconPath);

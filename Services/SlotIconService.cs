@@ -71,7 +71,7 @@ namespace CraftSharp.Services
             // 检查是否为快捷方式
             if (IconExtractor.IsShortcut(filePath))
             {
-                bool showTargetIcon = _appSettings?.HotbarShowTargetIcon ?? false;
+                bool showTargetIcon = _appSettings?.Hotbar.ShowTargetIcon ?? false;
                 if (showTargetIcon)
                 {
                     return IconExtractor.GetTargetIcon(filePath, iconSize);

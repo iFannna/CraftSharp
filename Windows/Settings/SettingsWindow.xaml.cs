@@ -48,28 +48,28 @@ namespace CraftSharp.Windows.Settings
             };
 
             // 根据设置恢复窗口位置和大小
-            if (_settings.SettingsWindowRememberPosition)
+            if (_settings.System.RememberWindowPosition)
             {
                 // 特殊值判断：位置为(0,0)时视为首次启动，居中显示
                 // IsValidScreenPosition 可能会误判(0,0)为有效位置（多显示器环境下可能为负值）
-                if (_settings.SettingsWindowPositionX == 0 && _settings.SettingsWindowPositionY == 0)
+                if (_settings.System.WindowPositionX == 0 && _settings.System.WindowPositionY == 0)
                 {
                     // 首次启动：居中显示
                     WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
                 }
-                else if (IsValidScreenPosition(_settings.SettingsWindowPositionX, _settings.SettingsWindowPositionY))
+                else if (IsValidScreenPosition(_settings.System.WindowPositionX, _settings.System.WindowPositionY))
                 {
                     // 已保存位置：恢复位置
                     WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-                    Left = _settings.SettingsWindowPositionX;
-                    Top = _settings.SettingsWindowPositionY;
+                    Left = _settings.System.WindowPositionX;
+                    Top = _settings.System.WindowPositionY;
                 }
             }
 
-            if (_settings.SettingsWindowRememberSize)
+            if (_settings.System.RememberWindowSize)
             {
-                Width = _settings.SettingsWindowWidth;
-                Height = _settings.SettingsWindowHeight;
+                Width = _settings.System.WindowWidth;
+                Height = _settings.System.WindowHeight;
             }
 
             // 监听窗口位置变化（即时保存）
@@ -100,20 +100,20 @@ namespace CraftSharp.Windows.Settings
 
         private void OnLocationChanged(object? sender, EventArgs e)
         {
-            if (_settings.SettingsWindowRememberPosition)
+            if (_settings.System.RememberWindowPosition)
             {
-                _settings.SettingsWindowPositionX = Left;
-                _settings.SettingsWindowPositionY = Top;
+                _settings.System.WindowPositionX = Left;
+                _settings.System.WindowPositionY = Top;
                 SaveSettings();
             }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_settings.SettingsWindowRememberSize)
+            if (_settings.System.RememberWindowSize)
             {
-                _settings.SettingsWindowWidth = Width;
-                _settings.SettingsWindowHeight = Height;
+                _settings.System.WindowWidth = Width;
+                _settings.System.WindowHeight = Height;
                 SaveSettings();
             }
         }

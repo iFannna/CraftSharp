@@ -11,17 +11,17 @@ namespace CraftSharp.Windows.Settings.Panels
     {
         private void AddStatusBarContent()
         {
-            var showToggle = AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", _settings.StatusBarVisible);
-            showToggle.Checked += (s, e) => { _settings.StatusBarVisible = true; StatusBarService.Instance.SetVisible(true); SaveSettings(); };
-            showToggle.Unchecked += (s, e) => { _settings.StatusBarVisible = false; StatusBarService.Instance.SetVisible(false); SaveSettings(); };
+            var showToggle = AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", _settings.StatusBar.Visible);
+            showToggle.Checked += (s, e) => { _settings.StatusBar.Visible = true; StatusBarService.Instance.SetVisible(true); SaveSettings(); };
+            showToggle.Unchecked += (s, e) => { _settings.StatusBar.Visible = false; StatusBarService.Instance.SetVisible(false); SaveSettings(); };
 
-            var lockToggle = AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", _settings.StatusBarLocked);
-            lockToggle.Checked += (s, e) => { _settings.StatusBarLocked = true; StatusBarService.Instance.SetLocked(true); SaveSettings(); };
-            lockToggle.Unchecked += (s, e) => { _settings.StatusBarLocked = false; StatusBarService.Instance.SetLocked(false); SaveSettings(); };
+            var lockToggle = AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", _settings.StatusBar.Locked);
+            lockToggle.Checked += (s, e) => { _settings.StatusBar.Locked = true; StatusBarService.Instance.SetLocked(true); SaveSettings(); };
+            lockToggle.Unchecked += (s, e) => { _settings.StatusBar.Locked = false; StatusBarService.Instance.SetLocked(false); SaveSettings(); };
 
-            var rememberToggle = AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBarRememberPosition);
-            rememberToggle.Checked += (s, e) => { _settings.StatusBarRememberPosition = true; SaveSettings(); };
-            rememberToggle.Unchecked += (s, e) => { _settings.StatusBarRememberPosition = false; SaveSettings(); };
+            var rememberToggle = AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBar.RememberPosition);
+            rememberToggle.Checked += (s, e) => { _settings.StatusBar.RememberPosition = true; SaveSettings(); };
+            rememberToggle.Unchecked += (s, e) => { _settings.StatusBar.RememberPosition = false; SaveSettings(); };
         }
     }
 }

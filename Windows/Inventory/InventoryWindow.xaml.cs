@@ -297,9 +297,9 @@ namespace CraftSharp.Windows.Inventory
         private void ShowInventory()
         {
             // 1. 先显示灰色蒙版
-            if (_settings?.InventoryWindowGrayOverlay ?? true)
+            if (_settings?.Inventory.GrayOverlay ?? true)
             {
-                int opacity = _settings?.InventoryWindowGrayOverlayOpacity ?? 50;
+                int opacity = _settings?.Inventory.GrayOverlayOpacity ?? 50;
                 _grayOverlayWindow = new GrayOverlayWindow(opacity);
                 _grayOverlayWindow.Show(); // 先显示蒙版
             }
@@ -313,7 +313,7 @@ namespace CraftSharp.Windows.Inventory
             Show();
 
             // 3. 隐藏状态栏
-            if (_settings?.InventoryWindowHideStatusBar ?? false)
+            if (_settings?.Inventory.HideStatusBar ?? false)
             {
                 _statusBarWasVisible = StatusBarService.Instance.IsVisible();
                 if (_statusBarWasVisible)
@@ -339,7 +339,7 @@ namespace CraftSharp.Windows.Inventory
             }
 
             // 2. 恢复状态栏
-            if ((_settings?.InventoryWindowHideStatusBar ?? false) && _statusBarWasVisible)
+            if ((_settings?.Inventory.HideStatusBar ?? false) && _statusBarWasVisible)
             {
                 StatusBarService.Instance.SetVisible(true);
             }

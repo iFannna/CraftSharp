@@ -5,7 +5,7 @@ using System.ComponentModel;
 namespace CraftSharp.Models
 {
     /// <summary>
-    /// 应用设置配置模型
+    /// 应用设置配置模型（分层结构）
     /// </summary>
     public class AppSettings
     {
@@ -17,7 +17,62 @@ namespace CraftSharp.Models
             BossBars = new ObservableCollection<BossBarSettings>();
         }
 
-        // ==================== 系统设置 ====================
+        /// <summary>
+        /// 系统设置
+        /// </summary>
+        public SystemSettings System { get; set; } = new SystemSettings();
+
+        /// <summary>
+        /// 外观设置
+        /// </summary>
+        public AppearanceSettings Appearance { get; set; } = new AppearanceSettings();
+
+        /// <summary>
+        /// 物品栏设置
+        /// </summary>
+        public InventorySettings Inventory { get; set; } = new InventorySettings();
+
+        /// <summary>
+        /// 状态栏设置
+        /// </summary>
+        public StatusBarSettings StatusBar { get; set; } = new StatusBarSettings();
+
+        /// <summary>
+        /// 快捷栏设置
+        /// </summary>
+        public HotbarSettings Hotbar { get; set; } = new HotbarSettings();
+
+        /// <summary>
+        /// HUD 元素配置列表
+        /// </summary>
+        public ObservableCollection<HudElementSettings> HudElements { get; set; }
+
+        /// <summary>
+        /// BOSS 血条配置列表
+        /// </summary>
+        public ObservableCollection<BossBarSettings> BossBars { get; set; }
+
+        /// <summary>
+        /// 快捷键设置
+        /// </summary>
+        public HotkeySettings Hotkeys { get; set; } = new HotkeySettings();
+
+        /// <summary>
+        /// 槽位数据
+        /// </summary>
+        public Dictionary<string, SlotItem> Slots { get; set; } = new Dictionary<string, SlotItem>();
+
+        /// <summary>
+        /// 应用版本
+        /// </summary>
+        public string Version { get; set; } = "1.0.0";
+    }
+
+    /// <summary>
+    /// 系统设置
+    /// </summary>
+    public class SystemSettings
+    {
         /// <summary>
         /// 界面语言
         /// </summary>
@@ -31,32 +86,32 @@ namespace CraftSharp.Models
         /// <summary>
         /// 记住设置窗口位置
         /// </summary>
-        public bool SettingsWindowRememberPosition { get; set; } = true;
+        public bool RememberWindowPosition { get; set; } = true;
 
         /// <summary>
         /// 记住设置窗口大小
         /// </summary>
-        public bool SettingsWindowRememberSize { get; set; } = true;
+        public bool RememberWindowSize { get; set; } = true;
 
         /// <summary>
         /// 设置窗口 X 坐标
         /// </summary>
-        public double SettingsWindowPositionX { get; set; } = 0;
+        public double WindowPositionX { get; set; } = 0;
 
         /// <summary>
         /// 设置窗口 Y 坐标
         /// </summary>
-        public double SettingsWindowPositionY { get; set; } = 0;
+        public double WindowPositionY { get; set; } = 0;
 
         /// <summary>
         /// 设置窗口宽度
         /// </summary>
-        public double SettingsWindowWidth { get; set; } = 1080;
+        public double WindowWidth { get; set; } = 1080;
 
         /// <summary>
         /// 设置窗口高度
         /// </summary>
-        public double SettingsWindowHeight { get; set; } = 720;
+        public double WindowHeight { get; set; } = 720;
 
         /// <summary>
         /// 记住卡片状态
@@ -67,8 +122,13 @@ namespace CraftSharp.Models
         /// 卡片展开状态字典（Key: titleResourceKey, Value: 是否展开）
         /// </summary>
         public Dictionary<string, bool> CardExpandedStates { get; set; } = new Dictionary<string, bool>();
+    }
 
-        // ==================== 外观设置 ====================
+    /// <summary>
+    /// 外观设置
+    /// </summary>
+    public class AppearanceSettings
+    {
         /// <summary>
         /// 主题风格
         /// </summary>
@@ -93,141 +153,140 @@ namespace CraftSharp.Models
         /// 应用图标路径（相对于Assets目录）
         /// </summary>
         public string AppIconPath { get; set; } = "minecraft/textures/block/block/debug.png";
+    }
 
-        // ==================== 物品栏窗口设置 ====================
+    /// <summary>
+    /// 物品栏设置
+    /// </summary>
+    public class InventorySettings
+    {
         /// <summary>
         /// 显示物品栏窗口
         /// </summary>
-        public bool InventoryWindowVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// 锁定物品栏窗口位置
         /// </summary>
-        public bool InventoryWindowLocked { get; set; } = true;
+        public bool Locked { get; set; } = true;
 
         /// <summary>
         /// 记住物品栏窗口位置
         /// </summary>
-        public bool InventoryWindowRememberPosition { get; set; } = true;
+        public bool RememberPosition { get; set; } = true;
 
         /// <summary>
         /// 物品栏窗口 X 坐标
         /// </summary>
-        public double InventoryWindowPositionX { get; set; } = 0;
+        public double PositionX { get; set; } = 0;
 
         /// <summary>
         /// 物品栏窗口 Y 坐标
         /// </summary>
-        public double InventoryWindowPositionY { get; set; } = 0;
+        public double PositionY { get; set; } = 0;
 
         /// <summary>
-        /// 物品栏灰色蒙版（打开物品栏时显示全屏灰色遮罩）
+        /// 灰色蒙版（打开物品栏时显示全屏灰色遮罩）
         /// </summary>
-        public bool InventoryWindowGrayOverlay { get; set; } = true;
+        public bool GrayOverlay { get; set; } = true;
 
         /// <summary>
-        /// 物品栏灰色蒙版透明度（0-100，默认50）
+        /// 灰色蒙版不透明度（0-100，默认50）
         /// </summary>
-        public int InventoryWindowGrayOverlayOpacity { get; set; } = 50;
+        public int GrayOverlayOpacity { get; set; } = 50;
 
         /// <summary>
         /// 隐藏状态栏（打开物品栏时隐藏状态栏窗口）
         /// </summary>
-        public bool InventoryWindowHideStatusBar { get; set; } = false;
+        public bool HideStatusBar { get; set; } = false;
+    }
 
-        // ==================== HUD 设置 ====================
+    /// <summary>
+    /// 状态栏设置
+    /// </summary>
+    public class StatusBarSettings
+    {
         /// <summary>
         /// 显示状态栏
         /// </summary>
-        public bool StatusBarVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// 锁定状态栏位置
         /// </summary>
-        public bool StatusBarLocked { get; set; } = false;
+        public bool Locked { get; set; } = false;
 
         /// <summary>
         /// 记住状态栏位置
         /// </summary>
-        public bool StatusBarRememberPosition { get; set; } = false;
+        public bool RememberPosition { get; set; } = false;
 
         /// <summary>
         /// 状态栏窗口 X 坐标
         /// </summary>
-        public double StatusBarPositionX { get; set; } = 0;
+        public double PositionX { get; set; } = 0;
 
         /// <summary>
         /// 状态栏窗口 Y 坐标
         /// </summary>
-        public double StatusBarPositionY { get; set; } = 0;
+        public double PositionY { get; set; } = 0;
+    }
 
+    /// <summary>
+    /// 快捷栏设置
+    /// </summary>
+    public class HotbarSettings
+    {
         /// <summary>
         /// 左副手槽
         /// </summary>
-        public bool HotbarLeftOffhand { get; set; } = false;
+        public bool LeftOffhand { get; set; } = false;
 
         /// <summary>
         /// 右副手槽
         /// </summary>
-        public bool HotbarRightOffhand { get; set; } = false;
+        public bool RightOffhand { get; set; } = false;
 
         /// <summary>
         /// 显示快捷栏（包括格子、副手槽）
         /// </summary>
-        public bool HotbarVisible { get; set; } = true;
+        public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// 打开动作（单击/双击，默认双击）
+        /// 点击模式（single/double，默认双击）
         /// </summary>
-        public string HotbarClickMode { get; set; } = "double";
+        public string ClickMode { get; set; } = "double";
 
         /// <summary>
-        /// 快捷栏悬浮效果（hover显示selection框）
+        /// 悬浮效果（hover显示selection框）
         /// </summary>
-        public bool HotbarHoverEffect { get; set; } = true;
+        public bool HoverEffect { get; set; } = true;
 
         /// <summary>
-        /// 显示目标程序图标（仅对快捷方式生效，默认false显示快捷方式自身图标）
+        /// 显示目标程序图标（仅对快捷方式生效）
         /// </summary>
-        public bool HotbarShowTargetIcon { get; set; } = false;
+        public bool ShowTargetIcon { get; set; } = false;
+    }
 
-        /// <summary>
-        /// HUD 元素配置列表
-        /// </summary>
-        public ObservableCollection<HudElementSettings> HudElements { get; set; }
-
-        /// <summary>
-        /// BOSS 血条配置列表
-        /// </summary>
-        public ObservableCollection<BossBarSettings> BossBars { get; set; }
-
-        // ==================== 快捷键设置 ====================
+    /// <summary>
+    /// 快捷键设置
+    /// </summary>
+    public class HotkeySettings
+    {
         /// <summary>
         /// 打开背包快捷键
         /// </summary>
-        public string InventoryHotkey { get; set; } = "E";
+        public string Inventory { get; set; } = "E";
 
         /// <summary>
         /// 打开设置快捷键
         /// </summary>
-        public string SettingsHotkey { get; set; } = "Ctrl+S";
+        public string Settings { get; set; } = "Ctrl+S";
 
         /// <summary>
         /// 显示/隐藏快捷栏快捷键
         /// </summary>
-        public string HotbarToggleHotkey { get; set; } = "";
-
-        // ==================== 槽位数据 ====================
-        /// <summary>
-        /// 快捷栏槽位数据
-        /// </summary>
-        public Dictionary<string, SlotItem> Slots { get; set; } = new Dictionary<string, SlotItem>();
-
-        // ==================== 关于 ====================
-        /// <summary>
-        /// 应用版本
-        /// </summary>
-        public string Version { get; set; } = "1.0.0";
+        public string HotbarToggle { get; set; } = "";
     }
 
     /// <summary>
@@ -239,7 +298,6 @@ namespace CraftSharp.Models
         /// 元素标识
         /// </summary>
         public string Id { get; set; } = "";
-        
 
         /// <summary>
         /// 显示元素
@@ -247,10 +305,9 @@ namespace CraftSharp.Models
         public bool IsVisible { get; set; } = true;
 
         /// <summary>
-        /// 图标样式（如"full"、"hardcore_full"、"food_full"、"food_full_hunger"等）
+        /// 图标样式（如"full"、"hardcore_full"、"food_full"等）
         /// </summary>
         public string IconStyle { get; set; } = "";
-
 
         /// <summary>
         /// 锁定位置（仅快捷栏）

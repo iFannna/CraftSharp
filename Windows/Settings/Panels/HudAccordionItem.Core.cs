@@ -57,9 +57,9 @@ namespace CraftSharp.Windows.Settings.Panels
             // 读取保存的展开状态（如果启用了记住卡片状态）
             // 使用 HudElement_xxx 作为 Key（因为 HudAccordionItem 使用 hudId）
             string stateKey = $"HudElement_{id}";
-            if (_settings.RememberCardStates)
+            if (_settings.System.RememberCardStates)
             {
-                if (_settings.CardExpandedStates.TryGetValue(stateKey, out bool savedExpanded))
+                if (_settings.System.CardExpandedStates.TryGetValue(stateKey, out bool savedExpanded))
                 {
                     _isExpanded = savedExpanded;
                 }
@@ -123,9 +123,9 @@ namespace CraftSharp.Windows.Settings.Panels
 
             // 如果启用了记住卡片状态，保存到配置
             string stateKey = $"HudElement_{_hudId}";
-            if (_settings.RememberCardStates)
+            if (_settings.System.RememberCardStates)
             {
-                _settings.CardExpandedStates[stateKey] = _isExpanded;
+                _settings.System.CardExpandedStates[stateKey] = _isExpanded;
                 SaveSettings();
             }
 

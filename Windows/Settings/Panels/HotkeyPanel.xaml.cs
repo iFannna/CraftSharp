@@ -20,10 +20,10 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void InitializeControls()
         {
-            InventoryHotkeyBtn.Content = _settings.InventoryHotkey;
-            SettingsHotkeyBtn.Content = _settings.SettingsHotkey;
+            InventoryHotkeyBtn.Content = _settings.Hotkeys.Inventory;
+            SettingsHotkeyBtn.Content = _settings.Hotkeys.Settings;
             var notSetText = System.Windows.Application.Current.TryFindResource("HotkeyNotSet") as string ?? "未设置";
-            HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.HotbarToggleHotkey) ? notSetText : _settings.HotbarToggleHotkey;
+            HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.HotbarToggle) ? notSetText : _settings.Hotkeys.HotbarToggle;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
@@ -63,9 +63,9 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void UpdateHotkeySetting(System.Windows.Controls.Button btn, string hotkey)
         {
-            if (btn == InventoryHotkeyBtn) _settings.InventoryHotkey = hotkey;
-            else if (btn == SettingsHotkeyBtn) _settings.SettingsHotkey = hotkey;
-            else if (btn == HotbarToggleHotkeyBtn) _settings.HotbarToggleHotkey = hotkey;
+            if (btn == InventoryHotkeyBtn) _settings.Hotkeys.Inventory = hotkey;
+            else if (btn == SettingsHotkeyBtn) _settings.Hotkeys.Settings = hotkey;
+            else if (btn == HotbarToggleHotkeyBtn) _settings.Hotkeys.HotbarToggle = hotkey;
 
             // 即时保存设置
             SaveSettings();

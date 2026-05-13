@@ -42,19 +42,19 @@ namespace CraftSharp
             LoadSettings();
 
             // 初始化语言
-            LocalizationService.Instance.Initialize(_appSettings?.Language ?? "简体中文");
+            LocalizationService.Instance.Initialize(_appSettings?.System.Language ?? "简体中文");
 
             // 初始化主题
-            ThemeService.Instance.Initialize(_appSettings?.Theme ?? "跟随系统");
+            ThemeService.Instance.Initialize(_appSettings?.Appearance.Theme ?? "跟随系统");
 
             // 初始化字体（使用标识符）
-            FontService.Instance.Initialize(_appSettings?.Font ?? "yahei", _appSettings?.FontSize ?? 14);
+            FontService.Instance.Initialize(_appSettings?.Appearance.Font ?? "yahei", _appSettings?.Appearance.FontSize ?? 14);
 
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow(_appSettings!);
 
             // 如果开启"记住位置"，在创建窗口前设置跳过默认定位
-            if (_appSettings?.StatusBarRememberPosition ?? false)
+            if (_appSettings?.StatusBar.RememberPosition ?? false)
             {
                 StatusBarWindow.ShouldSkipDefaultPositioning = true;
             }
@@ -68,21 +68,21 @@ namespace CraftSharp
             // 监听状态栏位置变化（即时保存到配置文件）
             _statusBarWindow.PositionChanged += (s, e) =>
             {
-                if (_appSettings?.StatusBarRememberPosition ?? false)
+                if (_appSettings?.StatusBar.RememberPosition ?? false)
                 {
-                    _appSettings.StatusBarPositionX = _statusBarWindow.Left;
-                    _appSettings.StatusBarPositionY = _statusBarWindow.Top;
+                    _appSettings.StatusBar.PositionX = _statusBarWindow.Left;
+                    _appSettings.StatusBar.PositionY = _statusBarWindow.Top;
                     SaveSettings();
                 }
             };
 
             // 初始化副手槽配置
             StatusBarService.Instance.SetOffhandConfig(
-                _appSettings?.HotbarLeftOffhand ?? false,
-                _appSettings?.HotbarRightOffhand ?? false);
+                _appSettings?.Hotbar.LeftOffhand ?? false,
+                _appSettings?.Hotbar.RightOffhand ?? false);
 
             // 初始化快捷栏可见性
-            StatusBarService.Instance.SetHotbarVisible(_appSettings?.HotbarVisible ?? true);
+            StatusBarService.Instance.SetHotbarVisible(_appSettings?.Hotbar.Visible ?? true);
 
             // 初始化HUD元素可见性
             InitializeHudElementsVisibility();
@@ -90,12 +90,12 @@ namespace CraftSharp
             // 状态栏位置定位：在窗口 Loaded 后定位（此时尺寸已计算好）
             _statusBarWindow.Loaded += (s, e) =>
             {
-                if (_appSettings?.StatusBarRememberPosition ?? false)
+                if (_appSettings?.StatusBar.RememberPosition ?? false)
                 {
                     // 记住位置开启 → 使用保存的位置
                     StatusBarService.Instance.RestorePosition(
-                        _appSettings.StatusBarPositionX,
-                        _appSettings.StatusBarPositionY);
+                        _appSettings.StatusBar.PositionX,
+                        _appSettings.StatusBar.PositionY);
                 }
                 else
                 {
@@ -105,7 +105,7 @@ namespace CraftSharp
             };
 
             // 根据设置决定是否显示状态栏
-            if (_appSettings?.StatusBarVisible ?? true)
+            if (_appSettings?.StatusBar.Visible ?? true)
                 _statusBarWindow.Show();
             else
                 _statusBarWindow.Hide();
@@ -322,7 +322,7 @@ namespace CraftSharp
 
             // 初始化图标服务（动态加载图标）
             IconService.Instance.InitializeForTaskbarIcon(
-                _appSettings?.AppIconPath ?? "minecraft/textures/block/block/glass.png",
+                _appSettings?.Appearance.AppIconPath ?? "minecraft/textures/block/block/glass.png",
                 _taskbarIcon,
                 _settingsWindow);
         }
@@ -466,7 +466,7 @@ namespace CraftSharp
         private void GlobalKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             // E键 - 切换背包显示（仅当显示物品栏开启时）
-            if (e.Key == Key.E && (_appSettings?.InventoryWindowVisible ?? true))
+            if (e.Key == Key.E && (_appSettings?.Inventory.Visible ?? true))
             {
                 _inventoryWindow?.Toggle();
                 e.Handled = true;
@@ -476,10 +476,10 @@ namespace CraftSharp
         protected override void OnExit(ExitEventArgs e)
         {
             // 如果启用了记住位置，保存状态栏位置
-            if (_appSettings?.StatusBarRememberPosition ?? false)
+            if (_appSettings?.StatusBar.RememberPosition ?? false)
             {
-                _appSettings.StatusBarPositionX = _statusBarWindow?.Left ?? 0;
-                _appSettings.StatusBarPositionY = _statusBarWindow?.Top ?? 0;
+                _appSettings.StatusBar.PositionX = _statusBarWindow?.Left ?? 0;
+                _appSettings.StatusBar.PositionY = _statusBarWindow?.Top ?? 0;
             }
 
             // 退出时始终保存所有设置到文件

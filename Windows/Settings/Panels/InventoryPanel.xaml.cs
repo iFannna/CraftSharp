@@ -141,7 +141,7 @@ namespace CraftSharp.Windows.Settings.Panels
                     // 开关开启：保存当前状态到配置
                     if (_settings != null)
                     {
-                        _settings.CardExpandedStates[key] = card.IsExpanded;
+                        _settings.System.CardExpandedStates[key] = card.IsExpanded;
                     }
                 }
                 else

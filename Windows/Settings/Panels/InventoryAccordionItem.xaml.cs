@@ -47,12 +47,12 @@ namespace CraftSharp.Windows.Settings.Panels
             TitleText.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, titleResourceKey);
 
             // 读取保存的展开状态（如果启用了记住卡片状态）
-            if (_settings != null && _settings.RememberCardStates)
+            if (_settings != null && _settings.System.RememberCardStates)
             {
                 // InventoryTitle 默认展开，其他默认折叠
                 bool defaultExpanded = titleResourceKey == "InventoryTitle";
 
-                if (_settings.CardExpandedStates.TryGetValue(titleResourceKey, out bool savedExpanded))
+                if (_settings.System.CardExpandedStates.TryGetValue(titleResourceKey, out bool savedExpanded))
                 {
                     _isExpanded = savedExpanded;
                 }
@@ -94,14 +94,14 @@ namespace CraftSharp.Windows.Settings.Panels
             if (titleResourceKey == "InventoryTitle" && _settings != null)
             {
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
-                AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.InventoryWindowVisible, v => _settings.InventoryWindowVisible = v);
-                AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.InventoryWindowLocked, v => _settings.InventoryWindowLocked = v);
-                AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.InventoryWindowRememberPosition, v => _settings.InventoryWindowRememberPosition = v);
+                AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.Inventory.Visible, v => _settings.Inventory.Visible = v);
+                AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => _settings.Inventory.Locked = v);
+                AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => _settings.Inventory.RememberPosition = v);
                 // 灰色蒙版开关 + 透明度输入框
-                var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.InventoryWindowGrayOverlay, v => _settings.InventoryWindowGrayOverlay = v);
+                var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.Inventory.GrayOverlay, v => _settings.Inventory.GrayOverlay = v);
                 AddGrayOverlayOpacitySection(grayOverlayToggle);
                 // 隐藏状态栏开关
-                AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.InventoryWindowHideStatusBar, v => _settings.InventoryWindowHideStatusBar = v);
+                AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.Inventory.HideStatusBar, v => _settings.Inventory.HideStatusBar = v);
             }
         }
 
@@ -160,7 +160,7 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 Orientation = System.Windows.Controls.Orientation.Vertical,
                 Margin = new Thickness(0, 0, 0, 12),
-                Visibility = _settings!.InventoryWindowGrayOverlay ? Visibility.Visible : Visibility.Collapsed
+                Visibility = _settings!.Inventory.GrayOverlay ? Visibility.Visible : Visibility.Collapsed
             };
 
             // 创建输入行 Grid
@@ -187,7 +187,7 @@ namespace CraftSharp.Windows.Settings.Panels
 
             var opacityTextBox = new System.Windows.Controls.TextBox
             {
-                Text = _settings!.InventoryWindowGrayOverlayOpacity.ToString(),
+                Text = _settings!.Inventory.GrayOverlayOpacity.ToString(),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center
@@ -235,7 +235,7 @@ namespace CraftSharp.Windows.Settings.Panels
                     val = 50; // 默认值
                 if (val < 0) val = 0;
                 if (val > 100) val = 100;
-                _settings!.InventoryWindowGrayOverlayOpacity = val;
+                _settings!.Inventory.GrayOverlayOpacity = val;
                 opacityTextBox.Text = val.ToString();
                 SaveSettings();
                 // 下次打开物品栏时会自动应用新透明度
@@ -318,9 +318,9 @@ namespace CraftSharp.Windows.Settings.Panels
             ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
 
             // 如果启用了记住卡片状态，保存到配置
-            if (_settings != null && _settings.RememberCardStates)
+            if (_settings != null && _settings.System.RememberCardStates)
             {
-                _settings.CardExpandedStates[_titleResourceKey] = _isExpanded;
+                _settings.System.CardExpandedStates[_titleResourceKey] = _isExpanded;
                 SaveSettings();
             }
 
