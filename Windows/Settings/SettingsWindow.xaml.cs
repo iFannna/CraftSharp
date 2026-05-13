@@ -49,8 +49,9 @@ namespace CraftSharp.Windows.Settings
             // 根据设置恢复窗口位置和大小
             if (_settings.SettingsWindowRememberPosition)
             {
-                // 只有当位置值有效（不为 0,0）时才恢复位置
-                if (_settings.SettingsWindowPositionX != 0 || _settings.SettingsWindowPositionY != 0)
+                // 只有当位置值有效时才恢复位置
+                // Windows 有时会在窗口最小化/隐藏时保存无效坐标（如 -25600）
+                if (IsValidScreenPosition(_settings.SettingsWindowPositionX, _settings.SettingsWindowPositionY))
                 {
                     WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
                     Left = _settings.SettingsWindowPositionX;
@@ -113,6 +114,28 @@ namespace CraftSharp.Windows.Settings
             {
                 app.SaveSettings();
             }
+        }
+
+        /// <summary>
+        /// 检查窗口位置是否在有效的屏幕范围内
+        /// Windows 有时会在窗口最小化/隐藏时保存无效坐标（如 -25600）
+        /// 多显示器环境下坐标可以为负值，所以只检查是否超出虚拟屏幕范围
+        /// </summary>
+        private static bool IsValidScreenPosition(double x, double y)
+        {
+            // 检查是否在虚拟屏幕范围内
+            // 多显示器环境下 VirtualScreenLeft/Top 可能为负值
+            double virtualScreenWidth = System.Windows.SystemParameters.VirtualScreenWidth;
+            double virtualScreenHeight = System.Windows.SystemParameters.VirtualScreenHeight;
+            double virtualScreenLeft = System.Windows.SystemParameters.VirtualScreenLeft;
+            double virtualScreenTop = System.Windows.SystemParameters.VirtualScreenTop;
+
+            // 允许一定的容差，因为窗口可能部分超出屏幕边缘
+            double tolerance = 100;
+            return x >= virtualScreenLeft - tolerance &&
+                   x <= virtualScreenLeft + virtualScreenWidth + tolerance &&
+                   y >= virtualScreenTop - tolerance &&
+                   y <= virtualScreenTop + virtualScreenHeight + tolerance;
         }
 
         private void NavListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

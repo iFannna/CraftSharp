@@ -32,7 +32,7 @@ namespace CraftSharp.Helpers
         }
 
         // 背包
-        public const string Inventory = "Assets/minecraft/textures/gui/sprites/inventory/inventory.png";
+        public const string Inventory = "Assets/minecraft/textures/gui/container/inventory.png";
 
         // 生命值（默认图标）
         public const string HeartFull = "Assets/minecraft/textures/gui/sprites/heart/full.png";
