@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using CraftSharp.Services;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
+using CraftSharp.Windows.Dialogs;
 using Newtonsoft.Json;
 
 namespace CraftSharp.Windows.Inventory
@@ -538,11 +539,112 @@ namespace CraftSharp.Windows.Inventory
                 var slotId = GetSlotIdAtPosition(mousePos);
                 if (slotId != null)
                 {
-                    var item = _slotService.GetSlot(slotId);
-                    if (!item.IsEmpty)
+                    HandleSlotClick(slotId);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 尝试打开文件/程序（不自动标记丢失，参考快捷栏 TryExecuteFile）
+        /// </summary>
+        private bool TryExecuteFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return false;
+
+            try
+            {
+                if (File.Exists(filePath) || Directory.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo
                     {
-                        OpenFile(item.FilePath);
+                        FileName = filePath,
+                        UseShellExecute = true
+                    });
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 处理格子点击（参考快捷栏 HandleSlotClick）
+        /// </summary>
+        private void HandleSlotClick(string slotId)
+        {
+            var item = _slotService.GetSlot(slotId);
+            if (item.IsEmpty) return;
+
+            bool isMissing = _fileValidator?.IsMissing(item.FilePath) ?? false;
+
+            bool success = TryExecuteFile(item.FilePath);
+            if (success)
+            {
+                // 执行成功，取消丢失标记
+                if (isMissing)
+                {
+                    _fileValidator?.UnmarkMissing(item.FilePath);
+                }
+            }
+            else
+            {
+                // 执行失败，弹窗确认
+                HandleMissingFileSlot(slotId, item.FilePath, isMissing);
+            }
+        }
+
+        /// <summary>
+        /// 处理文件丢失的格子点击（参考快捷栏 HandleMissingFileSlot）
+        /// </summary>
+        private void HandleMissingFileSlot(string slotId, string filePath, bool isMissing)
+        {
+            var confirmWindow = new SlotMissingConfirmWindow();
+            confirmWindow.Owner = Window.GetWindow(this);
+            confirmWindow.SetFilePath(filePath);
+            confirmWindow.ShowDialog();
+
+            if (confirmWindow.IsConfirmed)
+            {
+                // 用户确认移除，清除格子数据
+                _slotService.ClearSlot(slotId);
+
+                // 检查是否有其他格子使用相同路径
+                bool hasOtherSlots = false;
+                foreach (var otherSlotId in _slotBorders.Keys)
+                {
+                    if (otherSlotId == slotId) continue;
+                    var otherItem = _slotService.GetSlot(otherSlotId);
+                    if (!otherItem.IsEmpty && otherItem.FilePath == filePath)
+                    {
+                        hasOtherSlots = true;
+                        break;
                     }
+                }
+
+                // 如果没有其他格子使用此路径，取消丢失标记
+                if (!hasOtherSlots)
+                {
+                    _fileValidator?.UnmarkMissing(filePath);
+                }
+
+                // 清除格子图标
+                ClearSlotIcon(slotId);
+
+                // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
+                if (slotId.StartsWith("hotbar_"))
+                {
+                    StatusBarService.Instance.RefreshHotbarIcons();
+                }
+            }
+            else
+            {
+                // 用户取消，如果尚未标记为丢失则标记
+                if (!isMissing)
+                {
+                    _fileValidator?.MarkMissing(filePath);
                 }
             }
         }
@@ -617,35 +719,6 @@ namespace CraftSharp.Windows.Inventory
         }
 
         // ==================== 显示/隐藏 ====================
-
-        /// <summary>
-        /// 打开文件/程序
-        /// 返回是否成功打开
-        /// 后续检验通过执行结果来判断，不预先检查文件是否存在
-        /// </summary>
-        private bool OpenFile(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath)) return false;
-
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = filePath,
-                    UseShellExecute = true
-                });
-
-                // 执行成功，取消丢失标记
-                _fileValidator?.UnmarkMissing(filePath);
-                return true;
-            }
-            catch (Exception)
-            {
-                // 执行失败，标记为丢失
-                _fileValidator?.MarkMissing(filePath);
-                return false;
-            }
-        }
 
         /// <summary>
         /// 切换显示/隐藏
