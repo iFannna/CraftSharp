@@ -17,7 +17,7 @@ namespace CraftSharp.Windows.Inventory
 {
     public partial class InventoryWindow : Window
     {
-        private readonly SlotDataService _slotService;
+        private readonly SlotDataService _slotService = SlotDataService.Instance;
         private readonly AppSettings? _settings;
 
         private double _scaleFactor;
@@ -97,7 +97,7 @@ namespace CraftSharp.Windows.Inventory
                 _nativeDropTarget = null;
             };
 
-            _slotService = new SlotDataService();
+            // 使用 SlotDataService 单例（已在字段声明中初始化）
 
             // 初始化缩放服务
             ScaleService.Instance.Initialize();
@@ -492,6 +492,11 @@ namespace CraftSharp.Windows.Inventory
                 if (!item.IsEmpty)
                 {
                     SetSlotIcon(slotId, item.FilePath);
+                }
+                else
+                {
+                    // 格子为空时清除图标
+                    ClearSlotIcon(slotId);
                 }
             }
         }

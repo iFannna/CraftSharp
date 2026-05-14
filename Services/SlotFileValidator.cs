@@ -173,11 +173,20 @@ namespace CraftSharp.Services
             var slotsToRemove = GetSlotsByPath(settings, filePath);
             foreach (var slotId in slotsToRemove)
             {
+                // 从 AppSettings.Slots 清除
                 settings.Slots.Remove(slotId);
+                // 从 SlotDataService 缓存清除
+                SlotDataService.Instance.ClearSlot(slotId);
             }
 
             // 清除丢失标记
             UnmarkMissing(filePath);
+
+            // 保存配置到文件
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
         }
     }
 }

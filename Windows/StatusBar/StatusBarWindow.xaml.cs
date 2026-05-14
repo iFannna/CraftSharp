@@ -108,8 +108,7 @@ namespace CraftSharp.Windows.StatusBar
             // 监听窗口失焦事件（清除快捷栏格子选中状态）
             Deactivated += OnWindowDeactivated;
 
-            // 初始化槽位数据服务
-            _slotService = new Services.SlotDataService();
+            // 使用 SlotDataService 单例（已在 Hotbar.cs 字段声明中初始化）
 
             // 初始化数据映射服务
             DataMappingService.Instance.Initialize();

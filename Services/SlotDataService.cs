@@ -5,13 +5,16 @@ using CraftSharp.Models;
 namespace CraftSharp.Services
 {
     /// <summary>
-    /// 格子数据存储服务 - 数据存储在 settings.json 中
+    /// 格子数据存储服务 - App 级单例，数据存储在 settings.json 中
     /// </summary>
     public class SlotDataService
     {
+        private static SlotDataService? _instance;
+        public static SlotDataService Instance => _instance ??= new SlotDataService();
+
         private readonly Dictionary<string, SlotItem> _slots = new();
 
-        public SlotDataService()
+        private SlotDataService()
         {
             LoadData();
         }
@@ -48,6 +51,15 @@ namespace CraftSharp.Services
         public Dictionary<string, SlotItem> GetAllSlots()
         {
             return new Dictionary<string, SlotItem>(_slots);
+        }
+
+        /// <summary>
+        /// 从 AppSettings 重新加载数据（用于外部修改后同步）
+        /// </summary>
+        public void Reload()
+        {
+            _slots.Clear();
+            LoadData();
         }
 
         /// <summary>

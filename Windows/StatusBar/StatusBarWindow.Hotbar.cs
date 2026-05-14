@@ -24,7 +24,7 @@ namespace CraftSharp.Windows.StatusBar
     /// </summary>
     public partial class StatusBarWindow
     {
-        private readonly SlotDataService _slotService;
+        private readonly SlotDataService _slotService = SlotDataService.Instance;
         private readonly string[] _slotIds = { "hotbar_left_offhand", "hotbar_right_offhand", "hotbar_0", "hotbar_1", "hotbar_2", "hotbar_3", "hotbar_4", "hotbar_5", "hotbar_6", "hotbar_7", "hotbar_8" };
 
         // ===== 服务实例 =====
@@ -732,6 +732,11 @@ namespace CraftSharp.Windows.StatusBar
                     SetSlotIconFromPath(name, item.FilePath);
                 }
             }
+            else
+            {
+                // 格子为空时清除图标
+                ClearSlotIconUI(slotIndex);
+            }
         }
 
         /// <summary>
@@ -750,6 +755,11 @@ namespace CraftSharp.Windows.StatusBar
                 {
                     SetSlotIconFromPath(slotIndex - 2, item.FilePath);
                 }
+            }
+            else
+            {
+                // 格子为空时清除图标
+                ClearSlotIconUI(slotIndex);
             }
         }
 
