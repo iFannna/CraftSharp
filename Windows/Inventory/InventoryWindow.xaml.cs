@@ -482,10 +482,22 @@ namespace CraftSharp.Windows.Inventory
             {
                 _dragService.EndDrag();
             }
-            else
+            else if (_dragService != null && _dragService.IsTimerRunning)
             {
-                // 非拖动，取消长按检测
-                _dragService?.CancelLongPress();
+                // 长按定时器还在运行，取消长按检测
+                _dragService.CancelLongPress();
+
+                // 执行点击打开
+                var mousePos = e.GetPosition(SlotCanvas);
+                var slotId = GetSlotIdAtPosition(mousePos);
+                if (slotId != null)
+                {
+                    var item = _slotService.GetSlot(slotId);
+                    if (!item.IsEmpty)
+                    {
+                        OpenFile(item.FilePath);
+                    }
+                }
             }
         }
 

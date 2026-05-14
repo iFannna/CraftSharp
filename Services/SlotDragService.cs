@@ -270,8 +270,8 @@ namespace CraftSharp.Services
         /// </summary>
         private void SwapSlots(int sourceIndex, int targetIndex)
         {
-            var sourceSlotId = GetSlotId(sourceIndex);
-            var targetSlotId = GetSlotId(targetIndex);
+            var sourceSlotId = GetMappedSlotId(sourceIndex);
+            var targetSlotId = GetMappedSlotId(targetIndex);
 
             var sourceItem = _slotDataService.GetSlot(sourceSlotId);
             var targetItem = _slotDataService.GetSlot(targetSlotId);
