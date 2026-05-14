@@ -1,0 +1,324 @@
+[
+  {
+    "x": 26,
+    "y": 17,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_0"
+  },
+  {
+    "x": 44,
+    "y": 17,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_1"
+  },
+  {
+    "x": 62,
+    "y": 17,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_2"
+  },
+  {
+    "x": 26,
+    "y": 35,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_3"
+  },
+  {
+    "x": 44,
+    "y": 35,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_4"
+  },
+  {
+    "x": 62,
+    "y": 35,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_5"
+  },
+  {
+    "x": 26,
+    "y": 53,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_6"
+  },
+  {
+    "x": 44,
+    "y": 53,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_7"
+  },
+  {
+    "x": 62,
+    "y": 53,
+    "width": 16,
+    "height": 16,
+    "slot_id": "craft_8"
+  },
+  {
+    "x": 8,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_0"
+  },
+  {
+    "x": 26,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_1"
+  },
+  {
+    "x": 44,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_2"
+  },
+  {
+    "x": 62,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_3"
+  },
+  {
+    "x": 80,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_4"
+  },
+  {
+    "x": 98,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_5"
+  },
+  {
+    "x": 116,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_6"
+  },
+  {
+    "x": 134,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_7"
+  },
+  {
+    "x": 152,
+    "y": 84,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_8"
+  },
+  {
+    "x": 8,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_9"
+  },
+  {
+    "x": 26,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_10"
+  },
+  {
+    "x": 44,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_11"
+  },
+  {
+    "x": 62,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_12"
+  },
+  {
+    "x": 80,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_13"
+  },
+  {
+    "x": 98,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_14"
+  },
+  {
+    "x": 116,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_15"
+  },
+  {
+    "x": 134,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_16"
+  },
+  {
+    "x": 152,
+    "y": 102,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_17"
+  },
+  {
+    "x": 8,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_18"
+  },
+  {
+    "x": 26,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_19"
+  },
+  {
+    "x": 44,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_20"
+  },
+  {
+    "x": 62,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_21"
+  },
+  {
+    "x": 80,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_22"
+  },
+  {
+    "x": 98,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_23"
+  },
+  {
+    "x": 116,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_24"
+  },
+  {
+    "x": 134,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_25"
+  },
+  {
+    "x": 152,
+    "y": 120,
+    "width": 16,
+    "height": 16,
+    "slot_id": "inventory_26"
+  },
+  {
+    "x": 8,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_0"
+  },
+  {
+    "x": 26,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_1"
+  },
+  {
+    "x": 44,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_2"
+  },
+  {
+    "x": 62,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_3"
+  },
+  {
+    "x": 80,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_4"
+  },
+  {
+    "x": 98,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_5"
+  },
+  {
+    "x": 116,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_6"
+  },
+  {
+    "x": 134,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_7"
+  },
+  {
+    "x": 152,
+    "y": 142,
+    "width": 16,
+    "height": 16,
+    "slot_id": "hotbar_8"
+  },
+  {
+    "x": 130,
+    "y": 31,
+    "width": 24,
+    "height": 24,
+    "slot_id": "craft_result"
+  }
+]

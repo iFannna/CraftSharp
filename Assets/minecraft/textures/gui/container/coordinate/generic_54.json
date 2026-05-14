@@ -1,0 +1,632 @@
+[
+  {
+    "slot_id": "box_0",
+    "x": 8,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_1",
+    "x": 26,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_2",
+    "x": 44,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_3",
+    "x": 62,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_4",
+    "x": 80,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_5",
+    "x": 98,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_6",
+    "x": 116,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_7",
+    "x": 134,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_8",
+    "x": 152,
+    "y": 11,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_9",
+    "x": 8,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_10",
+    "x": 26,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_11",
+    "x": 44,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_12",
+    "x": 62,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_13",
+    "x": 80,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_14",
+    "x": 98,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_15",
+    "x": 116,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_16",
+    "x": 134,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_17",
+    "x": 152,
+    "y": 29,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_18",
+    "x": 8,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_19",
+    "x": 26,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_20",
+    "x": 44,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_21",
+    "x": 62,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_22",
+    "x": 80,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_23",
+    "x": 98,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_24",
+    "x": 116,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_25",
+    "x": 134,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_26",
+    "x": 152,
+    "y": 47,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_27",
+    "x": 8,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_28",
+    "x": 26,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_29",
+    "x": 44,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_30",
+    "x": 62,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_31",
+    "x": 80,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_32",
+    "x": 98,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_33",
+    "x": 116,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_34",
+    "x": 134,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_35",
+    "x": 152,
+    "y": 65,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_36",
+    "x": 8,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_37",
+    "x": 26,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_38",
+    "x": 44,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_39",
+    "x": 62,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_40",
+    "x": 80,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_41",
+    "x": 98,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_42",
+    "x": 116,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_43",
+    "x": 134,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_44",
+    "x": 152,
+    "y": 83,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_45",
+    "x": 8,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_46",
+    "x": 26,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_47",
+    "x": 44,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_48",
+    "x": 62,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_49",
+    "x": 80,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_50",
+    "x": 98,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_51",
+    "x": 116,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_52",
+    "x": 134,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "box_53",
+    "x": 152,
+    "y": 101,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_0",
+    "x": 8,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_1",
+    "x": 26,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_2",
+    "x": 44,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_3",
+    "x": 62,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_4",
+    "x": 80,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_5",
+    "x": 98,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_6",
+    "x": 116,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_7",
+    "x": 134,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_8",
+    "x": 152,
+    "y": 133,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_9",
+    "x": 8,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_10",
+    "x": 26,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_11",
+    "x": 44,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_12",
+    "x": 62,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_13",
+    "x": 80,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_14",
+    "x": 98,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_15",
+    "x": 116,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_16",
+    "x": 134,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_17",
+    "x": 152,
+    "y": 151,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_18",
+    "x": 8,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_19",
+    "x": 26,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_20",
+    "x": 44,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_21",
+    "x": 62,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_22",
+    "x": 80,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_23",
+    "x": 98,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_24",
+    "x": 116,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_25",
+    "x": 134,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_26",
+    "x": 152,
+    "y": 169,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_0",
+    "x": 8,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_1",
+    "x": 26,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_2",
+    "x": 44,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_3",
+    "x": 62,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_4",
+    "x": 80,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_5",
+    "x": 98,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_6",
+    "x": 116,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_7",
+    "x": 134,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_8",
+    "x": 152,
+    "y": 191,
+    "width": 16,
+    "height": 16
+  }
+]

@@ -1,0 +1,289 @@
+[
+  {
+    "slot_id": "hopper_item_0",
+    "x": 44,
+    "y": 20,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hopper_item_1",
+    "x": 62,
+    "y": 20,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hopper_item_2",
+    "x": 80,
+    "y": 20,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hopper_item_3",
+    "x": 98,
+    "y": 20,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hopper_item_4",
+    "x": 116,
+    "y": 20,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_0",
+    "x": 8,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_1",
+    "x": 26,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_2",
+    "x": 44,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_3",
+    "x": 62,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_4",
+    "x": 80,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_5",
+    "x": 98,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_6",
+    "x": 116,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_7",
+    "x": 134,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_8",
+    "x": 152,
+    "y": 51,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_9",
+    "x": 8,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_10",
+    "x": 26,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_11",
+    "x": 44,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_12",
+    "x": 62,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_13",
+    "x": 80,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_14",
+    "x": 98,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_15",
+    "x": 116,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_16",
+    "x": 134,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_17",
+    "x": 152,
+    "y": 69,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_18",
+    "x": 8,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_19",
+    "x": 26,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_20",
+    "x": 44,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_21",
+    "x": 62,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_22",
+    "x": 80,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_23",
+    "x": 98,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_24",
+    "x": 116,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_25",
+    "x": 134,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "inventory_26",
+    "x": 152,
+    "y": 87,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_0",
+    "x": 8,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_1",
+    "x": 26,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_2",
+    "x": 44,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_3",
+    "x": 62,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_4",
+    "x": 80,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_5",
+    "x": 98,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_6",
+    "x": 116,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_7",
+    "x": 134,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  },
+  {
+    "slot_id": "hotbar_8",
+    "x": 152,
+    "y": 109,
+    "width": 16,
+    "height": 16
+  }
+]
