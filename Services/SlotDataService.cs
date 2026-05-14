@@ -46,6 +46,102 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
+        /// 获取格子项（根据 SharedData 配置决定数据来源）
+        /// </summary>
+        /// <param name="slotId">格子ID</param>
+        /// <param name="stylePath">当前样式文件名（如 inventory.png）</param>
+        /// <param name="sharedData">是否共享数据</param>
+        public SlotItem GetSlot(string slotId, string stylePath, bool sharedData)
+        {
+            if (sharedData)
+            {
+                // 共享数据：使用原有的 _slots
+                return _slots.TryGetValue(slotId, out var item) ? item : new SlotItem();
+            }
+            else
+            {
+                // 独立数据：使用 StyleSlots
+                if (!string.IsNullOrEmpty(stylePath))
+                {
+                    var styleSlots = GetStyleSlots(stylePath);
+                    return styleSlots.TryGetValue(slotId, out var item) ? item : new SlotItem();
+                }
+                return new SlotItem();
+            }
+        }
+
+        /// <summary>
+        /// 设置格子项（根据 SharedData 配置决定数据存储位置）
+        /// </summary>
+        public void SetSlot(string slotId, SlotItem item, string stylePath, bool sharedData)
+        {
+            if (sharedData)
+            {
+                // 共享数据：存储到 _slots
+                _slots[slotId] = item;
+                SaveData();
+            }
+            else
+            {
+                // 独立数据：存储到 StyleSlots
+                if (!string.IsNullOrEmpty(stylePath))
+                {
+                    var styleSlots = GetStyleSlots(stylePath);
+                    styleSlots[slotId] = item;
+                    SaveStyleSlotsData();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 清空格子（根据 SharedData 配置）
+        /// </summary>
+        public void ClearSlot(string slotId, string stylePath, bool sharedData)
+        {
+            if (sharedData)
+            {
+                _slots.Remove(slotId);
+                SaveData();
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(stylePath))
+                {
+                    var styleSlots = GetStyleSlots(stylePath);
+                    styleSlots.Remove(slotId);
+                    SaveStyleSlotsData();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取指定样式的格子数据字典（如果不存在则创建）
+        /// </summary>
+        private Dictionary<string, SlotItem> GetStyleSlots(string stylePath)
+        {
+            var appSettings = GetAppSettings();
+            if (appSettings?.StyleSlots == null) return new Dictionary<string, SlotItem>();
+
+            if (!appSettings.StyleSlots.TryGetValue(stylePath, out var slots))
+            {
+                slots = new Dictionary<string, SlotItem>();
+                appSettings.StyleSlots[stylePath] = slots;
+            }
+            return slots;
+        }
+
+        /// <summary>
+        /// 保存 StyleSlots 数据到 settings.json
+        /// </summary>
+        private void SaveStyleSlotsData()
+        {
+            if (App.Current is App app)
+            {
+                app.SaveSettings();
+            }
+        }
+
+        /// <summary>
         /// 获取所有格子数据
         /// </summary>
         public Dictionary<string, SlotItem> GetAllSlots()

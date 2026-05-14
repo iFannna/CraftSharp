@@ -1,5 +1,6 @@
 using CraftSharp.Models;
 using CraftSharp.Windows.Dialogs;
+using CraftSharp.Services;
 using System;
 using System.IO;
 using System.Windows;
@@ -101,6 +102,11 @@ namespace CraftSharp.Windows.Settings.Panels
                 AddClickModeComboBox();
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
                 AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.Inventory.Visible, v => _settings.Inventory.Visible = v);
+                AddToggleRow("InventoryOptionSharedData", "InventoryOptionSharedDataDesc", _settings.Inventory.SharedData, v => {
+                    _settings.Inventory.SharedData = v;
+                    // 切换共享数据开关后刷新物品栏和快捷栏图标
+                    RefreshInventoryAndHotbarIcons();
+                });
                 AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => _settings.Inventory.Locked = v);
                 AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => _settings.Inventory.RememberPosition = v);
                 // 灰色蒙版开关 + 透明度输入框
@@ -108,6 +114,24 @@ namespace CraftSharp.Windows.Settings.Panels
                 AddGrayOverlayOpacitySection(grayOverlayToggle);
                 // 隐藏状态栏开关
                 AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.Inventory.HideStatusBar, v => _settings.Inventory.HideStatusBar = v);
+            }
+        }
+
+        /// <summary>
+        /// 切换共享数据开关后刷新物品栏和快捷栏图标
+        /// </summary>
+        private void RefreshInventoryAndHotbarIcons()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                // 刷新物品栏图标
+                var inventoryWindow = app.GetInventoryWindow();
+                if (inventoryWindow != null)
+                {
+                    inventoryWindow.RefreshIcons();
+                }
+                // 刷新快捷栏图标（hotbar 格子也受 SharedData 配置影响）
+                StatusBarService.Instance.RefreshHotbarIcons();
             }
         }
 

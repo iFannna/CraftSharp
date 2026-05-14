@@ -259,5 +259,6 @@
     <sys:String x:Key="InventoryStyleNautilus">鹦鹉螺</sys:String>
     <sys:String x:Key="InventoryStyleShulkerBox">潜影盒</sys:String>
     <sys:String x:Key="InventoryStyleSmithing">锻造台</sys:String>
-
+    <sys:String x:Key="InventoryOptionSharedData">共享数据</sys:String>
+    <sys:String x:Key="InventoryOptionSharedDataDesc">开启后所有样式共用格子数据，关闭后每个样式独立存储</sys:String>
 </ResourceDictionary>

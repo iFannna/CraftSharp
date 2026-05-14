@@ -21,6 +21,9 @@ namespace CraftSharp.Windows.StatusBar
     /// 1. 副手槽间距42px基准
     /// 2. 全局垂直间距6px基准
     /// 3. 使用Grid布局，不使用Canvas定位
+    ///
+    /// 数据规则：
+    /// 快捷栏格子始终使用共享数据，不受 InventorySettings.SharedData 影响
     /// </summary>
     public partial class StatusBarWindow
     {
@@ -86,6 +89,9 @@ namespace CraftSharp.Windows.StatusBar
                     return _slotIds[index];
                 return $"slot_{index}";
             };
+
+            // 快捷栏始终使用共享数据（不受 SharedData 开关影响）
+            _dragService.SharedData = true;
 
             // 订阅服务事件
             SubscribeServiceEvents();
@@ -1306,6 +1312,7 @@ namespace CraftSharp.Windows.StatusBar
 
         /// <summary>
         /// 刷新快捷栏图标
+        /// 快捷栏始终使用共享数据，不受 SharedData 开关影响
         /// </summary>
         public void RefreshHotbarIcons()
         {

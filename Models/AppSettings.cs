@@ -63,6 +63,12 @@ namespace CraftSharp.Models
         public Dictionary<string, SlotItem> Slots { get; set; } = new Dictionary<string, SlotItem>();
 
         /// <summary>
+        /// 样式独立格子数据（key: 样式文件名如 "inventory.png", value: 格子数据字典）
+        /// 用于 SharedData=false 时每个样式独立存储格子数据
+        /// </summary>
+        public Dictionary<string, Dictionary<string, SlotItem>> StyleSlots { get; set; } = new Dictionary<string, Dictionary<string, SlotItem>>();
+
+        /// <summary>
         /// 应用版本
         /// </summary>
         public string Version { get; set; } = "1.0.0";
@@ -209,6 +215,11 @@ namespace CraftSharp.Models
         /// 物品栏样式路径（默认 inventory.png）
         /// </summary>
         public string StylePath { get; set; } = "inventory.png";
+
+        /// <summary>
+        /// 共享数据开关（开启时所有样式共用格子数据，关闭时每个样式独立存储）
+        /// </summary>
+        public bool SharedData { get; set; } = true;
     }
 
     /// <summary>

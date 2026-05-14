@@ -208,22 +208,6 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 启动拖动
-        /// </summary>
-        private void StartDrag()
-        {
-            _isDragReady = false;
-            _dragSourceSlotIndex = _longPressSlotIndex;
-            _isDragging = true;
-
-            // 获取源格子内容
-            var sourceItem = _slotDataService.GetSlot(GetSlotId(_dragSourceSlotIndex));
-
-            // 触发拖动开始事件
-            DragStarted?.Invoke(this, new DragStartedEventArgs(_dragSourceSlotIndex, sourceItem));
-        }
-
-        /// <summary>
         /// 更新拖动过程中的目标格子hover
         /// </summary>
         public void UpdateDragTarget(int targetSlotIndex)
@@ -266,25 +250,6 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 交换两个格子内容
-        /// </summary>
-        private void SwapSlots(int sourceIndex, int targetIndex)
-        {
-            var sourceSlotId = GetMappedSlotId(sourceIndex);
-            var targetSlotId = GetMappedSlotId(targetIndex);
-
-            var sourceItem = _slotDataService.GetSlot(sourceSlotId);
-            var targetItem = _slotDataService.GetSlot(targetSlotId);
-
-            // 交换数据存储
-            _slotDataService.SetSlot(sourceSlotId, targetItem);
-            _slotDataService.SetSlot(targetSlotId, sourceItem);
-
-            // 触发交换完成事件
-            SwapCompleted?.Invoke(this, new SwapCompletedEventArgs(sourceIndex, targetIndex, sourceItem, targetItem));
-        }
-
-        /// <summary>
         /// 是否处于长按等待状态（定时器触发后等待移动阈值）
         /// </summary>
         public bool IsDragReady => _isDragReady;
@@ -315,6 +280,16 @@ namespace CraftSharp.Services
         public Func<int, string>? SlotIdMapper { get; set; }
 
         /// <summary>
+        /// 当前物品栏样式（用于独立数据模式）
+        /// </summary>
+        public string? CurrentStyle { get; set; }
+
+        /// <summary>
+        /// 是否共享数据（true=共享数据，false=独立数据）
+        /// </summary>
+        public bool SharedData { get; set; } = true;
+
+        /// <summary>
         /// 使用映射函数获取格子ID
         /// </summary>
         public string GetMappedSlotId(int index)
@@ -324,6 +299,41 @@ namespace CraftSharp.Services
                 return SlotIdMapper(index);
             }
             return GetSlotId(index);
+        }
+
+        /// <summary>
+        /// 启动拖动
+        /// </summary>
+        private void StartDrag()
+        {
+            _isDragReady = false;
+            _dragSourceSlotIndex = _longPressSlotIndex;
+            _isDragging = true;
+
+            // 获取源格子内容（根据 SharedData 配置）
+            var sourceItem = _slotDataService.GetSlot(GetSlotId(_dragSourceSlotIndex), CurrentStyle ?? "inventory.png", SharedData);
+
+            // 触发拖动开始事件
+            DragStarted?.Invoke(this, new DragStartedEventArgs(_dragSourceSlotIndex, sourceItem));
+        }
+
+        /// <summary>
+        /// 交换两个格子内容
+        /// </summary>
+        private void SwapSlots(int sourceIndex, int targetIndex)
+        {
+            var sourceSlotId = GetMappedSlotId(sourceIndex);
+            var targetSlotId = GetMappedSlotId(targetIndex);
+
+            var sourceItem = _slotDataService.GetSlot(sourceSlotId, CurrentStyle ?? "inventory.png", SharedData);
+            var targetItem = _slotDataService.GetSlot(targetSlotId, CurrentStyle ?? "inventory.png", SharedData);
+
+            // 交换数据存储（根据 SharedData 配置）
+            _slotDataService.SetSlot(sourceSlotId, targetItem, CurrentStyle ?? "inventory.png", SharedData);
+            _slotDataService.SetSlot(targetSlotId, sourceItem, CurrentStyle ?? "inventory.png", SharedData);
+
+            // 触发交换完成事件
+            SwapCompleted?.Invoke(this, new SwapCompletedEventArgs(sourceIndex, targetIndex, sourceItem, targetItem));
         }
     }
 }

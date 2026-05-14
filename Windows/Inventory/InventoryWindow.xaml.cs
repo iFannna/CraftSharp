@@ -27,6 +27,9 @@ namespace CraftSharp.Windows.Inventory
         // 当前样式文件名（如 inventory.png）
         private string _currentStyle = "inventory.png";
 
+        // 是否共享数据（从配置读取）
+        private bool _sharedData = true;
+
         // 格子坐标数据
         private List<SlotCoord>? _slotCoords;
 
@@ -105,6 +108,7 @@ namespace CraftSharp.Windows.Inventory
 
             // 读取当前样式配置
             _currentStyle = _settings?.Inventory.StylePath ?? "inventory.png";
+            _sharedData = _settings?.Inventory.SharedData ?? true;
 
             // 加载格子坐标数据
             LoadSlotCoords();
@@ -142,6 +146,10 @@ namespace CraftSharp.Windows.Inventory
 
             // 设置格子ID映射
             _dragService.SlotIdMapper = GetSlotIdFromIndex;
+
+            // 设置共享数据配置和当前样式
+            _dragService.SharedData = _sharedData;
+            _dragService.CurrentStyle = _currentStyle;
 
             // 订阅事件
             _iconService.IconNeedsUpdate += OnIconNeedsUpdate;
@@ -511,7 +519,7 @@ namespace CraftSharp.Windows.Inventory
 
             foreach (var slotId in _slotBorders.Keys)
             {
-                var item = _slotService.GetSlot(slotId);
+                var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
                 if (!item.IsEmpty)
                 {
                     SetSlotIcon(slotId, item.FilePath);
@@ -785,7 +793,7 @@ namespace CraftSharp.Windows.Inventory
 
             if (slotId != null)
             {
-                _slotService.SetSlot(slotId, new SlotItem { FilePath = filePath });
+                _slotService.SetSlot(slotId, new SlotItem { FilePath = filePath }, _currentStyle, _sharedData);
                 SetSlotIcon(slotId, filePath);
 
                 if (slotId.StartsWith("hotbar_"))
@@ -880,9 +888,22 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         public void RefreshIcons()
         {
+            // 更新共享数据配置和当前样式
+            if (_settings != null)
+            {
+                _sharedData = _settings.Inventory.SharedData;
+                _currentStyle = _settings.Inventory.StylePath;
+                // 更新拖动服务的配置
+                if (_dragService != null)
+                {
+                    _dragService.SharedData = _sharedData;
+                    _dragService.CurrentStyle = _currentStyle;
+                }
+            }
+
             foreach (var slotId in _slotBorders.Keys)
             {
-                var item = _slotService.GetSlot(slotId);
+                var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
                 if (!item.IsEmpty)
                 {
                     SetSlotIcon(slotId, item.FilePath);
@@ -925,6 +946,7 @@ namespace CraftSharp.Windows.Inventory
         public void RefreshStyle(string stylePath)
         {
             _currentStyle = stylePath;
+            _sharedData = _settings?.Inventory.SharedData ?? true;
             LoadStyleImage();
             LoadSlotCoords();
             SetupSlots();
