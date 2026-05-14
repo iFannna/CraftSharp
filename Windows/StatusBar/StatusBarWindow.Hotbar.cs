@@ -163,6 +163,16 @@ namespace CraftSharp.Windows.StatusBar
         {
             // 更新UI显示（使用缓存的图标Source和渲染模式）
             SwapSlotIconsUI(e.SourceSlotIndex, e.TargetSlotIndex, e.SourceItem.IsEmpty, e.TargetItem.IsEmpty);
+
+            // 如果涉及 hotbar 格子（索引 2-10 对应 hotbar_0~hotbar_8），通知 InventoryWindow 刷新
+            if (e.SourceSlotIndex >= 2 && e.SourceSlotIndex <= 10 ||
+                e.TargetSlotIndex >= 2 && e.TargetSlotIndex <= 10)
+            {
+                if (App.Current is App app)
+                {
+                    app.GetInventoryWindow()?.RefreshIcons();
+                }
+            }
         }
 
         /// <summary>
@@ -1283,6 +1293,15 @@ namespace CraftSharp.Windows.StatusBar
                 SetSlotIconFromPath("RightOffhand", filePath);
             else
                 SetSlotIconFromPath(slotIndex - 2, filePath);
+
+            // 如果是 hotbar 格子（索引 2-10 对应 hotbar_0~hotbar_8），通知 InventoryWindow 刷新
+            if (slotIndex >= 2 && slotIndex <= 10)
+            {
+                if (App.Current is App app)
+                {
+                    app.GetInventoryWindow()?.RefreshIcons();
+                }
+            }
         }
 
         /// <summary>
