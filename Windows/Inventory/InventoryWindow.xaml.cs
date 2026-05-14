@@ -231,6 +231,7 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 格子交换完成事件处理
+        /// 直接交换图标Source和渲染模式，不重新加载（参考快捷栏实现）
         /// </summary>
         private void OnSwapCompleted(object? sender, SlotDragService.SwapCompletedEventArgs e)
         {
@@ -239,16 +240,54 @@ namespace CraftSharp.Windows.Inventory
 
             if (sourceSlotId == "" || targetSlotId == "") return;
 
-            // 更新 UI（数据交换已在 SlotDragService 中完成）
-            if (!e.TargetItem.IsEmpty)
-                SetSlotIcon(sourceSlotId, e.TargetItem.FilePath);
-            else
-                ClearSlotIcon(sourceSlotId);
+            // 获取缓存的图标Source和渲染模式
+            ImageSource? sourceIconSource = null;
+            ImageSource? targetIconSource = null;
+            BitmapScalingMode sourceRenderMode = BitmapScalingMode.HighQuality;
+            BitmapScalingMode targetRenderMode = BitmapScalingMode.HighQuality;
 
-            if (!e.SourceItem.IsEmpty)
-                SetSlotIcon(targetSlotId, e.SourceItem.FilePath);
-            else
-                ClearSlotIcon(targetSlotId);
+            if (_slotIcons.TryGetValue(sourceSlotId, out var sourceIcon))
+            {
+                sourceIconSource = sourceIcon.Source;
+                sourceRenderMode = RenderOptions.GetBitmapScalingMode(sourceIcon);
+            }
+
+            if (_slotIcons.TryGetValue(targetSlotId, out var targetIcon))
+            {
+                targetIconSource = targetIcon.Source;
+                targetRenderMode = RenderOptions.GetBitmapScalingMode(targetIcon);
+            }
+
+            // 交换图标显示（使用缓存，不重新加载）
+            if (_slotIcons.TryGetValue(sourceSlotId, out var sourceIconImg))
+            {
+                if (!e.TargetItem.IsEmpty && targetIconSource != null)
+                {
+                    sourceIconImg.Source = targetIconSource;
+                    sourceIconImg.Visibility = Visibility.Visible;
+                    RenderOptions.SetBitmapScalingMode(sourceIconImg, targetRenderMode);
+                }
+                else
+                {
+                    sourceIconImg.Source = null;
+                    sourceIconImg.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            if (_slotIcons.TryGetValue(targetSlotId, out var targetIconImg))
+            {
+                if (!e.SourceItem.IsEmpty && sourceIconSource != null)
+                {
+                    targetIconImg.Source = sourceIconSource;
+                    targetIconImg.Visibility = Visibility.Visible;
+                    RenderOptions.SetBitmapScalingMode(targetIconImg, sourceRenderMode);
+                }
+                else
+                {
+                    targetIconImg.Source = null;
+                    targetIconImg.Visibility = Visibility.Collapsed;
+                }
+            }
 
             // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
             if (sourceSlotId.StartsWith("hotbar_") || targetSlotId.StartsWith("hotbar_"))
@@ -361,8 +400,7 @@ namespace CraftSharp.Windows.Inventory
                     Name = $"Slot_{slotId}",
                     Background = System.Windows.Media.Brushes.Transparent,
                     Width = slotSize,
-                    Height = slotSize,
-                    Cursor = System.Windows.Input.Cursors.Hand
+                    Height = slotSize
                 };
 
                 border.MouseLeftButtonDown += Slot_MouseLeftButtonDown;
@@ -406,11 +444,19 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void LoadSlots()
         {
+            // 清空丢失路径记录
+            _fileValidator?.ClearMissingPaths();
+
             foreach (var slotId in _slotBorders.Keys)
             {
                 var item = _slotService.GetSlot(slotId);
                 if (!item.IsEmpty)
                 {
+                    // 检查文件有效性
+                    if (_fileValidator != null && !_fileValidator.IsFilePathValid(item.FilePath))
+                    {
+                        _fileValidator.MarkMissing(item.FilePath);
+                    }
                     SetSlotIcon(slotId, item.FilePath);
                 }
             }
@@ -574,23 +620,30 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 打开文件/程序
+        /// 返回是否成功打开
+        /// 后续检验通过执行结果来判断，不预先检查文件是否存在
         /// </summary>
-        private void OpenFile(string filePath)
+        private bool OpenFile(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath)) return false;
+
             try
             {
-                if (File.Exists(filePath) || Directory.Exists(filePath))
+                Process.Start(new ProcessStartInfo
                 {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = filePath,
-                        UseShellExecute = true
-                    });
-                }
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+
+                // 执行成功，取消丢失标记
+                _fileValidator?.UnmarkMissing(filePath);
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                System.Windows.MessageBox.Show($"无法打开: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                // 执行失败，标记为丢失
+                _fileValidator?.MarkMissing(filePath);
+                return false;
             }
         }
 
