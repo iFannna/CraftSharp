@@ -35,7 +35,6 @@ namespace CraftSharp.Windows.Inventory
         private Dictionary<string, System.Windows.Controls.Image> _slotIcons = new();
 
         // 服务实例
-        private SlotFileValidator? _fileValidator;
         private SlotIconService? _iconService;
         private SlotDragService? _dragService;
 
@@ -133,8 +132,9 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void InitializeServices()
         {
-            _fileValidator = new SlotFileValidator();
-            _iconService = new SlotIconService(_fileValidator, _settings, _scaleFactor);
+            // 使用 SlotFileValidator 单例
+            var fileValidator = SlotFileValidator.Instance;
+            _iconService = new SlotIconService(fileValidator, _settings, _scaleFactor);
             _dragService = new SlotDragService(_slotService);
 
             // 读取点击模式配置
@@ -201,9 +201,31 @@ namespace CraftSharp.Windows.Inventory
             // 隐藏源格子图标
             sourceIcon.Visibility = Visibility.Collapsed;
 
+            // 检查文件是否丢失
+            var item = _slotService.GetSlot(slotId);
+            bool isMissing = !item.IsEmpty && SlotFileValidator.Instance.IsMissing(item.FilePath);
+
             // 显示拖动图标副本
-            if (sourceIcon.Source != null)
+            if (isMissing)
             {
+                // 文件丢失：使用占位图
+                var placeholder = _iconService?.LoadPlaceholderIcon();
+                if (placeholder != null)
+                {
+                    DragIconImage.Source = placeholder;
+                    DragIconImage.Width = 16 * _scaleFactor;
+                    DragIconImage.Height = 16 * _scaleFactor;
+                    DragIconImage.Visibility = Visibility.Visible;
+                    RenderOptions.SetBitmapScalingMode(DragIconImage, BitmapScalingMode.NearestNeighbor);
+
+                    var mousePos = Mouse.GetPosition(this);
+                    Canvas.SetLeft(DragIconImage, mousePos.X - DragIconImage.Width / 2);
+                    Canvas.SetTop(DragIconImage, mousePos.Y - DragIconImage.Height / 2);
+                }
+            }
+            else if (sourceIcon.Source != null)
+            {
+                // 文件正常：使用格子图标
                 DragIconImage.Source = sourceIcon.Source;
                 DragIconImage.Width = 16 * _scaleFactor;
                 DragIconImage.Height = 16 * _scaleFactor;
@@ -462,19 +484,13 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void LoadSlots()
         {
-            // 清空丢失路径记录
-            _fileValidator?.ClearMissingPaths();
+            // 程序启动时已执行全量检查，此处直接根据丢失状态显示图标
 
             foreach (var slotId in _slotBorders.Keys)
             {
                 var item = _slotService.GetSlot(slotId);
                 if (!item.IsEmpty)
                 {
-                    // 检查文件有效性
-                    if (_fileValidator != null && !_fileValidator.IsFilePathValid(item.FilePath))
-                    {
-                        _fileValidator.MarkMissing(item.FilePath);
-                    }
                     SetSlotIcon(slotId, item.FilePath);
                 }
             }
@@ -592,26 +608,29 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void HandleSlotClick(string slotId)
         {
+            // 点击前执行全量检查
+            if (System.Windows.Application.Current is App app)
+            {
+                app.ValidateAllSlots();
+            }
+
             var item = _slotService.GetSlot(slotId);
             if (item.IsEmpty) return;
 
-            bool isMissing = _fileValidator?.IsMissing(item.FilePath) ?? false;
+            bool isMissing = SlotFileValidator.Instance.IsMissing(item.FilePath);
 
             if (_clickMode == "single")
             {
-                // 单击模式：直接打开
-                bool success = TryExecuteFile(item.FilePath);
-                if (success)
+                // 单击模式
+                if (isMissing)
                 {
-                    if (isMissing)
-                    {
-                        _fileValidator?.UnmarkMissing(item.FilePath);
-                    }
+                    // 丢失文件：显示确认对话框
+                    HandleMissingFileSlot(slotId, item.FilePath);
+                    return;
                 }
-                else
-                {
-                    HandleMissingFileSlot(slotId, item.FilePath, isMissing);
-                }
+
+                // 尝试打开文件（仅打开，不判断丢失）
+                TryExecuteFile(item.FilePath);
             }
             else // double
             {
@@ -622,19 +641,18 @@ namespace CraftSharp.Windows.Inventory
 
                 if (isDoubleClick)
                 {
-                    // 双击：打开文件
-                    bool success = TryExecuteFile(item.FilePath);
-                    if (success)
+                    // 双击
+                    if (isMissing)
                     {
-                        if (isMissing)
-                        {
-                            _fileValidator?.UnmarkMissing(item.FilePath);
-                        }
+                        // 丢失文件：显示确认对话框
+                        HandleMissingFileSlot(slotId, item.FilePath);
+                        _lastClickedSlotId = null;
+                        _lastClickTime = DateTime.MinValue;
+                        return;
                     }
-                    else
-                    {
-                        HandleMissingFileSlot(slotId, item.FilePath, isMissing);
-                    }
+
+                    // 尝试打开文件（仅打开，不判断丢失）
+                    TryExecuteFile(item.FilePath);
                     // 清除双击检测状态
                     _lastClickedSlotId = null;
                     _lastClickTime = DateTime.MinValue;
@@ -649,60 +667,39 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 处理文件丢失的格子点击（参考快捷栏 HandleMissingFileSlot）
+        /// 处理文件丢失的格子点击
         /// </summary>
-        private void HandleMissingFileSlot(string slotId, string filePath, bool isMissing)
+        private void HandleMissingFileSlot(string slotId, string filePath)
         {
-            var confirmWindow = new SlotMissingConfirmWindow();
+            var confirmWindow = new SlotMissingConfirmWindow(filePath);
             confirmWindow.Owner = Window.GetWindow(this);
-            confirmWindow.SetFilePath(filePath);
             confirmWindow.ShowDialog();
 
             if (confirmWindow.IsConfirmed)
             {
-                // 用户确认移除，清除格子数据
-                _slotService.ClearSlot(slotId);
+                // 清除所有使用相同路径的格子（跨快捷栏+物品栏）
+                SlotFileValidator.Instance.ClearAllSlotsByPath(
+                    (System.Windows.Application.Current as App)?.GetAppSettings(), filePath);
 
-                // 检查是否有其他格子使用相同路径
-                bool hasOtherSlots = false;
-                foreach (var otherSlotId in _slotBorders.Keys)
-                {
-                    if (otherSlotId == slotId) continue;
-                    var otherItem = _slotService.GetSlot(otherSlotId);
-                    if (!otherItem.IsEmpty && otherItem.FilePath == filePath)
-                    {
-                        hasOtherSlots = true;
-                        break;
-                    }
-                }
+                // 刷新图标显示
+                RefreshIcons();
 
-                // 如果没有其他格子使用此路径，取消丢失标记
-                if (!hasOtherSlots)
-                {
-                    _fileValidator?.UnmarkMissing(filePath);
-                }
-
-                // 清除格子图标
-                ClearSlotIcon(slotId);
-
-                // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
-                if (slotId.StartsWith("hotbar_"))
+                // 通知快捷栏刷新（如果快捷栏窗口存在）
+                if (System.Windows.Application.Current is App app)
                 {
                     StatusBarService.Instance.RefreshHotbarIcons();
-                }
-            }
-            else
-            {
-                // 用户取消，如果尚未标记为丢失则标记
-                if (!isMissing)
-                {
-                    _fileValidator?.MarkMissing(filePath);
                 }
             }
         }
 
         private void Slot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // 拖拽前执行全量检查
+            if (System.Windows.Application.Current is App app)
+            {
+                app.ValidateAllSlots();
+            }
+
             var border = (Border)sender;
             var slotId = border.Name.Replace("Slot_", "");
             var slotIndex = GetIndexFromSlotId(slotId);

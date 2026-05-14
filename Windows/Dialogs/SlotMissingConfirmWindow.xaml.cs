@@ -25,6 +25,15 @@ namespace CraftSharp.Windows.Dialogs
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 构造函数：直接传入文件路径
+        /// </summary>
+        public SlotMissingConfirmWindow(string filePath)
+        {
+            InitializeComponent();
+            FilePathText.Text = filePath;
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             IsConfirmed = false;

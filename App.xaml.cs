@@ -41,6 +41,9 @@ namespace CraftSharp
             _settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
             LoadSettings();
 
+            // 初始化 SlotFileValidator 单例并执行全量检查
+            SlotFileValidator.Instance.ValidateAllSlots(_appSettings);
+
             // 初始化语言
             LocalizationService.Instance.Initialize(_appSettings?.System.Language ?? "简体中文");
 
@@ -527,11 +530,27 @@ namespace CraftSharp
         }
 
         /// <summary>
+        /// 执行全量格子文件路径检查（用于格子相关操作前）
+        /// </summary>
+        public void ValidateAllSlots()
+        {
+            SlotFileValidator.Instance.ValidateAllSlots(_appSettings);
+        }
+
+        /// <summary>
         /// 获取 AppSettings 实例（供其他组件调用）
         /// </summary>
         public Models.AppSettings? GetAppSettings()
         {
             return _appSettings;
+        }
+
+        /// <summary>
+        /// 获取物品栏窗口实例（供其他组件调用）
+        /// </summary>
+        public InventoryWindow? GetInventoryWindow()
+        {
+            return _inventoryWindow;
         }
 
         /// <summary>

@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using CraftSharp.Models;
 
 namespace CraftSharp.Services
 {
     /// <summary>
-    /// 格子文件有效性检测服务
+    /// 格子文件有效性检测服务（App 级单例）
     /// 负责检测文件是否存在，管理丢失路径集合
     /// </summary>
     public class SlotFileValidator
     {
+        private static SlotFileValidator? _instance;
+        public static SlotFileValidator Instance => _instance ??= new SlotFileValidator();
+
         /// <summary>
         /// 文件丢失的路径集合
         /// </summary>
@@ -113,6 +117,67 @@ namespace CraftSharp.Services
                 MarkMissing(filePath);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 全量检查所有格子文件路径
+        /// 遍历 AppSettings.Slots，检查每个路径是否有效
+        /// 更新丢失状态并触发相应事件
+        /// </summary>
+        public void ValidateAllSlots(AppSettings? settings)
+        {
+            if (settings?.Slots == null) return;
+
+            // 收集所有非空格子路径
+            var allPaths = new HashSet<string>();
+            foreach (var kvp in settings.Slots)
+            {
+                if (!kvp.Value.IsEmpty && !string.IsNullOrEmpty(kvp.Value.FilePath))
+                {
+                    allPaths.Add(kvp.Value.FilePath);
+                }
+            }
+
+            // 检查每个路径
+            foreach (var path in allPaths)
+            {
+                ValidateAndMark(path);
+            }
+        }
+
+        /// <summary>
+        /// 获取使用指定路径的所有格子 SlotId
+        /// </summary>
+        public List<string> GetSlotsByPath(AppSettings? settings, string filePath)
+        {
+            var result = new List<string>();
+            if (settings?.Slots == null || string.IsNullOrEmpty(filePath)) return result;
+
+            foreach (var kvp in settings.Slots)
+            {
+                if (!kvp.Value.IsEmpty && kvp.Value.FilePath == filePath)
+                {
+                    result.Add(kvp.Key);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 清除所有使用指定路径的格子数据
+        /// </summary>
+        public void ClearAllSlotsByPath(AppSettings? settings, string filePath)
+        {
+            if (settings?.Slots == null || string.IsNullOrEmpty(filePath)) return;
+
+            var slotsToRemove = GetSlotsByPath(settings, filePath);
+            foreach (var slotId in slotsToRemove)
+            {
+                settings.Slots.Remove(slotId);
+            }
+
+            // 清除丢失标记
+            UnmarkMissing(filePath);
         }
     }
 }
