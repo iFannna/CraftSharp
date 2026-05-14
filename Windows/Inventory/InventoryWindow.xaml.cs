@@ -380,20 +380,38 @@ namespace CraftSharp.Windows.Inventory
         #endregion
 
         /// <summary>
-        /// 加载格子坐标数据（从 Assets 目录读取）
+        /// 加载格子坐标数据（从 Assets 目录读取，根据当前样式动态加载）
         /// </summary>
         private void LoadSlotCoords()
         {
             try
             {
+                // 根据样式文件名推导坐标文件名：inventory.png → inventory.json
+                string coordFileName = System.IO.Path.GetFileNameWithoutExtension(_currentStyle) + ".json";
                 var coordsPath = System.IO.Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
-                    "Assets/minecraft/textures/gui/container/coordinate/inventory.json");
+                    $"Assets/minecraft/textures/gui/container/coordinate/{coordFileName}");
 
                 if (File.Exists(coordsPath))
                 {
                     var json = File.ReadAllText(coordsPath);
                     _slotCoords = JsonConvert.DeserializeObject<List<SlotCoord>>(json);
+                }
+                else
+                {
+                    // 回退到默认坐标文件
+                    var defaultCoordsPath = System.IO.Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory,
+                        "Assets/minecraft/textures/gui/container/coordinate/inventory.json");
+                    if (File.Exists(defaultCoordsPath))
+                    {
+                        var json = File.ReadAllText(defaultCoordsPath);
+                        _slotCoords = JsonConvert.DeserializeObject<List<SlotCoord>>(json);
+                    }
+                    else
+                    {
+                        _slotCoords = new List<SlotCoord>();
+                    }
                 }
             }
             catch
@@ -421,26 +439,31 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 动态创建和设置格子位置和大小
+        /// 支持任意尺寸格子（如 16x16、24x24）
         /// </summary>
         private void SetupSlots()
         {
             if (_slotCoords == null) return;
 
-            double slotSize = 16 * _scaleFactor;
+            // 清空现有格子控件和字典
+            SlotCanvas.Children.Clear();
+            _slotBorders.Clear();
+            _slotIcons.Clear();
 
             foreach (var coord in _slotCoords)
             {
-                // 只创建 16x16 的格子
-                if (coord.width != 16 || coord.height != 16) continue;
-
                 var slotId = coord.slot_id;
+
+                // 根据配置尺寸缩放
+                double slotWidth = coord.width * _scaleFactor;
+                double slotHeight = coord.height * _scaleFactor;
 
                 var border = new Border
                 {
                     Name = $"Slot_{slotId}",
                     Background = System.Windows.Media.Brushes.Transparent,
-                    Width = slotSize,
-                    Height = slotSize
+                    Width = slotWidth,
+                    Height = slotHeight
                 };
 
                 border.MouseLeftButtonDown += Slot_MouseLeftButtonDown;
@@ -449,8 +472,8 @@ namespace CraftSharp.Windows.Inventory
                 {
                     Name = $"Icon_{slotId}",
                     Stretch = Stretch.Uniform,
-                    Width = slotSize,
-                    Height = slotSize,
+                    Width = slotWidth,
+                    Height = slotHeight,
                     Visibility = Visibility.Collapsed
                 };
                 RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
@@ -897,12 +920,15 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 刷新物品栏样式（即时生效）
+        /// 流程：更新样式 → 加载背景 → 加载坐标 → 重建格子 → 刷新图标
         /// </summary>
         public void RefreshStyle(string stylePath)
         {
             _currentStyle = stylePath;
             LoadStyleImage();
-            // 刷新窗口位置（居中）
+            LoadSlotCoords();
+            SetupSlots();
+            LoadSlots();
             PositionWindow();
         }
     }
