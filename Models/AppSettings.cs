@@ -191,9 +191,9 @@ namespace CraftSharp.Models
         public bool GrayOverlay { get; set; } = true;
 
         /// <summary>
-        /// 灰色蒙版不透明度（0-100，默认50）
+        /// 灰色蒙版不透明度（0-100，默认75）
         /// </summary>
-        public int GrayOverlayOpacity { get; set; } = 50;
+        public int GrayOverlayOpacity { get; set; } = 75;
 
         /// <summary>
         /// 隐藏状态栏（打开物品栏时隐藏状态栏窗口）
