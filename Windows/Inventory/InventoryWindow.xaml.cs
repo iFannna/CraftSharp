@@ -650,7 +650,8 @@ namespace CraftSharp.Windows.Inventory
                 app.ValidateAllSlots();
             }
 
-            var item = _slotService.GetSlot(slotId);
+            // 根据 SharedData 配置获取格子数据
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
             if (item.IsEmpty) return;
 
             bool isMissing = SlotFileValidator.Instance.IsMissing(item.FilePath);
@@ -713,15 +714,49 @@ namespace CraftSharp.Windows.Inventory
 
             if (confirmWindow.IsConfirmed)
             {
-                // 清除所有使用相同路径的格子（跨快捷栏+物品栏）
-                SlotFileValidator.Instance.ClearAllSlotsByPath(
-                    (System.Windows.Application.Current as App)?.GetAppSettings(), filePath);
+                if (_sharedData)
+                {
+                    // 共享数据模式：清除所有使用相同路径的格子（跨快捷栏+物品栏）
+                    SlotFileValidator.Instance.ClearAllSlotsByPath(
+                        (System.Windows.Application.Current as App)?.GetAppSettings(), filePath);
+                }
+                else
+                {
+                    // 独立数据模式：只清除当前样式的格子数据
+                    var settings = (System.Windows.Application.Current as App)?.GetAppSettings();
+                    if (settings != null)
+                    {
+                        // 从 StyleSlots 中清除使用该路径的格子
+                        if (settings.StyleSlots.TryGetValue(_currentStyle, out var styleSlots))
+                        {
+                            var slotsToRemove = new List<string>();
+                            foreach (var kvp in styleSlots)
+                            {
+                                if (!kvp.Value.IsEmpty && kvp.Value.FilePath == filePath)
+                                {
+                                    slotsToRemove.Add(kvp.Key);
+                                }
+                            }
+                            foreach (var key in slotsToRemove)
+                            {
+                                styleSlots.Remove(key);
+                            }
+                        }
+                        // 清除丢失标记
+                        SlotFileValidator.Instance.UnmarkMissing(filePath);
+                        // 保存配置
+                        if (App.Current is App app)
+                        {
+                            app.SaveSettings();
+                        }
+                    }
+                }
 
                 // 刷新图标显示
                 RefreshIcons();
 
                 // 通知快捷栏刷新（如果快捷栏窗口存在）
-                if (System.Windows.Application.Current is App app)
+                if (System.Windows.Application.Current is App app2)
                 {
                     StatusBarService.Instance.RefreshHotbarIcons();
                 }
