@@ -346,6 +346,7 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 更新指定文件路径的所有格子为占位图
+        /// 检查当前格子实际使用的数据源
         /// </summary>
         private void UpdateSlotsToPlaceholder(string filePath)
         {
@@ -355,8 +356,13 @@ namespace CraftSharp.Windows.Inventory
             foreach (var kvp in _slotBorders)
             {
                 var slotId = kvp.Key;
-                var item = _slotService.GetSlot(slotId);
-                if (!item.IsEmpty && item.FilePath == filePath)
+                // 根据 SharedData 配置获取格子数据（统一逻辑）
+                var displayItem = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+
+                // 只检查当前格子实际使用的数据源
+                bool displayHasPath = !displayItem.IsEmpty && displayItem.FilePath == filePath;
+
+                if (displayHasPath)
                 {
                     var icon = _slotIcons[slotId];
                     if (icon != null)
@@ -371,16 +377,22 @@ namespace CraftSharp.Windows.Inventory
 
         /// <summary>
         /// 更新指定文件路径的所有格子为正常图标
+        /// 检查当前格子实际使用的数据源
         /// </summary>
         private void UpdateSlotsToNormal(string filePath)
         {
             foreach (var kvp in _slotBorders)
             {
                 var slotId = kvp.Key;
-                var item = _slotService.GetSlot(slotId);
-                if (!item.IsEmpty && item.FilePath == filePath)
+                // 根据 SharedData 配置获取格子数据（统一逻辑）
+                var displayItem = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+
+                // 只检查当前格子实际使用的数据源
+                bool displayHasPath = !displayItem.IsEmpty && displayItem.FilePath == filePath;
+
+                if (displayHasPath)
                 {
-                    SetSlotIcon(slotId, item.FilePath);
+                    SetSlotIcon(slotId, displayItem.FilePath);
                 }
             }
         }

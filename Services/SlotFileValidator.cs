@@ -121,20 +121,44 @@ namespace CraftSharp.Services
 
         /// <summary>
         /// 全量检查所有格子文件路径
-        /// 遍历 AppSettings.Slots，检查每个路径是否有效
+        /// 遍历 AppSettings.Slots 和 StyleSlots，检查每个路径是否有效
         /// 更新丢失状态并触发相应事件
         /// </summary>
         public void ValidateAllSlots(AppSettings? settings)
         {
-            if (settings?.Slots == null) return;
+            if (settings == null) return;
 
-            // 收集所有非空格子路径
+            // 收集所有非空格子路径（包括共享数据和独立数据）
             var allPaths = new HashSet<string>();
-            foreach (var kvp in settings.Slots)
+
+            // 1. 检查共享数据（Slots）
+            if (settings.Slots != null)
             {
-                if (!kvp.Value.IsEmpty && !string.IsNullOrEmpty(kvp.Value.FilePath))
+                foreach (var kvp in settings.Slots)
                 {
-                    allPaths.Add(kvp.Value.FilePath);
+                    if (!kvp.Value.IsEmpty && !string.IsNullOrEmpty(kvp.Value.FilePath))
+                    {
+                        allPaths.Add(kvp.Value.FilePath);
+                    }
+                }
+            }
+
+            // 2. 检查独立数据（StyleSlots - 所有样式）
+            if (settings.StyleSlots != null)
+            {
+                foreach (var styleKvp in settings.StyleSlots)
+                {
+                    var styleSlots = styleKvp.Value;
+                    if (styleSlots != null)
+                    {
+                        foreach (var slotKvp in styleSlots)
+                        {
+                            if (!slotKvp.Value.IsEmpty && !string.IsNullOrEmpty(slotKvp.Value.FilePath))
+                            {
+                                allPaths.Add(slotKvp.Value.FilePath);
+                            }
+                        }
+                    }
                 }
             }
 
