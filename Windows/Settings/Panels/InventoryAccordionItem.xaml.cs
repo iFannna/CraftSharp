@@ -93,6 +93,8 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             if (titleResourceKey == "InventoryTitle" && _settings != null)
             {
+                // 打开动作（单击/双击）
+                AddClickModeComboBox();
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
                 AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.Inventory.Visible, v => _settings.Inventory.Visible = v);
                 AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => _settings.Inventory.Locked = v);
@@ -103,6 +105,80 @@ namespace CraftSharp.Windows.Settings.Panels
                 // 隐藏状态栏开关
                 AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.Inventory.HideStatusBar, v => _settings.Inventory.HideStatusBar = v);
             }
+        }
+
+        /// <summary>
+        /// 添加点击模式选项（打开动作）
+        /// </summary>
+        private void AddClickModeComboBox()
+        {
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var left = new StackPanel();
+            var titleLabel = new System.Windows.Controls.TextBlock
+            {
+                FontWeight = FontWeights.Medium
+            };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "HudOptionClickMode");
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
+
+            var descLabel = new System.Windows.Controls.TextBlock
+            {
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "HudOptionClickModeDesc");
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
+
+            left.Children.Add(titleLabel);
+            left.Children.Add(descLabel);
+            grid.Children.Add(left);
+
+            var comboBox = new System.Windows.Controls.ComboBox
+            {
+                Width = 100,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+            };
+
+            var singleItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = System.Windows.Application.Current.TryFindResource("HudOptionClickModeSingle") as string ?? "单击",
+                Tag = "single"
+            };
+            var doubleItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = System.Windows.Application.Current.TryFindResource("HudOptionClickModeDouble") as string ?? "双击",
+                Tag = "double"
+            };
+            comboBox.Items.Add(singleItem);
+            comboBox.Items.Add(doubleItem);
+
+            if (_settings!.Inventory.ClickMode == "single")
+                comboBox.SelectedIndex = 0;
+            else
+                comboBox.SelectedIndex = 1;
+
+            comboBox.SelectionChanged += (s, e) =>
+            {
+                if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
+                {
+                    var mode = item.Tag?.ToString() ?? "single";
+                    _settings.Inventory.ClickMode = mode;
+                    SaveSettings();
+
+                    // 立即通知 App 更新物品栏窗口的点击模式（即时生效）
+                    if (System.Windows.Application.Current is App app)
+                    {
+                        app.SetInventoryClickMode(mode);
+                    }
+                }
+            };
+
+            grid.Children.Add(comboBox);
+            Grid.SetColumn(comboBox, 1);
+
+            ContentPanel.Children.Add(grid);
         }
 
         private ToggleSwitch AddToggleRow(string labelKey, string descKey, bool currentValue, Action<bool> onToggle)

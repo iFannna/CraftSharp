@@ -199,6 +199,11 @@ namespace CraftSharp.Models
         /// 隐藏状态栏（打开物品栏时隐藏状态栏窗口）
         /// </summary>
         public bool HideStatusBar { get; set; } = false;
+
+        /// <summary>
+        /// 点击模式（single/double，默认单击）
+        /// </summary>
+        public string ClickMode { get; set; } = "single";
     }
 
     /// <summary>

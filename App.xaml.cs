@@ -505,6 +505,17 @@ namespace CraftSharp
         }
 
         /// <summary>
+        /// 设置物品栏点击模式（即时生效）
+        /// </summary>
+        public void SetInventoryClickMode(string mode)
+        {
+            if (_inventoryWindow != null)
+            {
+                _inventoryWindow.SetClickMode(mode);
+            }
+        }
+
+        /// <summary>
         /// 获取 AppSettings 实例（供其他组件调用）
         /// </summary>
         public Models.AppSettings? GetAppSettings()

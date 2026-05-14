@@ -48,6 +48,14 @@ namespace CraftSharp.Windows.Inventory
         // 状态栏隐藏前的可见性状态
         private bool _statusBarWasVisible = false;
 
+        // 点击模式（"single"单击/"double"双击）
+        private string _clickMode = "single";
+
+        // 双击检测：上次点击的格子ID和时间
+        private string? _lastClickedSlotId = null;
+        private DateTime _lastClickTime = DateTime.MinValue;
+        private const int DoubleClickThresholdMs = 500;
+
         // 格子坐标数据结构
         public class SlotCoord
         {
@@ -122,6 +130,9 @@ namespace CraftSharp.Windows.Inventory
             _fileValidator = new SlotFileValidator();
             _iconService = new SlotIconService(_fileValidator, _settings, _scaleFactor);
             _dragService = new SlotDragService(_slotService);
+
+            // 读取点击模式配置
+            _clickMode = _settings?.Inventory.ClickMode ?? "single";
 
             // 设置格子ID映射
             _dragService.SlotIdMapper = GetSlotIdFromIndex;
@@ -571,7 +582,7 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 处理格子点击（参考快捷栏 HandleSlotClick）
+        /// 处理格子点击（支持单击/双击模式）
         /// </summary>
         private void HandleSlotClick(string slotId)
         {
@@ -580,19 +591,54 @@ namespace CraftSharp.Windows.Inventory
 
             bool isMissing = _fileValidator?.IsMissing(item.FilePath) ?? false;
 
-            bool success = TryExecuteFile(item.FilePath);
-            if (success)
+            if (_clickMode == "single")
             {
-                // 执行成功，取消丢失标记
-                if (isMissing)
+                // 单击模式：直接打开
+                bool success = TryExecuteFile(item.FilePath);
+                if (success)
                 {
-                    _fileValidator?.UnmarkMissing(item.FilePath);
+                    if (isMissing)
+                    {
+                        _fileValidator?.UnmarkMissing(item.FilePath);
+                    }
+                }
+                else
+                {
+                    HandleMissingFileSlot(slotId, item.FilePath, isMissing);
                 }
             }
-            else
+            else // double
             {
-                // 执行失败，弹窗确认
-                HandleMissingFileSlot(slotId, item.FilePath, isMissing);
+                // 双击模式：检测是否是双击
+                var now = DateTime.Now;
+                bool isDoubleClick = _lastClickedSlotId == slotId &&
+                    (now - _lastClickTime).TotalMilliseconds < DoubleClickThresholdMs;
+
+                if (isDoubleClick)
+                {
+                    // 双击：打开文件
+                    bool success = TryExecuteFile(item.FilePath);
+                    if (success)
+                    {
+                        if (isMissing)
+                        {
+                            _fileValidator?.UnmarkMissing(item.FilePath);
+                        }
+                    }
+                    else
+                    {
+                        HandleMissingFileSlot(slotId, item.FilePath, isMissing);
+                    }
+                    // 清除双击检测状态
+                    _lastClickedSlotId = null;
+                    _lastClickTime = DateTime.MinValue;
+                }
+                else
+                {
+                    // 记录第一次点击
+                    _lastClickedSlotId = slotId;
+                    _lastClickTime = now;
+                }
             }
         }
 
@@ -736,10 +782,24 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
+        /// 设置点击模式（"single"单击/"double"双击）
+        /// </summary>
+        public void SetClickMode(string mode)
+        {
+            _clickMode = mode;
+            // 清除双击检测状态
+            _lastClickedSlotId = null;
+            _lastClickTime = DateTime.MinValue;
+        }
+
+        /// <summary>
         /// 显示物品栏
         /// </summary>
         private void ShowInventory()
         {
+            // 每次显示时重新读取点击模式配置（确保使用最新设置）
+            _clickMode = _settings?.Inventory.ClickMode ?? "single";
+
             if (_settings?.Inventory.GrayOverlay ?? true)
             {
                 int opacity = _settings?.Inventory.GrayOverlayOpacity ?? 75;
