@@ -26,9 +26,6 @@
     <Content Include="Data\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="inventory_coords.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Fonts\zpix.ttf" />
     <Resource Include="Fonts\unifont-16.0.04.ttf" />
   </ItemGroup>

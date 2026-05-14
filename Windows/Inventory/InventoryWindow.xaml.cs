@@ -42,11 +42,11 @@ namespace CraftSharp.Windows.Inventory
         // 格子坐标数据结构
         public class SlotCoord
         {
+            public string slot_id { get; set; } = "";
             public int x { get; set; }
             public int y { get; set; }
             public int width { get; set; }
             public int height { get; set; }
-            public string name { get; set; } = "";
         }
 
         public InventoryWindow(AppSettings? settings = null)
@@ -103,13 +103,17 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 加载格子坐标数据
+        /// 加载格子坐标数据（从 Assets 目录读取）
         /// </summary>
         private void LoadSlotCoords()
         {
             try
             {
-                var coordsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "inventory_coords.json");
+                // 窗口名与 JSON 文件名自动对应：InventoryWindow → inventory.json
+                var coordsPath = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Assets/minecraft/textures/gui/container/coordinate/inventory.json");
+
                 if (File.Exists(coordsPath))
                 {
                     var json = File.ReadAllText(coordsPath);
@@ -155,7 +159,7 @@ namespace CraftSharp.Windows.Inventory
                 // 只创建 16x16 的格子（排除 player 区域）
                 if (coord.width != 16 || coord.height != 16) continue;
 
-                var slotId = coord.name;
+                var slotId = coord.slot_id;
 
                 var border = new Border
                 {

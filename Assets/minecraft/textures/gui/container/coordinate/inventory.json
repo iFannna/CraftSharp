@@ -1,331 +1,331 @@
 [
   {
+    "slot_id": "helmet",
     "x": 8,
     "y": 8,
     "width": 16,
-    "height": 16,
-    "name": "helmet"
+    "height": 16
   },
   {
+    "slot_id": "craft_0",
     "x": 98,
     "y": 18,
     "width": 16,
-    "height": 16,
-    "name": "craft_0"
+    "height": 16
   },
   {
+    "slot_id": "craft_1",
     "x": 116,
     "y": 18,
     "width": 16,
-    "height": 16,
-    "name": "craft_1"
+    "height": 16
   },
   {
+    "slot_id": "chestplate",
     "x": 8,
     "y": 26,
     "width": 16,
-    "height": 16,
-    "name": "chestplate"
+    "height": 16
   },
   {
+    "slot_id": "craft_result",
     "x": 154,
     "y": 28,
     "width": 16,
-    "height": 16,
-    "name": "craft_result"
+    "height": 16
   },
   {
+    "slot_id": "craft_2",
     "x": 98,
     "y": 36,
     "width": 16,
-    "height": 16,
-    "name": "craft_2"
+    "height": 16
   },
   {
+    "slot_id": "craft_3",
     "x": 116,
     "y": 36,
     "width": 16,
-    "height": 16,
-    "name": "craft_3"
+    "height": 16
   },
   {
+    "slot_id": "leggings",
     "x": 8,
     "y": 44,
     "width": 16,
-    "height": 16,
-    "name": "leggings"
+    "height": 16
   },
   {
+    "slot_id": "boots",
     "x": 8,
     "y": 62,
     "width": 16,
-    "height": 16,
-    "name": "boots"
+    "height": 16
   },
   {
+    "slot_id": "offhand",
     "x": 77,
     "y": 62,
     "width": 16,
-    "height": 16,
-    "name": "offhand"
+    "height": 16
   },
   {
+    "slot_id": "inventory_0",
     "x": 8,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_0"
+    "height": 16
   },
   {
+    "slot_id": "inventory_1",
     "x": 26,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_1"
+    "height": 16
   },
   {
+    "slot_id": "inventory_2",
     "x": 44,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_2"
+    "height": 16
   },
   {
+    "slot_id": "inventory_3",
     "x": 62,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_3"
+    "height": 16
   },
   {
+    "slot_id": "inventory_4",
     "x": 80,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_4"
+    "height": 16
   },
   {
+    "slot_id": "inventory_5",
     "x": 98,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_5"
+    "height": 16
   },
   {
+    "slot_id": "inventory_6",
     "x": 116,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_6"
+    "height": 16
   },
   {
+    "slot_id": "inventory_7",
     "x": 134,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_7"
+    "height": 16
   },
   {
+    "slot_id": "inventory_8",
     "x": 152,
     "y": 84,
     "width": 16,
-    "height": 16,
-    "name": "inventory_8"
+    "height": 16
   },
   {
+    "slot_id": "inventory_9",
     "x": 8,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_9"
+    "height": 16
   },
   {
+    "slot_id": "inventory_10",
     "x": 26,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_10"
+    "height": 16
   },
   {
+    "slot_id": "inventory_11",
     "x": 44,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_11"
+    "height": 16
   },
   {
+    "slot_id": "inventory_12",
     "x": 62,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_12"
+    "height": 16
   },
   {
+    "slot_id": "inventory_13",
     "x": 80,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_13"
+    "height": 16
   },
   {
+    "slot_id": "inventory_14",
     "x": 98,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_14"
+    "height": 16
   },
   {
+    "slot_id": "inventory_15",
     "x": 116,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_15"
+    "height": 16
   },
   {
+    "slot_id": "inventory_16",
     "x": 134,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_16"
+    "height": 16
   },
   {
+    "slot_id": "inventory_17",
     "x": 152,
     "y": 102,
     "width": 16,
-    "height": 16,
-    "name": "inventory_17"
+    "height": 16
   },
   {
+    "slot_id": "inventory_18",
     "x": 8,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_18"
+    "height": 16
   },
   {
+    "slot_id": "inventory_19",
     "x": 26,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_19"
+    "height": 16
   },
   {
+    "slot_id": "inventory_20",
     "x": 44,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_20"
+    "height": 16
   },
   {
+    "slot_id": "inventory_21",
     "x": 62,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_21"
+    "height": 16
   },
   {
+    "slot_id": "inventory_22",
     "x": 80,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_22"
+    "height": 16
   },
   {
+    "slot_id": "inventory_23",
     "x": 98,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_23"
+    "height": 16
   },
   {
+    "slot_id": "inventory_24",
     "x": 116,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_24"
+    "height": 16
   },
   {
+    "slot_id": "inventory_25",
     "x": 134,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_25"
+    "height": 16
   },
   {
+    "slot_id": "inventory_26",
     "x": 152,
     "y": 120,
     "width": 16,
-    "height": 16,
-    "name": "inventory_26"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_0",
     "x": 8,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_0"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_1",
     "x": 26,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_1"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_2",
     "x": 44,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_2"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_3",
     "x": 62,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_3"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_4",
     "x": 80,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_4"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_5",
     "x": 98,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_5"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_6",
     "x": 116,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_6"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_7",
     "x": 134,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_7"
+    "height": 16
   },
   {
+    "slot_id": "hotbar_8",
     "x": 152,
     "y": 142,
     "width": 16,
-    "height": 16,
-    "name": "hotbar_8"
+    "height": 16
   },
   {
+    "slot_id": "player",
     "x": 26,
     "y": 8,
     "width": 49,
-    "height": 70,
-    "name": "player"
+    "height": 70
   }
 ]
