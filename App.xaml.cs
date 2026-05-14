@@ -516,6 +516,17 @@ namespace CraftSharp
         }
 
         /// <summary>
+        /// 刷新物品栏样式（即时生效）
+        /// </summary>
+        public void RefreshInventoryStyle(string stylePath)
+        {
+            if (_inventoryWindow != null)
+            {
+                _inventoryWindow.RefreshStyle(stylePath);
+            }
+        }
+
+        /// <summary>
         /// 获取 AppSettings 实例（供其他组件调用）
         /// </summary>
         public Models.AppSettings? GetAppSettings()

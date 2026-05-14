@@ -239,4 +239,25 @@
     <sys:String x:Key="LlamaTitle">Llama</sys:String>
     <sys:String x:Key="NautilusTitle">Nautilus</sys:String>
 
+    <!-- Inventory Style Preview Window -->
+    <sys:String x:Key="StylePreviewTitle">Select Inventory Style</sys:String>
+    <sys:String x:Key="InventoryStyleOption">Inventory Style</sys:String>
+    <sys:String x:Key="InventoryStyleOptionDesc">Click to select inventory display style</sys:String>
+    <!-- Style Names -->
+    <sys:String x:Key="InventoryStyleInventory">Inventory</sys:String>
+    <sys:String x:Key="InventoryStyleTabInventory">Tab Inventory</sys:String>
+    <sys:String x:Key="InventoryStyleBrewingStand">Brewing Stand</sys:String>
+    <sys:String x:Key="InventoryStyleCartographyTable">Cartography Table</sys:String>
+    <sys:String x:Key="InventoryStyleCrafter">Crafter</sys:String>
+    <sys:String x:Key="InventoryStyleCraftingTable">Crafting Table</sys:String>
+    <sys:String x:Key="InventoryStyleDispenser">Dispenser</sys:String>
+    <sys:String x:Key="InventoryStyleFurnace">Furnace</sys:String>
+    <sys:String x:Key="InventoryStyleGeneric54">Large Chest</sys:String>
+    <sys:String x:Key="InventoryStyleGrindstone">Grindstone</sys:String>
+    <sys:String x:Key="InventoryStyleHopper">Hopper</sys:String>
+    <sys:String x:Key="InventoryStyleHorse">Horse</sys:String>
+    <sys:String x:Key="InventoryStyleNautilus">Nautilus</sys:String>
+    <sys:String x:Key="InventoryStyleShulkerBox">Shulker Box</sys:String>
+    <sys:String x:Key="InventoryStyleSmithing">Smithing Table</sys:String>
+
 </ResourceDictionary>

@@ -239,4 +239,25 @@
     <sys:String x:Key="LlamaTitle">羊驼</sys:String>
     <sys:String x:Key="NautilusTitle">鹦鹉螺</sys:String>
 
+    <!-- 物品栏样式预览弹窗 -->
+    <sys:String x:Key="StylePreviewTitle">选择物品栏样式</sys:String>
+    <sys:String x:Key="InventoryStyleOption">物品栏样式</sys:String>
+    <sys:String x:Key="InventoryStyleOptionDesc">点击选择物品栏的显示样式</sys:String>
+    <!-- 样式名称 -->
+    <sys:String x:Key="InventoryStyleInventory">物品栏</sys:String>
+    <sys:String x:Key="InventoryStyleTabInventory">标签页物品栏</sys:String>
+    <sys:String x:Key="InventoryStyleBrewingStand">酿造台</sys:String>
+    <sys:String x:Key="InventoryStyleCartographyTable">制图台</sys:String>
+    <sys:String x:Key="InventoryStyleCrafter">合成器</sys:String>
+    <sys:String x:Key="InventoryStyleCraftingTable">工作台</sys:String>
+    <sys:String x:Key="InventoryStyleDispenser">发射器</sys:String>
+    <sys:String x:Key="InventoryStyleFurnace">熔炉</sys:String>
+    <sys:String x:Key="InventoryStyleGeneric54">大箱子</sys:String>
+    <sys:String x:Key="InventoryStyleGrindstone">砂轮</sys:String>
+    <sys:String x:Key="InventoryStyleHopper">漏斗</sys:String>
+    <sys:String x:Key="InventoryStyleHorse">马</sys:String>
+    <sys:String x:Key="InventoryStyleNautilus">鹦鹉螺</sys:String>
+    <sys:String x:Key="InventoryStyleShulkerBox">潜影盒</sys:String>
+    <sys:String x:Key="InventoryStyleSmithing">锻造台</sys:String>
+
 </ResourceDictionary>

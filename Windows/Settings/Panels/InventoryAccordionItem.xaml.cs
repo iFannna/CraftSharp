@@ -1,5 +1,7 @@
 using CraftSharp.Models;
+using CraftSharp.Windows.Dialogs;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -93,6 +95,8 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             if (titleResourceKey == "InventoryTitle" && _settings != null)
             {
+                // 物品栏样式（打开样式预览弹窗）
+                AddStylePickerRow();
                 // 打开动作（单击/双击）
                 AddClickModeComboBox();
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
@@ -105,6 +109,124 @@ namespace CraftSharp.Windows.Settings.Panels
                 // 隐藏状态栏开关
                 AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.Inventory.HideStatusBar, v => _settings.Inventory.HideStatusBar = v);
             }
+        }
+
+        /// <summary>
+        /// 添加物品栏样式选项（打开样式预览弹窗）
+        /// </summary>
+        private void AddStylePickerRow()
+        {
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12), Cursor = System.Windows.Input.Cursors.Hand };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var left = new StackPanel();
+            var titleLabel = new System.Windows.Controls.TextBlock
+            {
+                FontWeight = FontWeights.Medium
+            };
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "InventoryStyleOption");
+            titleLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
+
+            var descLabel = new System.Windows.Controls.TextBlock
+            {
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "InventoryStyleOptionDesc");
+            descLabel.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextSecondaryBrush");
+
+            left.Children.Add(titleLabel);
+            left.Children.Add(descLabel);
+            grid.Children.Add(left);
+
+            // 当前样式名称显示
+            var styleNameText = new System.Windows.Controls.TextBlock
+            {
+                FontWeight = FontWeights.Medium,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
+            };
+            styleNameText.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
+
+            // 根据当前样式获取国际化名称
+            string currentStyle = _settings!.Inventory.StylePath;
+            string styleNameKey = GetStyleNameKey(currentStyle);
+            string styleName = System.Windows.Application.Current.TryFindResource(styleNameKey) as string;
+            if (string.IsNullOrEmpty(styleName))
+            {
+                // 如果没有找到国际化字符串，使用文件名
+                styleName = Path.GetFileNameWithoutExtension(currentStyle);
+            }
+            styleNameText.Text = styleName;
+
+            grid.Children.Add(styleNameText);
+            Grid.SetColumn(styleNameText, 1);
+
+            // 点击打开样式预览弹窗
+            grid.MouseLeftButtonDown += (s, e) =>
+            {
+                var previewWindow = new StylePreviewWindow(_settings.Inventory.StylePath);
+                previewWindow.Owner = Window.GetWindow(this);
+                previewWindow.StyleSelected += (sender, selectedStyle) =>
+                {
+                    // 更新样式配置
+                    _settings.Inventory.StylePath = selectedStyle;
+                    SaveSettings();
+
+                    // 更新显示名称
+                    string newStyleNameKey = GetStyleNameKey(selectedStyle);
+                    string newStyleName = System.Windows.Application.Current.TryFindResource(newStyleNameKey) as string;
+                    if (string.IsNullOrEmpty(newStyleName))
+                    {
+                        newStyleName = Path.GetFileNameWithoutExtension(selectedStyle);
+                    }
+                    styleNameText.Text = newStyleName;
+
+                    // 立即刷新物品栏窗口样式（即时生效）
+                    if (System.Windows.Application.Current is App app)
+                    {
+                        app.RefreshInventoryStyle(selectedStyle);
+                    }
+                };
+                previewWindow.ShowDialog();
+                e.Handled = true;
+            };
+
+            ContentPanel.Children.Add(grid);
+        }
+
+        /// <summary>
+        /// 根据样式文件名获取国际化字符串 Key
+        /// </summary>
+        private string GetStyleNameKey(string fileName)
+        {
+            // inventory.png → InventoryStyleInventory
+            // brewing_stand.png → InventoryStyleBrewingStand
+            string baseName = Path.GetFileNameWithoutExtension(fileName);
+            // 转换为 PascalCase
+            string pascalName = ConvertToPascalCase(baseName);
+            return $"InventoryStyle{pascalName}";
+        }
+
+        /// <summary>
+        /// 将 snake_case 转换为 PascalCase
+        /// </summary>
+        private string ConvertToPascalCase(string snakeCase)
+        {
+            if (string.IsNullOrEmpty(snakeCase))
+                return "";
+
+            var parts = snakeCase.Split('_');
+            var result = new System.Text.StringBuilder();
+            foreach (var part in parts)
+            {
+                if (part.Length > 0)
+                {
+                    result.Append(char.ToUpperInvariant(part[0]));
+                    if (part.Length > 1)
+                        result.Append(part.Substring(1));
+                }
+            }
+            return result.ToString();
         }
 
         /// <summary>

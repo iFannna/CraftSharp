@@ -24,6 +24,9 @@ namespace CraftSharp.Windows.Inventory
         private double _originalImageWidth = 176;
         private double _originalImageHeight = 166;
 
+        // 当前样式文件名（如 inventory.png）
+        private string _currentStyle = "inventory.png";
+
         // 格子坐标数据
         private List<SlotCoord>? _slotCoords;
 
@@ -101,11 +104,14 @@ namespace CraftSharp.Windows.Inventory
             ScaleService.Instance.Initialize();
             _scaleFactor = ScaleService.Instance.ScaleFactor;
 
+            // 读取当前样式配置
+            _currentStyle = _settings?.Inventory.StylePath ?? "inventory.png";
+
             // 加载格子坐标数据
             LoadSlotCoords();
 
-            // 加载背景图片
-            InventoryImage.Source = LoadBitmapImage(AssetPaths.Inventory);
+            // 加载背景图片（使用当前样式）
+            LoadStyleImage();
 
             // 设置窗口尺寸
             SetWindowSize();
@@ -861,6 +867,41 @@ namespace CraftSharp.Windows.Inventory
                     ClearSlotIcon(slotId);
                 }
             }
+        }
+
+        /// <summary>
+        /// 加载当前样式的背景图片
+        /// </summary>
+        private void LoadStyleImage()
+        {
+            string stylePath = $"Assets/minecraft/textures/gui/container/{_currentStyle}";
+            var bitmap = LoadBitmapImage(stylePath);
+            if (bitmap != null)
+            {
+                InventoryImage.Source = bitmap;
+                _originalImageWidth = bitmap.PixelWidth;
+                _originalImageHeight = bitmap.PixelHeight;
+                SetWindowSize();
+            }
+            else
+            {
+                // 回退到默认样式
+                InventoryImage.Source = LoadBitmapImage(AssetPaths.Inventory);
+                _originalImageWidth = 176;
+                _originalImageHeight = 166;
+                SetWindowSize();
+            }
+        }
+
+        /// <summary>
+        /// 刷新物品栏样式（即时生效）
+        /// </summary>
+        public void RefreshStyle(string stylePath)
+        {
+            _currentStyle = stylePath;
+            LoadStyleImage();
+            // 刷新窗口位置（居中）
+            PositionWindow();
         }
     }
 }

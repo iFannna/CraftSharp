@@ -204,6 +204,11 @@ namespace CraftSharp.Models
         /// 点击模式（single/double，默认单击）
         /// </summary>
         public string ClickMode { get; set; } = "single";
+
+        /// <summary>
+        /// 物品栏样式路径（默认 inventory.png）
+        /// </summary>
+        public string StylePath { get; set; } = "inventory.png";
     }
 
     /// <summary>
