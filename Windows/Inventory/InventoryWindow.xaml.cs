@@ -30,6 +30,14 @@ namespace CraftSharp.Windows.Inventory
         private Dictionary<string, Border> _slotBorders = new();
         private Dictionary<string, System.Windows.Controls.Image> _slotIcons = new();
 
+        // 服务实例
+        private SlotFileValidator? _fileValidator;
+        private SlotIconService? _iconService;
+        private SlotDragService? _dragService;
+
+        // 长按开始时的鼠标位置
+        private System.Windows.Point _longPressStartPoint;
+
         // 原生拖放目标（支持 Windows 拖拽缩略图）
         private IDisposable? _nativeDropTarget;
 
@@ -96,11 +104,201 @@ namespace CraftSharp.Windows.Inventory
             // 动态创建和设置格子
             SetupSlots();
 
+            // 初始化服务
+            InitializeServices();
+
             // 加载已保存的格子数据
             LoadSlots();
 
             PositionWindow();
         }
+
+        /// <summary>
+        /// 初始化服务实例
+        /// </summary>
+        private void InitializeServices()
+        {
+            _fileValidator = new SlotFileValidator();
+            _iconService = new SlotIconService(_fileValidator, _settings, _scaleFactor);
+            _dragService = new SlotDragService(_slotService);
+
+            // 设置格子ID映射
+            _dragService.SlotIdMapper = GetSlotIdFromIndex;
+
+            // 订阅事件
+            _iconService.IconNeedsUpdate += OnIconNeedsUpdate;
+            _dragService.DragStarted += OnDragStarted;
+            _dragService.DragEnded += OnDragEnded;
+            _dragService.SwapCompleted += OnSwapCompleted;
+        }
+
+        /// <summary>
+        /// 索引转 SlotId
+        /// </summary>
+        private string GetSlotIdFromIndex(int index)
+        {
+            if (_slotCoords == null || index < 0 || index >= _slotCoords.Count) return "";
+            return _slotCoords[index].slot_id;
+        }
+
+        /// <summary>
+        /// SlotId 转 索引
+        /// </summary>
+        private int GetIndexFromSlotId(string slotId)
+        {
+            if (_slotCoords == null) return -1;
+            for (int i = 0; i < _slotCoords.Count; i++)
+            {
+                if (_slotCoords[i].slot_id == slotId)
+                    return i;
+            }
+            return -1;
+        }
+
+        #region 服务事件处理
+
+        /// <summary>
+        /// 图标需要更新事件处理（文件丢失或恢复时）
+        /// </summary>
+        private void OnIconNeedsUpdate(object? sender, SlotIconService.IconUpdateEventArgs e)
+        {
+            if (e.IsPlaceholder)
+            {
+                UpdateSlotsToPlaceholder(e.FilePath);
+            }
+            else
+            {
+                UpdateSlotsToNormal(e.FilePath);
+            }
+        }
+
+        /// <summary>
+        /// 拖动开始事件处理
+        /// </summary>
+        private void OnDragStarted(object? sender, SlotDragService.DragStartedEventArgs e)
+        {
+            var slotId = GetSlotIdFromIndex(e.SourceSlotIndex);
+            if (!_slotIcons.TryGetValue(slotId, out var sourceIcon)) return;
+
+            // 隐藏源格子图标
+            sourceIcon.Visibility = Visibility.Collapsed;
+
+            // 显示拖动图标副本
+            if (sourceIcon.Source != null)
+            {
+                DragIconImage.Source = sourceIcon.Source;
+                DragIconImage.Width = 16 * _scaleFactor;
+                DragIconImage.Height = 16 * _scaleFactor;
+                DragIconImage.Visibility = Visibility.Visible;
+                RenderOptions.SetBitmapScalingMode(DragIconImage, RenderOptions.GetBitmapScalingMode(sourceIcon));
+
+                var mousePos = Mouse.GetPosition(this);
+                Canvas.SetLeft(DragIconImage, mousePos.X - DragIconImage.Width / 2);
+                Canvas.SetTop(DragIconImage, mousePos.Y - DragIconImage.Height / 2);
+            }
+            else
+            {
+                DragIconImage.Visibility = Visibility.Collapsed;
+            }
+
+            // 捕获鼠标，确保拖动过程中事件不丢失
+            CaptureMouse();
+        }
+
+        /// <summary>
+        /// 拖动结束事件处理
+        /// </summary>
+        private void OnDragEnded(object? sender, SlotDragService.DragEndedEventArgs e)
+        {
+            DragIconImage.Visibility = Visibility.Collapsed;
+
+            // 释放鼠标捕获
+            ReleaseMouseCapture();
+
+            if (e.ShouldRestore)
+            {
+                var slotId = GetSlotIdFromIndex(e.SourceSlotIndex);
+                if (_slotIcons.TryGetValue(slotId, out var sourceIcon))
+                {
+                    var item = _slotService.GetSlot(slotId);
+                    if (!item.IsEmpty)
+                    {
+                        sourceIcon.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 格子交换完成事件处理
+        /// </summary>
+        private void OnSwapCompleted(object? sender, SlotDragService.SwapCompletedEventArgs e)
+        {
+            var sourceSlotId = GetSlotIdFromIndex(e.SourceSlotIndex);
+            var targetSlotId = GetSlotIdFromIndex(e.TargetSlotIndex);
+
+            if (sourceSlotId == "" || targetSlotId == "") return;
+
+            // 更新 UI（数据交换已在 SlotDragService 中完成）
+            if (!e.TargetItem.IsEmpty)
+                SetSlotIcon(sourceSlotId, e.TargetItem.FilePath);
+            else
+                ClearSlotIcon(sourceSlotId);
+
+            if (!e.SourceItem.IsEmpty)
+                SetSlotIcon(targetSlotId, e.SourceItem.FilePath);
+            else
+                ClearSlotIcon(targetSlotId);
+
+            // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
+            if (sourceSlotId.StartsWith("hotbar_") || targetSlotId.StartsWith("hotbar_"))
+            {
+                StatusBarService.Instance.RefreshHotbarIcons();
+            }
+        }
+
+        /// <summary>
+        /// 更新指定文件路径的所有格子为占位图
+        /// </summary>
+        private void UpdateSlotsToPlaceholder(string filePath)
+        {
+            var placeholder = _iconService?.LoadPlaceholderIcon();
+            if (placeholder == null) return;
+
+            foreach (var kvp in _slotBorders)
+            {
+                var slotId = kvp.Key;
+                var item = _slotService.GetSlot(slotId);
+                if (!item.IsEmpty && item.FilePath == filePath)
+                {
+                    var icon = _slotIcons[slotId];
+                    if (icon != null)
+                    {
+                        icon.Source = placeholder;
+                        icon.Visibility = Visibility.Visible;
+                        RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.NearestNeighbor);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 更新指定文件路径的所有格子为正常图标
+        /// </summary>
+        private void UpdateSlotsToNormal(string filePath)
+        {
+            foreach (var kvp in _slotBorders)
+            {
+                var slotId = kvp.Key;
+                var item = _slotService.GetSlot(slotId);
+                if (!item.IsEmpty && item.FilePath == filePath)
+                {
+                    SetSlotIcon(slotId, item.FilePath);
+                }
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// 加载格子坐标数据（从 Assets 目录读取）
@@ -109,7 +307,6 @@ namespace CraftSharp.Windows.Inventory
         {
             try
             {
-                // 窗口名与 JSON 文件名自动对应：InventoryWindow → inventory.json
                 var coordsPath = System.IO.Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Assets/minecraft/textures/gui/container/coordinate/inventory.json");
@@ -122,7 +319,6 @@ namespace CraftSharp.Windows.Inventory
             }
             catch
             {
-                // 如果加载失败，使用空列表
                 _slotCoords = new List<SlotCoord>();
             }
         }
@@ -152,11 +348,10 @@ namespace CraftSharp.Windows.Inventory
             if (_slotCoords == null) return;
 
             double slotSize = 16 * _scaleFactor;
-            double iconSize = slotSize; // 图标占满格子
 
             foreach (var coord in _slotCoords)
             {
-                // 只创建 16x16 的格子（排除 player 区域）
+                // 只创建 16x16 的格子
                 if (coord.width != 16 || coord.height != 16) continue;
 
                 var slotId = coord.slot_id;
@@ -171,21 +366,19 @@ namespace CraftSharp.Windows.Inventory
                 };
 
                 border.MouseLeftButtonDown += Slot_MouseLeftButtonDown;
-                border.MouseLeftButtonUp += Slot_MouseLeftButtonUp;
 
                 var icon = new System.Windows.Controls.Image
                 {
                     Name = $"Icon_{slotId}",
                     Stretch = Stretch.Uniform,
-                    Width = iconSize,
-                    Height = iconSize,
+                    Width = slotSize,
+                    Height = slotSize,
                     Visibility = Visibility.Collapsed
                 };
                 RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
 
                 border.Child = icon;
 
-                // 使用坐标数据定位
                 Canvas.SetLeft(border, coord.x * _scaleFactor);
                 Canvas.SetTop(border, coord.y * _scaleFactor);
 
@@ -228,13 +421,14 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void SetSlotIcon(string slotId, string filePath)
         {
-            if (!_slotIcons.TryGetValue(slotId, out var icon)) return;
+            if (!_slotIcons.TryGetValue(slotId, out var icon) || _iconService == null) return;
 
-            var iconSource = IconExtractor.GetIcon(filePath, (int)(32 * _scaleFactor));
-            if (iconSource != null)
+            var result = _iconService.GetIconWithRenderMode(filePath);
+            if (result.IconSource != null)
             {
-                icon.Source = iconSource;
+                icon.Source = result.IconSource;
                 icon.Visibility = Visibility.Visible;
+                RenderOptions.SetBitmapScalingMode(icon, result.RenderMode);
             }
         }
 
@@ -250,22 +444,84 @@ namespace CraftSharp.Windows.Inventory
 
         // ==================== 鼠标事件处理 ====================
 
-        private void Slot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // 窗口级别的鼠标事件，用于拖动过程中持续更新
+
+        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
         {
-            // 只记录点击位置，不做其他处理
-            e.Handled = true;
+            base.OnMouseMove(e);
+
+            if (_dragService == null) return;
+
+            if (_dragService.IsDragging)
+            {
+                // 更新拖动图标位置
+                var mousePos = e.GetPosition(this);
+                Canvas.SetLeft(DragIconImage, mousePos.X - DragIconImage.Width / 2);
+                Canvas.SetTop(DragIconImage, mousePos.Y - DragIconImage.Height / 2);
+
+                // 更新拖动目标
+                var canvasPos = e.GetPosition(SlotCanvas);
+                var targetSlotId = GetSlotIdAtPosition(canvasPos);
+                var targetIndex = targetSlotId != null ? GetIndexFromSlotId(targetSlotId) : -1;
+                _dragService.UpdateDragTarget(targetIndex);
+            }
+            else if (e.LeftButton == MouseButtonState.Pressed && _dragService.IsDragReady)
+            {
+                // 长按等待中，检测移动阈值
+                var currentPoint = e.GetPosition(this);
+                var distance = (currentPoint - _longPressStartPoint).Length;
+                _dragService.HandleMouseMove(distance);
+            }
         }
 
-        private void Slot_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (_dragService != null && _dragService.IsDragging)
+            {
+                _dragService.EndDrag();
+            }
+            else
+            {
+                // 非拖动，取消长按检测
+                _dragService?.CancelLongPress();
+            }
+        }
+
+        private void Slot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var border = (Border)sender;
             var slotId = border.Name.Replace("Slot_", "");
+            var slotIndex = GetIndexFromSlotId(slotId);
 
-            var item = _slotService.GetSlot(slotId);
-            if (!item.IsEmpty)
+            if (slotIndex < 0 || _dragService == null) return;
+
+            _longPressStartPoint = e.GetPosition(this);
+            _dragService.StartLongPressDetection(slotIndex);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 根据鼠标位置判断落在哪个格子
+        /// </summary>
+        private string? GetSlotIdAtPosition(System.Windows.Point mousePos)
+        {
+            foreach (var kvp in _slotBorders)
             {
-                OpenFile(item.FilePath);
+                var border = kvp.Value;
+                var left = Canvas.GetLeft(border);
+                var top = Canvas.GetTop(border);
+                var width = border.Width;
+                var height = border.Height;
+
+                if (mousePos.X >= left && mousePos.X < left + width &&
+                    mousePos.Y >= top && mousePos.Y < top + height)
+                {
+                    return kvp.Key;
+                }
             }
+            return null;
         }
 
         // ==================== 原生拖放处理 ====================
@@ -295,34 +551,11 @@ namespace CraftSharp.Windows.Inventory
                 _slotService.SetSlot(slotId, new SlotItem { FilePath = filePath });
                 SetSlotIcon(slotId, filePath);
 
-                // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
                 if (slotId.StartsWith("hotbar_"))
                 {
                     StatusBarService.Instance.RefreshHotbarIcons();
                 }
             }
-        }
-
-        /// <summary>
-        /// 根据鼠标位置判断落在哪个格子
-        /// </summary>
-        private string? GetSlotIdAtPosition(System.Windows.Point mousePos)
-        {
-            foreach (var kvp in _slotBorders)
-            {
-                var border = kvp.Value;
-                var left = Canvas.GetLeft(border);
-                var top = Canvas.GetTop(border);
-                var width = border.Width;
-                var height = border.Height;
-
-                if (mousePos.X >= left && mousePos.X < left + width &&
-                    mousePos.Y >= top && mousePos.Y < top + height)
-                {
-                    return kvp.Key;
-                }
-            }
-            return null;
         }
 
         // ==================== 显示/隐藏 ====================
@@ -365,11 +598,10 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 显示物品栏（处理灰色蒙版和隐藏状态栏）
+        /// 显示物品栏
         /// </summary>
         private void ShowInventory()
         {
-            // 1. 先显示灰色蒙版
             if (_settings?.Inventory.GrayOverlay ?? true)
             {
                 int opacity = _settings?.Inventory.GrayOverlayOpacity ?? 75;
@@ -377,7 +609,6 @@ namespace CraftSharp.Windows.Inventory
                 _grayOverlayWindow.Show();
             }
 
-            // 2. 显示物品栏，设置 Owner 为蒙版窗口
             PositionWindow();
             if (_grayOverlayWindow != null)
             {
@@ -385,7 +616,6 @@ namespace CraftSharp.Windows.Inventory
             }
             Show();
 
-            // 3. 隐藏状态栏
             if (_settings?.Inventory.HideStatusBar ?? false)
             {
                 _statusBarWasVisible = StatusBarService.Instance.IsVisible();
@@ -397,21 +627,19 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 隐藏物品栏（恢复灰色蒙版和状态栏）
+        /// 隐藏物品栏
         /// </summary>
         private void HideInventory()
         {
             Hide();
             Owner = null;
 
-            // 1. 关闭灰色蒙版
             if (_grayOverlayWindow != null)
             {
                 _grayOverlayWindow.Close();
                 _grayOverlayWindow = null;
             }
 
-            // 2. 恢复状态栏
             if ((_settings?.Inventory.HideStatusBar ?? false) && _statusBarWasVisible)
             {
                 StatusBarService.Instance.SetVisible(true);

@@ -22,5 +22,14 @@
         <Canvas x:Name="SlotCanvas">
             <!-- 格子将在代码中动态创建和定位 -->
         </Canvas>
+
+        <!-- 拖动图标层 - 用于格子间拖拽显示图标副本 -->
+        <Canvas x:Name="DragIconCanvas"
+                IsHitTestVisible="False">
+            <Image x:Name="DragIconImage"
+                   Stretch="Uniform"
+                   Visibility="Collapsed"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Canvas>
     </Grid>
 </Window>
