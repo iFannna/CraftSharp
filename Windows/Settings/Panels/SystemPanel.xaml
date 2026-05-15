@@ -109,5 +109,25 @@
                                  Click="RememberCardStatesToggle_Click"/>
             </Grid>
         </ui:Card>
+
+        <!-- 记住菜单选项卡片 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource RememberNavSelectionLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource RememberNavSelectionDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <ui:ToggleSwitch Grid.Column="1" x:Name="RememberNavSelectionToggle" IsChecked="True"
+                                 Click="RememberNavSelectionToggle_Click"/>
+            </Grid>
+        </ui:Card>
     </StackPanel>
 </UserControl>

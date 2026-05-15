@@ -128,6 +128,16 @@ namespace CraftSharp.Models
         /// 卡片展开状态字典（Key: titleResourceKey, Value: 是否展开）
         /// </summary>
         public Dictionary<string, bool> CardExpandedStates { get; set; } = new Dictionary<string, bool>();
+
+        /// <summary>
+        /// 记住导航菜单选项
+        /// </summary>
+        public bool RememberNavSelection { get; set; } = true;
+
+        /// <summary>
+        /// 上次选中的导航菜单标签
+        /// </summary>
+        public string LastSelectedNav { get; set; } = "system";
     }
 
     /// <summary>

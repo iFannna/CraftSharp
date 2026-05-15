@@ -28,6 +28,8 @@
     <sys:String x:Key="RememberWindowSizeDesc">Restore settings window size on next launch</sys:String>
     <sys:String x:Key="RememberCardStatesLabel">Remember Card States</sys:String>
     <sys:String x:Key="RememberCardStatesDesc">Restore settings page card expanded/collapsed states on next launch</sys:String>
+    <sys:String x:Key="RememberNavSelectionLabel">Remember Nav Selection</sys:String>
+    <sys:String x:Key="RememberNavSelectionDesc">Restore last selected settings page on next launch</sys:String>
 
     <!-- Appearance Settings Panel -->
     <sys:String x:Key="AppearancePanelTitle">Appearance Settings</sys:String>

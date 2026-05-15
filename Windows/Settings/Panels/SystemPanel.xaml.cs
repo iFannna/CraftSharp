@@ -28,6 +28,7 @@ namespace CraftSharp.Windows.Settings.Panels
             RememberPositionToggle.IsChecked = _settings.System.RememberWindowPosition;
             RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
             RememberCardStatesToggle.IsChecked = _settings.System.RememberCardStates; // 默认开启
+            RememberNavSelectionToggle.IsChecked = _settings.System.RememberNavSelection; // 默认开启
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -95,6 +96,24 @@ namespace CraftSharp.Windows.Settings.Panels
 
                 // 触发事件，通知其他 Panel 刷新卡片状态
                 CardStatesRememberChanged?.Invoke(this, isChecked);
+            }
+        }
+
+        private void RememberNavSelectionToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
+                bool isChecked = toggle.IsChecked ?? false;
+                _settings.System.RememberNavSelection = isChecked;
+
+                // 如果关闭开关，清空已保存的导航选项
+                if (!isChecked)
+                {
+                    _settings.System.LastSelectedNav = "system";
+                }
+
+                // 即时保存设置
+                SaveSettings();
             }
         }
 

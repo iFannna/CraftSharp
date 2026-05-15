@@ -30,4 +30,8 @@
     <Resource Include="Fonts\unifont-16.0.04.ttf" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Assets\minecraft\textures\gui\sprites\hud\" />
+  </ItemGroup>
+
 </Project>

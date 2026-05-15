@@ -22,9 +22,10 @@ namespace CraftSharp.Windows.Settings
 
         public SettingsWindow(AppSettings settings)
         {
-            InitializeComponent();
-
+            // 先设置 _settings，因为 InitializeComponent 会触发 SelectionChanged 事件
             _settings = settings;
+
+            InitializeComponent();
 
             // 注册原生拖放（仅显示缩略图，不接受文件）
             SourceInitialized += (s, e) =>
@@ -95,7 +96,13 @@ namespace CraftSharp.Windows.Settings
             ContentContainer.Children.Add(_panelHotkey);
             ContentContainer.Children.Add(_panelAbout);
 
-            ShowPanel("system");
+            // 根据设置恢复导航菜单选项
+            string initialNav = _settings.System.RememberNavSelection
+                ? _settings.System.LastSelectedNav
+                : "system";
+
+            // 设置初始选中的导航项（触发 SelectionChanged 会自动调用 ShowPanel）
+            SelectNavItem(initialNav);
         }
 
         private void OnLocationChanged(object? sender, EventArgs e)
@@ -150,9 +157,37 @@ namespace CraftSharp.Windows.Settings
 
         private void NavListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            // 初始化阶段 _settings 可能还未设置
+            if (_settings == null) return;
+
             if (NavListBox.SelectedItem is System.Windows.Controls.ListBoxItem item && item.Tag is string tag)
             {
                 ShowPanel(tag);
+
+                // 即时保存导航菜单选项
+                if (_settings.System.RememberNavSelection)
+                {
+                    _settings.System.LastSelectedNav = tag;
+                    SaveSettings();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 根据标签选择导航项
+        /// </summary>
+        private void SelectNavItem(string tag)
+        {
+            foreach (var item in NavListBox.Items)
+            {
+                if (item is System.Windows.Controls.ListBoxItem listBoxItem && listBoxItem.Tag is string itemTag)
+                {
+                    if (itemTag == tag)
+                    {
+                        NavListBox.SelectedItem = listBoxItem;
+                        break;
+                    }
+                }
             }
         }
 

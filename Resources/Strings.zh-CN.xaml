@@ -28,6 +28,8 @@
     <sys:String x:Key="RememberWindowSizeDesc">下次启动时恢复设置窗口的大小</sys:String>
     <sys:String x:Key="RememberCardStatesLabel">记住卡片状态</sys:String>
     <sys:String x:Key="RememberCardStatesDesc">下次启动时恢复设置页面卡片的展开/折叠状态</sys:String>
+    <sys:String x:Key="RememberNavSelectionLabel">记住菜单选项</sys:String>
+    <sys:String x:Key="RememberNavSelectionDesc">下次启动时恢复上次选中的设置页面</sys:String>
 
     <!-- 外观设置面板 -->
     <sys:String x:Key="AppearancePanelTitle">外观设置</sys:String>
