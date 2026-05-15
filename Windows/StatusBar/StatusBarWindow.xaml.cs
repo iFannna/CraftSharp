@@ -382,14 +382,16 @@ namespace CraftSharp.Windows.StatusBar
             FileNameTextBlock.FontFamily = fontFamily;
             FileNameTextBlock.FontSize = 8 * _scaleFactor;
 
-            // 从配置读取颜色
+            // 从配置读取颜色并设置
             string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
-            FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
+            var textColor = ParseColorFromHex(colorHex);
+            FileNameTextBlock.Foreground = new SolidColorBrush(textColor);
 
-            // 设置阴影效果
+            // 根据文本颜色计算阴影颜色（加深）
+            var shadowColor = CalculateShadowColor(textColor);
             var shadowEffect = new System.Windows.Media.Effects.DropShadowEffect
             {
-                Color = Colors.Black,
+                Color = shadowColor,
                 Direction = 315,
                 ShadowDepth = 0.75 * _scaleFactor,
                 BlurRadius = 0,
@@ -417,7 +419,60 @@ namespace CraftSharp.Windows.StatusBar
         public void RefreshFileNameColor()
         {
             string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
-            FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
+            var textColor = ParseColorFromHex(colorHex);
+            FileNameTextBlock.Foreground = new SolidColorBrush(textColor);
+
+            // 同步更新阴影颜色
+            var shadowColor = CalculateShadowColor(textColor);
+            if (FileNameTextBlock.Effect is System.Windows.Media.Effects.DropShadowEffect shadowEffect)
+            {
+                shadowEffect.Color = shadowColor;
+            }
+        }
+
+        /// <summary>
+        /// 解析十六进制颜色字符串（支持 #RRGGBB 和 #AARRGGBB 格式）
+        /// </summary>
+        private System.Windows.Media.Color ParseColorFromHex(string hex)
+        {
+            hex = hex.TrimStart('#');
+
+            try
+            {
+                if (hex.Length == 8)
+                {
+                    byte a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                    return System.Windows.Media.Color.FromArgb(a, r, g, b);
+                }
+                else if (hex.Length == 6)
+                {
+                    byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    return System.Windows.Media.Color.FromRgb(r, g, b);
+                }
+            }
+            catch
+            {
+            }
+
+            return System.Windows.Media.Colors.White;
+        }
+
+        /// <summary>
+        /// 根据文本颜色计算加深后的阴影颜色
+        /// </summary>
+        private System.Windows.Media.Color CalculateShadowColor(System.Windows.Media.Color textColor)
+        {
+            // 将 RGB 值乘以系数加深（系数越小越深）
+            double darkenFactor = 0.5; // 加深到50%，阴影与文本颜色协调
+            byte r = (byte)Math.Round(textColor.R * darkenFactor);
+            byte g = (byte)Math.Round(textColor.G * darkenFactor);
+            byte b = (byte)Math.Round(textColor.B * darkenFactor);
+            return System.Windows.Media.Color.FromRgb(r, g, b);
         }
 
         /// <summary>
@@ -628,6 +683,9 @@ namespace CraftSharp.Windows.StatusBar
             SetupArmor();
             SetupAbsorbing();
             SetupExperienceBar();
+
+            // 配置设置后刷新文件名颜色
+            RefreshFileNameColor();
         }
 
         /// <summary>
