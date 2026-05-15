@@ -17,12 +17,15 @@ namespace CraftSharp.Windows.Settings.Panels
         // 预设文件名颜色列表
         private static readonly string[] PresetFileNameColors = new string[]
         {
-            "#FFFFFF", // 白色
-            "#FFFF55", // 黄色
-            "#FFAA00", // 金色
-            "#AA00AA", // 紫色
-            "#FF5555", // 红色
-            "#55FFFF"  // 青色
+            "#FCFCFC", // 白色
+            "#A8A8A8", // 灰色
+            "#FCFC54", // 黄色
+            "#5454FC", // 蓝色
+            "#FC54FC", // 粉色
+            "#A800A8", // 紫色
+            "#FC5454", // 红色
+            "#54FCFC", // 青色
+            "#00A800"  // 绿色
         };
 
         private void AddHotbarContent()
