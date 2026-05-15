@@ -12,12 +12,12 @@ namespace CraftSharp.Windows.Dialogs
         /// <summary>
         /// 用户选择的颜色（十六进制格式）
         /// </summary>
-        public string SelectedColorHex { get; private set; } = "#ECECEC";
+        public string SelectedColorHex { get; private set; } = "#FFFFFF";
 
         /// <summary>
         /// 用户选择的颜色（Color对象）
         /// </summary>
-        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromRgb(236, 236, 236);
+        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromRgb(255, 255, 255);
 
         public ColorPickerWindow()
         {

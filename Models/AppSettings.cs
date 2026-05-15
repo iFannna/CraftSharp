@@ -304,9 +304,9 @@ namespace CraftSharp.Models
         public bool ShowTargetIcon { get; set; } = false;
 
         /// <summary>
-        /// 文件名显示颜色（十六进制格式，如 "#ECECEC"）
+        /// 文件名显示颜色（十六进制格式，如 "#FFFFFF"）
         /// </summary>
-        public string FileNameColor { get; set; } = "#ECECEC";
+        public string FileNameColor { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// 用户自定义的文件名颜色（可选，null表示无自定义）

@@ -33,8 +33,8 @@
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="R" FontWeight="Medium" Foreground="#E74C3C"/>
-                <Slider Grid.Column="1" x:Name="RedSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="RedValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+                <Slider Grid.Column="1" x:Name="RedSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="RedValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
             </Grid>
 
             <!-- G 滑块 -->
@@ -45,8 +45,8 @@
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="G" FontWeight="Medium" Foreground="#27AE60"/>
-                <Slider Grid.Column="1" x:Name="GreenSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="GreenValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+                <Slider Grid.Column="1" x:Name="GreenSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="GreenValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
             </Grid>
 
             <!-- B 滑块 -->
@@ -57,8 +57,8 @@
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="B" FontWeight="Medium" Foreground="#3498DB"/>
-                <Slider Grid.Column="1" x:Name="BlueSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="BlueValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+                <Slider Grid.Column="1" x:Name="BlueSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="BlueValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
             </Grid>
         </StackPanel>
 
@@ -66,14 +66,14 @@
         <StackPanel Grid.Row="2" Margin="16,8,16,16">
             <TextBlock Text="{DynamicResource ColorPickerPreview}" FontWeight="Medium" Margin="0,0,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <Border x:Name="PreviewBorder" Background="#ECECEC" CornerRadius="8" Height="40">
+            <Border x:Name="PreviewBorder" Background="#FFFFFF" CornerRadius="8" Height="40">
                 <TextBlock x:Name="PreviewText" Text="示例文件名.txt"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontSize="14" FontWeight="Medium"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
             </Border>
             <!-- 十六进制值显示 -->
-            <TextBlock x:Name="HexValueText" Text="#ECECEC" Margin="0,8,0,0"
+            <TextBlock x:Name="HexValueText" Text="#FFFFFF" Margin="0,8,0,0"
                        HorizontalAlignment="Center" FontWeight="Medium"
                        Foreground="{DynamicResource TextSecondaryBrush}"/>
         </StackPanel>

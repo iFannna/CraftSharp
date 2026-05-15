@@ -17,17 +17,12 @@ namespace CraftSharp.Windows.Settings.Panels
         // 预设文件名颜色列表
         private static readonly string[] PresetFileNameColors = new string[]
         {
-            "#9A5CC6", // 紫色
-            "#B4684D", // 棕色
-            "#6EECD2", // 青色
-            "#11A036", // 绿色
-            "#DEB12D", // 黄色
-            "#ECECEC", // 白色
-            "#416E97", // 蓝色
-            "#E3D4C4", // 米色
-            "#625859", // 灰色
-            "#971607", // 深红
-            "#FC7812"  // 橙色
+            "#FFFFFF", // 白色
+            "#FFFF55", // 黄色
+            "#FFAA00", // 金色
+            "#AA00AA", // 紫色
+            "#FF5555", // 红色
+            "#55FFFF"  // 青色
         };
 
         private void AddHotbarContent()
@@ -92,10 +87,14 @@ namespace CraftSharp.Windows.Settings.Panels
             left.Children.Add(descLabel);
             grid.Children.Add(left);
 
+            // 预先计算所有选项的最大宽度
+            double maxWidth = CalculateMaxComboBoxWidth();
+
             var comboBox = new System.Windows.Controls.ComboBox
             {
-                Width = 120,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+                Width = maxWidth,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left
             };
 
             string currentColor = _settings.Hotbar.FileNameColor;
@@ -224,7 +223,7 @@ namespace CraftSharp.Windows.Settings.Panels
             // 十六进制值文本
             var textBlock = new System.Windows.Controls.TextBlock
             {
-                Text = isCustom ? $"{GetResourceString("HudOptionFileNameColorCustom")}: {colorHex}" : colorHex
+                Text = colorHex
             };
 
             stackPanel.Children.Add(colorBox);
@@ -274,6 +273,52 @@ namespace CraftSharp.Windows.Settings.Panels
 
             if (selectedIndex >= 0)
                 comboBox.SelectedIndex = selectedIndex;
+        }
+
+        /// <summary>
+        /// 计算下拉框最大宽度（根据所有选项内容）
+        /// </summary>
+        private double CalculateMaxComboBoxWidth()
+        {
+            double maxWidth = 0;
+
+            // 预设颜色选项
+            foreach (var color in PresetFileNameColors)
+            {
+                double width = EstimateComboBoxItemWidth(color, false);
+                if (width > maxWidth)
+                    maxWidth = width;
+            }
+
+            // "其他..."选项
+            double otherWidth = EstimateTextWidth(GetResourceString("HudOptionFileNameColorOther"));
+            if (otherWidth > maxWidth)
+                maxWidth = otherWidth;
+
+            // 添加ComboBox边距和下拉箭头空间
+            maxWidth += 40;
+
+            // 限制最大宽度不超过200
+            return Math.Min(maxWidth, 200);
+        }
+
+        /// <summary>
+        /// 估算下拉框选项宽度
+        /// </summary>
+        private double EstimateComboBoxItemWidth(string colorHex, bool isCustom)
+        {
+            // 颜色方块宽度(16) + 间距(8) + 文本宽度
+            double textWidth = EstimateTextWidth(colorHex);
+            return 16 + 8 + textWidth;
+        }
+
+        /// <summary>
+        /// 估算文本宽度
+        /// </summary>
+        private double EstimateTextWidth(string text)
+        {
+            // 使用平均字符宽度估算（假设12px字体，每个字符约7px宽）
+            return text.Length * 7 + 10; // 加10px padding
         }
 
         /// <summary>

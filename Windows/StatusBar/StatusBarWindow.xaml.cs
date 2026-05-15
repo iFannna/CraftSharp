@@ -383,7 +383,7 @@ namespace CraftSharp.Windows.StatusBar
             FileNameTextBlock.FontSize = 8 * _scaleFactor;
 
             // 从配置读取颜色
-            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#ECECEC";
+            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
             FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
 
             // 设置阴影效果
@@ -416,7 +416,7 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         public void RefreshFileNameColor()
         {
-            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#ECECEC";
+            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
             FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
         }
 
