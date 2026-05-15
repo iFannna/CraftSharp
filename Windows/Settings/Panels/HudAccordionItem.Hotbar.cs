@@ -119,15 +119,26 @@ namespace CraftSharp.Windows.Settings.Panels
             }
 
             // 2. 添加预设颜色
+            int autoIndexOffset = hasCustomColor ? 1 : 0;
             for (int i = 0; i < PresetFileNameColors.Length; i++)
             {
                 var presetItem = CreateColorComboBoxItem(PresetFileNameColors[i], false);
                 comboBox.Items.Add(presetItem);
                 if (currentColor == PresetFileNameColors[i])
-                    selectedIndex = hasCustomColor ? i + 1 : i;
+                    selectedIndex = autoIndexOffset + i;
             }
 
-            // 3. 添加"其他..."选项
+            // 3. 添加"自动"选项（在"其他..."之前）
+            var autoItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = GetResourceString("HudOptionFileNameColorAuto"),
+                Tag = "auto"
+            };
+            comboBox.Items.Add(autoItem);
+            if (currentColor == "auto")
+                selectedIndex = autoIndexOffset + PresetFileNameColors.Length;
+
+            // 4. 添加"其他..."选项
             var otherItem = new System.Windows.Controls.ComboBoxItem
             {
                 Content = GetResourceString("HudOptionFileNameColorOther"),
@@ -187,6 +198,17 @@ namespace CraftSharp.Windows.Settings.Panels
                         StatusBarService.Instance.RefreshFileNameColor();
 
                         currentColor = tag;
+                    }
+                    else if (tag == "auto")
+                    {
+                        // 自动模式
+                        _settings.Hotbar.FileNameColor = "auto";
+                        SaveSettings();
+
+                        // 更新 StatusBarWindow
+                        StatusBarService.Instance.RefreshFileNameColor();
+
+                        currentColor = "auto";
                     }
                 }
             };
@@ -291,6 +313,7 @@ namespace CraftSharp.Windows.Settings.Panels
                                   !PresetFileNameColors.Contains(_settings.Hotbar.CustomFileNameColor);
 
             int selectedIndex = -1;
+            int autoIndexOffset = hasCustomColor ? 1 : 0;
 
             // 自定义颜色
             if (hasCustomColor)
@@ -307,8 +330,18 @@ namespace CraftSharp.Windows.Settings.Panels
                 var presetItem = CreateColorComboBoxItem(PresetFileNameColors[i], false);
                 comboBox.Items.Add(presetItem);
                 if (selectedColor == PresetFileNameColors[i])
-                    selectedIndex = hasCustomColor ? i + 1 : i;
+                    selectedIndex = autoIndexOffset + i;
             }
+
+            // 自动
+            var autoItem = new System.Windows.Controls.ComboBoxItem
+            {
+                Content = GetResourceString("HudOptionFileNameColorAuto"),
+                Tag = "auto"
+            };
+            comboBox.Items.Add(autoItem);
+            if (selectedColor == "auto")
+                selectedIndex = autoIndexOffset + PresetFileNameColors.Length;
 
             // 其他...
             var otherItem = new System.Windows.Controls.ComboBoxItem
@@ -336,6 +369,11 @@ namespace CraftSharp.Windows.Settings.Panels
                 if (width > maxWidth)
                     maxWidth = width;
             }
+
+            // "自动"选项
+            double autoWidth = EstimateTextWidth(GetResourceString("HudOptionFileNameColorAuto"));
+            if (autoWidth > maxWidth)
+                maxWidth = autoWidth;
 
             // "其他..."选项
             double otherWidth = EstimateTextWidth(GetResourceString("HudOptionFileNameColorOther"));

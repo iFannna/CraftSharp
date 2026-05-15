@@ -116,6 +116,7 @@
     <sys:String x:Key="HudOptionShowTargetIconDesc">Only applies to shortcuts. May fail due to permission issues</sys:String>
     <sys:String x:Key="HudOptionFileNameColor">File Name Color</sys:String>
     <sys:String x:Key="HudOptionFileNameColorDesc">Color of file name when hotbar slot is selected</sys:String>
+    <sys:String x:Key="HudOptionFileNameColorAuto">Auto</sys:String>
     <sys:String x:Key="HudOptionFileNameColorOther">Other...</sys:String>
     <sys:String x:Key="HudOptionFileNameColorCustom">Custom</sys:String>
     <sys:String x:Key="ColorPickerTitle">Select Color</sys:String>

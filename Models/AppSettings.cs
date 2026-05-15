@@ -304,7 +304,7 @@ namespace CraftSharp.Models
         public bool ShowTargetIcon { get; set; } = false;
 
         /// <summary>
-        /// 文件名显示颜色（十六进制格式，如 "#FFFFFF"）
+        /// 文件名显示颜色（十六进制格式，如 "#FFFFFF"，或 "auto" 表示自动模式）
         /// </summary>
         public string FileNameColor { get; set; } = "#FFFFFF";
 
@@ -312,6 +312,35 @@ namespace CraftSharp.Models
         /// 用户自定义的文件名颜色（可选，null表示无自定义）
         /// </summary>
         public string? CustomFileNameColor { get; set; } = null;
+
+        /// <summary>
+        /// 自动模式使用的预设颜色列表
+        /// </summary>
+        public static readonly string[] AutoColors = new string[]
+        {
+            "#FCFCFC", // 白色
+            "#A8A8A8", // 灰色
+            "#FCFC54", // 黄色
+            "#5454FC", // 蓝色
+            "#FC54FC", // 粶色
+            "#A800A8", // 紫色
+            "#FC5454", // 红色
+            "#54FCFC", // 青色
+            "#00A800"  // 绿色
+        };
+
+        /// <summary>
+        /// 根据文件名计算自动颜色（相同文件名返回相同颜色）
+        /// </summary>
+        public static string GetAutoColorForFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return AutoColors[0];
+
+            int hash = Math.Abs(fileName.GetHashCode());
+            int index = hash % AutoColors.Length;
+            return AutoColors[index];
+        }
     }
 
     /// <summary>

@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
+using CraftSharp.Models;
 using CraftSharp.Services;
 
 #pragma warning disable CS8618 // 服务字段在 partial class 的 InitializeSlotServices 中初始化
@@ -528,6 +529,22 @@ namespace CraftSharp.Windows.StatusBar
             // 设置文件名（Grid 会自动居中）
             FileNameTextBlock.Text = fileName;
             FileNameTextBlock.Visibility = Visibility.Visible;
+
+            // 如果是自动模式，根据文件名动态计算颜色
+            string colorSetting = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
+            if (colorSetting == "auto")
+            {
+                string autoColor = HotbarSettings.GetAutoColorForFileName(fileName);
+                var textColor = ParseColorFromHex(autoColor);
+                FileNameTextBlock.Foreground = new SolidColorBrush(textColor);
+
+                // 同步更新阴影颜色
+                var shadowColor = CalculateShadowColor(textColor);
+                if (FileNameTextBlock.Effect is System.Windows.Media.Effects.DropShadowEffect shadowEffect)
+                {
+                    shadowEffect.Color = shadowColor;
+                }
+            }
 
             // 启动定时器（2000ms后触发渐隐动画）
             _fileNameTimer?.Start();

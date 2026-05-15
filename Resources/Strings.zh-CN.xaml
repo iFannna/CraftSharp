@@ -116,6 +116,7 @@
     <sys:String x:Key="HudOptionShowTargetIconDesc">仅对快捷方式生效，可能因为权限问题失效</sys:String>
     <sys:String x:Key="HudOptionFileNameColor">文件名颜色</sys:String>
     <sys:String x:Key="HudOptionFileNameColorDesc">选中快捷栏格子时显示的文件名颜色</sys:String>
+    <sys:String x:Key="HudOptionFileNameColorAuto">自动</sys:String>
     <sys:String x:Key="HudOptionFileNameColorOther">其他...</sys:String>
     <sys:String x:Key="HudOptionFileNameColorCustom">自定义</sys:String>
     <sys:String x:Key="ColorPickerTitle">选择颜色</sys:String>
