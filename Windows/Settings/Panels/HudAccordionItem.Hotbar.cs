@@ -340,10 +340,10 @@ namespace CraftSharp.Windows.Settings.Panels
                 maxWidth = otherWidth;
 
             // 添加ComboBox边距和下拉箭头空间
-            maxWidth += 40;
+            maxWidth += 60;
 
-            // 限制最大宽度不超过200
-            return Math.Min(maxWidth, 200);
+            // 限制最大宽度不超过300
+            return Math.Min(maxWidth, 300);
         }
 
         /// <summary>

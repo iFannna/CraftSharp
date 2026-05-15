@@ -34,14 +34,41 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 色谱区域（色相 + 饱和度） -->
-            <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="8" Height="200"
+            <!-- 色谱区域（饱和度 + 亮度） -->
+            <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="0" Height="200"
                     Background="White" MouseLeftButtonDown="Spectrum_MouseDown">
                 <Grid IsHitTestVisible="False">
-                    <!-- 色相渐变（横向从红到红） -->
+                    <!-- 横向渐变：透明 → 纯色（饱和度：左白→右纯色） -->
                     <Rectangle x:Name="HueGradient">
                         <Rectangle.Fill>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                <GradientStop Color="#FFFF0000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 纵向渐变：透明 → 黑色（亮度：上亮→下黑） -->
+                    <Rectangle x:Name="BrightnessGradient">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00000000" Offset="0"/>
+                                <GradientStop Color="#FF000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 选择指示器 -->
+                    <Border x:Name="SpectrumSelector" Width="12" Height="12" CornerRadius="6" BorderBrush="White" BorderThickness="2"
+                            Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
+
+            <!-- 色相光谱条（垂直） -->
+            <Border Grid.Column="1" x:Name="HueSpectrumBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
+                    Background="Transparent" MouseLeftButtonDown="HueSpectrum_MouseDown">
+                <Grid IsHitTestVisible="False">
+                    <Rectangle x:Name="HueSpectrumGradient">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                 <GradientStop Color="#FF0000" Offset="0"/>
                                 <GradientStop Color="#FFFF00" Offset="0.167"/>
                                 <GradientStop Color="#00FF00" Offset="0.333"/>
@@ -52,35 +79,8 @@
                             </LinearGradientBrush>
                         </Rectangle.Fill>
                     </Rectangle>
-                    <!-- 饱和度渐变（纵向从透明到白色） -->
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#00FFFFFF" Offset="0"/>
-                                <GradientStop Color="#FFFFFFFF" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <!-- 选择指示器 -->
-                    <Border x:Name="SpectrumSelector" Width="12" Height="12" CornerRadius="6" BorderBrush="White" BorderThickness="2"
-                            Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                </Grid>
-            </Border>
-
-            <!-- 明度条（垂直） -->
-            <Border Grid.Column="1" x:Name="BrightnessBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
-                    Background="Transparent" MouseLeftButtonDown="Brightness_MouseDown">
-                <Grid IsHitTestVisible="False">
-                    <Rectangle x:Name="BrightnessGradient">
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="White" Offset="0"/>
-                                <GradientStop Color="Black" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <!-- 明度选择指示器 -->
-                    <Border x:Name="BrightnessSelector" Width="24" Height="4" CornerRadius="2" BorderBrush="White" BorderThickness="1"
+                    <!-- 色相选择指示器 -->
+                    <Border x:Name="HueSpectrumSelector" Width="24" Height="4" CornerRadius="2" BorderBrush="White" BorderThickness="1"
                             Background="Transparent" VerticalAlignment="Top"/>
                 </Grid>
             </Border>
