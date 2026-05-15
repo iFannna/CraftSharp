@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -23,6 +24,9 @@ namespace CraftSharp.Windows.Dialogs
         private bool _isDraggingBrightness = false;
         private bool _isDraggingOpacity = false;
 
+        // 防止输入框更新时递归触发
+        private bool _isUpdatingInputs = false;
+
         /// <summary>
         /// 用户选择的颜色（十六进制格式，带Alpha）
         /// </summary>
@@ -40,7 +44,9 @@ namespace CraftSharp.Windows.Dialogs
 
         public ColorPickerWindow()
         {
+            _isUpdatingInputs = true;  // 防止初始化时触发事件
             InitializeComponent();
+            _isUpdatingInputs = false;
             UpdateColorDisplay();
             UpdateBrightnessGradient();
             UpdateOpacityGradient();
@@ -51,6 +57,7 @@ namespace CraftSharp.Windows.Dialogs
         /// </summary>
         public ColorPickerWindow(string initialColorHex)
         {
+            _isUpdatingInputs = true;  // 防止初始化时触发事件
             InitializeComponent();
 
             // 解析初始颜色（支持 #RRGGBB 或 #AARRGGBB 格式）
@@ -66,6 +73,7 @@ namespace CraftSharp.Windows.Dialogs
                 _selectedColor = _initialColor;
             }
 
+            _isUpdatingInputs = false;
             UpdateColorDisplay();
             UpdateBrightnessGradient();
             UpdateOpacityGradient();
@@ -375,14 +383,30 @@ namespace CraftSharp.Windows.Dialogs
         #region UI更新
 
         /// <summary>
-        /// 更新颜色显示（预览、十六进制、RGB、Alpha）
+        /// 更新颜色显示（预览、输入框）
         /// </summary>
         private void UpdateColorDisplay()
         {
+            _isUpdatingInputs = true;
+
+            // 更新预览
             PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
-            HexValueText.Text = SelectedColorHex;
-            int opacityPercent = (int)Math.Round(_opacity * 100);
-            RgbValueText.Text = $"R:{_selectedColor.R} G:{_selectedColor.G} B:{_selectedColor.B} A:{opacityPercent}%";
+
+            // 更新 HEX 输入框（不带 Alpha）
+            HexInput.Text = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}";
+
+            // HEX 行的 Alpha 输入框（百分比格式）
+            AlphaPercentInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+
+            // 更新 RGB 输入框
+            RInput.Text = _selectedColor.R.ToString();
+            GInput.Text = _selectedColor.G.ToString();
+            BInput.Text = _selectedColor.B.ToString();
+
+            // RGB 行的 Alpha 输入框（百分比格式）
+            AlphaInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+
+            _isUpdatingInputs = false;
         }
 
         /// <summary>
@@ -442,6 +466,243 @@ namespace CraftSharp.Windows.Dialogs
             double opacityY = _opacity * OpacityBorder.ActualHeight;
 
             OpacitySelector.Margin = new Thickness(0, opacityY - 2, 0, 0);
+        }
+
+        #endregion
+
+        #region 输入框事件
+
+        /// <summary>
+        /// HEX 输入框文本变化时更新颜色（仅在输入完整时生效）
+        /// </summary>
+        private void HexInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingInputs) return;
+
+            string text = HexInput.Text;
+
+            // 只处理完整的6位十六进制输入（#RRGGBB 格式）
+            // 不完整的输入不做任何处理，让用户继续输入
+            if (text.Length != 7 || !text.StartsWith("#"))
+                return;
+
+            string hex = text.Substring(1);
+
+            // 验证是否为有效的6位十六进制
+            if (!IsValidHexString(hex))
+                return;
+
+            // 输入完整且有效，更新颜色
+            if (TryParseHexColor(hex, out byte r, out byte g, out byte b))
+            {
+                _selectedColor = System.Windows.Media.Color.FromArgb(_selectedColor.A, r, g, b);
+                RgbToHsl(_selectedColor, out _hue, out _saturation, out _brightness);
+                UpdateColorFromHsl();
+                UpdateBrightnessGradient();
+                UpdateOpacityGradient();
+                UpdateSelectorPositions();
+
+                // 只更新其他输入框，不更新HexInput（避免干扰用户输入）
+                _isUpdatingInputs = true;
+                PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
+                AlphaPercentInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+                RInput.Text = _selectedColor.R.ToString();
+                GInput.Text = _selectedColor.G.ToString();
+                BInput.Text = _selectedColor.B.ToString();
+                AlphaInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+                _isUpdatingInputs = false;
+            }
+        }
+
+        /// <summary>
+        /// 验证字符串是否为有效的十六进制字符串（6位）
+        /// </summary>
+        private bool IsValidHexString(string hex)
+        {
+            if (hex.Length != 6)
+                return false;
+
+            foreach (char c in hex)
+            {
+                if (!((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')))
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// HEX 行的 Alpha 百分比输入框文本变化时更新
+        /// </summary>
+        private void AlphaPercentInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingInputs) return;
+
+            // 尝试解析，无效时不处理（让用户继续输入）
+            if (TryParseOpacityValue(AlphaPercentInput.Text, out int opacityPercent))
+            {
+                _opacity = opacityPercent / 100.0;
+                UpdateColorFromHsl();
+                UpdateSelectorPositions();
+
+                // 只更新其他输入框和预览
+                _isUpdatingInputs = true;
+                PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
+                HexInput.Text = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}";
+                RInput.Text = _selectedColor.R.ToString();
+                GInput.Text = _selectedColor.G.ToString();
+                BInput.Text = _selectedColor.B.ToString();
+                AlphaInput.Text = $"{opacityPercent}%";
+                _isUpdatingInputs = false;
+            }
+        }
+
+        /// <summary>
+        /// RGB 输入框文本变化时更新颜色（仅在所有值有效时生效）
+        /// </summary>
+        private void RgbInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingInputs) return;
+
+            // 检查所有RGB输入框是否都有有效数字
+            if (TryParseRgbValueWithClamp(RInput.Text, out byte r, out int rRaw) &&
+                TryParseRgbValueWithClamp(GInput.Text, out byte g, out int gRaw) &&
+                TryParseRgbValueWithClamp(BInput.Text, out byte b, out int bRaw))
+            {
+                _selectedColor = System.Windows.Media.Color.FromArgb(_selectedColor.A, r, g, b);
+                RgbToHsl(_selectedColor, out _hue, out _saturation, out _brightness);
+                UpdateColorFromHsl();
+                UpdateBrightnessGradient();
+                UpdateOpacityGradient();
+                UpdateSelectorPositions();
+
+                // 更新其他输入框，同时矫正超范围的RGB值
+                _isUpdatingInputs = true;
+                PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
+                HexInput.Text = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}";
+                AlphaPercentInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+                AlphaInput.Text = $"{(int)Math.Round(_opacity * 100)}%";
+
+                // 矫正超范围的RGB输入框显示值
+                if (rRaw != r) RInput.Text = r.ToString();
+                if (gRaw != g) GInput.Text = g.ToString();
+                if (bRaw != b) BInput.Text = b.ToString();
+
+                _isUpdatingInputs = false;
+            }
+        }
+
+        /// <summary>
+        /// RGB 行的 Alpha 百分比输入框文本变化时更新
+        /// </summary>
+        private void AlphaInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingInputs) return;
+
+            // 尝试解析，无效时不处理（让用户继续输入）
+            if (TryParseOpacityValue(AlphaInput.Text, out int opacityPercent))
+            {
+                _opacity = opacityPercent / 100.0;
+                UpdateColorFromHsl();
+                UpdateSelectorPositions();
+
+                // 只更新其他输入框和预览
+                _isUpdatingInputs = true;
+                PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
+                HexInput.Text = $"#{_selectedColor.R:X2}{_selectedColor.G:X2}{_selectedColor.B:X2}";
+                AlphaPercentInput.Text = $"{opacityPercent}%";
+                RInput.Text = _selectedColor.R.ToString();
+                GInput.Text = _selectedColor.G.ToString();
+                BInput.Text = _selectedColor.B.ToString();
+                _isUpdatingInputs = false;
+            }
+        }
+
+        /// <summary>
+        /// 解析十六进制颜色值
+        /// </summary>
+        private bool TryParseHexColor(string hex, out byte r, out byte g, out byte b)
+        {
+            r = g = b = 0;
+            try
+            {
+                r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 解析 RGB 值（0-255），返回矫正后的值和原始值
+        /// </summary>
+        private bool TryParseRgbValueWithClamp(string text, out byte clampedValue, out int rawValue)
+        {
+            clampedValue = 0;
+            rawValue = 0;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            try
+            {
+                rawValue = int.Parse(text);
+                int clamped = Math.Clamp(rawValue, 0, 255);
+                clampedValue = (byte)clamped;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 解析 RGB 值（0-255）
+        /// </summary>
+        private bool TryParseRgbValue(string text, out byte value)
+        {
+            value = 0;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            try
+            {
+                int parsed = int.Parse(text);
+                parsed = Math.Clamp(parsed, 0, 255);
+                value = (byte)parsed;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 解析不透明度百分比值（支持 "100", "100%", "50%" 等格式）
+        /// </summary>
+        private bool TryParseOpacityValue(string text, out int value)
+        {
+            value = 0;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            try
+            {
+                // 移除百分号
+                text = text.TrimEnd('%');
+                int parsed = int.Parse(text);
+                parsed = Math.Clamp(parsed, 0, 100);
+                value = parsed;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

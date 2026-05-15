@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- 标题栏 -->
@@ -126,52 +127,74 @@
             </Border>
         </Grid>
 
-        <!-- 预览和数值区域 -->
-        <StackPanel Grid.Row="2" Margin="16,8,16,16">
-            <TextBlock Text="{DynamicResource ColorPickerPreview}" FontWeight="Medium" Margin="0,0,0,8"
-                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <!-- 预览颜色块 -->
-            <Border x:Name="PreviewBorder" CornerRadius="8" Height="40">
-                <!-- 棋盘格背景用于显示透明效果 -->
-                <Border.Background>
-                    <DrawingBrush TileMode="Tile" Viewport="0,0,10,10" ViewportUnits="Absolute">
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <GeometryDrawing Brush="White">
-                                    <GeometryDrawing.Geometry>
-                                        <RectangleGeometry Rect="0,0,10,10"/>
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                                <GeometryDrawing Brush="#CCCCCC">
-                                    <GeometryDrawing.Geometry>
-                                        <GeometryGroup>
-                                            <RectangleGeometry Rect="0,0,5,5"/>
-                                            <RectangleGeometry Rect="5,5,5,5"/>
-                                        </GeometryGroup>
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Border.Background>
-                <!-- 预览颜色覆盖层 -->
-                <Border x:Name="PreviewColorOverlay" CornerRadius="8" Background="#FFFFFF"/>
-            </Border>
-            <!-- 颜色值显示 -->
-            <Grid Margin="0,8,0,0">
+        <!-- 颜色预览区域 -->
+        <Border Grid.Row="2" Margin="16,8,16,8" CornerRadius="8" Height="40">
+            <!-- 棋盘格背景用于显示透明效果 -->
+            <Border.Background>
+                <DrawingBrush TileMode="Tile" Viewport="0,0,10,10" ViewportUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="White">
+                                <GeometryDrawing.Geometry>
+                                    <RectangleGeometry Rect="0,0,10,10"/>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                            <GeometryDrawing Brush="#CCCCCC">
+                                <GeometryDrawing.Geometry>
+                                    <GeometryGroup>
+                                        <RectangleGeometry Rect="0,0,5,5"/>
+                                        <RectangleGeometry Rect="5,5,5,5"/>
+                                    </GeometryGroup>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Border.Background>
+            <!-- 预览颜色覆盖层 -->
+            <Border x:Name="PreviewColorOverlay" CornerRadius="8" Background="#FFFFFFFF"/>
+        </Border>
+
+        <!-- 颜色值输入区域 -->
+        <StackPanel Grid.Row="3" Margin="16,0,16,8">
+            <!-- HEX 行 -->
+            <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" x:Name="HexValueText" Text="#FFFFFF" FontWeight="Medium"
+                <TextBlock Grid.Column="0" Text="HEX" FontWeight="Medium" Margin="0,0,8,0" VerticalAlignment="Center"
                            Foreground="{DynamicResource TextSecondaryBrush}"/>
-                <TextBlock Grid.Column="1" x:Name="RgbValueText" Text="R:255 G:255 B:255" FontWeight="Medium"
-                           HorizontalAlignment="Right" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBox Grid.Column="1" x:Name="HexInput" Text="#FFFFFF" FontWeight="Medium"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="HexInput_TextChanged"/>
+                <TextBox Grid.Column="2" x:Name="AlphaPercentInput" Text="100%" FontWeight="Medium" Width="60" Margin="8,0,0,0"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="AlphaPercentInput_TextChanged"/>
+            </Grid>
+            <!-- RGB 行 -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="RGB" FontWeight="Medium" Margin="0,0,8,0" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBox Grid.Column="1" x:Name="RInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
+                <TextBox Grid.Column="2" x:Name="GInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
+                <TextBox Grid.Column="3" x:Name="BInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
+                <TextBox Grid.Column="4" x:Name="AlphaInput" Text="100%" FontWeight="Medium" Width="60"
+                         VerticalAlignment="Center" Padding="8,4" TextChanged="AlphaInput_TextChanged"/>
             </Grid>
         </StackPanel>
 
         <!-- 按钮区域 -->
-        <Grid Grid.Row="3" Margin="16,0,16,16">
+        <Grid Grid.Row="4" Margin="16,0,16,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
