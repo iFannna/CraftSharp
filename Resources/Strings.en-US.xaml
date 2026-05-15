@@ -114,6 +114,14 @@
     <sys:String x:Key="HudOptionHoverEffectDesc">Show selection frame when hovering over slot</sys:String>
     <sys:String x:Key="HudOptionShowTargetIcon">Show Target Icon</sys:String>
     <sys:String x:Key="HudOptionShowTargetIconDesc">Only applies to shortcuts. May fail due to permission issues</sys:String>
+    <sys:String x:Key="HudOptionFileNameColor">File Name Color</sys:String>
+    <sys:String x:Key="HudOptionFileNameColorDesc">Color of file name when hotbar slot is selected</sys:String>
+    <sys:String x:Key="HudOptionFileNameColorOther">Other...</sys:String>
+    <sys:String x:Key="HudOptionFileNameColorCustom">Custom</sys:String>
+    <sys:String x:Key="ColorPickerTitle">Select Color</sys:String>
+    <sys:String x:Key="ColorPickerPreview">Preview</sys:String>
+    <sys:String x:Key="ColorPickerConfirm">Confirm</sys:String>
+    <sys:String x:Key="ColorPickerCancel">Cancel</sys:String>
     <sys:String x:Key="HudOptionLockPosition">Lock Position</sys:String>
     <sys:String x:Key="HudOptionLockPositionDesc">Prevent hotbar from being accidentally dragged</sys:String>
     <sys:String x:Key="HudOptionLeftOffhand">Left Offhand</sys:String>

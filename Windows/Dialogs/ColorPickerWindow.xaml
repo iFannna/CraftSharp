@@ -1,0 +1,100 @@
+<ui:FluentWindow x:Class="CraftSharp.Windows.Dialogs.ColorPickerWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="{DynamicResource ColorPickerTitle}"
+                 Height="Auto" MinHeight="0" Width="320" MinWidth="280"
+                 WindowStartupLocation="CenterOwner"
+                 SizeToContent="Height"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 Foreground="{DynamicResource TextPrimaryBrush}"
+                 ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <ui:TitleBar Grid.Row="0" Title="{DynamicResource ColorPickerTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
+                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+
+        <!-- RGB 滑块 -->
+        <StackPanel Grid.Row="1" Margin="16">
+            <!-- R 滑块 -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="R" FontWeight="Medium" Foreground="#E74C3C"/>
+                <Slider Grid.Column="1" x:Name="RedSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="RedValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+            </Grid>
+
+            <!-- G 滑块 -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="G" FontWeight="Medium" Foreground="#27AE60"/>
+                <Slider Grid.Column="1" x:Name="GreenSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="GreenValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+            </Grid>
+
+            <!-- B 滑块 -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="B" FontWeight="Medium" Foreground="#3498DB"/>
+                <Slider Grid.Column="1" x:Name="BlueSlider" Minimum="0" Maximum="255" Value="236" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="BlueValue" Text="236" HorizontalAlignment="Center" FontWeight="Medium"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 预览区域 -->
+        <StackPanel Grid.Row="2" Margin="16,8,16,16">
+            <TextBlock Text="{DynamicResource ColorPickerPreview}" FontWeight="Medium" Margin="0,0,0,8"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <Border x:Name="PreviewBorder" Background="#ECECEC" CornerRadius="8" Height="40">
+                <TextBlock x:Name="PreviewText" Text="示例文件名.txt"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="14" FontWeight="Medium"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+            </Border>
+            <!-- 十六进制值显示 -->
+            <TextBlock x:Name="HexValueText" Text="#ECECEC" Margin="0,8,0,0"
+                       HorizontalAlignment="Center" FontWeight="Medium"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+        </StackPanel>
+
+        <!-- 按钮区域 -->
+        <Grid Grid.Row="3" Margin="16,0,16,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:Button Grid.Column="1" x:Name="CancelButton"
+                       Content="{DynamicResource ColorPickerCancel}"
+                       Appearance="Secondary"
+                       Margin="0,0,8,0"
+                       Click="CancelButton_Click"/>
+            <ui:Button Grid.Column="2" x:Name="ConfirmButton"
+                       Content="{DynamicResource ColorPickerConfirm}"
+                       Appearance="Primary"
+                       Click="ConfirmButton_Click"/>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

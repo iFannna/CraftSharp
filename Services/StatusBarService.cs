@@ -212,5 +212,14 @@ namespace CraftSharp.Services
             if (_statusBarWindow == null) return;
             _statusBarWindow.RefreshHotbarIcons();
         }
+
+        /// <summary>
+        /// 刷新文件名显示颜色
+        /// </summary>
+        public void RefreshFileNameColor()
+        {
+            if (_statusBarWindow == null) return;
+            _statusBarWindow.RefreshFileNameColor();
+        }
     }
 }

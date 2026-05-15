@@ -381,7 +381,10 @@ namespace CraftSharp.Windows.StatusBar
             var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
             FileNameTextBlock.FontFamily = fontFamily;
             FileNameTextBlock.FontSize = 8 * _scaleFactor;
-            FileNameTextBlock.Foreground = System.Windows.Media.Brushes.White;
+
+            // 从配置读取颜色
+            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#ECECEC";
+            FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
 
             // 设置阴影效果
             var shadowEffect = new System.Windows.Media.Effects.DropShadowEffect
@@ -406,6 +409,37 @@ namespace CraftSharp.Windows.StatusBar
             {
                 HideFileName();
             };
+        }
+
+        /// <summary>
+        /// 刷新文件名显示颜色
+        /// </summary>
+        public void RefreshFileNameColor()
+        {
+            string colorHex = _appSettings?.Hotbar.FileNameColor ?? "#ECECEC";
+            FileNameTextBlock.Foreground = CreateBrushFromHex(colorHex);
+        }
+
+        /// <summary>
+        /// 从十六进制字符串创建 SolidColorBrush
+        /// </summary>
+        private System.Windows.Media.SolidColorBrush CreateBrushFromHex(string hex)
+        {
+            hex = hex.TrimStart('#');
+            if (hex.Length != 6)
+                return System.Windows.Media.Brushes.White;
+
+            try
+            {
+                byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+            }
+            catch
+            {
+                return System.Windows.Media.Brushes.White;
+            }
         }
 
         /// <summary>
