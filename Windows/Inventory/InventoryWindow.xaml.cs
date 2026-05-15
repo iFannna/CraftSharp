@@ -36,6 +36,10 @@ namespace CraftSharp.Windows.Inventory
         // 格子控件字典（Key: slotId, Value: Border）
         private Dictionary<string, Border> _slotBorders = new();
         private Dictionary<string, System.Windows.Controls.Image> _slotIcons = new();
+        private Dictionary<string, Border> _slotHoverOverlays = new(); // hover 白色蒙版
+
+        // 悬浮效果配置（从设置读取）
+        private bool _hoverEffect = true;
 
         // 服务实例
         private SlotIconService? _iconService;
@@ -109,6 +113,7 @@ namespace CraftSharp.Windows.Inventory
             // 读取当前样式配置
             _currentStyle = _settings?.Inventory.StylePath ?? "inventory.png";
             _sharedData = _settings?.Inventory.SharedData ?? true;
+            _hoverEffect = _settings?.Inventory.HoverEffect ?? true;
 
             // 加载格子坐标数据
             LoadSlotCoords();
@@ -469,6 +474,7 @@ namespace CraftSharp.Windows.Inventory
             SlotCanvas.Children.Clear();
             _slotBorders.Clear();
             _slotIcons.Clear();
+            _slotHoverOverlays.Clear();
 
             foreach (var coord in _slotCoords)
             {
@@ -477,6 +483,14 @@ namespace CraftSharp.Windows.Inventory
                 // 根据配置尺寸缩放
                 double slotWidth = coord.width * _scaleFactor;
                 double slotHeight = coord.height * _scaleFactor;
+
+                // 创建容器 Grid（用于叠加图标和 hover 蒙版）
+                var grid = new Grid
+                {
+                    Name = $"SlotGrid_{slotId}",
+                    Width = slotWidth,
+                    Height = slotHeight
+                };
 
                 var border = new Border
                 {
@@ -498,7 +512,23 @@ namespace CraftSharp.Windows.Inventory
                 };
                 RenderOptions.SetBitmapScalingMode(icon, BitmapScalingMode.HighQuality);
 
-                border.Child = icon;
+                // 创建 hover 白色蒙版（50% 不透明度）
+                var hoverOverlay = new Border
+                {
+                    Name = $"HoverOverlay_{slotId}",
+                    Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(128, 255, 255, 255)),
+                    Width = slotWidth,
+                    Height = slotHeight,
+                    Visibility = Visibility.Collapsed
+                };
+
+                grid.Children.Add(icon);
+                grid.Children.Add(hoverOverlay);
+                border.Child = grid;
+
+                // 添加 hover 事件
+                border.MouseEnter += Slot_MouseEnter;
+                border.MouseLeave += Slot_MouseLeave;
 
                 Canvas.SetLeft(border, coord.x * _scaleFactor);
                 Canvas.SetTop(border, coord.y * _scaleFactor);
@@ -507,6 +537,7 @@ namespace CraftSharp.Windows.Inventory
 
                 _slotBorders[slotId] = border;
                 _slotIcons[slotId] = icon;
+                _slotHoverOverlays[slotId] = hoverOverlay;
             }
         }
 
@@ -794,6 +825,28 @@ namespace CraftSharp.Windows.Inventory
             e.Handled = true;
         }
 
+        private void Slot_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!_hoverEffect) return;
+
+            var border = (Border)sender;
+            var slotId = border.Name.Replace("Slot_", "");
+            if (_slotHoverOverlays.TryGetValue(slotId, out var hoverOverlay))
+            {
+                hoverOverlay.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Slot_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var border = (Border)sender;
+            var slotId = border.Name.Replace("Slot_", "");
+            if (_slotHoverOverlays.TryGetValue(slotId, out var hoverOverlay))
+            {
+                hoverOverlay.Visibility = Visibility.Collapsed;
+            }
+        }
+
         /// <summary>
         /// 根据鼠标位置判断落在哪个格子
         /// </summary>
@@ -960,6 +1013,14 @@ namespace CraftSharp.Windows.Inventory
                     ClearSlotIcon(slotId);
                 }
             }
+        }
+
+        /// <summary>
+        /// 刷新悬浮效果配置
+        /// </summary>
+        public void RefreshHoverEffect()
+        {
+            _hoverEffect = _settings?.Inventory.HoverEffect ?? true;
         }
 
         /// <summary>

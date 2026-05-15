@@ -109,6 +109,11 @@ namespace CraftSharp.Windows.Settings.Panels
                 });
                 AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => _settings.Inventory.Locked = v);
                 AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => _settings.Inventory.RememberPosition = v);
+                AddToggleRow("InventoryOptionHoverEffect", "InventoryOptionHoverEffectDesc", _settings.Inventory.HoverEffect, v => {
+                    _settings.Inventory.HoverEffect = v;
+                    // 切换悬浮效果开关后刷新物品栏窗口
+                    RefreshInventoryHoverEffect();
+                });
                 // 灰色蒙版开关 + 透明度输入框
                 var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.Inventory.GrayOverlay, v => _settings.Inventory.GrayOverlay = v);
                 AddGrayOverlayOpacitySection(grayOverlayToggle);
@@ -132,6 +137,21 @@ namespace CraftSharp.Windows.Settings.Panels
                 }
                 // 刷新快捷栏图标（hotbar 格子也受 SharedData 配置影响）
                 StatusBarService.Instance.RefreshHotbarIcons();
+            }
+        }
+
+        /// <summary>
+        /// 切换悬浮效果开关后刷新物品栏窗口
+        /// </summary>
+        private void RefreshInventoryHoverEffect()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                var inventoryWindow = app.GetInventoryWindow();
+                if (inventoryWindow != null)
+                {
+                    inventoryWindow.RefreshHoverEffect();
+                }
             }
         }
 

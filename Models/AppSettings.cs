@@ -220,6 +220,11 @@ namespace CraftSharp.Models
         /// 共享数据开关（开启时所有样式共用格子数据，关闭时每个样式独立存储）
         /// </summary>
         public bool SharedData { get; set; } = true;
+
+        /// <summary>
+        /// 悬浮效果（hover 显示 50% 白色蒙版）
+        /// </summary>
+        public bool HoverEffect { get; set; } = true;
     }
 
     /// <summary>
