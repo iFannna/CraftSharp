@@ -4,8 +4,6 @@ using CraftSharp.Helpers;
 using CraftSharp.Windows.Dialogs;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Settings.Panels
 {
@@ -14,20 +12,6 @@ namespace CraftSharp.Windows.Settings.Panels
     /// </summary>
     public partial class HudAccordionItem
     {
-        // 预设文件名颜色列表
-        private static readonly string[] PresetFileNameColors = new string[]
-        {
-            "#FCFCFC", // 白色
-            "#A8A8A8", // 灰色
-            "#FCFC54", // 黄色
-            "#5454FC", // 蓝色
-            "#FC54FC", // 粉色
-            "#A800A8", // 紫色
-            "#FC5454", // 红色
-            "#54FCFC", // 青色
-            "#00A800"  // 绿色
-        };
-
         private void AddHotbarContent()
         {
             AddFileNameColorComboBox();
@@ -91,7 +75,9 @@ namespace CraftSharp.Windows.Settings.Panels
             grid.Children.Add(left);
 
             // 预先计算所有选项的最大宽度
-            double maxWidth = CalculateMaxComboBoxWidth();
+            double maxWidth = ColorPickerHelper.CalculateMaxComboBoxWidth(
+                GetResourceString("HudOptionFileNameColorAuto"),
+                GetResourceString("HudOptionFileNameColorOther"));
 
             var comboBox = new System.Windows.Controls.ComboBox
             {
@@ -104,7 +90,7 @@ namespace CraftSharp.Windows.Settings.Panels
             string? customColor = _settings.Hotbar.CustomFileNameColor;
 
             // 是否有自定义颜色
-            bool hasCustomColor = !string.IsNullOrEmpty(customColor) && !PresetFileNameColors.Contains(customColor);
+            bool hasCustomColor = !string.IsNullOrEmpty(customColor) && !ColorPickerHelper.PresetColors.Contains(customColor);
 
             // 构建下拉框选项
             int selectedIndex = -1;
@@ -112,7 +98,7 @@ namespace CraftSharp.Windows.Settings.Panels
             // 1. 如果有自定义颜色，添加自定义颜色选项在最前面
             if (hasCustomColor)
             {
-                var customItem = CreateColorComboBoxItem(customColor, true);
+                var customItem = ColorPickerHelper.CreateColorComboBoxItem(customColor!);
                 comboBox.Items.Add(customItem);
                 if (currentColor == customColor)
                     selectedIndex = 0;
@@ -120,11 +106,11 @@ namespace CraftSharp.Windows.Settings.Panels
 
             // 2. 添加预设颜色
             int autoIndexOffset = hasCustomColor ? 1 : 0;
-            for (int i = 0; i < PresetFileNameColors.Length; i++)
+            for (int i = 0; i < ColorPickerHelper.PresetColors.Length; i++)
             {
-                var presetItem = CreateColorComboBoxItem(PresetFileNameColors[i], false);
+                var presetItem = ColorPickerHelper.CreateColorComboBoxItem(ColorPickerHelper.PresetColors[i]);
                 comboBox.Items.Add(presetItem);
-                if (currentColor == PresetFileNameColors[i])
+                if (currentColor == ColorPickerHelper.PresetColors[i])
                     selectedIndex = autoIndexOffset + i;
             }
 
@@ -136,7 +122,7 @@ namespace CraftSharp.Windows.Settings.Panels
             };
             comboBox.Items.Add(autoItem);
             if (currentColor == "auto")
-                selectedIndex = autoIndexOffset + PresetFileNameColors.Length;
+                selectedIndex = autoIndexOffset + ColorPickerHelper.PresetColors.Length;
 
             // 4. 添加"其他..."选项
             var otherItem = new System.Windows.Controls.ComboBoxItem
@@ -187,7 +173,7 @@ namespace CraftSharp.Windows.Settings.Panels
                     {
                         // 预设颜色或自定义颜色
                         _settings.Hotbar.FileNameColor = tag;
-                        if (!PresetFileNameColors.Contains(tag))
+                        if (!ColorPickerHelper.PresetColors.Contains(tag))
                         {
                             // 如果是自定义颜色，保留配置
                             _settings.Hotbar.CustomFileNameColor = tag;
@@ -220,89 +206,6 @@ namespace CraftSharp.Windows.Settings.Panels
         }
 
         /// <summary>
-        /// 创建颜色下拉框选项（带颜色方块和十六进制值）
-        /// </summary>
-        private System.Windows.Controls.ComboBoxItem CreateColorComboBoxItem(string colorHex, bool isCustom)
-        {
-            var item = new System.Windows.Controls.ComboBoxItem
-            {
-                Tag = colorHex
-            };
-
-            // 创建内容面板
-            var stackPanel = new StackPanel
-            {
-                Orientation = System.Windows.Controls.Orientation.Horizontal
-            };
-
-            // 颜色方块容器（带棋盘格背景显示透明效果）
-            var colorBoxContainer = new Border
-            {
-                Width = 16,
-                Height = 16,
-                CornerRadius = new CornerRadius(3),
-                Margin = new Thickness(0, 0, 8, 0),
-                Background = CreateCheckerboardBrush()
-            };
-
-            // 颜色方块（实际颜色）
-            var colorBox = new Border
-            {
-                CornerRadius = new CornerRadius(3),
-                Background = new SolidColorBrush(ParseColorHex(colorHex))
-            };
-            colorBoxContainer.Child = colorBox;
-
-            // 显示简化的文本（不带 Alpha 的 6 位格式）
-            var displayText = colorHex;
-            if (colorHex.StartsWith("#") && colorHex.Length == 9)
-            {
-                // 8 位格式，显示 RGB 部分
-                displayText = "#" + colorHex.Substring(3);
-            }
-
-            // 十六进制值文本
-            var textBlock = new System.Windows.Controls.TextBlock
-            {
-                Text = displayText
-            };
-
-            stackPanel.Children.Add(colorBoxContainer);
-            stackPanel.Children.Add(textBlock);
-            item.Content = stackPanel;
-
-            return item;
-        }
-
-        /// <summary>
-        /// 创建棋盘格背景画刷（用于显示透明效果）
-        /// </summary>
-        private System.Windows.Media.DrawingBrush CreateCheckerboardBrush()
-        {
-            var brush = new System.Windows.Media.DrawingBrush
-            {
-                TileMode = System.Windows.Media.TileMode.Tile,
-                Viewport = new System.Windows.Rect(0, 0, 4, 4),
-                ViewportUnits = System.Windows.Media.BrushMappingMode.Absolute
-            };
-
-            var geometryGroup = new System.Windows.Media.GeometryGroup();
-            geometryGroup.Children.Add(new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(0, 0, 2, 2)));
-            geometryGroup.Children.Add(new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(2, 2, 2, 2)));
-
-            var drawingGroup = new System.Windows.Media.DrawingGroup();
-            drawingGroup.Children.Add(new System.Windows.Media.GeometryDrawing(
-                System.Windows.Media.Brushes.White, null,
-                new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(0, 0, 4, 4))));
-            drawingGroup.Children.Add(new System.Windows.Media.GeometryDrawing(
-                new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(204, 204, 204)), null,
-                geometryGroup));
-
-            brush.Drawing = drawingGroup;
-            return brush;
-        }
-
-        /// <summary>
         /// 刷新文件名颜色下拉框选项
         /// </summary>
         private void RefreshFileNameColorComboBox(System.Windows.Controls.ComboBox comboBox, string selectedColor)
@@ -310,7 +213,7 @@ namespace CraftSharp.Windows.Settings.Panels
             comboBox.Items.Clear();
 
             bool hasCustomColor = !string.IsNullOrEmpty(_settings.Hotbar.CustomFileNameColor) &&
-                                  !PresetFileNameColors.Contains(_settings.Hotbar.CustomFileNameColor);
+                                  !ColorPickerHelper.PresetColors.Contains(_settings.Hotbar.CustomFileNameColor);
 
             int selectedIndex = -1;
             int autoIndexOffset = hasCustomColor ? 1 : 0;
@@ -318,18 +221,18 @@ namespace CraftSharp.Windows.Settings.Panels
             // 自定义颜色
             if (hasCustomColor)
             {
-                var customItem = CreateColorComboBoxItem(_settings.Hotbar.CustomFileNameColor, true);
+                var customItem = ColorPickerHelper.CreateColorComboBoxItem(_settings.Hotbar.CustomFileNameColor!);
                 comboBox.Items.Add(customItem);
                 if (selectedColor == _settings.Hotbar.CustomFileNameColor)
                     selectedIndex = 0;
             }
 
             // 预设颜色
-            for (int i = 0; i < PresetFileNameColors.Length; i++)
+            for (int i = 0; i < ColorPickerHelper.PresetColors.Length; i++)
             {
-                var presetItem = CreateColorComboBoxItem(PresetFileNameColors[i], false);
+                var presetItem = ColorPickerHelper.CreateColorComboBoxItem(ColorPickerHelper.PresetColors[i]);
                 comboBox.Items.Add(presetItem);
-                if (selectedColor == PresetFileNameColors[i])
+                if (selectedColor == ColorPickerHelper.PresetColors[i])
                     selectedIndex = autoIndexOffset + i;
             }
 
@@ -341,7 +244,7 @@ namespace CraftSharp.Windows.Settings.Panels
             };
             comboBox.Items.Add(autoItem);
             if (selectedColor == "auto")
-                selectedIndex = autoIndexOffset + PresetFileNameColors.Length;
+                selectedIndex = autoIndexOffset + ColorPickerHelper.PresetColors.Length;
 
             // 其他...
             var otherItem = new System.Windows.Controls.ComboBoxItem
@@ -353,91 +256,6 @@ namespace CraftSharp.Windows.Settings.Panels
 
             if (selectedIndex >= 0)
                 comboBox.SelectedIndex = selectedIndex;
-        }
-
-        /// <summary>
-        /// 计算下拉框最大宽度（根据所有选项内容）
-        /// </summary>
-        private double CalculateMaxComboBoxWidth()
-        {
-            double maxWidth = 0;
-
-            // 预设颜色选项
-            foreach (var color in PresetFileNameColors)
-            {
-                double width = EstimateComboBoxItemWidth(color, false);
-                if (width > maxWidth)
-                    maxWidth = width;
-            }
-
-            // "自动"选项
-            double autoWidth = EstimateTextWidth(GetResourceString("HudOptionFileNameColorAuto"));
-            if (autoWidth > maxWidth)
-                maxWidth = autoWidth;
-
-            // "其他..."选项
-            double otherWidth = EstimateTextWidth(GetResourceString("HudOptionFileNameColorOther"));
-            if (otherWidth > maxWidth)
-                maxWidth = otherWidth;
-
-            // 添加ComboBox边距和下拉箭头空间
-            maxWidth += 60;
-
-            // 限制最大宽度不超过300
-            return Math.Min(maxWidth, 300);
-        }
-
-        /// <summary>
-        /// 估算下拉框选项宽度
-        /// </summary>
-        private double EstimateComboBoxItemWidth(string colorHex, bool isCustom)
-        {
-            // 颜色方块宽度(16) + 间距(8) + 文本宽度
-            double textWidth = EstimateTextWidth(colorHex);
-            return 16 + 8 + textWidth;
-        }
-
-        /// <summary>
-        /// 估算文本宽度
-        /// </summary>
-        private double EstimateTextWidth(string text)
-        {
-            // 使用平均字符宽度估算（假设12px字体，每个字符约7px宽）
-            return text.Length * 7 + 10; // 加10px padding
-        }
-
-        /// <summary>
-        /// 解析十六进制颜色字符串（支持 #RRGGBB 和 #AARRGGBB 格式）
-        /// </summary>
-        private System.Windows.Media.Color ParseColorHex(string hex)
-        {
-            hex = hex.TrimStart('#');
-
-            try
-            {
-                if (hex.Length == 8)
-                {
-                    // 8 位格式（#AARRGGBB），使用 Alpha
-                    byte a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                    byte r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                    byte g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                    byte b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
-                    return System.Windows.Media.Color.FromArgb(a, r, g, b);
-                }
-                else if (hex.Length == 6)
-                {
-                    // 6 位格式（#RRGGBB），Alpha 默认 255
-                    byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                    byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                    byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                    return System.Windows.Media.Color.FromRgb(r, g, b);
-                }
-            }
-            catch
-            {
-            }
-
-            return System.Windows.Media.Colors.White;
         }
     }
 }

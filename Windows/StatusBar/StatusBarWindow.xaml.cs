@@ -534,7 +534,7 @@ namespace CraftSharp.Windows.StatusBar
             string colorSetting = _appSettings?.Hotbar.FileNameColor ?? "#FFFFFF";
             if (colorSetting == "auto")
             {
-                string autoColor = HotbarSettings.GetAutoColorForFileName(fileName);
+                string autoColor = ColorPickerHelper.GetAutoColorForFileName(fileName);
                 var textColor = ParseColorFromHex(autoColor);
                 FileNameTextBlock.Foreground = new SolidColorBrush(textColor);
 
