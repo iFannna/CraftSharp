@@ -69,6 +69,9 @@ namespace CraftSharp.Windows.Inventory
         // 点击模式（"single"单击/"double"双击）
         private string _clickMode = "single";
 
+        // Tooltip 窗口
+        private InventoryTooltipWindow? _tooltipWindow;
+
         // 双击检测：上次点击的格子ID和时间
         private string? _lastClickedSlotId = null;
         private DateTime _lastClickTime = DateTime.MinValue;
@@ -852,7 +855,7 @@ namespace CraftSharp.Windows.Inventory
 
                 if (hasFile)
                 {
-                    // 有文件：启动200ms计时器，之后切换为绿色蒙版
+                    // 有文件：启动计时器，之后切换为绿色蒙版
                     _currentHoverSlotId = slotId;
                     if (_hoverTimer == null)
                     {
@@ -862,6 +865,9 @@ namespace CraftSharp.Windows.Inventory
                     }
                     _hoverTimer.Stop();
                     _hoverTimer.Start();
+
+                    // 显示 Tooltip（立即显示）
+                    ShowTooltip(slotId);
                 }
                 else
                 {
@@ -903,6 +909,9 @@ namespace CraftSharp.Windows.Inventory
                 hoverOverlay.Visibility = Visibility.Collapsed;
                 hoverOverlay.Background = new SolidColorBrush(WhiteOverlayColor);
             }
+
+            // 隐藏 Tooltip（立即关闭）
+            HideTooltip();
         }
 
         /// <summary>
@@ -1026,6 +1035,9 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void HideInventory()
         {
+            // 隐藏 Tooltip
+            HideTooltip();
+
             Hide();
             Owner = null;
 
@@ -1127,6 +1139,64 @@ namespace CraftSharp.Windows.Inventory
             SetupSlots();
             LoadSlots();
             PositionWindow();
+        }
+
+        // ==================== Tooltip 相关 ====================
+
+        /// <summary>
+        /// 显示 Tooltip
+        /// </summary>
+        private void ShowTooltip(string slotId)
+        {
+            // 根据 SharedData 配置获取格子数据
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+            if (item.IsEmpty) return;
+
+            bool isMissing = SlotFileValidator.Instance.IsMissing(item.FilePath);
+
+            // 创建或更新 Tooltip 窗口
+            if (_tooltipWindow == null)
+            {
+                _tooltipWindow = new InventoryTooltipWindow(_scaleFactor);
+            }
+
+            // 获取文件名颜色配置
+            string fileNameColor = _settings?.Inventory.FileNameColor ?? "#FCFCFC";
+
+            // 设置 Tooltip 内容
+            _tooltipWindow.SetContent(item.FilePath, isMissing, fileNameColor);
+
+            // 获取格子控件位置和尺寸
+            if (_slotBorders.TryGetValue(slotId, out var border))
+            {
+                // 获取格子在窗口中的位置
+                double cellLeft = Canvas.GetLeft(border);
+                double cellTop = Canvas.GetTop(border);
+                double cellWidth = border.Width;
+                double cellHeight = border.Height;
+
+                // 获取窗口在屏幕中的位置
+                double windowLeft = Left;
+                double windowTop = Top;
+
+                // 计算格子在屏幕中的位置
+                double screenCellLeft = windowLeft + cellLeft;
+                double screenCellTop = windowTop + cellTop;
+
+                // 显示 Tooltip 在格子右侧，垂直居中
+                _tooltipWindow.ShowAtCellPosition(screenCellLeft, screenCellTop, cellWidth, cellHeight);
+            }
+        }
+
+        /// <summary>
+        /// 隐藏 Tooltip
+        /// </summary>
+        private void HideTooltip()
+        {
+            if (_tooltipWindow != null)
+            {
+                _tooltipWindow.Hide();
+            }
         }
     }
 }
