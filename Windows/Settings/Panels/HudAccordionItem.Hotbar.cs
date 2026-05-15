@@ -30,8 +30,18 @@ namespace CraftSharp.Windows.Settings.Panels
             rightOffhandToggle.Unchecked += (s, e) => { _settings.Hotbar.RightOffhand = false; StatusBarService.Instance.SetOffhandConfig(_settings.Hotbar.LeftOffhand, false); SaveSettings(); };
 
             var showTargetIconToggle = AddToggleRow("HudOptionShowTargetIcon", "HudOptionShowTargetIconDesc", _settings.Hotbar.ShowTargetIcon);
-            showTargetIconToggle.Checked += (s, e) => { _settings.Hotbar.ShowTargetIcon = true; StatusBarService.Instance.RefreshHotbarIcons(); SaveSettings(); };
-            showTargetIconToggle.Unchecked += (s, e) => { _settings.Hotbar.ShowTargetIcon = false; StatusBarService.Instance.RefreshHotbarIcons(); SaveSettings(); };
+            showTargetIconToggle.Checked += (s, e) => {
+                _settings.Hotbar.ShowTargetIcon = true;
+                StatusBarService.Instance.RefreshHotbarIcons();
+                if (System.Windows.Application.Current is App app) app.GetInventoryWindow()?.RefreshIcons();
+                SaveSettings();
+            };
+            showTargetIconToggle.Unchecked += (s, e) => {
+                _settings.Hotbar.ShowTargetIcon = false;
+                StatusBarService.Instance.RefreshHotbarIcons();
+                if (System.Windows.Application.Current is App app) app.GetInventoryWindow()?.RefreshIcons();
+                SaveSettings();
+            };
         }
     }
 }

@@ -563,6 +563,18 @@ namespace CraftSharp.Windows.StatusBar
         public void SetAppSettings(Models.AppSettings settings)
         {
             _appSettings = settings;
+
+            // 重新创建 _iconService 以使用最新的配置（特别是 ShowTargetIcon）
+            // 先取消旧事件订阅
+            if (_iconService != null)
+            {
+                _iconService.IconNeedsUpdate -= OnIconNeedsUpdate;
+            }
+
+            var fileValidator = SlotFileValidator.Instance;
+            _iconService = new SlotIconService(fileValidator, _appSettings, _scaleFactor);
+            _iconService.IconNeedsUpdate += OnIconNeedsUpdate;
+
             // 配置设置后重新Setup所有HUD元素（使用配置文件中的值）
             SetupHearts();
             SetupFood();

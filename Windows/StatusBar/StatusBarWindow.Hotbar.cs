@@ -1326,6 +1326,15 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         public void RefreshHotbarIcons()
         {
+            // 重新创建 _iconService 以使用最新的配置（特别是 ShowTargetIcon）
+            if (_iconService != null)
+            {
+                _iconService.IconNeedsUpdate -= OnIconNeedsUpdate;
+            }
+            var fileValidator = SlotFileValidator.Instance;
+            _iconService = new SlotIconService(fileValidator, _appSettings, _scaleFactor);
+            _iconService.IconNeedsUpdate += OnIconNeedsUpdate;
+
             LoadSlots();
         }
     }
