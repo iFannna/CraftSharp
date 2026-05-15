@@ -28,6 +28,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- 色谱区域（色相 + 饱和度） -->
@@ -80,6 +81,49 @@
                             Background="Transparent" VerticalAlignment="Top"/>
                 </Grid>
             </Border>
+
+            <!-- 不透明度条（垂直） -->
+            <Border Grid.Column="2" x:Name="OpacityBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
+                    Background="Transparent" MouseLeftButtonDown="Opacity_MouseDown" MouseMove="Opacity_MouseMove" MouseLeftButtonUp="Opacity_MouseUp">
+                <Grid IsHitTestVisible="False">
+                    <!-- 棋盘格背景 -->
+                    <Rectangle x:Name="OpacityCheckerboard">
+                        <Rectangle.Fill>
+                            <DrawingBrush TileMode="Tile" Viewport="0,0,8,8" ViewportUnits="Absolute">
+                                <DrawingBrush.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="White">
+                                            <GeometryDrawing.Geometry>
+                                                <RectangleGeometry Rect="0,0,8,8"/>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Brush="#CCCCCC">
+                                            <GeometryDrawing.Geometry>
+                                                <GeometryGroup>
+                                                    <RectangleGeometry Rect="0,0,4,4"/>
+                                                    <RectangleGeometry Rect="4,4,4,4"/>
+                                                </GeometryGroup>
+                                            </GeometryDrawing.Geometry>
+                                        </GeometryDrawing>
+                                    </DrawingGroup>
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 不透明度渐变 -->
+                    <Rectangle x:Name="OpacityGradient">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                <GradientStop Color="#FFFFFFFF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 不透明度选择指示器 -->
+                    <Border x:Name="OpacitySelector" Width="24" Height="4" CornerRadius="2" BorderBrush="Gray" BorderThickness="1"
+                            Background="Transparent" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
         </Grid>
 
         <!-- 预览和数值区域 -->
@@ -87,7 +131,32 @@
             <TextBlock Text="{DynamicResource ColorPickerPreview}" FontWeight="Medium" Margin="0,0,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
             <!-- 预览颜色块 -->
-            <Border x:Name="PreviewBorder" Background="#FFFFFF" CornerRadius="8" Height="40"/>
+            <Border x:Name="PreviewBorder" CornerRadius="8" Height="40">
+                <!-- 棋盘格背景用于显示透明效果 -->
+                <Border.Background>
+                    <DrawingBrush TileMode="Tile" Viewport="0,0,10,10" ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="White">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,0,10,10"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="#CCCCCC">
+                                    <GeometryDrawing.Geometry>
+                                        <GeometryGroup>
+                                            <RectangleGeometry Rect="0,0,5,5"/>
+                                            <RectangleGeometry Rect="5,5,5,5"/>
+                                        </GeometryGroup>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.Background>
+                <!-- 预览颜色覆盖层 -->
+                <Border x:Name="PreviewColorOverlay" CornerRadius="8" Background="#FFFFFF"/>
+            </Border>
             <!-- 颜色值显示 -->
             <Grid Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>

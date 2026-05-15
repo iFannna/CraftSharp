@@ -15,21 +15,23 @@ namespace CraftSharp.Windows.Dialogs
         private double _hue = 0;           // 色相 0-360
         private double _saturation = 1;    // 饱和度 0-1
         private double _brightness = 1;    // 明度 0-1
+        private double _opacity = 1;       // 不透明度 0-1
 
         // 颜色状态
         private System.Windows.Media.Color _selectedColor = System.Windows.Media.Colors.White;
         private bool _isDraggingSpectrum = false;
         private bool _isDraggingBrightness = false;
+        private bool _isDraggingOpacity = false;
 
         /// <summary>
-        /// 用户选择的颜色（十六进制格式）
+        /// 用户选择的颜色（十六进制格式，带Alpha）
         /// </summary>
-        public string SelectedColorHex { get; private set; } = "#FFFFFF";
+        public string SelectedColorHex { get; private set; } = "#FFFFFFFF";
 
         /// <summary>
-        /// 用户选择的颜色（Color对象）
+        /// 用户选择的颜色（Color对象，带Alpha）
         /// </summary>
-        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromRgb(255, 255, 255);
+        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromArgb(255, 255, 255, 255);
 
         /// <summary>
         /// 初始颜色（构造时传入）
@@ -41,6 +43,7 @@ namespace CraftSharp.Windows.Dialogs
             InitializeComponent();
             UpdateColorDisplay();
             UpdateBrightnessGradient();
+            UpdateOpacityGradient();
         }
 
         /// <summary>
@@ -50,9 +53,12 @@ namespace CraftSharp.Windows.Dialogs
         {
             InitializeComponent();
 
-            // 解析初始颜色
+            // 解析初始颜色（支持 #RRGGBB 或 #AARRGGBB 格式）
             if (TryParseColorHex(initialColorHex, out _initialColor))
             {
+                // 提取透明度
+                _opacity = _initialColor.A / 255.0;
+
                 // 将RGB转换为HSL
                 RgbToHsl(_initialColor, out _hue, out _saturation, out _brightness);
                 SelectedColor = _initialColor;
@@ -62,6 +68,7 @@ namespace CraftSharp.Windows.Dialogs
 
             UpdateColorDisplay();
             UpdateBrightnessGradient();
+            UpdateOpacityGradient();
             UpdateSelectorPositions();
         }
 
@@ -124,6 +131,34 @@ namespace CraftSharp.Windows.Dialogs
         }
 
         /// <summary>
+        /// 不透明度条鼠标按下
+        /// </summary>
+        private void Opacity_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingOpacity = true;
+            UpdateOpacityFromMouse(e);
+        }
+
+        /// <summary>
+        /// 不透明度条鼠标移动
+        /// </summary>
+        private void Opacity_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isDraggingOpacity)
+            {
+                UpdateOpacityFromMouse(e);
+            }
+        }
+
+        /// <summary>
+        /// 不透明度条鼠标释放
+        /// </summary>
+        private void Opacity_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingOpacity = false;
+        }
+
+        /// <summary>
         /// 根据鼠标位置更新色谱选择
         /// </summary>
         private void UpdateSpectrumFromMouse(System.Windows.Input.MouseEventArgs e)
@@ -142,6 +177,7 @@ namespace CraftSharp.Windows.Dialogs
                 UpdateColorFromHsl();
                 UpdateColorDisplay();
                 UpdateBrightnessGradient();
+                UpdateOpacityGradient();
                 UpdateSelectorPositions();
             }
         }
@@ -161,6 +197,26 @@ namespace CraftSharp.Windows.Dialogs
 
                 UpdateColorFromHsl();
                 UpdateColorDisplay();
+                UpdateOpacityGradient();
+                UpdateSelectorPositions();
+            }
+        }
+
+        /// <summary>
+        /// 根据鼠标位置更新不透明度选择
+        /// </summary>
+        private void UpdateOpacityFromMouse(System.Windows.Input.MouseEventArgs e)
+        {
+            var pos = e.GetPosition(OpacityBorder);
+            double height = OpacityBorder.ActualHeight;
+
+            if (height > 0)
+            {
+                // 不透明度 0-1（纵向，从上到下递增）
+                _opacity = Math.Clamp(pos.Y / height, 0, 1);
+
+                UpdateColorFromHsl();
+                UpdateColorDisplay();
                 UpdateSelectorPositions();
             }
         }
@@ -170,11 +226,13 @@ namespace CraftSharp.Windows.Dialogs
         #region 颜色计算
 
         /// <summary>
-        /// 根据HSL值更新颜色
+        /// 根据HSL值和透明度更新颜色
         /// </summary>
         private void UpdateColorFromHsl()
         {
-            _selectedColor = HslToRgb(_hue, _saturation, _brightness);
+            var rgb = HslToRgb(_hue, _saturation, _brightness);
+            byte alpha = (byte)Math.Round(_opacity * 255);
+            _selectedColor = System.Windows.Media.Color.FromArgb(alpha, rgb.R, rgb.G, rgb.B);
             SelectedColor = _selectedColor;
             SelectedColorHex = ColorToHex(_selectedColor);
         }
@@ -264,15 +322,15 @@ namespace CraftSharp.Windows.Dialogs
         }
 
         /// <summary>
-        /// 颜色转十六进制字符串
+        /// 颜色转十六进制字符串（带Alpha）
         /// </summary>
         private string ColorToHex(System.Windows.Media.Color color)
         {
-            return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            return $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
         }
 
         /// <summary>
-        /// 解析十六进制颜色字符串
+        /// 解析十六进制颜色字符串（支持 #RRGGBB 和 #AARRGGBB 格式）
         /// </summary>
         private bool TryParseColorHex(string hex, out System.Windows.Media.Color color)
         {
@@ -283,16 +341,28 @@ namespace CraftSharp.Windows.Dialogs
 
             hex = hex.TrimStart('#');
 
-            if (hex.Length != 6)
-                return false;
-
             try
             {
-                byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                color = System.Windows.Media.Color.FromRgb(r, g, b);
-                return true;
+                if (hex.Length == 6)
+                {
+                    // #RRGGBB 格式，默认 Alpha=255
+                    byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    color = System.Windows.Media.Color.FromArgb(255, r, g, b);
+                    return true;
+                }
+                else if (hex.Length == 8)
+                {
+                    // #AARRGGBB 格式
+                    byte a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                    color = System.Windows.Media.Color.FromArgb(a, r, g, b);
+                    return true;
+                }
+                return false;
             }
             catch
             {
@@ -305,13 +375,14 @@ namespace CraftSharp.Windows.Dialogs
         #region UI更新
 
         /// <summary>
-        /// 更新颜色显示（预览、十六进制、RGB）
+        /// 更新颜色显示（预览、十六进制、RGB、Alpha）
         /// </summary>
         private void UpdateColorDisplay()
         {
-            PreviewBorder.Background = new SolidColorBrush(_selectedColor);
+            PreviewColorOverlay.Background = new SolidColorBrush(_selectedColor);
             HexValueText.Text = SelectedColorHex;
-            RgbValueText.Text = $"R:{_selectedColor.R} G:{_selectedColor.G} B:{_selectedColor.B}";
+            int opacityPercent = (int)Math.Round(_opacity * 100);
+            RgbValueText.Text = $"R:{_selectedColor.R} G:{_selectedColor.G} B:{_selectedColor.B} A:{opacityPercent}%";
         }
 
         /// <summary>
@@ -333,6 +404,25 @@ namespace CraftSharp.Windows.Dialogs
         }
 
         /// <summary>
+        /// 更新不透明度条渐变（根据当前颜色）
+        /// </summary>
+        private void UpdateOpacityGradient()
+        {
+            // 不透明度条从当前颜色的完全透明到完全不透明（从上到下递增）
+            System.Windows.Media.Color baseColor = HslToRgb(_hue, _saturation, _brightness);
+            System.Windows.Media.Color topColor = System.Windows.Media.Color.FromArgb(0, baseColor.R, baseColor.G, baseColor.B);
+            System.Windows.Media.Color bottomColor = System.Windows.Media.Color.FromArgb(255, baseColor.R, baseColor.G, baseColor.B);
+
+            var gradient = new LinearGradientBrush();
+            gradient.StartPoint = new System.Windows.Point(0, 0);
+            gradient.EndPoint = new System.Windows.Point(0, 1);
+            gradient.GradientStops.Add(new GradientStop(topColor, 0));
+            gradient.GradientStops.Add(new GradientStop(bottomColor, 1));
+
+            OpacityGradient.Fill = gradient;
+        }
+
+        /// <summary>
         /// 更新选择器位置
         /// </summary>
         private void UpdateSelectorPositions()
@@ -347,6 +437,11 @@ namespace CraftSharp.Windows.Dialogs
             double brightnessY = (1 - _brightness) * BrightnessBorder.ActualHeight;
 
             BrightnessSelector.Margin = new Thickness(0, brightnessY - 2, 0, 0);
+
+            // 不透明度选择器位置（从上到下递增）
+            double opacityY = _opacity * OpacityBorder.ActualHeight;
+
+            OpacitySelector.Margin = new Thickness(0, opacityY - 2, 0, 0);
         }
 
         #endregion
