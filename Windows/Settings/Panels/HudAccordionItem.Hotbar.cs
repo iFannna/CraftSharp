@@ -210,27 +210,71 @@ namespace CraftSharp.Windows.Settings.Panels
                 Orientation = System.Windows.Controls.Orientation.Horizontal
             };
 
-            // 颜色方块
-            var colorBox = new Border
+            // 颜色方块容器（带棋盘格背景显示透明效果）
+            var colorBoxContainer = new Border
             {
                 Width = 16,
                 Height = 16,
                 CornerRadius = new CornerRadius(3),
                 Margin = new Thickness(0, 0, 8, 0),
+                Background = CreateCheckerboardBrush()
+            };
+
+            // 颜色方块（实际颜色）
+            var colorBox = new Border
+            {
+                CornerRadius = new CornerRadius(3),
                 Background = new SolidColorBrush(ParseColorHex(colorHex))
             };
+            colorBoxContainer.Child = colorBox;
+
+            // 显示简化的文本（不带 Alpha 的 6 位格式）
+            var displayText = colorHex;
+            if (colorHex.StartsWith("#") && colorHex.Length == 9)
+            {
+                // 8 位格式，显示 RGB 部分
+                displayText = "#" + colorHex.Substring(3);
+            }
 
             // 十六进制值文本
             var textBlock = new System.Windows.Controls.TextBlock
             {
-                Text = colorHex
+                Text = displayText
             };
 
-            stackPanel.Children.Add(colorBox);
+            stackPanel.Children.Add(colorBoxContainer);
             stackPanel.Children.Add(textBlock);
             item.Content = stackPanel;
 
             return item;
+        }
+
+        /// <summary>
+        /// 创建棋盘格背景画刷（用于显示透明效果）
+        /// </summary>
+        private System.Windows.Media.DrawingBrush CreateCheckerboardBrush()
+        {
+            var brush = new System.Windows.Media.DrawingBrush
+            {
+                TileMode = System.Windows.Media.TileMode.Tile,
+                Viewport = new System.Windows.Rect(0, 0, 4, 4),
+                ViewportUnits = System.Windows.Media.BrushMappingMode.Absolute
+            };
+
+            var geometryGroup = new System.Windows.Media.GeometryGroup();
+            geometryGroup.Children.Add(new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(0, 0, 2, 2)));
+            geometryGroup.Children.Add(new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(2, 2, 2, 2)));
+
+            var drawingGroup = new System.Windows.Media.DrawingGroup();
+            drawingGroup.Children.Add(new System.Windows.Media.GeometryDrawing(
+                System.Windows.Media.Brushes.White, null,
+                new System.Windows.Media.RectangleGeometry(new System.Windows.Rect(0, 0, 4, 4))));
+            drawingGroup.Children.Add(new System.Windows.Media.GeometryDrawing(
+                new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(204, 204, 204)), null,
+                geometryGroup));
+
+            brush.Drawing = drawingGroup;
+            return brush;
         }
 
         /// <summary>
@@ -322,25 +366,37 @@ namespace CraftSharp.Windows.Settings.Panels
         }
 
         /// <summary>
-        /// 解析十六进制颜色字符串
+        /// 解析十六进制颜色字符串（支持 #RRGGBB 和 #AARRGGBB 格式）
         /// </summary>
         private System.Windows.Media.Color ParseColorHex(string hex)
         {
             hex = hex.TrimStart('#');
-            if (hex.Length != 6)
-                return System.Windows.Media.Colors.White;
 
             try
             {
-                byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                return System.Windows.Media.Color.FromRgb(r, g, b);
+                if (hex.Length == 8)
+                {
+                    // 8 位格式（#AARRGGBB），使用 Alpha
+                    byte a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                    return System.Windows.Media.Color.FromArgb(a, r, g, b);
+                }
+                else if (hex.Length == 6)
+                {
+                    // 6 位格式（#RRGGBB），Alpha 默认 255
+                    byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    return System.Windows.Media.Color.FromRgb(r, g, b);
+                }
             }
             catch
             {
-                return System.Windows.Media.Colors.White;
             }
+
+            return System.Windows.Media.Colors.White;
         }
     }
 }

@@ -421,25 +421,37 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 从十六进制字符串创建 SolidColorBrush
+        /// 从十六进制字符串创建 SolidColorBrush（支持 #RRGGBB 和 #AARRGGBB 格式）
         /// </summary>
         private System.Windows.Media.SolidColorBrush CreateBrushFromHex(string hex)
         {
             hex = hex.TrimStart('#');
-            if (hex.Length != 6)
-                return System.Windows.Media.Brushes.White;
 
             try
             {
-                byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                if (hex.Length == 8)
+                {
+                    // 8 位格式（#AARRGGBB），使用 Alpha
+                    byte a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                    return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(a, r, g, b));
+                }
+                else if (hex.Length == 6)
+                {
+                    // 6 位格式（#RRGGBB），Alpha 默认 255
+                    byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                }
             }
             catch
             {
-                return System.Windows.Media.Brushes.White;
             }
+
+            return System.Windows.Media.Brushes.White;
         }
 
         /// <summary>
