@@ -6,15 +6,15 @@ namespace CraftSharp.Helpers
     public static class AssetPaths
     {
         // 快捷栏
-        public const string Hotbar = "Assets/minecraft/textures/gui/sprites/hotbar/hotbar.png";
-        public const string HotbarSelection = "Assets/minecraft/textures/gui/sprites/hotbar/hotbar_selection.png";
-        public const string HotbarOffhand = "Assets/minecraft/textures/gui/sprites/hotbar/hotbar_offhand.png";
+        public const string Hotbar = "Assets/minecraft/textures/gui/sprites/hud/hotbar/hotbar.png";
+        public const string HotbarSelection = "Assets/minecraft/textures/gui/sprites/hud/hotbar/hotbar_selection.png";
+        public const string HotbarOffhand = "Assets/minecraft/textures/gui/sprites/hud/hotbar/hotbar_offhand.png";
 
         // 经验条
-        public const string ExperienceBarBackground = "Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_background.png";
-        public const string ExperienceBarProgress = "Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_progress.png";
-        public const string JumpBarBackground = "Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_background.png";
-        public const string JumpBarProgress = "Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_progress.png";
+        public const string ExperienceBarBackground = "Assets/minecraft/textures/gui/sprites/hud/experience_bar/experience_bar_background.png";
+        public const string ExperienceBarProgress = "Assets/minecraft/textures/gui/sprites/hud/experience_bar/experience_bar_progress.png";
+        public const string JumpBarBackground = "Assets/minecraft/textures/gui/sprites/hud/experience_bar/jump_bar_background.png";
+        public const string JumpBarProgress = "Assets/minecraft/textures/gui/sprites/hud/experience_bar/jump_bar_progress.png";
 
         /// <summary>
         /// 根据 IconStyle 获取经验条图标路径
@@ -25,54 +25,54 @@ namespace CraftSharp.Helpers
             // suffix: background, progress
             if (string.IsNullOrEmpty(iconStyle) || iconStyle == "experience_bar_progress")
             {
-                return $"Assets/minecraft/textures/gui/sprites/experience_bar/experience_bar_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/experience_bar/experience_bar_{suffix}.png";
             }
             // jump_bar_progress → jump_bar_{suffix}.png
-            return $"Assets/minecraft/textures/gui/sprites/experience_bar/jump_bar_{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/experience_bar/jump_bar_{suffix}.png";
         }
 
         // 背包
         public const string Inventory = "Assets/minecraft/textures/gui/container/inventory.png";
 
         // 生命值（默认图标）
-        public const string HeartFull = "Assets/minecraft/textures/gui/sprites/heart/full.png";
-        public const string HeartHalf = "Assets/minecraft/textures/gui/sprites/heart/half.png";
-        public const string HeartContainer = "Assets/minecraft/textures/gui/sprites/heart/container.png";
-        public const string HeartFullBlinking = "Assets/minecraft/textures/gui/sprites/heart/full_blinking.png";
-        public const string HeartHalfBlinking = "Assets/minecraft/textures/gui/sprites/heart/half_blinking.png";
-        public const string HeartContainerBlinking = "Assets/minecraft/textures/gui/sprites/heart/container_blinking.png";
+        public const string HeartFull = "Assets/minecraft/textures/gui/sprites/hud/heart/full.png";
+        public const string HeartHalf = "Assets/minecraft/textures/gui/sprites/hud/heart/half.png";
+        public const string HeartContainer = "Assets/minecraft/textures/gui/sprites/hud/heart/container.png";
+        public const string HeartFullBlinking = "Assets/minecraft/textures/gui/sprites/hud/heart/full_blinking.png";
+        public const string HeartHalfBlinking = "Assets/minecraft/textures/gui/sprites/hud/heart/half_blinking.png";
+        public const string HeartContainerBlinking = "Assets/minecraft/textures/gui/sprites/hud/heart/container_blinking.png";
 
         // 饥饿值（默认图标）
-        public const string FoodFull = "Assets/minecraft/textures/gui/sprites/food/food_full.png";
-        public const string FoodHalf = "Assets/minecraft/textures/gui/sprites/food/food_half.png";
-        public const string FoodEmpty = "Assets/minecraft/textures/gui/sprites/food/food_empty.png";
+        public const string FoodFull = "Assets/minecraft/textures/gui/sprites/hud/food/food_full.png";
+        public const string FoodHalf = "Assets/minecraft/textures/gui/sprites/hud/food/food_half.png";
+        public const string FoodEmpty = "Assets/minecraft/textures/gui/sprites/hud/food/food_empty.png";
 
         // 饱和度
-        public const string SaturationFull = "Assets/minecraft/textures/gui/sprites/food/saturation_full.png";
-        public const string SaturationHalf = "Assets/minecraft/textures/gui/sprites/food/saturation_half.png";
+        public const string SaturationFull = "Assets/minecraft/textures/gui/sprites/hud/food/saturation_full.png";
+        public const string SaturationHalf = "Assets/minecraft/textures/gui/sprites/hud/food/saturation_half.png";
 
         // 盔甲值
-        public const string ArmorFull = "Assets/minecraft/textures/gui/sprites/armor/armor_full.png";
-        public const string ArmorHalf = "Assets/minecraft/textures/gui/sprites/armor/armor_half.png";
-        public const string ArmorEmpty = "Assets/minecraft/textures/gui/sprites/armor/armor_empty.png";
+        public const string ArmorFull = "Assets/minecraft/textures/gui/sprites/hud/armor/armor_full.png";
+        public const string ArmorHalf = "Assets/minecraft/textures/gui/sprites/hud/armor/armor_half.png";
+        public const string ArmorEmpty = "Assets/minecraft/textures/gui/sprites/hud/armor/armor_empty.png";
 
         // 空气值
-        public const string Air = "Assets/minecraft/textures/gui/sprites/air/air.png";
-        public const string AirEmpty = "Assets/minecraft/textures/gui/sprites/air/air_empty.png";
-        public const string AirBursting = "Assets/minecraft/textures/gui/sprites/air/air_bursting.png";
+        public const string Air = "Assets/minecraft/textures/gui/sprites/hud/air/air.png";
+        public const string AirEmpty = "Assets/minecraft/textures/gui/sprites/hud/air/air_empty.png";
+        public const string AirBursting = "Assets/minecraft/textures/gui/sprites/hud/air/air_bursting.png";
 
         // 伤害吸收值
-        public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/heart/absorbing_full.png";
-        public const string AbsorbingHalf = "Assets/minecraft/textures/gui/sprites/heart/absorbing_half.png";
+        public const string AbsorbingFull = "Assets/minecraft/textures/gui/sprites/hud/heart/absorbing_full.png";
+        public const string AbsorbingHalf = "Assets/minecraft/textures/gui/sprites/hud/heart/absorbing_half.png";
 
         // 占位图标（用于文件丢失时显示）
         public const string PlaceholderBarrier = "Assets/minecraft/textures/item/item/barrier.png";
 
         // 准星
-        public const string Crosshair = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair.png";
-        public const string CrosshairAttackIndicatorBackground = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_background.png";
-        public const string CrosshairAttackIndicatorFull = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_full.png";
-        public const string CrosshairAttackIndicatorProgress = "Assets/minecraft/textures/gui/sprites/crosshair/crosshair_attack_indicator_progress.png";
+        public const string Crosshair = "Assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair.png";
+        public const string CrosshairAttackIndicatorBackground = "Assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_background.png";
+        public const string CrosshairAttackIndicatorFull = "Assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_full.png";
+        public const string CrosshairAttackIndicatorProgress = "Assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_progress.png";
 
         /// <summary>
         /// 根据 IconStyle 获取生命值图标路径
@@ -86,7 +86,7 @@ namespace CraftSharp.Helpers
             // 如果 iconStyle 为空或默认，使用原始路径
             if (string.IsNullOrEmpty(iconStyle) || iconStyle == "full")
             {
-                return $"Assets/minecraft/textures/gui/sprites/heart/{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/{suffix}.png";
             }
 
             // 从 iconStyle 提取 baseName
@@ -110,30 +110,30 @@ namespace CraftSharp.Helpers
                 // container 只有 hardcore 和 vehicle 有特定版本
                 if (baseName == "hardcore" || baseName == "vehicle")
                 {
-                    return $"Assets/minecraft/textures/gui/sprites/heart/container_{baseName}.png";
+                    return $"Assets/minecraft/textures/gui/sprites/hud/heart/container_{baseName}.png";
                 }
                 // 其他样式没有 container 版本，使用默认
-                return $"Assets/minecraft/textures/gui/sprites/heart/container.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/container.png";
             }
             else if (suffix == "container_blinking")
             {
                 // container_blinking 只有 hardcore 有特定版本
                 if (baseName == "hardcore")
                 {
-                    return $"Assets/minecraft/textures/gui/sprites/heart/container_{baseName}_blinking.png";
+                    return $"Assets/minecraft/textures/gui/sprites/hud/heart/container_{baseName}_blinking.png";
                 }
                 // 其他使用默认
-                return $"Assets/minecraft/textures/gui/sprites/heart/container_blinking.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/container_blinking.png";
             }
             else if (suffix.Contains("_blinking"))
             {
                 // full_blinking, half_blinking
-                return $"Assets/minecraft/textures/gui/sprites/heart/{baseName}_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/{baseName}_{suffix}.png";
             }
             else
             {
                 // full, half
-                return $"Assets/minecraft/textures/gui/sprites/heart/{baseName}_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/{baseName}_{suffix}.png";
             }
         }
 
@@ -151,7 +151,7 @@ namespace CraftSharp.Helpers
             }
 
             // 文件不存在，回退到默认图标
-            return $"Assets/minecraft/textures/gui/sprites/heart/{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/heart/{suffix}.png";
         }
 
         /// <summary>
@@ -164,12 +164,12 @@ namespace CraftSharp.Helpers
             // 如果 iconStyle 为空或默认，使用原始路径
             if (string.IsNullOrEmpty(iconStyle) || iconStyle == "food_full")
             {
-                return $"Assets/minecraft/textures/gui/sprites/food/food_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/food/food_{suffix}.png";
             }
 
             // hunger 后缀样式
             // 例如: iconStyle="food_full_hunger", suffix="half" → "food_half_hunger.png"
-            return $"Assets/minecraft/textures/gui/sprites/food/food_{suffix}_hunger.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/food/food_{suffix}_hunger.png";
         }
 
         /// <summary>
@@ -182,12 +182,12 @@ namespace CraftSharp.Helpers
             // 如果 iconStyle 为空或默认，使用原始路径
             if (string.IsNullOrEmpty(iconStyle) || iconStyle == "absorbing_full")
             {
-                return $"Assets/minecraft/textures/gui/sprites/heart/absorbing_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/heart/absorbing_{suffix}.png";
             }
 
             // absorbing_hardcore_full → absorbing_hardcore_{suffix}.png
             string baseName = iconStyle.Replace("_full", "");
-            return $"Assets/minecraft/textures/gui/sprites/heart/{baseName}_{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/heart/{baseName}_{suffix}.png";
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace CraftSharp.Helpers
             }
 
             // 文件不存在，回退到默认图标
-            return $"Assets/minecraft/textures/gui/sprites/heart/absorbing_{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/heart/absorbing_{suffix}.png";
         }
 
         // BOSS血条
@@ -217,9 +217,9 @@ namespace CraftSharp.Helpers
         {
             if (string.IsNullOrEmpty(iconType))
             {
-                return $"Assets/minecraft/textures/gui/sprites/boss_bar/blue_{suffix}.png";
+                return $"Assets/minecraft/textures/gui/sprites/hud/boss_bar/blue_{suffix}.png";
             }
-            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{iconType}_{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/boss_bar/{iconType}_{suffix}.png";
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace CraftSharp.Helpers
             {
                 return "";
             }
-            return $"Assets/minecraft/textures/gui/sprites/boss_bar/{notchType}_{suffix}.png";
+            return $"Assets/minecraft/textures/gui/sprites/hud/boss_bar/{notchType}_{suffix}.png";
         }
     }
 }

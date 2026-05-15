@@ -80,7 +80,7 @@ namespace CraftSharp.Windows.Settings
 
             // 确定图标目录路径（absorbing 使用 heart 目录）
             string spriteDir = _elementType == "absorbing" ? "heart" : _elementType;
-            string basePath = $"Assets/minecraft/textures/gui/sprites/{spriteDir}";
+            string basePath = $"Assets/minecraft/textures/gui/sprites/hud/{spriteDir}";
 
             if (_elementType == "heart")
             {
@@ -220,7 +220,7 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in expbarStyles)
                 {
-                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/experience_bar/{style}.png");
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/hud/experience_bar/{style}.png");
                     if (bitmap != null)
                     {
                         _iconItems.Add(new HudIconItem
@@ -249,7 +249,7 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in bossBarStyles)
                 {
-                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/boss_bar/{style}_progress.png");
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/hud/boss_bar/{style}_progress.png");
                     if (bitmap != null)
                     {
                         _iconItems.Add(new HudIconItem
@@ -283,7 +283,7 @@ namespace CraftSharp.Windows.Settings
 
                 foreach (var (style, displayName) in notchStyles)
                 {
-                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/boss_bar/{style}_progress.png");
+                    var bitmap = ImageService.Instance.LoadBitmapImage($"Assets/minecraft/textures/gui/sprites/hud/boss_bar/{style}_progress.png");
                     if (bitmap != null)
                     {
                         _iconItems.Add(new HudIconItem
