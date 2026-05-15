@@ -32,8 +32,8 @@
 
             <!-- 色谱区域（色相 + 饱和度） -->
             <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="8" Height="200" ClipToBounds="True"
-                    Background="White" MouseLeftButtonDown="Spectrum_MouseDown" MouseMove="Spectrum_MouseMove">
-                <Grid>
+                    Background="White" MouseLeftButtonDown="Spectrum_MouseDown" MouseMove="Spectrum_MouseMove" MouseLeftButtonUp="Spectrum_MouseUp">
+                <Grid IsHitTestVisible="False">
                     <!-- 色相渐变（横向从红到红） -->
                     <Rectangle x:Name="HueGradient">
                         <Rectangle.Fill>
@@ -59,18 +59,14 @@
                     </Rectangle>
                     <!-- 选择指示器 -->
                     <Border x:Name="SpectrumSelector" Width="12" Height="12" CornerRadius="6" BorderBrush="White" BorderThickness="2"
-                            Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        <Border.RenderTransform>
-                            <TranslateTransform X="-6" Y="-6"/>
-                        </Border.RenderTransform>
-                    </Border>
+                            Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 </Grid>
             </Border>
 
             <!-- 明度条（垂直） -->
             <Border Grid.Column="1" x:Name="BrightnessBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
-                    MouseLeftButtonDown="Brightness_MouseDown" MouseMove="Brightness_MouseMove">
-                <Grid>
+                    Background="Transparent" MouseLeftButtonDown="Brightness_MouseDown" MouseMove="Brightness_MouseMove" MouseLeftButtonUp="Brightness_MouseUp">
+                <Grid IsHitTestVisible="False">
                     <Rectangle x:Name="BrightnessGradient">
                         <Rectangle.Fill>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -81,11 +77,7 @@
                     </Rectangle>
                     <!-- 明度选择指示器 -->
                     <Border x:Name="BrightnessSelector" Width="24" Height="4" CornerRadius="2" BorderBrush="White" BorderThickness="1"
-                            Background="Transparent" VerticalAlignment="Top">
-                        <Border.RenderTransform>
-                            <TranslateTransform Y="-2"/>
-                        </Border.RenderTransform>
-                    </Border>
+                            Background="Transparent" VerticalAlignment="Top"/>
                 </Grid>
             </Border>
         </Grid>

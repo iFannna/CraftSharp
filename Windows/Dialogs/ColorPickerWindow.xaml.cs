@@ -74,7 +74,6 @@ namespace CraftSharp.Windows.Dialogs
         {
             _isDraggingSpectrum = true;
             UpdateSpectrumFromMouse(e);
-            CaptureMouse();
         }
 
         /// <summary>
@@ -82,10 +81,18 @@ namespace CraftSharp.Windows.Dialogs
         /// </summary>
         private void Spectrum_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (_isDraggingSpectrum && e.LeftButton == MouseButtonState.Pressed)
+            if (_isDraggingSpectrum)
             {
                 UpdateSpectrumFromMouse(e);
             }
+        }
+
+        /// <summary>
+        /// 色谱区域鼠标释放
+        /// </summary>
+        private void Spectrum_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingSpectrum = false;
         }
 
         /// <summary>
@@ -95,7 +102,6 @@ namespace CraftSharp.Windows.Dialogs
         {
             _isDraggingBrightness = true;
             UpdateBrightnessFromMouse(e);
-            CaptureMouse();
         }
 
         /// <summary>
@@ -103,10 +109,18 @@ namespace CraftSharp.Windows.Dialogs
         /// </summary>
         private void Brightness_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (_isDraggingBrightness && e.LeftButton == MouseButtonState.Pressed)
+            if (_isDraggingBrightness)
             {
                 UpdateBrightnessFromMouse(e);
             }
+        }
+
+        /// <summary>
+        /// 明度条鼠标释放
+        /// </summary>
+        private void Brightness_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingBrightness = false;
         }
 
         /// <summary>
@@ -149,17 +163,6 @@ namespace CraftSharp.Windows.Dialogs
                 UpdateColorDisplay();
                 UpdateSelectorPositions();
             }
-        }
-
-        /// <summary>
-        /// 窗口鼠标释放
-        /// </summary>
-        protected override void OnMouseUp(MouseButtonEventArgs e)
-        {
-            _isDraggingSpectrum = false;
-            _isDraggingBrightness = false;
-            ReleaseMouseCapture();
-            base.OnMouseUp(e);
         }
 
         #endregion
