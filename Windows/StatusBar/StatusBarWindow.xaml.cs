@@ -565,12 +565,15 @@ namespace CraftSharp.Windows.StatusBar
                 Duration = TimeSpan.FromMilliseconds(500)
             };
 
-            // 动画完成后隐藏
+            // 动画完成后隐藏（只有 Opacity 确实为 0 时才隐藏，防止动画中途被打断时误触发）
             fadeAnimation.Completed += (s, e) =>
             {
-                FileNameTextBlock.Visibility = Visibility.Collapsed;
-                FileNameTextBlock.Text = string.Empty;
-                FileNameTextBlock.Opacity = 1.0; // 重置以便下次使用
+                if (FileNameTextBlock.Opacity <= 0.01)
+                {
+                    FileNameTextBlock.Visibility = Visibility.Collapsed;
+                    FileNameTextBlock.Text = string.Empty;
+                    FileNameTextBlock.Opacity = 1.0; // 重置以便下次使用
+                }
             };
 
             FileNameTextBlock.BeginAnimation(System.Windows.UIElement.OpacityProperty, fadeAnimation);
