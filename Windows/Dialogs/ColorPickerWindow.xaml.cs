@@ -12,14 +12,14 @@ namespace CraftSharp.Windows.Dialogs
     /// </summary>
     public partial class ColorPickerWindow : Wpf.Ui.Controls.FluentWindow
     {
-        // 当前选择的颜色参数
-        private double _hue = 0;           // 色相 0-360
-        private double _saturation = 1;    // 饱和度 0-1
-        private double _brightness = 1;    // 明度 0-1
-        private double _opacity = 1;       // 不透明度 0-1
+        // 当前选择的颜色参数（默认红色 #FF0000）
+        private double _hue = 0;           // 色相 0-360（红色）
+        private double _saturation = 1;    // 饱和度 0-1（最大）
+        private double _brightness = 0.5;  // 明度 0-1（纯色）
+        private double _opacity = 1;       // 不透明度 0-1（100%）
 
         // 颜色状态
-        private System.Windows.Media.Color _selectedColor = System.Windows.Media.Colors.White;
+        private System.Windows.Media.Color _selectedColor = System.Windows.Media.Colors.Red;
         private bool _isDraggingSpectrum = false;
         private bool _isDraggingBrightness = false;
         private bool _isDraggingOpacity = false;
@@ -30,12 +30,12 @@ namespace CraftSharp.Windows.Dialogs
         /// <summary>
         /// 用户选择的颜色（十六进制格式，带Alpha）
         /// </summary>
-        public string SelectedColorHex { get; private set; } = "#FFFFFFFF";
+        public string SelectedColorHex { get; private set; } = "#FFFF0000";
 
         /// <summary>
         /// 用户选择的颜色（Color对象，带Alpha）
         /// </summary>
-        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromArgb(255, 255, 255, 255);
+        public System.Windows.Media.Color SelectedColor { get; private set; } = System.Windows.Media.Color.FromArgb(255, 255, 0, 0);
 
         /// <summary>
         /// 初始颜色（构造时传入）
@@ -88,26 +88,9 @@ namespace CraftSharp.Windows.Dialogs
         private void Spectrum_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _isDraggingSpectrum = true;
+            CaptureMouse();
             UpdateSpectrumFromMouse(e);
-        }
-
-        /// <summary>
-        /// 色谱区域鼠标移动
-        /// </summary>
-        private void Spectrum_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (_isDraggingSpectrum)
-            {
-                UpdateSpectrumFromMouse(e);
-            }
-        }
-
-        /// <summary>
-        /// 色谱区域鼠标释放
-        /// </summary>
-        private void Spectrum_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            _isDraggingSpectrum = false;
+            e.Handled = true;
         }
 
         /// <summary>
@@ -116,26 +99,9 @@ namespace CraftSharp.Windows.Dialogs
         private void Brightness_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _isDraggingBrightness = true;
+            CaptureMouse();
             UpdateBrightnessFromMouse(e);
-        }
-
-        /// <summary>
-        /// 明度条鼠标移动
-        /// </summary>
-        private void Brightness_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (_isDraggingBrightness)
-            {
-                UpdateBrightnessFromMouse(e);
-            }
-        }
-
-        /// <summary>
-        /// 明度条鼠标释放
-        /// </summary>
-        private void Brightness_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            _isDraggingBrightness = false;
+            e.Handled = true;
         }
 
         /// <summary>
@@ -144,26 +110,42 @@ namespace CraftSharp.Windows.Dialogs
         private void Opacity_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _isDraggingOpacity = true;
+            CaptureMouse();
             UpdateOpacityFromMouse(e);
+            e.Handled = true;
         }
 
         /// <summary>
-        /// 不透明度条鼠标移动
+        /// 窗口级别的鼠标移动处理（用于拖拽操作）
         /// </summary>
-        private void Opacity_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Window_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (_isDraggingOpacity)
+            if (_isDraggingSpectrum)
+            {
+                UpdateSpectrumFromMouse(e);
+            }
+            else if (_isDraggingBrightness)
+            {
+                UpdateBrightnessFromMouse(e);
+            }
+            else if (_isDraggingOpacity)
             {
                 UpdateOpacityFromMouse(e);
             }
         }
 
         /// <summary>
-        /// 不透明度条鼠标释放
+        /// 窗口级别的鼠标释放处理
         /// </summary>
-        private void Opacity_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Window_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _isDraggingOpacity = false;
+            if (_isDraggingSpectrum || _isDraggingBrightness || _isDraggingOpacity)
+            {
+                _isDraggingSpectrum = false;
+                _isDraggingBrightness = false;
+                _isDraggingOpacity = false;
+                ReleaseMouseCapture();
+            }
         }
 
         /// <summary>

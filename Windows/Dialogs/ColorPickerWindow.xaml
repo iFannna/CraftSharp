@@ -9,7 +9,9 @@
                  Background="{DynamicResource ApplicationBackgroundBrush}"
                  ExtendsContentIntoTitleBar="True"
                  Foreground="{DynamicResource TextPrimaryBrush}"
-                 ResizeMode="NoResize">
+                 ResizeMode="NoResize"
+                 PreviewMouseMove="Window_PreviewMouseMove"
+                 PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -33,8 +35,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- 色谱区域（色相 + 饱和度） -->
-            <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="8" Height="200" ClipToBounds="True"
-                    Background="White" MouseLeftButtonDown="Spectrum_MouseDown" MouseMove="Spectrum_MouseMove" MouseLeftButtonUp="Spectrum_MouseUp">
+            <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="8" Height="200"
+                    Background="White" MouseLeftButtonDown="Spectrum_MouseDown">
                 <Grid IsHitTestVisible="False">
                     <!-- 色相渐变（横向从红到红） -->
                     <Rectangle x:Name="HueGradient">
@@ -67,7 +69,7 @@
 
             <!-- 明度条（垂直） -->
             <Border Grid.Column="1" x:Name="BrightnessBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
-                    Background="Transparent" MouseLeftButtonDown="Brightness_MouseDown" MouseMove="Brightness_MouseMove" MouseLeftButtonUp="Brightness_MouseUp">
+                    Background="Transparent" MouseLeftButtonDown="Brightness_MouseDown">
                 <Grid IsHitTestVisible="False">
                     <Rectangle x:Name="BrightnessGradient">
                         <Rectangle.Fill>
@@ -85,7 +87,7 @@
 
             <!-- 不透明度条（垂直） -->
             <Border Grid.Column="2" x:Name="OpacityBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
-                    Background="Transparent" MouseLeftButtonDown="Opacity_MouseDown" MouseMove="Opacity_MouseMove" MouseLeftButtonUp="Opacity_MouseUp">
+                    Background="Transparent" MouseLeftButtonDown="Opacity_MouseDown">
                 <Grid IsHitTestVisible="False">
                     <!-- 棋盘格背景 -->
                     <Rectangle x:Name="OpacityCheckerboard">
@@ -128,7 +130,7 @@
         </Grid>
 
         <!-- 颜色预览区域 -->
-        <Border Grid.Row="2" Margin="16,8,16,8" CornerRadius="8" Height="40">
+        <Border Grid.Row="2" Margin="16,8,16,8" CornerRadius="0" Height="40">
             <!-- 棋盘格背景用于显示透明效果 -->
             <Border.Background>
                 <DrawingBrush TileMode="Tile" Viewport="0,0,10,10" ViewportUnits="Absolute">
@@ -152,7 +154,7 @@
                 </DrawingBrush>
             </Border.Background>
             <!-- 预览颜色覆盖层 -->
-            <Border x:Name="PreviewColorOverlay" CornerRadius="8" Background="#FFFFFFFF"/>
+            <Border x:Name="PreviewColorOverlay" CornerRadius="0" Background="#FFFF0000"/>
         </Border>
 
         <!-- 颜色值输入区域 -->
@@ -166,7 +168,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="HEX" FontWeight="Medium" Margin="0,0,8,0" VerticalAlignment="Center"
                            Foreground="{DynamicResource TextSecondaryBrush}"/>
-                <TextBox Grid.Column="1" x:Name="HexInput" Text="#FFFFFF" FontWeight="Medium"
+                <TextBox Grid.Column="1" x:Name="HexInput" Text="#FF0000" FontWeight="Medium"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="HexInput_TextChanged"/>
                 <TextBox Grid.Column="2" x:Name="AlphaPercentInput" Text="100%" FontWeight="Medium" Width="60" Margin="8,0,0,0"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="AlphaPercentInput_TextChanged"/>
@@ -184,9 +186,9 @@
                            Foreground="{DynamicResource TextSecondaryBrush}"/>
                 <TextBox Grid.Column="1" x:Name="RInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
-                <TextBox Grid.Column="2" x:Name="GInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
+                <TextBox Grid.Column="2" x:Name="GInput" Text="0" FontWeight="Medium" Margin="0,0,4,0"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
-                <TextBox Grid.Column="3" x:Name="BInput" Text="255" FontWeight="Medium" Margin="0,0,4,0"
+                <TextBox Grid.Column="3" x:Name="BInput" Text="0" FontWeight="Medium" Margin="0,0,4,0"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="RgbInput_TextChanged"/>
                 <TextBox Grid.Column="4" x:Name="AlphaInput" Text="100%" FontWeight="Medium" Width="60"
                          VerticalAlignment="Center" Padding="8,4" TextChanged="AlphaInput_TextChanged"/>
