@@ -200,5 +200,16 @@
                    Stretch="Uniform"
                    RenderOptions.BitmapScalingMode="HighQuality"/>
         </Canvas>
+
+        <!-- 文件名显示层：距离窗口底部50*scaleFactor，水平居中 -->
+        <Grid x:Name="FileNameGrid"
+              IsHitTestVisible="False"
+              Background="Transparent"
+              VerticalAlignment="Bottom"
+              Margin="0,0,0,50">
+            <TextBlock x:Name="FileNameTextBlock"
+                       HorizontalAlignment="Center"
+                       Visibility="Collapsed"/>
+        </Grid>
     </Grid>
 </Window>

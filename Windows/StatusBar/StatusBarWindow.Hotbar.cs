@@ -1067,6 +1067,13 @@ namespace CraftSharp.Windows.StatusBar
                             selection.Visibility = Visibility.Visible;
                         }
                     }
+
+                    // 显示文件名（选中时）
+                    if (!isEmpty && !isMissing)
+                    {
+                        string fileName = System.IO.Path.GetFileName(item.FilePath);
+                        ShowFileName(fileName);
+                    }
                 }
             }
         }
@@ -1124,6 +1131,9 @@ namespace CraftSharp.Windows.StatusBar
                 }
             }
             _selectedSlotIndex = -1;
+
+            // 隐藏文件名
+            HideFileName();
         }
 
         /// <summary>

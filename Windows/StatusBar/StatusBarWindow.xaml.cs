@@ -54,6 +54,9 @@ namespace CraftSharp.Windows.StatusBar
         private double _dragOffsetX;  // 鼠标相对于窗口左上角的偏移
         private double _dragOffsetY;
 
+        // 文件名显示定时器
+        private DispatcherTimer? _fileNameTimer;
+
         // 原生拖放目标（支持 Windows 拖拽缩略图）
         private IDisposable? _nativeDropTarget;
 
@@ -121,6 +124,9 @@ namespace CraftSharp.Windows.StatusBar
 
             // 初始化格子相关服务（需要在 _scaleFactor 和 _appSettings 初始化后）
             InitializeSlotServices();
+
+            // 初始化文件名显示样式
+            InitializeFileNameDisplay();
 
             // 获取原始图片尺寸（调用各模块的加载方法）
             GetOriginalImageSize();
@@ -199,6 +205,13 @@ namespace CraftSharp.Windows.StatusBar
             {
                 _batteryTimer.Stop();
                 _batteryTimer = null;
+            }
+
+            // 停止文件名显示定时器
+            if (_fileNameTimer != null)
+            {
+                _fileNameTimer.Stop();
+                _fileNameTimer = null;
             }
 
             // 释放原生拖放资源
@@ -357,6 +370,74 @@ namespace CraftSharp.Windows.StatusBar
                 UpdateAirLevel();
             };
             _batteryTimer.Start();
+        }
+
+        /// <summary>
+        /// 初始化文件名显示样式
+        /// </summary>
+        private void InitializeFileNameDisplay()
+        {
+            // 设置字体样式
+            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
+            FileNameTextBlock.FontFamily = fontFamily;
+            FileNameTextBlock.FontSize = 8 * _scaleFactor;
+            FileNameTextBlock.Foreground = System.Windows.Media.Brushes.White;
+
+            // 设置阴影效果
+            var shadowEffect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = Colors.Black,
+                Direction = 315,
+                ShadowDepth = 0.75 * _scaleFactor,
+                BlurRadius = 0,
+                Opacity = 1.0
+            };
+            FileNameTextBlock.Effect = shadowEffect;
+
+            // 设置 Grid 底部距离（距离窗口底部 50*scaleFactor）
+            FileNameGrid.Margin = new Thickness(0, 0, 0, 50 * _scaleFactor);
+
+            // 初始化文件名显示定时器
+            _fileNameTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(2000)
+            };
+            _fileNameTimer.Tick += (s, e) =>
+            {
+                HideFileName();
+            };
+        }
+
+        /// <summary>
+        /// 显示文件名（选中格子时调用）
+        /// </summary>
+        public void ShowFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                HideFileName();
+                return;
+            }
+
+            // 立即清空之前的显示
+            _fileNameTimer?.Stop();
+
+            // 设置文件名（Grid 会自动居中）
+            FileNameTextBlock.Text = fileName;
+            FileNameTextBlock.Visibility = Visibility.Visible;
+
+            // 启动定时器（2000ms后消失）
+            _fileNameTimer?.Start();
+        }
+
+        /// <summary>
+        /// 隐藏文件名
+        /// </summary>
+        public void HideFileName()
+        {
+            _fileNameTimer?.Stop();
+            FileNameTextBlock.Visibility = Visibility.Collapsed;
+            FileNameTextBlock.Text = string.Empty;
         }
 
         /// <summary>
