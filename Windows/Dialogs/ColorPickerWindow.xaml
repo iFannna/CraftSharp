@@ -23,59 +23,90 @@
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource ColorPickerTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
                      FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
-        <!-- RGB 滑块 -->
-        <StackPanel Grid.Row="1" Margin="16">
-            <!-- R 滑块 -->
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="R" FontWeight="Medium" Foreground="#E74C3C"/>
-                <Slider Grid.Column="1" x:Name="RedSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="RedValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
-            </Grid>
+        <!-- 调色板区域 -->
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- G 滑块 -->
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="G" FontWeight="Medium" Foreground="#27AE60"/>
-                <Slider Grid.Column="1" x:Name="GreenSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="GreenValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
-            </Grid>
+            <!-- 色谱区域（色相 + 饱和度） -->
+            <Border Grid.Column="0" x:Name="SpectrumBorder" CornerRadius="8" Height="200" ClipToBounds="True"
+                    Background="White" MouseLeftButtonDown="Spectrum_MouseDown" MouseMove="Spectrum_MouseMove">
+                <Grid>
+                    <!-- 色相渐变（横向从红到红） -->
+                    <Rectangle x:Name="HueGradient">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#FF0000" Offset="0"/>
+                                <GradientStop Color="#FFFF00" Offset="0.167"/>
+                                <GradientStop Color="#00FF00" Offset="0.333"/>
+                                <GradientStop Color="#00FFFF" Offset="0.5"/>
+                                <GradientStop Color="#0000FF" Offset="0.667"/>
+                                <GradientStop Color="#FF00FF" Offset="0.833"/>
+                                <GradientStop Color="#FF0000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 饱和度渐变（纵向从透明到白色） -->
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                <GradientStop Color="#FFFFFFFF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 选择指示器 -->
+                    <Border x:Name="SpectrumSelector" Width="12" Height="12" CornerRadius="6" BorderBrush="White" BorderThickness="2"
+                            Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Border.RenderTransform>
+                            <TranslateTransform X="-6" Y="-6"/>
+                        </Border.RenderTransform>
+                    </Border>
+                </Grid>
+            </Border>
 
-            <!-- B 滑块 -->
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="B" FontWeight="Medium" Foreground="#3498DB"/>
-                <Slider Grid.Column="1" x:Name="BlueSlider" Minimum="0" Maximum="255" Value="255" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" x:Name="BlueValue" Text="255" HorizontalAlignment="Center" FontWeight="Medium"/>
-            </Grid>
-        </StackPanel>
+            <!-- 明度条（垂直） -->
+            <Border Grid.Column="1" x:Name="BrightnessBorder" Width="24" Height="200" CornerRadius="8" Margin="8,0,0,0" ClipToBounds="True"
+                    MouseLeftButtonDown="Brightness_MouseDown" MouseMove="Brightness_MouseMove">
+                <Grid>
+                    <Rectangle x:Name="BrightnessGradient">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="White" Offset="0"/>
+                                <GradientStop Color="Black" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <!-- 明度选择指示器 -->
+                    <Border x:Name="BrightnessSelector" Width="24" Height="4" CornerRadius="2" BorderBrush="White" BorderThickness="1"
+                            Background="Transparent" VerticalAlignment="Top">
+                        <Border.RenderTransform>
+                            <TranslateTransform Y="-2"/>
+                        </Border.RenderTransform>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
 
-        <!-- 预览区域 -->
+        <!-- 预览和数值区域 -->
         <StackPanel Grid.Row="2" Margin="16,8,16,16">
             <TextBlock Text="{DynamicResource ColorPickerPreview}" FontWeight="Medium" Margin="0,0,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <Border x:Name="PreviewBorder" Background="#FFFFFF" CornerRadius="8" Height="40">
-                <TextBlock x:Name="PreviewText" Text="示例文件名.txt"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="14" FontWeight="Medium"
-                           Foreground="{DynamicResource TextPrimaryBrush}"/>
-            </Border>
-            <!-- 十六进制值显示 -->
-            <TextBlock x:Name="HexValueText" Text="#FFFFFF" Margin="0,8,0,0"
-                       HorizontalAlignment="Center" FontWeight="Medium"
-                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+            <!-- 预览颜色块 -->
+            <Border x:Name="PreviewBorder" Background="#FFFFFF" CornerRadius="8" Height="40"/>
+            <!-- 颜色值显示 -->
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" x:Name="HexValueText" Text="#FFFFFF" FontWeight="Medium"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBlock Grid.Column="1" x:Name="RgbValueText" Text="R:255 G:255 B:255" FontWeight="Medium"
+                           HorizontalAlignment="Right" Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Grid>
         </StackPanel>
 
         <!-- 按钮区域 -->
