@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using CraftSharp.Services;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
@@ -40,6 +41,14 @@ namespace CraftSharp.Windows.Inventory
 
         // 悬浮效果配置（从设置读取）
         private bool _hoverEffect = true;
+
+        // hover 长按计时器（300ms后切换为绿色蒙版）
+        private DispatcherTimer? _hoverTimer;
+        private string? _currentHoverSlotId = null;
+
+        // hover 蒙版颜色
+        private static readonly System.Windows.Media.Color WhiteOverlayColor = System.Windows.Media.Color.FromArgb(128, 255, 255, 255); // 50%不透明度白色
+        private static readonly System.Windows.Media.Color GreenOverlayColor = System.Windows.Media.Color.FromArgb(112, 75, 255, 84); // 44%不透明度
 
         // 服务实例
         private SlotIconService? _iconService;
@@ -831,19 +840,68 @@ namespace CraftSharp.Windows.Inventory
 
             var border = (Border)sender;
             var slotId = border.Name.Replace("Slot_", "");
+
+            // 检查格子是否有文件（通过图标Visibility判断）
+            bool hasFile = _slotIcons.TryGetValue(slotId, out var icon) && icon.Visibility == Visibility.Visible;
+
             if (_slotHoverOverlays.TryGetValue(slotId, out var hoverOverlay))
             {
+                // 显示白色蒙版
+                hoverOverlay.Background = new SolidColorBrush(WhiteOverlayColor);
                 hoverOverlay.Visibility = Visibility.Visible;
+
+                if (hasFile)
+                {
+                    // 有文件：启动200ms计时器，之后切换为绿色蒙版
+                    _currentHoverSlotId = slotId;
+                    if (_hoverTimer == null)
+                    {
+                        _hoverTimer = new DispatcherTimer();
+                        _hoverTimer.Interval = TimeSpan.FromMilliseconds(250);
+                        _hoverTimer.Tick += HoverTimer_Tick;
+                    }
+                    _hoverTimer.Stop();
+                    _hoverTimer.Start();
+                }
+                else
+                {
+                    // 空格子：不启动计时器，保持白色蒙版
+                    _hoverTimer?.Stop();
+                    _currentHoverSlotId = null;
+                }
             }
+        }
+
+        private void HoverTimer_Tick(object? sender, EventArgs e)
+        {
+            _hoverTimer?.Stop();
+
+            // 检查当前hover格子是否还有文件且蒙版可见
+            if (_currentHoverSlotId != null &&
+                _slotHoverOverlays.TryGetValue(_currentHoverSlotId, out var hoverOverlay) &&
+                hoverOverlay.Visibility == Visibility.Visible)
+            {
+                // 切换为绿色蒙版
+                hoverOverlay.Background = new SolidColorBrush(GreenOverlayColor);
+            }
+
+            _currentHoverSlotId = null;
         }
 
         private void Slot_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             var border = (Border)sender;
             var slotId = border.Name.Replace("Slot_", "");
+
+            // 停止计时器
+            _hoverTimer?.Stop();
+            _currentHoverSlotId = null;
+
             if (_slotHoverOverlays.TryGetValue(slotId, out var hoverOverlay))
             {
+                // 隐藏蒙版并恢复白色配置（为下次hover准备）
                 hoverOverlay.Visibility = Visibility.Collapsed;
+                hoverOverlay.Background = new SolidColorBrush(WhiteOverlayColor);
             }
         }
 
