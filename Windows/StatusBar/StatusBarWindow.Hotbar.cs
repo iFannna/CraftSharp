@@ -1132,8 +1132,8 @@ namespace CraftSharp.Windows.StatusBar
             }
             _selectedSlotIndex = -1;
 
-            // 隐藏文件名
-            HideFileName();
+            // 立即隐藏文件名（无动画，用于切换选中时立即清空）
+            HideFileNameImmediately();
         }
 
         /// <summary>

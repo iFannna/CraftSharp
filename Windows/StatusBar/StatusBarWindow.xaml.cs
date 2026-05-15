@@ -419,25 +419,55 @@ namespace CraftSharp.Windows.StatusBar
                 return;
             }
 
-            // 立即清空之前的显示
+            // 立即清空之前的显示（停止任何正在进行的动画，无动画切换）
             _fileNameTimer?.Stop();
+            FileNameTextBlock.BeginAnimation(System.Windows.UIElement.OpacityProperty, null);
+            FileNameTextBlock.Opacity = 1.0;
 
             // 设置文件名（Grid 会自动居中）
             FileNameTextBlock.Text = fileName;
             FileNameTextBlock.Visibility = Visibility.Visible;
 
-            // 启动定时器（2000ms后消失）
+            // 启动定时器（2000ms后触发渐隐动画）
             _fileNameTimer?.Start();
         }
 
         /// <summary>
-        /// 隐藏文件名
+        /// 隐藏文件名（带渐隐动画）
         /// </summary>
         public void HideFileName()
         {
             _fileNameTimer?.Stop();
+
+            // 创建渐隐动画（500ms）
+            var fadeAnimation = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromMilliseconds(500)
+            };
+
+            // 动画完成后隐藏
+            fadeAnimation.Completed += (s, e) =>
+            {
+                FileNameTextBlock.Visibility = Visibility.Collapsed;
+                FileNameTextBlock.Text = string.Empty;
+                FileNameTextBlock.Opacity = 1.0; // 重置以便下次使用
+            };
+
+            FileNameTextBlock.BeginAnimation(System.Windows.UIElement.OpacityProperty, fadeAnimation);
+        }
+
+        /// <summary>
+        /// 立即隐藏文件名（无动画，用于切换选中时）
+        /// </summary>
+        public void HideFileNameImmediately()
+        {
+            _fileNameTimer?.Stop();
+            FileNameTextBlock.BeginAnimation(System.Windows.UIElement.OpacityProperty, null);
             FileNameTextBlock.Visibility = Visibility.Collapsed;
             FileNameTextBlock.Text = string.Empty;
+            FileNameTextBlock.Opacity = 1.0;
         }
 
         /// <summary>
