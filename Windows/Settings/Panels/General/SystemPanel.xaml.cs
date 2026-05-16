@@ -3,9 +3,9 @@ using CraftSharp.Services;
 using System;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.General
 {
-    public partial class SystemPanel : System.Windows.Controls.UserControl
+    public partial class SystemPanel : global::System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
 
@@ -48,7 +48,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void AutoStartToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void AutoStartToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
@@ -58,7 +58,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void RememberPositionToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void RememberPositionToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
@@ -68,7 +68,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void RememberSizeToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void RememberSizeToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
@@ -78,7 +78,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void RememberCardStatesToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void RememberCardStatesToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
@@ -99,7 +99,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void RememberNavSelectionToggle_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void RememberNavSelectionToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
@@ -119,7 +119,7 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void SaveSettings()
         {
-            if (System.Windows.Application.Current is App app)
+            if (global::System.Windows.Application.Current is App app)
             {
                 app.SaveSettings();
             }

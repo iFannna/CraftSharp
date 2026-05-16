@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Inventory
 {
     /// <summary>
     /// 物品栏设置卡片组件

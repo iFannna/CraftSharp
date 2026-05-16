@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem BOSS血条配置

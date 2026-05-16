@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 数据映射和自定义数值配置

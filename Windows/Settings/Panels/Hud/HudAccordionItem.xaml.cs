@@ -1,6 +1,6 @@
 using CraftSharp.Models;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 主入口 - AddHudContent 分发逻辑

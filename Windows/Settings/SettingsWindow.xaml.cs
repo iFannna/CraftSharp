@@ -2,7 +2,12 @@ using System;
 using System.Windows;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
-using CraftSharp.Windows.Settings.Panels;
+using CraftSharp.Windows.Settings.Panels.Hud;
+using CraftSharp.Windows.Settings.Panels.Inventory;
+using CraftSharp.Windows.Settings.Panels.General;
+using CraftSharp.Windows.Settings.Panels.Appearance;
+using CraftSharp.Windows.Settings.Panels.Hotkey;
+using CraftSharp.Windows.Settings.Panels.About;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Settings

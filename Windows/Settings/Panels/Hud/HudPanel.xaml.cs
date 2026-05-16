@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     public partial class HudPanel : System.Windows.Controls.UserControl
     {

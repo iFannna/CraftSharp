@@ -2,9 +2,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.About
 {
-    public partial class AboutPanel : System.Windows.Controls.UserControl
+    public partial class AboutPanel : global::System.Windows.Controls.UserControl
     {
         public AboutPanel()
         {
@@ -19,7 +19,7 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void CheckUpdate_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("当前已是最新版本", "检查更新", MessageBoxButton.OK, MessageBoxImage.Information);
+            global::System.Windows.MessageBox.Show("当前已是最新版本", "检查更新", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Feedback_Click(object sender, RoutedEventArgs e)

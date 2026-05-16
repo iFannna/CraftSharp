@@ -1,7 +1,7 @@
 using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services;
-using CraftSharp.Windows.Settings;
+using CraftSharp.Windows.Dialogs;
 using System;
 using System.Linq;
 using System.Windows;

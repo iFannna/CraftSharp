@@ -3,13 +3,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hotkey
 {
-    public partial class HotkeyPanel : System.Windows.Controls.UserControl
+    public partial class HotkeyPanel : global::System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
         private bool _isRecordingHotkey = false;
-        private System.Windows.Controls.Button? _recordingHotkeyButton = null;
+        private global::System.Windows.Controls.Button? _recordingHotkeyButton = null;
 
         public HotkeyPanel(AppSettings settings)
         {
@@ -22,13 +22,13 @@ namespace CraftSharp.Windows.Settings.Panels
         {
             InventoryHotkeyBtn.Content = _settings.Hotkeys.Inventory;
             SettingsHotkeyBtn.Content = _settings.Hotkeys.Settings;
-            var notSetText = System.Windows.Application.Current.TryFindResource("HotkeyNotSet") as string ?? "未设置";
+            var notSetText = global::System.Windows.Application.Current.TryFindResource("HotkeyNotSet") as string ?? "未设置";
             HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.HotbarToggle) ? notSetText : _settings.Hotkeys.HotbarToggle;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is System.Windows.Controls.Button btn)
+            if (sender is global::System.Windows.Controls.Button btn)
             {
                 _isRecordingHotkey = true;
                 _recordingHotkeyButton = btn;
@@ -36,7 +36,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        public void HandleKeyDown(System.Windows.Input.KeyEventArgs e)
+        public void HandleKeyDown(global::System.Windows.Input.KeyEventArgs e)
         {
             if (_isRecordingHotkey && _recordingHotkeyButton != null)
             {
@@ -49,7 +49,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private static string BuildHotkeyString(System.Windows.Input.KeyEventArgs e)
+        private static string BuildHotkeyString(global::System.Windows.Input.KeyEventArgs e)
         {
             var parts = new System.Collections.Generic.List<string>();
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
@@ -61,7 +61,7 @@ namespace CraftSharp.Windows.Settings.Panels
             return string.Join("+", parts);
         }
 
-        private void UpdateHotkeySetting(System.Windows.Controls.Button btn, string hotkey)
+        private void UpdateHotkeySetting(global::System.Windows.Controls.Button btn, string hotkey)
         {
             if (btn == InventoryHotkeyBtn) _settings.Hotkeys.Inventory = hotkey;
             else if (btn == SettingsHotkeyBtn) _settings.Hotkeys.Settings = hotkey;
@@ -73,7 +73,7 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void SaveSettings()
         {
-            if (System.Windows.Application.Current is App app)
+            if (global::System.Windows.Application.Current is App app)
             {
                 app.SaveSettings();
             }

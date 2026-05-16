@@ -5,7 +5,7 @@ using CraftSharp.Windows.Dialogs;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 快捷栏配置

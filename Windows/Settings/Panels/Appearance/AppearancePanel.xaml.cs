@@ -3,12 +3,12 @@ using CraftSharp.Services;
 using CraftSharp.Windows.Dialogs;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Appearance
 {
-    public partial class AppearancePanel : System.Windows.Controls.UserControl
+    public partial class AppearancePanel : global::System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
-        private System.Windows.Window? _parentWindow;
+        private global::System.Windows.Window? _parentWindow;
 
         public AppearancePanel(AppSettings settings)
         {
@@ -17,7 +17,7 @@ namespace CraftSharp.Windows.Settings.Panels
             InitializeControls();
         }
 
-        public void SetParentWindow(System.Windows.Window parent)
+        public void SetParentWindow(global::System.Windows.Window parent)
         {
             _parentWindow = parent;
         }
@@ -118,7 +118,7 @@ namespace CraftSharp.Windows.Settings.Panels
             }
         }
 
-        private void AppIconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void AppIconPreview_Click(object sender, global::System.Windows.Input.MouseButtonEventArgs e)
         {
             var picker = new IconPickerWindow();
             picker.Owner = _parentWindow;
@@ -141,7 +141,7 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void SaveSettings()
         {
-            if (System.Windows.Application.Current is App app)
+            if (global::System.Windows.Application.Current is App app)
             {
                 app.SaveSettings();
             }

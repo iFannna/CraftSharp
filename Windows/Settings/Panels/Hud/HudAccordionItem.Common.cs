@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 通用UI构建方法

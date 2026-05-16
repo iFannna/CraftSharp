@@ -4,7 +4,7 @@ using CraftSharp.Windows.Dialogs;
 using System.Windows;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 准星和攻击指示器配置

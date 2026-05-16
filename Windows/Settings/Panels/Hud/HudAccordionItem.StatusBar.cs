@@ -2,7 +2,7 @@ using CraftSharp.Services;
 using System.Windows;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 状态栏配置

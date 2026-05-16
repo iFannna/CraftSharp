@@ -7,7 +7,7 @@ using CraftSharp.Helpers;
 using CraftSharp.Services;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings
+namespace CraftSharp.Windows.Dialogs
 {
     /// <summary>
     /// HUD 图标选择器窗口（无左侧边栏）

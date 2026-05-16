@@ -3,7 +3,7 @@ using CraftSharp.Services;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 标准HUD元素配置（生命值、饥饿值、空气值、经验条、伤害吸收、护甲）

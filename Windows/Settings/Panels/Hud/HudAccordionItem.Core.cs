@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Wpf.Ui.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// HudAccordionItem 核心逻辑 - 构造函数、动画、设置管理

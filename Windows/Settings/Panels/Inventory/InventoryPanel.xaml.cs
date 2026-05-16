@@ -1,7 +1,7 @@
 using CraftSharp.Models;
 using System.Windows.Controls;
 
-namespace CraftSharp.Windows.Settings.Panels
+namespace CraftSharp.Windows.Settings.Panels.Inventory
 {
     /// <summary>
     /// 物品栏设置面板
