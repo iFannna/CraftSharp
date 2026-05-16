@@ -34,18 +34,22 @@ namespace CraftSharp.Windows.Settings.Panels
 
         private void AddPlayerInventoryCards()
         {
-            // 物品栏
+            // 物品栏（物品栏相关）
             var card1 = new InventoryAccordionItem(_settings, "InventoryTitle");
             _cards.Add(card1);
             PlayerInventoryContainer.Children.Add(card1);
-            // 生存物品栏
+            // 文本提示框（物品栏相关）
+            var tooltipCard = new InventoryAccordionItem(_settings, "TooltipTitle");
+            _cards.Add(tooltipCard);
+            PlayerInventoryContainer.Children.Add(tooltipCard);
+            // 生存物品栏（玩家物品栏）
             var card2 = new InventoryAccordionItem(_settings, "SurvivalInventoryTitle");
             _cards.Add(card2);
-            PlayerInventoryContainer.Children.Add(card2);
-            // 创造物品栏
+            PlayerInventoryExtraContainer.Children.Add(card2);
+            // 创造物品栏（玩家物品栏）
             var card3 = new InventoryAccordionItem(_settings, "CreativeInventoryTitle");
             _cards.Add(card3);
-            PlayerInventoryContainer.Children.Add(card3);
+            PlayerInventoryExtraContainer.Children.Add(card3);
         }
 
         private void AddContainerCards()

@@ -239,7 +239,27 @@ namespace CraftSharp.Models
         /// <summary>
         /// 文本提示框（hover 时显示 Tooltip）
         /// </summary>
-        public bool ShowTooltip { get; set; } = true;
+        public bool ShowTooltip { get; set; } = false;
+
+        /// <summary>
+        /// Tooltip 显示文件名（不含后缀）
+        /// </summary>
+        public bool TooltipShowFileName { get; set; } = true;
+
+        /// <summary>
+        /// Tooltip 显示原文件名（含后缀）
+        /// </summary>
+        public bool TooltipShowOriginalName { get; set; } = false;
+
+        /// <summary>
+        /// Tooltip 显示文件路径
+        /// </summary>
+        public bool TooltipShowFilePath { get; set; } = false;
+
+        /// <summary>
+        /// Tooltip 显示文件类型（后缀）
+        /// </summary>
+        public bool TooltipShowFileType { get; set; } = false;
 
         /// <summary>
         /// 文件名显示颜色（十六进制格式，如 "#FCFCFC"，或 "auto" 表示自动模式）

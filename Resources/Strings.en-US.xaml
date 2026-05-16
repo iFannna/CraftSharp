@@ -213,11 +213,13 @@
 
     <!-- Inventory Settings Panel -->
     <sys:String x:Key="InventoryPanelTitle">Inventory Settings</sys:String>
-    <sys:String x:Key="InventoryPlayerSettings">Player Inventory</sys:String>
+    <sys:String x:Key="InventoryPlayerSettings">Inventory Related</sys:String>
+    <sys:String x:Key="InventoryPlayerInventorySettings">Player Inventory</sys:String>
     <sys:String x:Key="InventoryContainerPanelSettings">Container Panel</sys:String>
     <sys:String x:Key="InventoryFunctionalBlockSettings">Functional Block Panel</sys:String>
     <sys:String x:Key="InventoryCreatureSettings">Creature Inventory</sys:String>
     <sys:String x:Key="InventoryTitle">Inventory</sys:String>
+    <sys:String x:Key="TooltipTitle">Tooltip</sys:String>
     <sys:String x:Key="InventoryOptionVisible">Show Inventory</sys:String>
     <sys:String x:Key="InventoryOptionVisibleDesc">Display inventory window on desktop</sys:String>
     <sys:String x:Key="InventoryOptionLocked">Lock Position</sys:String>
@@ -228,6 +230,14 @@
     <sys:String x:Key="InventoryOptionHoverEffectDesc">Show white overlay when hovering over slots</sys:String>
     <sys:String x:Key="InventoryOptionShowTooltip">Tooltip</sys:String>
     <sys:String x:Key="InventoryOptionShowTooltipDesc">Show file details when hovering</sys:String>
+    <sys:String x:Key="TooltipOptionShowFileName">File Name</sys:String>
+    <sys:String x:Key="TooltipOptionShowFileNameDesc">Show file name without extension</sys:String>
+    <sys:String x:Key="TooltipOptionShowOriginalName">Original Name</sys:String>
+    <sys:String x:Key="TooltipOptionShowOriginalNameDesc">Show original file name with extension</sys:String>
+    <sys:String x:Key="TooltipOptionShowFilePath">File Path</sys:String>
+    <sys:String x:Key="TooltipOptionShowFilePathDesc">Show full file path</sys:String>
+    <sys:String x:Key="TooltipOptionShowFileType">File Type</sys:String>
+    <sys:String x:Key="TooltipOptionShowFileTypeDesc">Show file extension type</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlay">Gray Overlay</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">Show fullscreen gray overlay when inventory is open</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacity">Opacity</sys:String>

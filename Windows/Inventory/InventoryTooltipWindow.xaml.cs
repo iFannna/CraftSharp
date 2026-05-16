@@ -20,7 +20,7 @@ namespace CraftSharp.Windows.Inventory
         private double _scaleFactor;
         private System.Windows.Media.FontFamily _fontFamily;
         private double _contentMaxWidth; // 内容最大宽度缓存
-        private const double MinWidthBase = 55; // 最小宽度
+        private const double MinWidthBase = 0; // 最小宽度
         private const double MaxWidthBase = 150; // 最大宽度
         private const double PaddingBase = 3;
         private const double FontSizeBase = 8;
@@ -76,7 +76,12 @@ namespace CraftSharp.Windows.Inventory
         /// <param name="filePath">文件路径</param>
         /// <param name="isMissing">是否丢失</param>
         /// <param name="fileNameColor">文件名颜色配置</param>
-        public void SetContent(string filePath, bool isMissing, string fileNameColor)
+        /// <param name="showFileName">显示文件名</param>
+        /// <param name="showOriginalName">显示原文件名</param>
+        /// <param name="showFilePath">显示文件路径</param>
+        /// <param name="showFileType">显示文件类型</param>
+        public void SetContent(string filePath, bool isMissing, string fileNameColor,
+            bool showFileName, bool showOriginalName, bool showFilePath, bool showFileType)
         {
             ContentPanel.Children.Clear();
 
@@ -105,33 +110,55 @@ namespace CraftSharp.Windows.Inventory
             }
             else
             {
-                // 正常文件：四个组件（所有组件都支持换行）
-                // 组件1：文件名（不含后缀）
-                string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-                string line1Color = GetDisplayColor(fileNameColor, fileNameWithoutExt);
-                AddTextComponent(fileNameWithoutExt, line1Color, fontSize, true);
+                // 正常文件：根据开关显示组件
+                bool hasContent = false;
 
-                AddSpacing(componentSpacing);
+                // 组件1：文件名（不含后缀）
+                if (showFileName)
+                {
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+                    string line1Color = GetDisplayColor(fileNameColor, fileNameWithoutExt);
+                    AddTextComponent(fileNameWithoutExt, line1Color, fontSize, true);
+                    hasContent = true;
+                }
 
                 // 组件2：文件原始名（含后缀）
-                AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize, true);
-
-                AddSpacing(componentSpacing);
+                if (showOriginalName)
+                {
+                    if (hasContent) AddSpacing(componentSpacing);
+                    AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize, true);
+                    hasContent = true;
+                }
 
                 // 组件3：文件路径
-                AddTextComponent(filePath, ColorFilePath, fontSize, true);
-
-                AddSpacing(componentSpacing);
+                if (showFilePath)
+                {
+                    if (hasContent) AddSpacing(componentSpacing);
+                    AddTextComponent(filePath, ColorFilePath, fontSize, true);
+                    hasContent = true;
+                }
 
                 // 组件4：文件类型（后缀）
-                string extension = Path.GetExtension(filePath);
-                if (!string.IsNullOrEmpty(extension))
+                if (showFileType)
                 {
-                    AddTextComponent(extension, ColorFileType, fontSize, true);
+                    if (hasContent) AddSpacing(componentSpacing);
+                    string extension = Path.GetExtension(filePath);
+                    if (!string.IsNullOrEmpty(extension))
+                    {
+                        AddTextComponent(extension, ColorFileType, fontSize, true);
+                    }
+                    else
+                    {
+                        AddTextComponent("(无后缀)", ColorFileType, fontSize, true);
+                    }
                 }
-                else
+
+                // 如果所有开关都关闭，至少显示文件名
+                if (!hasContent)
                 {
-                    AddTextComponent("(无后缀)", ColorFileType, fontSize, true);
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+                    string line1Color = GetDisplayColor(fileNameColor, fileNameWithoutExt);
+                    AddTextComponent(fileNameWithoutExt, line1Color, fontSize, true);
                 }
             }
 

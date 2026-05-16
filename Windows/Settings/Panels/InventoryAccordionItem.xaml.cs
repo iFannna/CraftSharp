@@ -99,8 +99,6 @@ namespace CraftSharp.Windows.Settings.Panels
             {
                 // 物品栏样式（打开样式预览弹窗）
                 AddStylePickerRow();
-                // 文件名颜色
-                AddFileNameColorComboBox();
                 // 打开动作（单击/双击）
                 AddClickModeComboBox();
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
@@ -117,16 +115,27 @@ namespace CraftSharp.Windows.Settings.Panels
                     // 切换悬浮效果开关后刷新物品栏窗口
                     RefreshInventoryHoverEffect();
                 });
-                AddToggleRow("InventoryOptionShowTooltip", "InventoryOptionShowTooltipDesc", _settings.Inventory.ShowTooltip, v => {
-                    _settings.Inventory.ShowTooltip = v;
-                    // 切换 Tooltip 开关后刷新物品栏窗口
-                    RefreshInventoryShowTooltip();
-                });
                 // 灰色蒙版开关 + 透明度输入框
                 var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.Inventory.GrayOverlay, v => _settings.Inventory.GrayOverlay = v);
                 AddGrayOverlayOpacitySection(grayOverlayToggle);
                 // 隐藏状态栏开关
                 AddToggleRow("InventoryOptionHideStatusBar", "InventoryOptionHideStatusBarDesc", _settings.Inventory.HideStatusBar, v => _settings.Inventory.HideStatusBar = v);
+            }
+            else if (titleResourceKey == "TooltipTitle" && _settings != null)
+            {
+                // 文件名颜色
+                AddFileNameColorComboBox();
+                // 文本提示框开关
+                AddToggleRow("InventoryOptionShowTooltip", "InventoryOptionShowTooltipDesc", _settings.Inventory.ShowTooltip, v => {
+                    _settings.Inventory.ShowTooltip = v;
+                    // 切换 Tooltip 开关后刷新物品栏窗口
+                    RefreshInventoryShowTooltip();
+                });
+                // 显示内容开关
+                AddToggleRow("TooltipOptionShowFileName", "TooltipOptionShowFileNameDesc", _settings.Inventory.TooltipShowFileName, v => _settings.Inventory.TooltipShowFileName = v);
+                AddToggleRow("TooltipOptionShowOriginalName", "TooltipOptionShowOriginalNameDesc", _settings.Inventory.TooltipShowOriginalName, v => _settings.Inventory.TooltipShowOriginalName = v);
+                AddToggleRow("TooltipOptionShowFilePath", "TooltipOptionShowFilePathDesc", _settings.Inventory.TooltipShowFilePath, v => _settings.Inventory.TooltipShowFilePath = v);
+                AddToggleRow("TooltipOptionShowFileType", "TooltipOptionShowFileTypeDesc", _settings.Inventory.TooltipShowFileType, v => _settings.Inventory.TooltipShowFileType = v);
             }
         }
 

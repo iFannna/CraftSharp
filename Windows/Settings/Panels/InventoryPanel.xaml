@@ -7,12 +7,19 @@
         <TextBlock Text="{DynamicResource InventoryPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-        <!-- 玩家物品栏子标题 -->
+        <!-- 物品栏相关子标题 -->
         <TextBlock Text="{DynamicResource InventoryPlayerSettings}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-        <!-- 玩家物品栏卡片容器 -->
+        <!-- 物品栏相关卡片容器 -->
         <StackPanel x:Name="PlayerInventoryContainer"/>
+
+        <!-- 玩家物品栏子标题 -->
+        <TextBlock Text="{DynamicResource InventoryPlayerInventorySettings}" FontSize="16" FontWeight="Medium" Margin="0,24,0,16"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+        <!-- 玩家物品栏卡片容器 -->
+        <StackPanel x:Name="PlayerInventoryExtraContainer"/>
 
         <!-- 容器面板子标题 -->
         <TextBlock Text="{DynamicResource InventoryContainerPanelSettings}" FontSize="16" FontWeight="Medium" Margin="0,24,0,16"

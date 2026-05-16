@@ -1240,8 +1240,15 @@ namespace CraftSharp.Windows.Inventory
             // 获取文件名颜色配置
             string fileNameColor = _settings?.Inventory.FileNameColor ?? "#FCFCFC";
 
+            // 获取显示开关配置
+            bool showFileName = _settings?.Inventory.TooltipShowFileName ?? true;
+            bool showOriginalName = _settings?.Inventory.TooltipShowOriginalName ?? false;
+            bool showFilePath = _settings?.Inventory.TooltipShowFilePath ?? false;
+            bool showFileType = _settings?.Inventory.TooltipShowFileType ?? false;
+
             // 设置 Tooltip 内容
-            _tooltipWindow.SetContent(item.FilePath, isMissing, fileNameColor);
+            _tooltipWindow.SetContent(item.FilePath, isMissing, fileNameColor,
+                showFileName, showOriginalName, showFilePath, showFileType);
 
             // 获取格子控件位置和尺寸
             if (_slotBorders.TryGetValue(slotId, out var border))
