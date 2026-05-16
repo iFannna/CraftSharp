@@ -117,6 +117,11 @@ namespace CraftSharp.Windows.Settings.Panels
                     // 切换悬浮效果开关后刷新物品栏窗口
                     RefreshInventoryHoverEffect();
                 });
+                AddToggleRow("InventoryOptionShowTooltip", "InventoryOptionShowTooltipDesc", _settings.Inventory.ShowTooltip, v => {
+                    _settings.Inventory.ShowTooltip = v;
+                    // 切换 Tooltip 开关后刷新物品栏窗口
+                    RefreshInventoryShowTooltip();
+                });
                 // 灰色蒙版开关 + 透明度输入框
                 var grayOverlayToggle = AddToggleRow("InventoryOptionGrayOverlay", "InventoryOptionGrayOverlayDesc", _settings.Inventory.GrayOverlay, v => _settings.Inventory.GrayOverlay = v);
                 AddGrayOverlayOpacitySection(grayOverlayToggle);
@@ -154,6 +159,21 @@ namespace CraftSharp.Windows.Settings.Panels
                 if (inventoryWindow != null)
                 {
                     inventoryWindow.RefreshHoverEffect();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 切换 Tooltip 开关后刷新物品栏窗口
+        /// </summary>
+        private void RefreshInventoryShowTooltip()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                var inventoryWindow = app.GetInventoryWindow();
+                if (inventoryWindow != null)
+                {
+                    inventoryWindow.RefreshShowTooltip();
                 }
             }
         }

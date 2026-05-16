@@ -226,6 +226,8 @@
     <sys:String x:Key="InventoryOptionRememberPositionDesc">Restore inventory window position on next launch</sys:String>
     <sys:String x:Key="InventoryOptionHoverEffect">Hover Effect</sys:String>
     <sys:String x:Key="InventoryOptionHoverEffectDesc">Show white overlay when hovering over slots</sys:String>
+    <sys:String x:Key="InventoryOptionShowTooltip">Tooltip</sys:String>
+    <sys:String x:Key="InventoryOptionShowTooltipDesc">Show file details when hovering</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlay">Gray Overlay</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">Show fullscreen gray overlay when inventory is open</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacity">Opacity</sys:String>

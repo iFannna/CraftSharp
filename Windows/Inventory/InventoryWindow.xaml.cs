@@ -42,6 +42,9 @@ namespace CraftSharp.Windows.Inventory
         // 悬浮效果配置（从设置读取）
         private bool _hoverEffect = true;
 
+        // Tooltip 配置（从设置读取）
+        private bool _showTooltip = true;
+
         // hover 长按计时器（300ms后切换为绿色蒙版）
         private DispatcherTimer? _hoverTimer;
         private string? _currentHoverSlotId = null;
@@ -126,6 +129,7 @@ namespace CraftSharp.Windows.Inventory
             _currentStyle = _settings?.Inventory.StylePath ?? "inventory.png";
             _sharedData = _settings?.Inventory.SharedData ?? true;
             _hoverEffect = _settings?.Inventory.HoverEffect ?? true;
+            _showTooltip = _settings?.Inventory.ShowTooltip ?? true;
 
             // 加载格子坐标数据
             LoadSlotCoords();
@@ -1165,6 +1169,14 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
+        /// 刷新 Tooltip 配置
+        /// </summary>
+        public void RefreshShowTooltip()
+        {
+            _showTooltip = _settings?.Inventory.ShowTooltip ?? true;
+        }
+
+        /// <summary>
         /// 加载当前样式的背景图片
         /// </summary>
         private void LoadStyleImage()
@@ -1210,6 +1222,9 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void ShowTooltip(string slotId)
         {
+            // 检查 Tooltip 功能是否启用
+            if (!_showTooltip) return;
+
             // 根据 SharedData 配置获取格子数据
             var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
             if (item.IsEmpty) return;

@@ -226,6 +226,8 @@
     <sys:String x:Key="InventoryOptionRememberPositionDesc">下次启动时恢复物品栏窗口位置</sys:String>
     <sys:String x:Key="InventoryOptionHoverEffect">悬浮效果</sys:String>
     <sys:String x:Key="InventoryOptionHoverEffectDesc">鼠标悬浮在格子时显示白色蒙版</sys:String>
+    <sys:String x:Key="InventoryOptionShowTooltip">文本提示框</sys:String>
+    <sys:String x:Key="InventoryOptionShowTooltipDesc">悬浮时显示文件详细信息</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlay">灰色蒙版</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">打开物品栏时显示全屏灰色遮罩</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacity">不透明度</sys:String>

@@ -237,6 +237,11 @@ namespace CraftSharp.Models
         public bool HoverEffect { get; set; } = true;
 
         /// <summary>
+        /// 文本提示框（hover 时显示 Tooltip）
+        /// </summary>
+        public bool ShowTooltip { get; set; } = true;
+
+        /// <summary>
         /// 文件名显示颜色（十六进制格式，如 "#FCFCFC"，或 "auto" 表示自动模式）
         /// </summary>
         public string FileNameColor { get; set; } = "#FCFCFC";
