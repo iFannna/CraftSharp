@@ -102,6 +102,7 @@ namespace CraftSharp.Services
             public int TargetSlotIndex { get; }
             public bool ShouldSwap { get; }
             public bool ShouldRestore { get; }
+            public bool HasSwap { get; }
 
             public DragEndedEventArgs(int sourceSlotIndex, int targetSlotIndex)
             {
@@ -109,6 +110,7 @@ namespace CraftSharp.Services
                 TargetSlotIndex = targetSlotIndex;
                 ShouldSwap = sourceSlotIndex != targetSlotIndex && targetSlotIndex >= 0;
                 ShouldRestore = !ShouldSwap && sourceSlotIndex >= 0;
+                HasSwap = ShouldSwap;
             }
         }
 

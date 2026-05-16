@@ -292,6 +292,62 @@ namespace CraftSharp.Windows.Inventory
                     }
                 }
             }
+
+            // 没有发生交换时，延迟触发hover效果（图标恢复已完成）
+            // 有交换时，hover效果会在OnSwapCompleted中触发
+            if (!e.HasSwap)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    TriggerHoverAtMousePosition();
+                }), System.Windows.Threading.DispatcherPriority.ContextIdle);
+            }
+        }
+
+        /// <summary>
+        /// 在鼠标当前位置手动触发 hover 效果
+        /// </summary>
+        private void TriggerHoverAtMousePosition()
+        {
+            if (!_hoverEffect) return;
+
+            var mousePos = Mouse.GetPosition(SlotCanvas);
+            var targetSlotId = GetSlotIdAtPosition(mousePos);
+
+            if (targetSlotId == null) return;
+
+            // 检查格子是否有文件
+            bool hasFile = _slotIcons.TryGetValue(targetSlotId, out var icon) && icon.Visibility == Visibility.Visible;
+
+            if (_slotHoverOverlays.TryGetValue(targetSlotId, out var hoverOverlay))
+            {
+                // 显示白色蒙版
+                hoverOverlay.Background = new SolidColorBrush(WhiteOverlayColor);
+                hoverOverlay.Visibility = Visibility.Visible;
+
+                if (hasFile)
+                {
+                    // 有文件：启动计时器，之后切换为绿色蒙版
+                    _currentHoverSlotId = targetSlotId;
+                    if (_hoverTimer == null)
+                    {
+                        _hoverTimer = new DispatcherTimer();
+                        _hoverTimer.Interval = TimeSpan.FromMilliseconds(250);
+                        _hoverTimer.Tick += HoverTimer_Tick;
+                    }
+                    _hoverTimer.Stop();
+                    _hoverTimer.Start();
+
+                    // 显示 Tooltip
+                    ShowTooltip(targetSlotId);
+                }
+                else
+                {
+                    // 空格子：不启动计时器，保持白色蒙版
+                    _hoverTimer?.Stop();
+                    _currentHoverSlotId = null;
+                }
+            }
         }
 
         /// <summary>
@@ -359,6 +415,12 @@ namespace CraftSharp.Windows.Inventory
             {
                 StatusBarService.Instance.RefreshHotbarIcons();
             }
+
+            // 交换完成后，延迟触发目标格子的 hover 效果
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                TriggerHoverAtMousePosition();
+            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         /// <summary>
