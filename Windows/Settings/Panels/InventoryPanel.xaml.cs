@@ -150,8 +150,8 @@ namespace CraftSharp.Windows.Settings.Panels
                 }
                 else
                 {
-                    // 开关关闭：恢复默认状态（只有 InventoryTitle 展开）
-                    card.SetExpanded(key == "InventoryTitle", animate: false);
+                    // 开关关闭：恢复默认状态（所有卡片折叠）
+                    card.SetExpanded(false, animate: false);
                 }
             }
 

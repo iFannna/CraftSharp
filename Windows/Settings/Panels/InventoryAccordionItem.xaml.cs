@@ -53,8 +53,8 @@ namespace CraftSharp.Windows.Settings.Panels
             // 读取保存的展开状态（如果启用了记住卡片状态）
             if (_settings != null && _settings.System.RememberCardStates)
             {
-                // InventoryTitle 默认展开，其他默认折叠
-                bool defaultExpanded = titleResourceKey == "InventoryTitle";
+                // 所有卡片默认折叠
+                bool defaultExpanded = false;
 
                 if (_settings.System.CardExpandedStates.TryGetValue(titleResourceKey, out bool savedExpanded))
                 {
@@ -67,8 +67,8 @@ namespace CraftSharp.Windows.Settings.Panels
             }
             else
             {
-                // 未启用记住卡片状态：使用默认值（InventoryTitle 展开）
-                _isExpanded = titleResourceKey == "InventoryTitle";
+                // 未启用记住卡片状态：所有卡片默认折叠
+                _isExpanded = false;
             }
 
             // 根据卡片类型添加内容
