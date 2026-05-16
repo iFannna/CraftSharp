@@ -286,4 +286,24 @@
     <sys:String x:Key="InventoryStyleSmithing">锻造台</sys:String>
     <sys:String x:Key="InventoryOptionSharedData">共享数据</sys:String>
     <sys:String x:Key="InventoryOptionSharedDataDesc">开启后所有样式共用格子数据，关闭后每个样式独立存储</sys:String>
+
+    <!-- 格子右键菜单 -->
+    <sys:String x:Key="ContextMenuOpen">打开</sys:String>
+    <sys:String x:Key="ContextMenuOpenLocation">打开文件所在位置</sys:String>
+    <sys:String x:Key="ContextMenuRunAsAdmin">以管理员身份运行</sys:String>
+    <sys:String x:Key="ContextMenuCopyPath">复制文件地址</sys:String>
+    <sys:String x:Key="ContextMenuCut">剪切</sys:String>
+    <sys:String x:Key="ContextMenuCopy">复制</sys:String>
+    <sys:String x:Key="ContextMenuPaste">粘贴</sys:String>
+    <sys:String x:Key="ContextMenuDelete">删除</sys:String>
+    <sys:String x:Key="ContextMenuRename">重命名</sys:String>
+    <sys:String x:Key="ContextMenuProperties">属性</sys:String>
+
+    <!-- 重命名格子对话框 -->
+    <sys:String x:Key="RenameSlotTitle">重命名格子</sys:String>
+    <sys:String x:Key="RenameSlotFilePath">文件路径</sys:String>
+    <sys:String x:Key="RenameSlotDisplayName">显示名称</sys:String>
+    <sys:String x:Key="RenameSlotPlaceholder">输入自定义显示名称</sys:String>
+    <sys:String x:Key="RenameSlotCancel">取消</sys:String>
+    <sys:String x:Key="RenameSlotConfirm">确定</sys:String>
 </ResourceDictionary>

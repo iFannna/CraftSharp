@@ -286,4 +286,24 @@
     <sys:String x:Key="InventoryStyleSmithing">Smithing Table</sys:String>
     <sys:String x:Key="InventoryOptionSharedData">Shared Data</sys:String>
     <sys:String x:Key="InventoryOptionSharedDataDesc">When enabled, all styles share slot data; when disabled, each style has independent storage</sys:String>
+
+    <!-- Slot Context Menu -->
+    <sys:String x:Key="ContextMenuOpen">Open</sys:String>
+    <sys:String x:Key="ContextMenuOpenLocation">Open File Location</sys:String>
+    <sys:String x:Key="ContextMenuRunAsAdmin">Run as Administrator</sys:String>
+    <sys:String x:Key="ContextMenuCopyPath">Copy File Path</sys:String>
+    <sys:String x:Key="ContextMenuCut">Cut</sys:String>
+    <sys:String x:Key="ContextMenuCopy">Copy</sys:String>
+    <sys:String x:Key="ContextMenuPaste">Paste</sys:String>
+    <sys:String x:Key="ContextMenuDelete">Delete</sys:String>
+    <sys:String x:Key="ContextMenuRename">Rename</sys:String>
+    <sys:String x:Key="ContextMenuProperties">Properties</sys:String>
+
+    <!-- Rename Slot Dialog -->
+    <sys:String x:Key="RenameSlotTitle">Rename Slot</sys:String>
+    <sys:String x:Key="RenameSlotFilePath">File Path</sys:String>
+    <sys:String x:Key="RenameSlotDisplayName">Display Name</sys:String>
+    <sys:String x:Key="RenameSlotPlaceholder">Enter custom display name</sys:String>
+    <sys:String x:Key="RenameSlotCancel">Cancel</sys:String>
+    <sys:String x:Key="RenameSlotConfirm">Confirm</sys:String>
 </ResourceDictionary>

@@ -212,5 +212,64 @@ namespace CraftSharp.Services
                 app.SaveSettings();
             }
         }
+
+        /// <summary>
+        /// 更新所有使用指定路径的格子为新路径（文件重命名时使用）
+        /// </summary>
+        public void UpdateAllSlotsFilePath(AppSettings? settings, string oldFilePath, string newFilePath)
+        {
+            if (settings == null || string.IsNullOrEmpty(oldFilePath) || string.IsNullOrEmpty(newFilePath)) return;
+
+            // 1. 更新共享数据（Slots）
+            if (settings.Slots != null)
+            {
+                foreach (var kvp in settings.Slots)
+                {
+                    if (!kvp.Value.IsEmpty && kvp.Value.FilePath == oldFilePath)
+                    {
+                        kvp.Value.FilePath = newFilePath;
+                    }
+                }
+            }
+
+            // 2. 更新独立数据（StyleSlots - 所有样式）
+            if (settings.StyleSlots != null)
+            {
+                foreach (var styleKvp in settings.StyleSlots)
+                {
+                    var styleSlots = styleKvp.Value;
+                    if (styleSlots != null)
+                    {
+                        foreach (var slotKvp in styleSlots)
+                        {
+                            if (!slotKvp.Value.IsEmpty && slotKvp.Value.FilePath == oldFilePath)
+                            {
+                                slotKvp.Value.FilePath = newFilePath;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 更新丢失标记
+            if (IsMissing(oldFilePath))
+            {
+                UnmarkMissing(oldFilePath);
+                // 如果新文件也不存在，标记为丢失
+                if (!IsFilePathValid(newFilePath))
+                {
+                    MarkMissing(newFilePath);
+                }
+            }
+
+            // 更新 SlotDataService 缓存
+            SlotDataService.Instance.Reload();
+
+            // 保存配置到文件
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
+        }
     }
 }

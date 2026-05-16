@@ -383,6 +383,7 @@ namespace CraftSharp.Windows.StatusBar
             border.MouseEnter += Slot_MouseEnter;
             border.MouseLeave += Slot_MouseLeave;
             border.MouseMove += Slot_MouseMove;
+            border.MouseRightButtonDown += Slot_MouseRightButtonDown;
 
             var icon = new System.Windows.Controls.Image
             {
@@ -1336,6 +1337,77 @@ namespace CraftSharp.Windows.StatusBar
             _iconService.IconNeedsUpdate += OnIconNeedsUpdate;
 
             LoadSlots();
+        }
+
+        /// <summary>
+        /// 右键点击格子 - 显示右键菜单
+        /// </summary>
+        private void Slot_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 执行全量检查
+            if (App.Current is App app)
+            {
+                app.ValidateAllSlots();
+            }
+
+            var border = (Border)sender;
+            var slotIndex = GetSlotIndex(border);
+            if (slotIndex < 0) return;
+
+            var slotId = _slotIds[slotIndex];
+            var item = _slotService.GetSlot(slotId);
+            bool isMissing = !item.IsEmpty && SlotFileValidator.Instance.IsMissing(item.FilePath);
+
+            // 快捷栏始终使用共享数据
+            string currentStyle = "inventory.png";
+            bool sharedData = true;
+
+            var menu = SlotContextMenuService.Instance.CreateSlotContextMenu(
+                slotId,
+                item,
+                isMissing,
+                currentStyle,
+                sharedData,
+                () => RefreshSlotUI(slotId, slotIndex));
+
+            menu.PlacementTarget = border;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            menu.IsOpen = true;
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 刷新单个格子UI（右键菜单操作后）
+        /// </summary>
+        private void RefreshSlotUI(string slotId, int slotIndex)
+        {
+            var item = _slotService.GetSlot(slotId);
+            if (item.IsEmpty)
+            {
+                ClearSlotIconUI(slotIndex);
+            }
+            else
+            {
+                if (SlotFileValidator.Instance.IsMissing(item.FilePath))
+                {
+                    if (slotIndex == 0)
+                        ShowPlaceholderIconUI("LeftOffhand");
+                    else if (slotIndex == 1)
+                        ShowPlaceholderIconUI("RightOffhand");
+                    else
+                        ShowPlaceholderIconUI(slotIndex - 2);
+                }
+                else
+                {
+                    if (slotIndex == 0)
+                        SetSlotIconFromPath("LeftOffhand", item.FilePath);
+                    else if (slotIndex == 1)
+                        SetSlotIconFromPath("RightOffhand", item.FilePath);
+                    else
+                        SetSlotIconFromPath(slotIndex - 2, item.FilePath);
+                }
+            }
         }
     }
 }

@@ -579,6 +579,7 @@ namespace CraftSharp.Windows.Inventory
                 };
 
                 border.MouseLeftButtonDown += Slot_MouseLeftButtonDown;
+                border.MouseRightButtonDown += Slot_MouseRightButtonDown;
 
                 var icon = new System.Windows.Controls.Image
                 {
@@ -1280,6 +1281,57 @@ namespace CraftSharp.Windows.Inventory
             if (_tooltipWindow != null)
             {
                 _tooltipWindow.Hide();
+            }
+        }
+
+        // ==================== 右键菜单 ====================
+
+        /// <summary>
+        /// 右键点击格子 - 显示右键菜单
+        /// </summary>
+        private void Slot_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 执行全量检查
+            if (System.Windows.Application.Current is App app)
+            {
+                app.ValidateAllSlots();
+            }
+
+            var border = (Border)sender;
+            var slotId = border.Name.Replace("Slot_", "");
+
+            // 根据 SharedData 配置获取格子数据
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+            bool isMissing = !item.IsEmpty && SlotFileValidator.Instance.IsMissing(item.FilePath);
+
+            var menu = SlotContextMenuService.Instance.CreateSlotContextMenu(
+                slotId,
+                item,
+                isMissing,
+                _currentStyle,
+                _sharedData,
+                () => RefreshSingleSlotUI(slotId));
+
+            menu.PlacementTarget = border;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            menu.IsOpen = true;
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 刷新单个格子UI（右键菜单操作后）
+        /// </summary>
+        private void RefreshSingleSlotUI(string slotId)
+        {
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+            if (item.IsEmpty)
+            {
+                ClearSlotIcon(slotId);
+            }
+            else
+            {
+                SetSlotIcon(slotId, item.FilePath);
             }
         }
     }
