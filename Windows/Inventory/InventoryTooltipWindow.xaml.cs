@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using CraftSharp.Controls;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services;
@@ -19,7 +20,8 @@ namespace CraftSharp.Windows.Inventory
         private double _scaleFactor;
         private System.Windows.Media.FontFamily _fontFamily;
         private double _contentMaxWidth; // 内容最大宽度缓存
-        private const double FixedWidthBase = 55; // 固定宽度
+        private const double MinWidthBase = 55; // 最小宽度
+        private const double MaxWidthBase = 150; // 最大宽度
         private const double PaddingBase = 3;
         private const double FontSizeBase = 8;
         private const double ComponentSpacingBase = 0;
@@ -51,12 +53,16 @@ namespace CraftSharp.Windows.Inventory
                 if (bgBitmap != null)
                 {
                     BackgroundImage.Source = bgBitmap;
+                    BackgroundImage.BorderSizeBase = 3; // 九宫格边框宽度（3像素）
+                    BackgroundImage.ScaleFactor = _scaleFactor;
                 }
 
                 var frameBitmap = Services.ImageService.Instance.LoadBitmapImage("Assets/minecraft/textures/gui/sprites/tooltip/frame.png");
                 if (frameBitmap != null)
                 {
                     FrameImage.Source = frameBitmap;
+                    FrameImage.BorderSizeBase = 3; // 九宫格边框宽度（3像素）
+                    FrameImage.ScaleFactor = _scaleFactor;
                 }
             }
             catch
@@ -74,13 +80,18 @@ namespace CraftSharp.Windows.Inventory
         {
             ContentPanel.Children.Clear();
 
+            // 重置尺寸状态（避免复用窗口时保留旧尺寸）
+            Width = 0;
+            Height = 0;
+
             double padding = PaddingBase * _scaleFactor;
             double fontSize = FontSizeBase * _scaleFactor;
             double componentSpacing = ComponentSpacingBase * _scaleFactor;
-            double fixedWidth = FixedWidthBase * _scaleFactor;
+            double maxWidth = MaxWidthBase * _scaleFactor;
+            double minWidth = MinWidthBase * _scaleFactor;
 
             // 计算内容最大宽度（用于文本换行）
-            _contentMaxWidth = fixedWidth - padding * 2;
+            _contentMaxWidth = maxWidth - padding * 2;
 
             // 设置内容面板 Margin
             ContentPanel.Margin = new Thickness(padding);
@@ -88,13 +99,13 @@ namespace CraftSharp.Windows.Inventory
             if (isMissing)
             {
                 // 占位图：只显示文件原始名 + 文件已丢失（两个组件）
-                AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize);
+                AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize, true);
                 AddSpacing(componentSpacing);
-                AddTextComponent("文件已丢失", ColorFileMissing, fontSize);
+                AddTextComponent("文件已丢失", ColorFileMissing, fontSize, true);
             }
             else
             {
-                // 正常文件：四个组件
+                // 正常文件：四个组件（所有组件都支持换行）
                 // 组件1：文件名（不含后缀）
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
                 string line1Color = GetDisplayColor(fileNameColor, fileNameWithoutExt);
@@ -103,11 +114,11 @@ namespace CraftSharp.Windows.Inventory
                 AddSpacing(componentSpacing);
 
                 // 组件2：文件原始名（含后缀）
-                AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize);
+                AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize, true);
 
                 AddSpacing(componentSpacing);
 
-                // 组件3：文件路径（支持换行）
+                // 组件3：文件路径
                 AddTextComponent(filePath, ColorFilePath, fontSize, true);
 
                 AddSpacing(componentSpacing);
@@ -116,16 +127,16 @@ namespace CraftSharp.Windows.Inventory
                 string extension = Path.GetExtension(filePath);
                 if (!string.IsNullOrEmpty(extension))
                 {
-                    AddTextComponent(extension, ColorFileType, fontSize);
+                    AddTextComponent(extension, ColorFileType, fontSize, true);
                 }
                 else
                 {
-                    AddTextComponent("(无后缀)", ColorFileType, fontSize);
+                    AddTextComponent("(无后缀)", ColorFileType, fontSize, true);
                 }
             }
 
-            // 计算并设置窗口尺寸
-            UpdateWindowSize();
+            // 计算并设置窗口尺寸（动态宽度）
+            UpdateWindowSize(minWidth, maxWidth);
         }
 
         /// <summary>
@@ -151,8 +162,7 @@ namespace CraftSharp.Windows.Inventory
                 FontSize = fontSize,
                 FontFamily = _fontFamily,
                 Foreground = new SolidColorBrush(ColorPickerHelper.ParseColorHex(colorHex)),
-                TextWrapping = allowWrap ? TextWrapping.Wrap : TextWrapping.NoWrap,
-                MaxWidth = _contentMaxWidth // 使用缓存的最大宽度
+                TextWrapping = allowWrap ? TextWrapping.Wrap : TextWrapping.NoWrap
             };
 
             // 添加阴影效果（与快捷栏文件名一致）
@@ -195,32 +205,38 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 更新窗口尺寸
+        /// 更新窗口尺寸（动态宽度）
         /// </summary>
-        private void UpdateWindowSize()
+        private void UpdateWindowSize(double minWidth, double maxWidth)
         {
             double padding = PaddingBase * _scaleFactor;
-            double fixedWidth = FixedWidthBase * _scaleFactor;
 
-            // 设置内容面板的最大宽度（确保文本不超出）
-            ContentPanel.MaxWidth = _contentMaxWidth;
+            // 先测量内容需要的尺寸（无宽度限制）
+            ContentPanel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            double naturalWidth = ContentPanel.DesiredSize.Width;
 
-            // 强制布局以获取实际高度
-            ContentPanel.Measure(new System.Windows.Size(_contentMaxWidth, double.PositiveInfinity));
-            ContentPanel.Arrange(new System.Windows.Rect(0, 0, _contentMaxWidth, ContentPanel.DesiredSize.Height));
+            // 如果自然宽度超过最大宽度，需要用最大宽度重新测量（触发换行）
+            if (naturalWidth > maxWidth - padding * 2)
+            {
+                ContentPanel.Measure(new System.Windows.Size(maxWidth - padding * 2, double.PositiveInfinity));
+                ContentPanel.Arrange(new System.Windows.Rect(0, 0, maxWidth - padding * 2, ContentPanel.DesiredSize.Height));
+                Width = maxWidth;
+            }
+            else
+            {
+                // 自然宽度在范围内，直接使用
+                ContentPanel.Arrange(new System.Windows.Rect(0, 0, naturalWidth, ContentPanel.DesiredSize.Height));
+                double dynamicWidth = naturalWidth + padding * 2;
+                Width = Math.Max(minWidth, dynamicWidth);
+            }
 
-            // 使用实际高度（不包含 Margin）
-            double contentHeight = ContentPanel.ActualHeight;
+            Height = ContentPanel.ActualHeight + padding * 2;
 
-            // 设置窗口尺寸（固定宽度）
-            Width = fixedWidth;
-            Height = contentHeight + padding * 2;
+            // 强制窗口布局更新
+            UpdateLayout();
 
-            // 更新背景和边框尺寸
-            BackgroundImage.Width = Width;
-            BackgroundImage.Height = Height;
-            FrameImage.Width = Width;
-            FrameImage.Height = Height;
+            // 背景和边框使用 Grid 的实际尺寸
+            // Grid 会自动填充窗口，NineSliceImage 会填充 Grid
         }
 
         /// <summary>
