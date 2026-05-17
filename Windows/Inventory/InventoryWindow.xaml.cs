@@ -80,6 +80,19 @@ namespace CraftSharp.Windows.Inventory
         private DateTime _lastClickTime = DateTime.MinValue;
         private const int DoubleClickThresholdMs = 500;
 
+        // 窗口锁定和拖动状态
+        private bool _isLocked = false;
+        private bool _isDragging = false;
+        private double _dragOffsetX = 0;
+        private double _dragOffsetY = 0;
+        private bool _skipDefaultPositioning = false;
+
+        // 静态属性：跳过默认定位（必须在构造函数之前设置）
+        public static bool ShouldSkipDefaultPositioning { get; set; } = false;
+
+        // 位置变化事件（用于通知外部即时保存）
+        public event EventHandler? PositionChanged;
+
         // 格子坐标数据结构
         public class SlotCoord
         {
@@ -92,9 +105,17 @@ namespace CraftSharp.Windows.Inventory
 
         public InventoryWindow(AppSettings? settings = null)
         {
+            // 从静态属性读取是否跳过默认定位
+            _skipDefaultPositioning = ShouldSkipDefaultPositioning;
+            // 重置静态属性（避免影响下次创建）
+            ShouldSkipDefaultPositioning = false;
+
             InitializeComponent();
 
             _settings = settings;
+
+            // 读取锁定状态
+            _isLocked = _settings?.Inventory.Locked ?? false;
 
             // 注册原生拖放
             SourceInitialized += (s, e) =>
@@ -118,6 +139,9 @@ namespace CraftSharp.Windows.Inventory
                 _nativeDropTarget?.Dispose();
                 _nativeDropTarget = null;
             };
+
+            // 监听窗口位置变化（用于即时保存位置）
+            LocationChanged += OnLocationChanged;
 
             // 使用 SlotDataService 单例（已在字段声明中初始化）
 
@@ -621,15 +645,88 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 定位窗口到屏幕居中
+        /// 定位窗口到屏幕居中（如果未跳过默认定位）
         /// </summary>
         private void PositionWindow()
         {
+            // 如果跳过默认定位，则不执行默认居中（位置由 App.xaml.cs 恢复保存的位置）
+            if (_skipDefaultPositioning) return;
+
             var screenWidth = SystemParameters.PrimaryScreenWidth;
             var screenHeight = SystemParameters.PrimaryScreenHeight;
 
             Left = (screenWidth - Width) / 2;
             Top = (screenHeight - Height) / 2;
+        }
+
+        /// <summary>
+        /// 窗口位置变化事件处理
+        /// </summary>
+        private void OnLocationChanged(object? sender, EventArgs e)
+        {
+            PositionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 设置窗口锁定状态
+        /// </summary>
+        public void SetLocked(bool locked)
+        {
+            _isLocked = locked;
+        }
+
+        /// <summary>
+        /// 设置跳过默认定位（实例方法，供外部调用）
+        /// </summary>
+        public void SetSkipDefaultPositioning(bool skip)
+        {
+            _skipDefaultPositioning = skip;
+        }
+
+        /// <summary>
+        /// 窗口鼠标左键按下事件（用于窗口拖动）
+        /// </summary>
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 检查点击目标是否是格子（格子有自己的拖动逻辑）
+            if (IsClickOnSlot(e.OriginalSource))
+                return;
+
+            // 未锁定时允许窗口拖动
+            if (!_isLocked)
+            {
+                _isDragging = true;
+                var mousePos = e.GetPosition(this);
+                _dragOffsetX = mousePos.X;
+                _dragOffsetY = mousePos.Y;
+                CaptureMouse();
+            }
+        }
+
+        /// <summary>
+        /// 检查点击目标是否是格子
+        /// </summary>
+        private bool IsClickOnSlot(object originalSource)
+        {
+            // 检查是否是 Border（格子）
+            if (originalSource is Border border)
+            {
+                return border.Name.StartsWith("Slot_");
+            }
+
+            // 检查是否是格子内的 Image（图标）
+            if (originalSource is System.Windows.Controls.Image image)
+            {
+                return image.Name.StartsWith("Icon_");
+            }
+
+            // 检查是否是 Canvas
+            if (originalSource is Canvas canvas)
+            {
+                return canvas.Name == "SlotCanvas";
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -688,6 +785,15 @@ namespace CraftSharp.Windows.Inventory
         {
             base.OnMouseMove(e);
 
+            // 窗口拖动（使用增量方式，参考 StatusBarWindow）
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                System.Windows.Point currentMousePos = e.GetPosition(this);
+                Left += currentMousePos.X - _dragOffsetX;
+                Top += currentMousePos.Y - _dragOffsetY;
+                return;
+            }
+
             if (_dragService == null) return;
 
             if (_dragService.IsDragging)
@@ -715,6 +821,14 @@ namespace CraftSharp.Windows.Inventory
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
+
+            // 窗口拖动结束
+            if (_isDragging)
+            {
+                _isDragging = false;
+                ReleaseMouseCapture();
+                return;
+            }
 
             if (_dragService != null && _dragService.IsDragging)
             {

@@ -136,9 +136,65 @@ namespace CraftSharp
             else
                 _bossBarWindow.Hide();
 
+            // 如果开启"记住位置"，在创建物品栏窗口前设置跳过默认定位
+            if (_appSettings?.Inventory.RememberPosition ?? false)
+            {
+                InventoryWindow.ShouldSkipDefaultPositioning = true;
+            }
+
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow(_appSettings!);
             _inventoryWindow.Hide();
+
+            // 监听物品栏位置变化（即时保存到配置文件）
+            _inventoryWindow.PositionChanged += (s, e) =>
+            {
+                if (_appSettings?.Inventory.RememberPosition ?? false)
+                {
+                    _appSettings.Inventory.PositionX = _inventoryWindow.Left;
+                    _appSettings.Inventory.PositionY = _inventoryWindow.Top;
+                    SaveSettings();
+                }
+            };
+
+            // 物品栏位置定位：在窗口第一次显示时定位
+            _inventoryWindow.Loaded += (s, e) =>
+            {
+                if (_appSettings?.Inventory.RememberPosition ?? false)
+                {
+                    // 记住位置开启 → 检查保存的位置是否有效
+                    double savedX = _appSettings.Inventory.PositionX;
+                    double savedY = _appSettings.Inventory.PositionY;
+
+                    var screenWidth = SystemParameters.PrimaryScreenWidth;
+                    var screenHeight = SystemParameters.PrimaryScreenHeight;
+
+                    // 如果位置是默认值（0,0）或超出屏幕右下边缘太多，则居中显示
+                    // 允许负坐标（窗口可部分超出屏幕左/上边缘）
+                    if (savedX == 0 && savedY == 0 ||
+                        savedX > screenWidth - 100 ||
+                        savedY > screenHeight - 100)
+                    {
+                        // 位置无效 → 定位到屏幕居中
+                        _inventoryWindow.Left = (screenWidth - _inventoryWindow.Width) / 2;
+                        _inventoryWindow.Top = (screenHeight - _inventoryWindow.Height) / 2;
+                    }
+                    else
+                    {
+                        // 位置有效 → 使用保存的位置
+                        _inventoryWindow.Left = savedX;
+                        _inventoryWindow.Top = savedY;
+                    }
+                }
+                else
+                {
+                    // 记住位置关闭 → 定位到屏幕居中
+                    var screenWidth = SystemParameters.PrimaryScreenWidth;
+                    var screenHeight = SystemParameters.PrimaryScreenHeight;
+                    _inventoryWindow.Left = (screenWidth - _inventoryWindow.Width) / 2;
+                    _inventoryWindow.Top = (screenHeight - _inventoryWindow.Height) / 2;
+                }
+            };
 
             // 创建系统托盘图标（使用纯 WPF 实现）
             CreateTaskbarIcon();

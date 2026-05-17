@@ -108,7 +108,11 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     // 切换共享数据开关后刷新物品栏和快捷栏图标
                     RefreshInventoryAndHotbarIcons();
                 });
-                AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => _settings.Inventory.Locked = v);
+                AddToggleRow("InventoryOptionLocked", "InventoryOptionLockedDesc", _settings.Inventory.Locked, v => {
+                    _settings.Inventory.Locked = v;
+                    // 切换锁定位置开关后即时生效
+                    RefreshInventoryLocked();
+                });
                 AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => _settings.Inventory.RememberPosition = v);
                 AddToggleRow("InventoryOptionHoverEffect", "InventoryOptionHoverEffectDesc", _settings.Inventory.HoverEffect, v => {
                     _settings.Inventory.HoverEffect = v;
@@ -183,6 +187,21 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                 if (inventoryWindow != null)
                 {
                     inventoryWindow.RefreshShowTooltip();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 切换锁定位置开关后即时生效
+        /// </summary>
+        private void RefreshInventoryLocked()
+        {
+            if (System.Windows.Application.Current is App app)
+            {
+                var inventoryWindow = app.GetInventoryWindow();
+                if (inventoryWindow != null && _settings != null)
+                {
+                    inventoryWindow.SetLocked(_settings.Inventory.Locked);
                 }
             }
         }
