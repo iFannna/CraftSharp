@@ -36,7 +36,7 @@ namespace CraftSharp.Services
             _currentIconPath = relativePath;
 
             // 构建完整路径
-            var fullPath = relativePath.StartsWith("Assets/")
+            var fullPath = relativePath.StartsWith("assets/")
                 ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath)
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", relativePath);
 
@@ -169,7 +169,7 @@ namespace CraftSharp.Services
             try
             {
                 var iconPath = GetCurrentIconPath();
-                var fullPath = iconPath.StartsWith("Assets/")
+                var fullPath = iconPath.StartsWith("assets/")
                     ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, iconPath)
                     : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", iconPath);
 
@@ -205,7 +205,7 @@ namespace CraftSharp.Services
         /// </summary>
         public BitmapImage? GetIconPreview(string relativePath)
         {
-            var fullPath = relativePath.StartsWith("Assets/")
+            var fullPath = relativePath.StartsWith("assets/")
                 ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath)
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", relativePath);
 

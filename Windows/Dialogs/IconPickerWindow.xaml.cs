@@ -206,7 +206,7 @@ namespace CraftSharp.Windows.Dialogs
                             {
                                 FilePath = fullPath,
                                 Name = Path.GetFileNameWithoutExtension(filename),
-                                RelativePath = $"Assets/minecraft/textures/block/block/{filename}"
+                                RelativePath = $"assets/minecraft/textures/block/block/{filename}"
                             });
                         }
                     }
@@ -241,7 +241,7 @@ namespace CraftSharp.Windows.Dialogs
                             {
                                 FilePath = fullPath,
                                 Name = Path.GetFileNameWithoutExtension(filename),
-                                RelativePath = $"Assets/minecraft/textures/item/item/{filename}"
+                                RelativePath = $"assets/minecraft/textures/item/item/{filename}"
                             });
                         }
                     }

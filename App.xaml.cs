@@ -38,7 +38,12 @@ namespace CraftSharp
             InitializeBrushes();
 
             // 加载设置
-            _settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+            var configDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config");
+            if (!System.IO.Directory.Exists(configDir))
+            {
+                System.IO.Directory.CreateDirectory(configDir);
+            }
+            _settingsPath = System.IO.Path.Combine(configDir, "settings.json");
             LoadSettings();
 
             // 初始化 SlotFileValidator 单例并执行全量检查

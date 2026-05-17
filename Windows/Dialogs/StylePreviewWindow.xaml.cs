@@ -50,13 +50,13 @@ namespace CraftSharp.Windows.Dialogs
         }
 
         /// <summary>
-        /// 加载 Assets/minecraft/textures/gui/container 目录下的 PNG 文件
+        /// 加载 assets/minecraft/textures/gui/container 目录下的 PNG 文件
         /// </summary>
         private void LoadStyleFiles()
         {
             var containerPath = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
-                "Assets/minecraft/textures/gui/container");
+                "assets/minecraft/textures/gui/container");
 
             if (Directory.Exists(containerPath))
             {
@@ -94,7 +94,7 @@ namespace CraftSharp.Windows.Dialogs
             string fileName = _styleFiles[_currentIndex];
             string filePath = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
-                "Assets/minecraft/textures/gui/container",
+                "assets/minecraft/textures/gui/container",
                 fileName);
 
             // 加载图片

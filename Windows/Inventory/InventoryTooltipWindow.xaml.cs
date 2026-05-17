@@ -49,7 +49,7 @@ namespace CraftSharp.Windows.Inventory
         {
             try
             {
-                var bgBitmap = Services.ImageService.Instance.LoadBitmapImage("Assets/minecraft/textures/gui/sprites/tooltip/background.png");
+                var bgBitmap = Services.ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/background.png");
                 if (bgBitmap != null)
                 {
                     BackgroundImage.Source = bgBitmap;
@@ -57,7 +57,7 @@ namespace CraftSharp.Windows.Inventory
                     BackgroundImage.ScaleFactor = _scaleFactor;
                 }
 
-                var frameBitmap = Services.ImageService.Instance.LoadBitmapImage("Assets/minecraft/textures/gui/sprites/tooltip/frame.png");
+                var frameBitmap = Services.ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/frame.png");
                 if (frameBitmap != null)
                 {
                     FrameImage.Source = frameBitmap;

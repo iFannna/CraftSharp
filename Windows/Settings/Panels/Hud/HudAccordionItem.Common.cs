@@ -289,7 +289,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             {
                 return AssetPaths.AbsorbingFull;
             }
-            return "Assets/minecraft/textures/gui/sprites/hud/heart/absorbing_hardcore_full.png";
+            return "assets/minecraft/textures/gui/sprites/hud/heart/absorbing_hardcore_full.png";
         }
 
         private static BitmapImage LoadBitmapImage(string relativePath)

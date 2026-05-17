@@ -517,7 +517,7 @@ namespace CraftSharp.Windows.Inventory
                 string coordFileName = System.IO.Path.GetFileNameWithoutExtension(_currentStyle) + ".json";
                 var coordsPath = System.IO.Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
-                    $"Assets/minecraft/textures/gui/container/coordinate/{coordFileName}");
+                    $"assets/minecraft/textures/gui/container/coordinate/{coordFileName}");
 
                 if (File.Exists(coordsPath))
                 {
@@ -529,7 +529,7 @@ namespace CraftSharp.Windows.Inventory
                     // 回退到默认坐标文件
                     var defaultCoordsPath = System.IO.Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory,
-                        "Assets/minecraft/textures/gui/container/coordinate/inventory.json");
+                        "assets/minecraft/textures/gui/container/coordinate/inventory.json");
                     if (File.Exists(defaultCoordsPath))
                     {
                         var json = File.ReadAllText(defaultCoordsPath);
@@ -1296,7 +1296,7 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void LoadStyleImage()
         {
-            string stylePath = $"Assets/minecraft/textures/gui/container/{_currentStyle}";
+            string stylePath = $"assets/minecraft/textures/gui/container/{_currentStyle}";
             var bitmap = LoadBitmapImage(stylePath);
             if (bitmap != null)
             {

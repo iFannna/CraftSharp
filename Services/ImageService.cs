@@ -19,7 +19,7 @@ namespace CraftSharp.Services
         /// </summary>
         public string GetAbsolutePath(string relativePath)
         {
-            if (relativePath.StartsWith("Assets/"))
+            if (relativePath.StartsWith("assets/"))
             {
                 return Path.Combine(BaseDirectory, relativePath);
             }
