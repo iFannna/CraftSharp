@@ -379,7 +379,7 @@ namespace CraftSharp.Windows.StatusBar
         private void InitializeFileNameDisplay()
         {
             // 设置字体样式
-            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
+            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/unifont-16.0.04.ttf#Unifont");
             FileNameTextBlock.FontFamily = fontFamily;
             FileNameTextBlock.FontSize = 8 * _scaleFactor;
 

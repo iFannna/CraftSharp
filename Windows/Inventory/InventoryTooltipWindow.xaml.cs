@@ -42,7 +42,7 @@ namespace CraftSharp.Windows.Inventory
             LoadImages();
 
             // 设置字体
-            _fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
+            _fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/unifont-16.0.04.ttf#Unifont");
         }
 
         private void LoadImages()

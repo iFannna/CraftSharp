@@ -76,8 +76,8 @@ namespace CraftSharp.Services
         {
             return tag switch
             {
-                "pixel" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/zpix.ttf#Zpix"),
-                "unifont" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont"),
+                "pixel" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/zpix.ttf#Zpix"),
+                "unifont" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/unifont-16.0.04.ttf#Unifont"),
                 "songti" => new System.Windows.Media.FontFamily("SimSun"),
                 "heiti" => new System.Windows.Media.FontFamily("SimHei"),
                 "kaiti" => new System.Windows.Media.FontFamily("KaiTi"),

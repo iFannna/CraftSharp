@@ -21,14 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="assets\**\*">
+    <!-- assets 目录作为运行时资源（排除嵌入资源） -->
+    <Content Include="assets\**\*" Exclude="assets\fonts\*.ttf;assets\resources\*.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Fonts\zpix.ttf" />
-    <Resource Include="Fonts\unifont-16.0.04.ttf" />
+    <!-- 嵌入资源 -->
+    <Resource Include="assets\fonts\*.ttf" />
+    <Resource Include="assets\resources\*.xaml" />
   </ItemGroup>
 
   <ItemGroup>

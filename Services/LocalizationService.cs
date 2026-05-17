@@ -51,7 +51,7 @@ namespace CraftSharp.Services
             }
 
             // 加载新的语言资源字典
-            var newDictUri = new Uri($"pack://application:,,,/Resources/Strings.{languageCode}.xaml");
+            var newDictUri = new Uri($"pack://application:,,,/assets/resources/Strings.{languageCode}.xaml");
             var newDict = new ResourceDictionary { Source = newDictUri };
             app.Resources.MergedDictionaries.Add(newDict);
         }

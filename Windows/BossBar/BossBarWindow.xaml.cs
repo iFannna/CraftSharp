@@ -637,7 +637,7 @@ namespace CraftSharp.Windows.BossBar
         {
             _nameContainer.Children.Clear();
 
-            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/Fonts/unifont-16.0.04.ttf#Unifont");
+            var fontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/unifont-16.0.04.ttf#Unifont");
             var shadowEffect = new System.Windows.Media.Effects.DropShadowEffect
             {
                 Color = Colors.Black,
