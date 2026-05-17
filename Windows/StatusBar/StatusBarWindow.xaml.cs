@@ -776,13 +776,17 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
-        /// 根Grid鼠标滚轮事件 - 在选中格子后通过滚轮循环切换选中
+        /// 根Grid鼠标滚轮事件 - 通过滚轮循环切换选中
         /// </summary>
         private void RootGrid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            // 只有选中主快捷栏格子时才响应滚轮切换
+            // 如果没有选中格子，滚动第一下默认选中第一个格子
             if (_selectedSlotIndex < 2)
+            {
+                UpdateSlotSelection(2); // 默认选中第一个格子（索引2 = hotbar 0）
+                e.Handled = true;
                 return;
+            }
 
             // 计算新的格子索引（主快捷栏范围：2-10）
             int currentIndex = _selectedSlotIndex;
@@ -805,6 +809,55 @@ namespace CraftSharp.Windows.StatusBar
 
             // 标记事件已处理，防止向上传递
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Window键盘事件 - 数字键切换选中 + Enter打开文件
+        /// </summary>
+        private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // 数字键 1-9 切换选中格子（对应索引 0-8，即 slotIndex 2-10）
+            if (e.Key >= Key.D1 && e.Key <= Key.D9)
+            {
+                int hotbarIndex = e.Key - Key.D1; // D1=0, D2=1, ..., D9=8
+                int slotIndex = hotbarIndex + 2;  // 转换为全局索引
+
+                // 更新选中状态
+                UpdateSlotSelection(slotIndex);
+                e.Handled = true;
+                return;
+            }
+
+            // Enter 键打开当前选中的文件
+            if (e.Key == Key.Enter)
+            {
+                // 只有选中主快捷栏格子时才响应
+                if (_selectedSlotIndex >= 2 && _selectedSlotIndex <= 10)
+                {
+                    var item = _slotService.GetSlot(_slotIds[_selectedSlotIndex]);
+                    bool isEmpty = item.IsEmpty;
+                    bool isMissing = SlotFileValidator.Instance.IsMissing(item.FilePath);
+
+                    if (isEmpty)
+                    {
+                        ClearSlotSelection();
+                        return;
+                    }
+
+                    // 丢失文件：显示确认对话框
+                    if (isMissing)
+                    {
+                        HandleMissingFileSlot(_selectedSlotIndex, item.FilePath);
+                        ClearSlotSelection();
+                        return;
+                    }
+
+                    // 尝试打开文件
+                    TryExecuteFile(item.FilePath);
+                    ClearSlotSelection();
+                    e.Handled = true;
+                }
+            }
         }
 
         /// <summary>
