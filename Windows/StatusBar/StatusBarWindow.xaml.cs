@@ -776,6 +776,82 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
+        /// 根Grid鼠标滚轮事件 - 在选中格子后通过滚轮循环切换选中
+        /// </summary>
+        private void RootGrid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            // 只有选中主快捷栏格子时才响应滚轮切换
+            if (_selectedSlotIndex < 2)
+                return;
+
+            // 计算新的格子索引（主快捷栏范围：2-10）
+            int currentIndex = _selectedSlotIndex;
+            int newIndex;
+
+            // Delta > 0 上滑向左，Delta < 0 下滑向右
+            if (e.Delta > 0)
+            {
+                // 上滑向左：索引减小，到达第一个(2)时跳到最后一个(10)
+                newIndex = currentIndex == 2 ? 10 : currentIndex - 1;
+            }
+            else
+            {
+                // 下滑向右：索引增大，到达最后一个(10)时跳到第一个(2)
+                newIndex = currentIndex == 10 ? 2 : currentIndex + 1;
+            }
+
+            // 更新选中状态
+            UpdateSlotSelection(newIndex);
+
+            // 标记事件已处理，防止向上传递
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 更新格子选中状态（切换选中格子）
+        /// </summary>
+        private void UpdateSlotSelection(int newSlotIndex)
+        {
+            if (newSlotIndex < 2 || newSlotIndex > 10)
+                return;
+
+            // 隐藏当前选中框
+            if (_selectedSlotIndex >= 2)
+            {
+                var oldSelection = GetSelectionImage(_selectedSlotIndex - 2);
+                if (oldSelection != null)
+                {
+                    oldSelection.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            // 显示新选中框
+            var newSelection = GetSelectionImage(newSlotIndex - 2);
+            if (newSelection != null)
+            {
+                newSelection.Visibility = Visibility.Visible;
+            }
+
+            // 更新选中索引
+            _selectedSlotIndex = newSlotIndex;
+
+            // 更新文件名显示
+            var item = _slotService.GetSlot(_slotIds[newSlotIndex]);
+            bool isEmpty = item.IsEmpty;
+            bool isMissing = SlotFileValidator.Instance.IsMissing(item.FilePath);
+
+            if (!isEmpty && !isMissing)
+            {
+                string fileName = System.IO.Path.GetFileName(item.FilePath);
+                ShowFileName(fileName);
+            }
+            else
+            {
+                HideFileNameImmediately();
+            }
+        }
+
+        /// <summary>
         /// 检查点击目标是否是格子
         /// </summary>
         private bool IsClickOnSlot(object originalSource)

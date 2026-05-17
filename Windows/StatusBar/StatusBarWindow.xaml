@@ -15,7 +15,8 @@
     <Grid>
         <!-- 根Grid：整个状态栏水平居中，垂直紧贴窗口底部 -->
         <Grid x:Name="RootGrid" MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
-              HorizontalAlignment="Center" VerticalAlignment="Bottom">
+              HorizontalAlignment="Center" VerticalAlignment="Bottom"
+              PreviewMouseWheel="RootGrid_PreviewMouseWheel">
 
         <!-- 主容器Grid：包含副手槽和核心容器 -->
         <!-- 使用五列布局：左副手槽 | 左间距 | 核心容器 | 右间距 | 右副手槽 -->
