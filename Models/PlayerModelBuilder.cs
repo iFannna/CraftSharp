@@ -122,17 +122,10 @@ namespace CraftSharp.Models
             {
                 FaceType.Right => new Vector2Collection
                 {
-                    new Vector2(1, 0),
-                    new Vector2(0, 0),
+                    new Vector2(1, 1),
                     new Vector2(0, 1),
-                    new Vector2(1, 1)
-                },
-                FaceType.Left => new Vector2Collection
-                {
-                    new Vector2(1, 0),
                     new Vector2(0, 0),
-                    new Vector2(0, 1),
-                    new Vector2(1, 1)
+                    new Vector2(1, 0)
                 },
                 _ => new Vector2Collection
                 {
