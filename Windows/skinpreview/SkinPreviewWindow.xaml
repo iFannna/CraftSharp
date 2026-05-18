@@ -1,0 +1,37 @@
+<ui:FluentWindow x:Class="CraftSharp.Windows.SkinPreview.SkinPreviewWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX"
+                 Title="皮肤预览"
+                 Height="400" Width="400"
+                 MinHeight="300" MinWidth="300"
+                 WindowStartupLocation="CenterScreen"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ResizeMode="CanResize"
+                 ShowInTaskbar="True"
+                 Topmost="False"
+                 ExtendsContentIntoTitleBar="True"
+                 Foreground="{DynamicResource TextPrimaryBrush}">
+
+    <Grid PreviewMouseDown="Grid_PreviewMouseDown" PreviewMouseMove="Grid_PreviewMouseMove" PreviewMouseUp="Grid_PreviewMouseUp">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <ui:TitleBar Grid.Row="0" Title="皮肤预览" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
+                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+
+        <!-- HelixToolkit Viewport3DX -->
+        <hx:Viewport3DX Grid.Row="1" x:Name="Viewport"
+                        ShowCoordinateSystem="False"
+                        ShowViewCube="False"
+                        ModelUpDirection="0,1,0">
+            <hx:AmbientLight3D Color="#404040"/>
+            <hx:DirectionalLight3D Color="#FFFFFF" Direction="-1,-1,-1"/>
+            <hx:GroupModel3D x:Name="PlayerModelGroup"/>
+        </hx:Viewport3DX>
+    </Grid>
+</ui:FluentWindow>

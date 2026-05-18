@@ -6,6 +6,7 @@ using CraftSharp.Windows.BossBar;
 using CraftSharp.Windows.Crosshair;
 using CraftSharp.Windows.Settings;
 using CraftSharp.Windows.Inventory;
+using CraftSharp.Windows.SkinPreview;
 using CraftSharp.Services;
 using Newtonsoft.Json;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -17,6 +18,7 @@ namespace CraftSharp
         private StatusBarWindow? _statusBarWindow;
         private CrosshairWindow? _crosshairWindow;
         private InventoryWindow? _inventoryWindow;
+        private SkinPreviewWindow? _skinPreviewWindow;
         private BossBarWindow? _bossBarWindow;
         private SettingsWindow? _settingsWindow;
         private TaskbarIcon? _taskbarIcon;
@@ -208,6 +210,11 @@ namespace CraftSharp
             LocalizationService.Instance.LanguageChanged += UpdateTrayMenuTexts;
 
             _settingsWindow.Show();
+
+            // 创建皮肤预览窗口
+            _skinPreviewWindow = new SkinPreviewWindow();
+            SkinPreviewService.Instance.Initialize(_skinPreviewWindow);
+            _skinPreviewWindow.Show();
 
             // 设置窗口关闭时最小化到托盘
             _settingsWindow.Closing += (s, e) =>
