@@ -39,6 +39,25 @@ namespace CraftSharp.Models
 
         [JsonProperty("leftLeg")]
         public PartData? LeftLeg { get; set; }
+
+        // 外层覆盖物
+        [JsonProperty("outerHead")]
+        public PartData? OuterHead { get; set; }
+
+        [JsonProperty("outerBody")]
+        public PartData? OuterBody { get; set; }
+
+        [JsonProperty("outerRightArm")]
+        public PartData? OuterRightArm { get; set; }
+
+        [JsonProperty("outerLeftArm")]
+        public PartData? OuterLeftArm { get; set; }
+
+        [JsonProperty("outerRightLeg")]
+        public PartData? OuterRightLeg { get; set; }
+
+        [JsonProperty("outerLeftLeg")]
+        public PartData? OuterLeftLeg { get; set; }
     }
 
     public class PartData

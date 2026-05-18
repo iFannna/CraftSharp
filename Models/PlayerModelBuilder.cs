@@ -96,6 +96,39 @@ namespace CraftSharp.Models
         }
 
         /// <summary>
+        /// 创建外层覆盖物材质（支持 Alpha 混合）
+        /// </summary>
+        public static Material CreateOuterLayerMaterial(string skinPath)
+        {
+            lock (_materialLock)
+            {
+                var cacheKey = skinPath + "_outer";
+                if (_materialCache.TryGetValue(cacheKey, out var cached))
+                    return cached;
+
+                var textureModel = new TextureModel(skinPath);
+
+                var material = new PhongMaterial
+                {
+                    DiffuseMap = textureModel,
+                    DiffuseColor = new Color4(1, 1, 1, 1),
+                    SpecularColor = new Color4(0, 0, 0, 0),
+                    SpecularShininess = 1,
+                    DiffuseMapSampler = new SamplerStateDescription
+                    {
+                        Filter = Filter.MinMagMipPoint,
+                        AddressU = TextureAddressMode.Clamp,
+                        AddressV = TextureAddressMode.Clamp,
+                        AddressW = TextureAddressMode.Clamp
+                    }
+                };
+
+                _materialCache[cacheKey] = material;
+                return material;
+            }
+        }
+
+        /// <summary>
         /// 清除指定皮肤的材质缓存
         /// </summary>
         public static void ClearMaterialCache(string skinPath)
@@ -316,11 +349,12 @@ namespace CraftSharp.Models
 
             // 创建或获取单一材质，所有部位共享
             var material = CreateSkinMaterial(skinPath);
+            var outerMaterial = CreateOuterLayerMaterial(skinPath);
             var texWidth = uvData.TextureSize.Width;
             var texHeight = uvData.TextureSize.Height;
 
-            // 直接使用 JSON 配置中的部位数据，不做任何交换
-            var parts = new List<(string Name, PartData? Data)>
+            // 内层部位
+            var innerParts = new List<(string Name, PartData? Data)>
             {
                 ("Head", uvData.Parts.Head),
                 ("Body", uvData.Parts.Body),
@@ -330,11 +364,33 @@ namespace CraftSharp.Models
                 ("LeftLeg", uvData.Parts.LeftLeg)
             };
 
-            foreach (var (_, data) in parts)
+            // 外层覆盖物部位
+            var outerParts = new List<(string Name, PartData? Data)>
+            {
+                ("OuterHead", uvData.Parts.OuterHead),
+                ("OuterBody", uvData.Parts.OuterBody),
+                ("OuterRightArm", uvData.Parts.OuterRightArm),
+                ("OuterLeftArm", uvData.Parts.OuterLeftArm),
+                ("OuterRightLeg", uvData.Parts.OuterRightLeg),
+                ("OuterLeftLeg", uvData.Parts.OuterLeftLeg)
+            };
+
+            // 先添加内层部位
+            foreach (var (_, data) in innerParts)
             {
                 if (data != null)
                 {
                     var partModel = CreatePartModel(material, data, texWidth, texHeight);
+                    playerGroup.Children.Add(partModel);
+                }
+            }
+
+            // 后添加外层覆盖物（渲染顺序在内层之后）
+            foreach (var (_, data) in outerParts)
+            {
+                if (data != null)
+                {
+                    var partModel = CreatePartModel(outerMaterial, data, texWidth, texHeight);
                     playerGroup.Children.Add(partModel);
                 }
             }
