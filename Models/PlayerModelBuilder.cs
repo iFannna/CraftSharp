@@ -118,6 +118,24 @@ namespace CraftSharp.Models
         }
 
         /// <summary>
+        /// 判断面是否需要镜像UV映射
+        /// </summary>
+        /// <param name="face">面类型</param>
+        /// <returns>(mirroredU, mirroredV) - U坐标镜像和V坐标镜像</returns>
+        private static (bool mirroredU, bool mirroredV) NeedsMirroredUv(FaceType face)
+        {
+            // Top 面：上下颠倒 + 镜像翻转
+            // Bottom 面：镜像翻转
+
+            return face switch
+            {
+                FaceType.Top => (true, true),     // U镜像 + V镜像
+                FaceType.Bottom => (true, false), // U镜像，V不镜像
+                _ => (false, false)
+            };
+        }
+
+        /// <summary>
         /// 创建单个面的网格，UV 坐标指向纹理中的实际像素位置
         /// </summary>
         public static MeshGeometry3D CreateFaceMesh(
@@ -182,26 +200,14 @@ namespace CraftSharp.Models
             var v0 = uvData.Y / (float)textureHeight;
             var v1 = (uvData.Y + uvData.H) / (float)textureHeight;
 
-            // UV 映射：根据面的朝向确定顶点与纹理的对应关系
-            // p0-p3 是从下到上的顶点顺序，纹理 v0 是上边缘，v1 是下边缘
-            var uvCoords = face switch
+            // 根据镜像设置选择UV坐标
+            var (mirroredU, mirroredV) = NeedsMirroredUv(face);
+            var uvCoords = new Vector2Collection
             {
-                // Right 面需要特殊处理：纹理从左到右对应空间从后到前（镜像关系）
-                FaceType.Right => new Vector2Collection
-                {
-                    new Vector2(u1, v1),  // p0: 前下 -> 纹理右下
-                    new Vector2(u0, v1),  // p1: 后下 -> 纹理左下
-                    new Vector2(u0, v0),  // p2: 后上 -> 稳理左上
-                    new Vector2(u1, v0)   // p3: 前上 -> 稳理右上
-                },
-                // Left 面不需要特殊处理：纹理从左到右对应空间从后到前（正向关系）
-                _ => new Vector2Collection
-                {
-                    new Vector2(u0, v1),  // p0: 后下/左下 -> 稳理左下
-                    new Vector2(u1, v1),  // p1: 前下/右下 -> 稳理右下
-                    new Vector2(u1, v0),  // p2: 前上/右上 -> 稳理右上
-                    new Vector2(u0, v0)   // p3: 后上/左上 -> 稳理左上
-                }
+                new Vector2(mirroredU ? u1 : u0, mirroredV ? v0 : v1),  // p0
+                new Vector2(mirroredU ? u0 : u1, mirroredV ? v0 : v1),  // p1
+                new Vector2(mirroredU ? u0 : u1, mirroredV ? v1 : v0),  // p2
+                new Vector2(mirroredU ? u1 : u0, mirroredV ? v1 : v0)   // p3
             };
 
             return new MeshGeometry3D
@@ -227,8 +233,8 @@ namespace CraftSharp.Models
 
             var faces = new[]
             {
-                (FaceType.Front, uv.Front),
-                (FaceType.Back, uv.Back),
+                (FaceType.Front, uv.Back),    // Front 面使用 Back 的 UV
+                (FaceType.Back, uv.Front),    // Back 面使用 Front 的 UV
                 (FaceType.Top, uv.Top),
                 (FaceType.Bottom, uv.Bottom),
                 (FaceType.Right, uv.Right),
@@ -273,6 +279,7 @@ namespace CraftSharp.Models
             if (partData.Size == null || partData.Position == null || partData.Uv == null)
                 return new MeshGeometryModel3D();
 
+            // 直接使用 JSON 配置中的位置，不做任何翻转
             var center = new Vector3(
                 partData.Position.X,
                 partData.Position.Y,
@@ -312,6 +319,7 @@ namespace CraftSharp.Models
             var texWidth = uvData.TextureSize.Width;
             var texHeight = uvData.TextureSize.Height;
 
+            // 直接使用 JSON 配置中的部位数据，不做任何交换
             var parts = new List<(string Name, PartData? Data)>
             {
                 ("Head", uvData.Parts.Head),

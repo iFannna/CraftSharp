@@ -27,8 +27,8 @@ namespace CraftSharp.Windows.SkinPreview
             // 设置相机位置，高度略低于模型顶部，以便能看到底部
             Viewport.Camera = new HelixToolkit.Wpf.SharpDX.PerspectiveCamera
             {
-                Position = new Point3D(40, 20, 40),  // 相机位置：右前方，高度20
-                LookDirection = new Vector3D(-40, -8, -40),  // 观察方向：指向模型中心偏下
+                Position = new Point3D(50, 25, 50),  // 相机位置：右前方，高度25
+                LookDirection = new Vector3D(-50, -10, -50),  // 观察方向：指向模型中心
                 UpDirection = new Vector3D(0, 1, 0),
                 FarPlaneDistance = 500,
                 NearPlaneDistance = 0.1,
@@ -64,7 +64,7 @@ namespace CraftSharp.Windows.SkinPreview
             if (e.ChangedButton == MouseButton.Left)
             {
                 _isDragging = true;
-                _lastMousePosition = e.GetPosition(this);
+                _lastMousePosition = e.GetPosition(Viewport);
                 e.Handled = true;
             }
         }
@@ -73,10 +73,9 @@ namespace CraftSharp.Windows.SkinPreview
         {
             if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
-                var currentPosition = e.GetPosition(this);
+                var currentPosition = e.GetPosition(Viewport);
                 var delta = currentPosition - _lastMousePosition;
-                Viewport.CameraRotationMode = CameraRotationMode.Turntable;
-                Viewport.AddRotateForce((float)delta.X, (float)delta.Y);
+                Viewport.AddRotateForce((float)delta.X * 0.5f, (float)delta.Y * 0.5f);
                 _lastMousePosition = currentPosition;
                 e.Handled = true;
             }
