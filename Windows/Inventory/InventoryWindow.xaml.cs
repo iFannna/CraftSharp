@@ -87,6 +87,10 @@ namespace CraftSharp.Windows.Inventory
         private double _dragOffsetY = 0;
         private bool _skipDefaultPositioning = false;
 
+        // Shift 模式批量移动状态
+        private bool _isShiftMoveMode = false;
+        private string? _lastShiftMoveSlotId = null;
+
         // 静态属性：跳过默认定位（必须在构造函数之前设置）
         public static bool ShouldSkipDefaultPositioning { get; set; } = false;
 
@@ -101,6 +105,17 @@ namespace CraftSharp.Windows.Inventory
             public int y { get; set; }
             public int width { get; set; }
             public int height { get; set; }
+        }
+
+        // Shift 模式格子类型枚举
+        private enum SlotCategory
+        {
+            Hotbar,      // 快捷栏 hotbar_0 ~ hotbar_8
+            Inventory,   // 物品栏 inventory_0 ~ inventory_26
+            Armor,       // 护甲 helmet, chestplate, leggings, boots
+            Craft,       // 合成 craft_0 ~ craft_3, craft_result
+            Offhand,     // 副手 offhand
+            Other        // 其他（如 player，不参与移动）
         }
 
         public InventoryWindow(AppSettings? settings = null)
@@ -688,6 +703,15 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Shift 模式检测：从非格子区域开始
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                _isShiftMoveMode = true;
+                _lastShiftMoveSlotId = null;
+                CaptureMouse();
+                return;
+            }
+
             // 检查点击目标是否是格子（格子有自己的拖动逻辑）
             if (IsClickOnSlot(e.OriginalSource))
                 return;
@@ -785,6 +809,19 @@ namespace CraftSharp.Windows.Inventory
         {
             base.OnMouseMove(e);
 
+            // Shift 模式处理（最高优先级）
+            if (_isShiftMoveMode && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var canvasPos = e.GetPosition(SlotCanvas);
+                var currentSlotId = GetSlotIdAtPosition(canvasPos);
+
+                if (currentSlotId != null && currentSlotId != _lastShiftMoveSlotId)
+                {
+                    ExecuteShiftMove(currentSlotId);
+                }
+                return;
+            }
+
             // 窗口拖动（使用增量方式，参考 StatusBarWindow）
             if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
@@ -821,6 +858,15 @@ namespace CraftSharp.Windows.Inventory
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
+
+            // Shift 模式结束
+            if (_isShiftMoveMode)
+            {
+                _isShiftMoveMode = false;
+                _lastShiftMoveSlotId = null;
+                ReleaseMouseCapture();
+                return;
+            }
 
             // 窗口拖动结束
             if (_isDragging)
@@ -1013,6 +1059,17 @@ namespace CraftSharp.Windows.Inventory
 
             if (slotIndex < 0 || _dragService == null) return;
 
+            // Shift 模式检测：从格子开始
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                _isShiftMoveMode = true;
+                _lastShiftMoveSlotId = null;
+                CaptureMouse();
+                ExecuteShiftMove(slotId);
+                e.Handled = true;
+                return;
+            }
+
             _longPressStartPoint = e.GetPosition(this);
             _dragService.StartLongPressDetection(slotIndex);
             e.Handled = true;
@@ -1115,6 +1172,121 @@ namespace CraftSharp.Windows.Inventory
                 }
             }
             return null;
+        }
+
+        // ==================== Shift 模式批量移动 ====================
+
+        /// <summary>
+        /// 根据格子ID判断格子类型
+        /// </summary>
+        private SlotCategory GetSlotCategory(string slotId)
+        {
+            if (slotId.StartsWith("hotbar_"))
+                return SlotCategory.Hotbar;
+
+            if (slotId.StartsWith("inventory_"))
+                return SlotCategory.Inventory;
+
+            if (slotId == "helmet" || slotId == "chestplate" ||
+                slotId == "leggings" || slotId == "boots")
+                return SlotCategory.Armor;
+
+            if (slotId.StartsWith("craft_") || slotId == "craft_result")
+                return SlotCategory.Craft;
+
+            if (slotId == "offhand")
+                return SlotCategory.Offhand;
+
+            return SlotCategory.Other;
+        }
+
+        /// <summary>
+        /// 在指定区域查找第一个空格子
+        /// </summary>
+        private string? FindFirstEmptySlot(SlotCategory category)
+        {
+            List<string> slotIds;
+
+            switch (category)
+            {
+                case SlotCategory.Hotbar:
+                    slotIds = new List<string>();
+                    for (int i = 0; i <= 8; i++)
+                        slotIds.Add($"hotbar_{i}");
+                    break;
+
+                case SlotCategory.Inventory:
+                    slotIds = new List<string>();
+                    for (int i = 0; i <= 26; i++)
+                        slotIds.Add($"inventory_{i}");
+                    break;
+
+                default:
+                    return null;
+            }
+
+            foreach (var slotId in slotIds)
+            {
+                var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+                if (item.IsEmpty)
+                    return slotId;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 执行 Shift 模式格子移动
+        /// </summary>
+        private void ExecuteShiftMove(string sourceSlotId)
+        {
+            _lastShiftMoveSlotId = sourceSlotId;
+
+            var sourceItem = _slotService.GetSlot(sourceSlotId, _currentStyle, _sharedData);
+            if (sourceItem.IsEmpty) return;
+
+            SlotCategory sourceCategory = GetSlotCategory(sourceSlotId);
+            if (sourceCategory == SlotCategory.Other) return;
+
+            string? targetSlotId = null;
+
+            switch (sourceCategory)
+            {
+                case SlotCategory.Hotbar:
+                    targetSlotId = FindFirstEmptySlot(SlotCategory.Inventory);
+                    break;
+
+                case SlotCategory.Inventory:
+                    targetSlotId = FindFirstEmptySlot(SlotCategory.Hotbar);
+                    break;
+
+                case SlotCategory.Armor:
+                case SlotCategory.Craft:
+                case SlotCategory.Offhand:
+                    targetSlotId = FindFirstEmptySlot(SlotCategory.Inventory);
+                    break;
+            }
+
+            if (targetSlotId == null) return;
+
+            MoveSlotContent(sourceSlotId, targetSlotId, sourceItem);
+        }
+
+        /// <summary>
+        /// 移动格子内容（源变空，目标获得内容）
+        /// </summary>
+        private void MoveSlotContent(string sourceSlotId, string targetSlotId, SlotItem sourceItem)
+        {
+            _slotService.ClearSlot(sourceSlotId, _currentStyle, _sharedData);
+            _slotService.SetSlot(targetSlotId, sourceItem, _currentStyle, _sharedData);
+
+            ClearSlotIcon(sourceSlotId);
+            SetSlotIcon(targetSlotId, sourceItem.FilePath);
+
+            if (sourceSlotId.StartsWith("hotbar_") || targetSlotId.StartsWith("hotbar_"))
+            {
+                StatusBarService.Instance.RefreshHotbarIcons();
+            }
         }
 
         // ==================== 原生拖放处理 ====================
