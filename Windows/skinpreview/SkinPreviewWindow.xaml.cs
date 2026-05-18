@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf.SharpDX;
 using CraftSharp.Models;
 using Wpf.Ui.Controls;
@@ -17,7 +18,22 @@ namespace CraftSharp.Windows.SkinPreview
         {
             InitializeComponent();
             Viewport.EffectsManager = new DefaultEffectsManager();
+            SetupCamera();
             LoadDefaultSkin();
+        }
+
+        private void SetupCamera()
+        {
+            // 设置相机位置，高度略低于模型顶部，以便能看到底部
+            Viewport.Camera = new HelixToolkit.Wpf.SharpDX.PerspectiveCamera
+            {
+                Position = new Point3D(40, 20, 40),  // 相机位置：右前方，高度20
+                LookDirection = new Vector3D(-40, -8, -40),  // 观察方向：指向模型中心偏下
+                UpDirection = new Vector3D(0, 1, 0),
+                FarPlaneDistance = 500,
+                NearPlaneDistance = 0.1,
+                FieldOfView = 45
+            };
         }
 
         private void LoadDefaultSkin()

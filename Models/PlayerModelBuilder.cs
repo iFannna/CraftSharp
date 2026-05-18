@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Media.Imaging;
 using HelixToolkit.Wpf.SharpDX;
 using Newtonsoft.Json;
 using SharpDX;
@@ -11,43 +10,111 @@ namespace CraftSharp.Models
 {
     public static class PlayerModelBuilder
     {
-        private static PlayerUvData? _uvData;
-        private static readonly object _lock = new();
+        // UV 配置缓存：支持多路径缓存
+        private static readonly Dictionary<string, PlayerUvData> _uvDataCache = new();
+        private static readonly object _uvLock = new();
 
+        // 材质缓存：避免重复创建相同皮肤的材质
+        private static readonly Dictionary<string, Material> _materialCache = new();
+        private static readonly object _materialLock = new();
+
+        /// <summary>
+        /// 加载 UV 配置数据（支持多路径缓存）
+        /// </summary>
         public static PlayerUvData LoadUvData(string jsonPath)
         {
-            lock (_lock)
+            lock (_uvLock)
             {
-                if (_uvData != null)
-                    return _uvData;
+                if (_uvDataCache.TryGetValue(jsonPath, out var cached))
+                    return cached;
+
+                if (!File.Exists(jsonPath))
+                    throw new FileNotFoundException($"UV configuration file not found: {jsonPath}");
 
                 var json = File.ReadAllText(jsonPath);
-                _uvData = JsonConvert.DeserializeObject<PlayerUvData>(json);
-                return _uvData!;
+                var data = JsonConvert.DeserializeObject<PlayerUvData>(json);
+                if (data == null)
+                    throw new InvalidOperationException($"Failed to parse UV configuration: {jsonPath}");
+
+                _uvDataCache[jsonPath] = data;
+                return data;
             }
         }
 
         /// <summary>
-        /// 创建完整皮肤纹理的材质，用于所有部位共享
+        /// 清除指定路径的 UV 配置缓存
+        /// </summary>
+        public static void ClearUvCache(string jsonPath)
+        {
+            lock (_uvLock)
+            {
+                _uvDataCache.Remove(jsonPath);
+            }
+        }
+
+        /// <summary>
+        /// 清除所有 UV 配置缓存
+        /// </summary>
+        public static void ClearAllUvCache()
+        {
+            lock (_uvLock)
+            {
+                _uvDataCache.Clear();
+            }
+        }
+
+        /// <summary>
+        /// 创建或获取皮肤材质（带缓存）
         /// </summary>
         public static Material CreateSkinMaterial(string skinPath)
         {
-            var textureModel = new TextureModel(skinPath);
-
-            return new PhongMaterial
+            lock (_materialLock)
             {
-                DiffuseMap = textureModel,
-                DiffuseColor = new Color4(1, 1, 1, 1),
-                SpecularColor = new Color4(0, 0, 0, 0),
-                SpecularShininess = 1,
-                DiffuseMapSampler = new SamplerStateDescription
+                if (_materialCache.TryGetValue(skinPath, out var cached))
+                    return cached;
+
+                var textureModel = new TextureModel(skinPath);
+
+                var material = new PhongMaterial
                 {
-                    Filter = Filter.MinMagMipPoint,
-                    AddressU = TextureAddressMode.Clamp,
-                    AddressV = TextureAddressMode.Clamp,
-                    AddressW = TextureAddressMode.Clamp
-                }
-            };
+                    DiffuseMap = textureModel,
+                    DiffuseColor = new Color4(1, 1, 1, 1),
+                    SpecularColor = new Color4(0, 0, 0, 0),
+                    SpecularShininess = 1,
+                    DiffuseMapSampler = new SamplerStateDescription
+                    {
+                        Filter = Filter.MinMagMipPoint,
+                        AddressU = TextureAddressMode.Clamp,
+                        AddressV = TextureAddressMode.Clamp,
+                        AddressW = TextureAddressMode.Clamp
+                    }
+                };
+
+                _materialCache[skinPath] = material;
+                return material;
+            }
+        }
+
+        /// <summary>
+        /// 清除指定皮肤的材质缓存
+        /// </summary>
+        public static void ClearMaterialCache(string skinPath)
+        {
+            lock (_materialLock)
+            {
+                _materialCache.Remove(skinPath);
+            }
+        }
+
+        /// <summary>
+        /// 清除所有材质缓存
+        /// </summary>
+        public static void ClearAllMaterialCache()
+        {
+            lock (_materialLock)
+            {
+                _materialCache.Clear();
+            }
         }
 
         /// <summary>
@@ -94,7 +161,7 @@ namespace CraftSharp.Models
                     new Vector3(center.X - hw, center.Y - hh, center.Z + hd),
                     new Vector3(center.X - hw, center.Y + hh, center.Z + hd),
                     new Vector3(center.X - hw, center.Y + hh, center.Z - hd)),
-                _ => throw new ArgumentException("Invalid face type")
+                _ => throw new ArgumentException($"Invalid face type: {face}")
             };
 
             var normal = face switch
@@ -105,7 +172,7 @@ namespace CraftSharp.Models
                 FaceType.Bottom => new Vector3(0, -1, 0),
                 FaceType.Right => new Vector3(1, 0, 0),
                 FaceType.Left => new Vector3(-1, 0, 0),
-                _ => throw new ArgumentException("Invalid face type")
+                _ => throw new ArgumentException($"Invalid face type: {face}")
             };
 
             // UV 坐标归一化到纹理像素位置
@@ -119,32 +186,31 @@ namespace CraftSharp.Models
             // p0-p3 是从下到上的顶点顺序，纹理 v0 是上边缘，v1 是下边缘
             var uvCoords = face switch
             {
-                // Right 面需要特殊处理，因为其顶点顺序与纹理方向有镜像关系
+                // Right 面需要特殊处理：纹理从左到右对应空间从后到前（镜像关系）
                 FaceType.Right => new Vector2Collection
                 {
                     new Vector2(u1, v1),  // p0: 前下 -> 纹理右下
                     new Vector2(u0, v1),  // p1: 后下 -> 纹理左下
-                    new Vector2(u0, v0),  // p2: 后上 -> 纹理左上
-                    new Vector2(u1, v0)   // p3: 前上 -> 纹理右上
+                    new Vector2(u0, v0),  // p2: 后上 -> 稳理左上
+                    new Vector2(u1, v0)   // p3: 前上 -> 稳理右上
                 },
+                // Left 面不需要特殊处理：纹理从左到右对应空间从后到前（正向关系）
                 _ => new Vector2Collection
                 {
-                    new Vector2(u0, v1),  // p0: 左下 -> 纹理左下
-                    new Vector2(u1, v1),  // p1: 右下 -> 纹理右下
-                    new Vector2(u1, v0),  // p2: 右上 -> 纹理右上
-                    new Vector2(u0, v0)   // p3: 左上 -> 纹理左上
+                    new Vector2(u0, v1),  // p0: 后下/左下 -> 稳理左下
+                    new Vector2(u1, v1),  // p1: 前下/右下 -> 稳理右下
+                    new Vector2(u1, v0),  // p2: 前上/右上 -> 稳理右上
+                    new Vector2(u0, v0)   // p3: 后上/左上 -> 稳理左上
                 }
             };
 
-            var mesh = new MeshGeometry3D
+            return new MeshGeometry3D
             {
                 Positions = new Vector3Collection { p0, p1, p2, p3 },
                 Normals = new Vector3Collection { normal, normal, normal, normal },
                 TextureCoordinates = uvCoords,
                 Indices = new IntCollection { 0, 1, 2, 0, 2, 3 }
             };
-
-            return mesh;
         }
 
         /// <summary>
@@ -241,7 +307,7 @@ namespace CraftSharp.Models
             if (uvData.Parts == null || uvData.TextureSize == null)
                 return playerGroup;
 
-            // 创建单一材质，所有部位共享
+            // 创建或获取单一材质，所有部位共享
             var material = CreateSkinMaterial(skinPath);
             var texWidth = uvData.TextureSize.Width;
             var texHeight = uvData.TextureSize.Height;

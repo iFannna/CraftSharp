@@ -29,8 +29,15 @@
                         ShowCoordinateSystem="False"
                         ShowViewCube="False"
                         ModelUpDirection="0,1,0">
-            <hx:AmbientLight3D Color="#404040"/>
+            <!-- 环境光：提供基础照明 -->
+            <hx:AmbientLight3D Color="#606060"/>
+            <!-- 多方向光源：照亮所有6个面 -->
             <hx:DirectionalLight3D Color="#FFFFFF" Direction="-1,-1,-1"/>
+            <hx:DirectionalLight3D Color="#FFFFFF" Direction="1,-1,-1"/>
+            <hx:DirectionalLight3D Color="#FFFFFF" Direction="1,-1,1"/>
+            <hx:DirectionalLight3D Color="#FFFFFF" Direction="-1,-1,1"/>
+            <!-- 底部光源：照亮底面 -->
+            <hx:DirectionalLight3D Color="#FFFFFF" Direction="0,1,0"/>
             <hx:GroupModel3D x:Name="PlayerModelGroup"/>
         </hx:Viewport3DX>
     </Grid>
