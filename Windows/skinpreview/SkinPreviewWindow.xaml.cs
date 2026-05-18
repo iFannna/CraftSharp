@@ -2,10 +2,12 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf.SharpDX;
 using CraftSharp.Models;
 using Wpf.Ui.Controls;
+using SharpDX.Direct3D11;
 
 namespace CraftSharp.Windows.SkinPreview
 {
@@ -17,18 +19,28 @@ namespace CraftSharp.Windows.SkinPreview
         public SkinPreviewWindow()
         {
             InitializeComponent();
-            Viewport.EffectsManager = new DefaultEffectsManager();
+            SetupEffectsManager();
             SetupCamera();
             LoadDefaultSkin();
         }
 
+        private void SetupEffectsManager()
+        {
+            var effectsManager = new DefaultEffectsManager();
+            Viewport.EffectsManager = effectsManager;
+
+            // 设置场景背景色为完全透明（Alpha=0）
+            // 使用透明黑色而不是 Transparent（后者是白色透明）
+            Viewport.BackgroundColor = System.Windows.Media.Color.FromArgb(0, 0, 0, 0);
+        }
+
         private void SetupCamera()
         {
-            // 设置相机位置，高度略低于模型顶部，以便能看到底部
+            // 设置相机位置，沿Y轴对称翻转（X和Z取负）
             Viewport.Camera = new HelixToolkit.Wpf.SharpDX.PerspectiveCamera
             {
-                Position = new Point3D(50, 25, 50),  // 相机位置：右前方，高度25
-                LookDirection = new Vector3D(-50, -10, -50),  // 观察方向：指向模型中心
+                Position = new Point3D(-50, 25, -50),  // 相机位置：左后方，高度25
+                LookDirection = new Vector3D(50, -10, 50),  // 观察方向：指向模型中心
                 UpDirection = new Vector3D(0, 1, 0),
                 FarPlaneDistance = 500,
                 NearPlaneDistance = 0.1,

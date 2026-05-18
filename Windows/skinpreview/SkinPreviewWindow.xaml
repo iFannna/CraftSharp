@@ -27,6 +27,7 @@
 
         <!-- HelixToolkit Viewport3DX -->
         <hx:Viewport3DX Grid.Row="1" x:Name="Viewport"
+                        Background="Transparent"
                         ShowCoordinateSystem="True"
                         ShowViewCube="True"
                         ViewCubeSize="50"
