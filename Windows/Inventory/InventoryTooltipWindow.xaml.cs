@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -32,43 +31,6 @@ namespace CraftSharp.Windows.Inventory
         private static readonly string ColorFilePath = "#A8A8A8";        // 灰色
         private static readonly string ColorFileType = "#5454FC";       // 蓝色
         private static readonly string ColorFileMissing = "#FC5454";    // 红色
-
-        // Win32 API for screen info
-        [DllImport("user32.dll")]
-        private static extern bool GetCursorPos(out POINT lpPoint);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
-
-        [DllImport("user32.dll")]
-        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
-        {
-            public int X;
-            public int Y;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MONITORINFO
-        {
-            public int cbSize;
-            public RECT rcMonitor;
-            public RECT rcWork;
-            public uint dwFlags;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        private const uint MONITOR_DEFAULTTONEAREST = 2;
 
         public InventoryTooltipWindow(double scaleFactor)
         {
@@ -317,40 +279,35 @@ namespace CraftSharp.Windows.Inventory
             double offsetX = 2 * _scaleFactor;
 
             // 获取鼠标所在显示器的工作区域
-            GetCursorPos(out POINT mousePoint);
-            IntPtr monitor = MonitorFromPoint(mousePoint, MONITOR_DEFAULTTONEAREST);
-            var monitorInfo = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
-            if (GetMonitorInfo(monitor, ref monitorInfo))
+            var monitorInfo = Win32Helper.GetMonitorInfoFromCursor();
+            double screenRight = monitorInfo.rcWork.Right;
+            double screenBottom = monitorInfo.rcWork.Bottom;
+            double screenTop = monitorInfo.rcWork.Top;
+
+            // 计算 Tooltip 位置（格子右侧，垂直居中）
+            double x = cellLeft + cellWidth + offsetX;
+            double y = cellTop + (cellHeight - Height) / 2; // 垂直居中
+
+            // 检查是否超出屏幕右侧
+            if (x + Width > screenRight)
             {
-                double screenRight = monitorInfo.rcWork.Right;
-                double screenBottom = monitorInfo.rcWork.Bottom;
-                double screenTop = monitorInfo.rcWork.Top;
-
-                // 计算 Tooltip 位置（格子右侧，垂直居中）
-                double x = cellLeft + cellWidth + offsetX;
-                double y = cellTop + (cellHeight - Height) / 2; // 垂直居中
-
-                // 检查是否超出屏幕右侧
-                if (x + Width > screenRight)
-                {
-                    x = cellLeft - Width - offsetX;
-                }
-
-                // 检查是否超出屏幕底部
-                if (y + Height > screenBottom)
-                {
-                    y = screenBottom - Height - 5;
-                }
-
-                // 确保不超出屏幕顶部
-                if (y < screenTop)
-                {
-                    y = screenTop + 5;
-                }
-
-                Left = x;
-                Top = y;
+                x = cellLeft - Width - offsetX;
             }
+
+            // 检查是否超出屏幕底部
+            if (y + Height > screenBottom)
+            {
+                y = screenBottom - Height - 5;
+            }
+
+            // 确保不超出屏幕顶部
+            if (y < screenTop)
+            {
+                y = screenTop + 5;
+            }
+
+            Left = x;
+            Top = y;
 
             Show();
         }

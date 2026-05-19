@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Text.Json;
 using HelixToolkit;
 using HelixToolkit.SharpDX;
 using HelixToolkit.Wpf.SharpDX;
-using Newtonsoft.Json;
 using SharpDX.Direct3D11;
 
 namespace CraftSharp.Models
@@ -34,7 +34,7 @@ namespace CraftSharp.Models
                     throw new FileNotFoundException($"UV configuration file not found: {jsonPath}");
 
                 var json = File.ReadAllText(jsonPath);
-                var data = JsonConvert.DeserializeObject<PlayerUvData>(json);
+                var data = JsonSerializer.Deserialize<PlayerUvData>(json);
                 if (data == null)
                     throw new InvalidOperationException($"Failed to parse UV configuration: {jsonPath}");
 

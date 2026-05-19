@@ -8,7 +8,7 @@ using CraftSharp.Windows.Settings;
 using CraftSharp.Windows.Inventory;
 using CraftSharp.Windows.SkinPreview;
 using CraftSharp.Services;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Hardcodet.Wpf.TaskbarNotification;
 
 namespace CraftSharp
@@ -240,7 +240,7 @@ namespace CraftSharp
                 try
                 {
                     var json = System.IO.File.ReadAllText(_settingsPath);
-                    _appSettings = JsonConvert.DeserializeObject<Models.AppSettings>(json);
+                    _appSettings = JsonSerializer.Deserialize<Models.AppSettings>(json);
 
                     // 清理重复的HudElements（只保留每个ID的第一个）
                     if (_appSettings?.HudElements != null && _appSettings.HudElements.Count > 0)
@@ -572,7 +572,7 @@ namespace CraftSharp
 
             try
             {
-                var json = JsonConvert.SerializeObject(_appSettings, Formatting.Indented);
+                var json = JsonSerializer.Serialize(_appSettings, new JsonSerializerOptions { WriteIndented = true });
                 System.IO.File.WriteAllText(_settingsPath, json);
             }
             catch { }

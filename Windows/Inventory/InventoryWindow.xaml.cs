@@ -12,7 +12,7 @@ using CraftSharp.Services;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Windows.Dialogs;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace CraftSharp.Windows.Inventory
 {
@@ -537,7 +537,7 @@ namespace CraftSharp.Windows.Inventory
                 if (File.Exists(coordsPath))
                 {
                     var json = File.ReadAllText(coordsPath);
-                    _slotCoords = JsonConvert.DeserializeObject<List<SlotCoord>>(json);
+                    _slotCoords = JsonSerializer.Deserialize<List<SlotCoord>>(json);
                 }
                 else
                 {
@@ -548,7 +548,7 @@ namespace CraftSharp.Windows.Inventory
                     if (File.Exists(defaultCoordsPath))
                     {
                         var json = File.ReadAllText(defaultCoordsPath);
-                        _slotCoords = JsonConvert.DeserializeObject<List<SlotCoord>>(json);
+                        _slotCoords = JsonSerializer.Deserialize<List<SlotCoord>>(json);
                     }
                     else
                     {

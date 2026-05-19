@@ -1,134 +1,134 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CraftSharp.Models
 {
     public class PlayerUvData
     {
-        [JsonProperty("textureSize")]
+        [JsonPropertyName("textureSize")]
         public TextureSize? TextureSize { get; set; }
 
-        [JsonProperty("parts")]
+        [JsonPropertyName("parts")]
         public Parts? Parts { get; set; }
     }
 
     public class TextureSize
     {
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public int Width { get; set; }
 
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public int Height { get; set; }
     }
 
     public class Parts
     {
-        [JsonProperty("head")]
+        [JsonPropertyName("head")]
         public PartData? Head { get; set; }
 
-        [JsonProperty("body")]
+        [JsonPropertyName("body")]
         public PartData? Body { get; set; }
 
-        [JsonProperty("rightArm")]
+        [JsonPropertyName("rightArm")]
         public PartData? RightArm { get; set; }
 
-        [JsonProperty("leftArm")]
+        [JsonPropertyName("leftArm")]
         public PartData? LeftArm { get; set; }
 
-        [JsonProperty("rightLeg")]
+        [JsonPropertyName("rightLeg")]
         public PartData? RightLeg { get; set; }
 
-        [JsonProperty("leftLeg")]
+        [JsonPropertyName("leftLeg")]
         public PartData? LeftLeg { get; set; }
 
         // 外层覆盖物
-        [JsonProperty("outerHead")]
+        [JsonPropertyName("outerHead")]
         public PartData? OuterHead { get; set; }
 
-        [JsonProperty("outerBody")]
+        [JsonPropertyName("outerBody")]
         public PartData? OuterBody { get; set; }
 
-        [JsonProperty("outerRightArm")]
+        [JsonPropertyName("outerRightArm")]
         public PartData? OuterRightArm { get; set; }
 
-        [JsonProperty("outerLeftArm")]
+        [JsonPropertyName("outerLeftArm")]
         public PartData? OuterLeftArm { get; set; }
 
-        [JsonProperty("outerRightLeg")]
+        [JsonPropertyName("outerRightLeg")]
         public PartData? OuterRightLeg { get; set; }
 
-        [JsonProperty("outerLeftLeg")]
+        [JsonPropertyName("outerLeftLeg")]
         public PartData? OuterLeftLeg { get; set; }
     }
 
     public class PartData
     {
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public PartSize? Size { get; set; }
 
-        [JsonProperty("position")]
+        [JsonPropertyName("position")]
         public PartPosition? Position { get; set; }
 
-        [JsonProperty("uv")]
+        [JsonPropertyName("uv")]
         public PartUv? Uv { get; set; }
     }
 
     public class PartSize
     {
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public float Width { get; set; }
 
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public float Height { get; set; }
 
-        [JsonProperty("depth")]
+        [JsonPropertyName("depth")]
         public float Depth { get; set; }
     }
 
     public class PartPosition
     {
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public float X { get; set; }
 
-        [JsonProperty("y")]
+        [JsonPropertyName("y")]
         public float Y { get; set; }
 
-        [JsonProperty("z")]
+        [JsonPropertyName("z")]
         public float Z { get; set; }
     }
 
     public class PartUv
     {
-        [JsonProperty("top")]
+        [JsonPropertyName("top")]
         public UvFace? Top { get; set; }
 
-        [JsonProperty("bottom")]
+        [JsonPropertyName("bottom")]
         public UvFace? Bottom { get; set; }
 
-        [JsonProperty("right")]
+        [JsonPropertyName("right")]
         public UvFace? Right { get; set; }
 
-        [JsonProperty("front")]
+        [JsonPropertyName("front")]
         public UvFace? Front { get; set; }
 
-        [JsonProperty("left")]
+        [JsonPropertyName("left")]
         public UvFace? Left { get; set; }
 
-        [JsonProperty("back")]
+        [JsonPropertyName("back")]
         public UvFace? Back { get; set; }
     }
 
     public class UvFace
     {
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public int X { get; set; }
 
-        [JsonProperty("y")]
+        [JsonPropertyName("y")]
         public int Y { get; set; }
 
-        [JsonProperty("w")]
+        [JsonPropertyName("w")]
         public int W { get; set; }
 
-        [JsonProperty("h")]
+        [JsonPropertyName("h")]
         public int H { get; set; }
     }
 }
