@@ -374,9 +374,12 @@ namespace CraftSharp
         /// </summary>
         private void CreateTaskbarIcon()
         {
+            // 使用项目内置图标文件
+            var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CraftSharp.ico");
+            var icon = new System.Drawing.Icon(iconPath);
             _taskbarIcon = new TaskbarIcon
             {
-                IconSource = new System.Drawing.Icon(SystemIcons.Application, 16, 16).ToImageSource(),
+                IconSource = icon.ToImageSource(),
                 ToolTipText = "Craft#"
             };
 

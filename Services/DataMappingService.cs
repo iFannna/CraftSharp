@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using LibreHardwareMonitor.Hardware;
 
 namespace CraftSharp.Services
@@ -22,6 +23,21 @@ namespace CraftSharp.Services
 
         private bool _initialized = false;
         private bool _libreHardwareInitialized = false;
+
+        // Win32 API for power status
+        [DllImport("kernel32.dll")]
+        private static extern bool GetSystemPowerStatus(ref SYSTEM_POWER_STATUS lpSystemPowerStatus);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SYSTEM_POWER_STATUS
+        {
+            public byte ACLineStatus;
+            public byte BatteryFlag;
+            public byte BatteryLifePercent;
+            public byte SystemStatusFlag;
+            public int BatteryLifeTime;
+            public int BatteryFullLifeTime;
+        }
 
         /// <summary>
         /// 初始化服务（初始化性能计数器）
@@ -55,8 +71,12 @@ namespace CraftSharp.Services
             switch (mappingType)
             {
                 case "电池电量":
-                    var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-                    return powerStatus.BatteryLifePercent;
+                    var powerStatus = new SYSTEM_POWER_STATUS();
+                    if (GetSystemPowerStatus(ref powerStatus))
+                    {
+                        return powerStatus.BatteryLifePercent / 100.0;
+                    }
+                    return 0;
 
                 case "内存占用率":
                     try

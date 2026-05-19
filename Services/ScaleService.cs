@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace CraftSharp.Services
@@ -31,6 +33,40 @@ namespace CraftSharp.Services
         public double DpiScaleX => _dpiScaleX;
         public double DpiScaleY => _dpiScaleY;
 
+        // Win32 API for screen info
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        private const uint MONITOR_DEFAULTTOPRIMARY = 1;
+
         /// <summary>
         /// 初始化缩放服务（使用 SystemParameters.PrimaryScreenWidth）
         /// </summary>
@@ -59,14 +95,24 @@ namespace CraftSharp.Services
                 _dpiScaleY = 1.0;
             }
 
-            // 使用 System.Windows.Forms.Screen 获取物理像素尺寸
-            var screen = System.Windows.Forms.Screen.PrimaryScreen;
-            double physicalWidth = screen?.Bounds.Width ?? 0;
-            double physicalHeight = screen?.Bounds.Height ?? 0;
+            // 使用 Win32 API 获取主显示器物理像素尺寸
+            IntPtr monitor = MonitorFromPoint(new POINT { X = 0, Y = 0 }, MONITOR_DEFAULTTOPRIMARY);
+            var monitorInfo = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
+            if (GetMonitorInfo(monitor, ref monitorInfo))
+            {
+                double physicalWidth = monitorInfo.rcMonitor.Right - monitorInfo.rcMonitor.Left;
+                double physicalHeight = monitorInfo.rcMonitor.Bottom - monitorInfo.rcMonitor.Top;
 
-            // 转换为 WPF 逻辑像素
-            _screenWidth = physicalWidth / _dpiScaleX;
-            _screenHeight = physicalHeight / _dpiScaleY;
+                // 转换为 WPF 逻辑像素
+                _screenWidth = physicalWidth / _dpiScaleX;
+                _screenHeight = physicalHeight / _dpiScaleY;
+            }
+            else
+            {
+                // 回退到 WPF 原生 API
+                _screenWidth = SystemParameters.PrimaryScreenWidth;
+                _screenHeight = SystemParameters.PrimaryScreenHeight;
+            }
 
             _scaleFactor = (_screenWidth / BaseScreenWidth) * BaseScaleMultiplier;
         }

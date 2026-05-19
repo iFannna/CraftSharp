@@ -113,7 +113,15 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     // 切换锁定位置开关后即时生效
                     RefreshInventoryLocked();
                 });
-                AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => _settings.Inventory.RememberPosition = v);
+                AddToggleRow("InventoryOptionRememberPosition", "InventoryOptionRememberPositionDesc", _settings.Inventory.RememberPosition, v => {
+                    _settings.Inventory.RememberPosition = v;
+                    // 关闭开关时重置位置为默认值（下次启动居中）
+                    if (!v)
+                    {
+                        _settings.Inventory.PositionX = 0;
+                        _settings.Inventory.PositionY = 0;
+                    }
+                });
                 AddToggleRow("InventoryOptionHoverEffect", "InventoryOptionHoverEffectDesc", _settings.Inventory.HoverEffect, v => {
                     _settings.Inventory.HoverEffect = v;
                     // 切换悬浮效果开关后刷新物品栏窗口

@@ -62,7 +62,17 @@ namespace CraftSharp.Windows.Settings.Panels.General
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
-                _settings.System.RememberWindowPosition = toggle.IsChecked ?? false;
+                bool isChecked = toggle.IsChecked ?? false;
+                _settings.System.RememberWindowPosition = isChecked;
+
+                // 如果关闭开关，重置位置为默认值（下次启动居中）
+                if (!isChecked)
+                {
+                    _settings.System.WindowPositionX = 0;
+                    _settings.System.WindowPositionY = 0;
+                    _settings.System.WindowState = "Normal";
+                }
+
                 // 即时保存设置
                 SaveSettings();
             }
@@ -72,7 +82,17 @@ namespace CraftSharp.Windows.Settings.Panels.General
         {
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
-                _settings.System.RememberWindowSize = toggle.IsChecked ?? false;
+                bool isChecked = toggle.IsChecked ?? false;
+                _settings.System.RememberWindowSize = isChecked;
+
+                // 如果关闭开关，重置大小为默认值
+                if (!isChecked)
+                {
+                    _settings.System.WindowWidth = 1080;
+                    _settings.System.WindowHeight = 720;
+                    _settings.System.WindowState = "Normal";
+                }
+
                 // 即时保存设置
                 SaveSettings();
             }

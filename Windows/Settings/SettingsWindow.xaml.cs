@@ -38,6 +38,15 @@ namespace CraftSharp.Windows.Settings
                 try
                 {
                     _nativeDropTarget = NativeDropHelper.RegisterForThumbnail(this);
+
+                    // 在窗口句柄创建后恢复窗口状态，确保 TitleBar 图标同步
+                    if (_settings.System.RememberWindowPosition || _settings.System.RememberWindowSize)
+                    {
+                        if (_settings.System.WindowState == "Maximized")
+                        {
+                            WindowState = System.Windows.WindowState.Maximized;
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -78,11 +87,14 @@ namespace CraftSharp.Windows.Settings
                 Height = _settings.System.WindowHeight;
             }
 
-            // 监听窗口位置变化（即时保存）
+            // 监听窗口位置变化（即时保存，仅正常状态）
             LocationChanged += OnLocationChanged;
 
-            // 监听窗口大小变化（即时保存）
+            // 监听窗口大小变化（即时保存，仅正常状态）
             SizeChanged += OnSizeChanged;
+
+            // 监听窗口状态变化（最大化/正常）
+            StateChanged += OnStateChanged;
 
             // 创建各个面板并添加到容器
             _panelSystem = new SystemPanel(_settings);
@@ -112,7 +124,8 @@ namespace CraftSharp.Windows.Settings
 
         private void OnLocationChanged(object? sender, EventArgs e)
         {
-            if (_settings.System.RememberWindowPosition)
+            // 仅在正常窗口状态下保存位置
+            if (_settings.System.RememberWindowPosition && WindowState == System.Windows.WindowState.Normal)
             {
                 _settings.System.WindowPositionX = Left;
                 _settings.System.WindowPositionY = Top;
@@ -122,11 +135,32 @@ namespace CraftSharp.Windows.Settings
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_settings.System.RememberWindowSize)
+            // 仅在正常窗口状态下保存大小
+            if (_settings.System.RememberWindowSize && WindowState == System.Windows.WindowState.Normal)
             {
                 _settings.System.WindowWidth = Width;
                 _settings.System.WindowHeight = Height;
                 SaveSettings();
+            }
+        }
+
+        private void OnStateChanged(object? sender, EventArgs e)
+        {
+            // 仅保存 Normal ↔ Maximized 的转换，忽略最小化
+            // 最小化时保持之前的状态不变
+            if (_settings.System.RememberWindowPosition || _settings.System.RememberWindowSize)
+            {
+                if (WindowState == System.Windows.WindowState.Maximized)
+                {
+                    _settings.System.WindowState = "Maximized";
+                    SaveSettings();
+                }
+                else if (WindowState == System.Windows.WindowState.Normal)
+                {
+                    _settings.System.WindowState = "Normal";
+                    SaveSettings();
+                }
+                // Minimized: 不保存，保持之前的状态
             }
         }
 

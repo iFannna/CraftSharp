@@ -74,6 +74,10 @@ namespace CraftSharp.Helpers
         public const string CrosshairAttackIndicatorFull = "assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_full.png";
         public const string CrosshairAttackIndicatorProgress = "assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_progress.png";
 
+        // 皮肤预览
+        public const string DefaultSkinWide = "assets/minecraft/textures/entity/player/wide/steve.png";
+        public const string PlayerUvWide = "assets/minecraft/textures/entity/player/uv/wide.json";
+
         /// <summary>
         /// 根据 IconStyle 获取生命值图标路径
         /// IconStyle: full, hardcore_full, poisoned_full, withered_full, frozen_full, vehicle_full,

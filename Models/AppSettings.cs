@@ -120,6 +120,11 @@ namespace CraftSharp.Models
         public double WindowHeight { get; set; } = 720;
 
         /// <summary>
+        /// 设置窗口状态（Normal/Maximized）
+        /// </summary>
+        public string WindowState { get; set; } = "Normal";
+
+        /// <summary>
         /// 记住卡片状态
         /// </summary>
         public bool RememberCardStates { get; set; } = true;

@@ -21,7 +21,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             var rememberToggle = AddToggleRow("HudOptionRememberPosition", "HudOptionRememberPositionDesc", _settings.StatusBar.RememberPosition);
             rememberToggle.Checked += (s, e) => { _settings.StatusBar.RememberPosition = true; SaveSettings(); };
-            rememberToggle.Unchecked += (s, e) => { _settings.StatusBar.RememberPosition = false; SaveSettings(); };
+            rememberToggle.Unchecked += (s, e) =>
+            {
+                _settings.StatusBar.RememberPosition = false;
+                // 关闭开关时重置位置为默认值（下次启动居中）
+                _settings.StatusBar.PositionX = 0;
+                _settings.StatusBar.PositionY = 0;
+                SaveSettings();
+            };
         }
     }
 }
