@@ -272,11 +272,11 @@ namespace CraftSharp.Models
 
                 var baseIndex = positions.Count;
 
-                positions.AddRange(faceMesh.Positions);
-                normals.AddRange(faceMesh.Normals);
-                textureCoords.AddRange(faceMesh.TextureCoordinates);
+                positions.AddRange(faceMesh.Positions!);
+                normals.AddRange(faceMesh.Normals!);
+                textureCoords.AddRange(faceMesh.TextureCoordinates!);
 
-                foreach (var idx in faceMesh.Indices)
+                foreach (var idx in faceMesh.Indices!)
                 {
                     indices.Add(baseIndex + idx);
                 }

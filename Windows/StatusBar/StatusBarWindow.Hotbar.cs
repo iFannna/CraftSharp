@@ -487,7 +487,7 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void ShowDragIconCopy(int sourceSlotIndex, SlotItem sourceItem)
         {
-            ImageSource iconSource = null;
+            ImageSource? iconSource = null;
             BitmapScalingMode renderMode = BitmapScalingMode.Linear;
 
             if (!sourceItem.IsEmpty)
@@ -504,7 +504,7 @@ namespace CraftSharp.Windows.StatusBar
                 else
                 {
                     // 文件正常：使用格子图标
-                    System.Windows.Controls.Image slotIconImage = GetSlotIconImage(sourceSlotIndex);
+                    System.Windows.Controls.Image? slotIconImage = GetSlotIconImage(sourceSlotIndex);
                     if (slotIconImage != null && slotIconImage.Source != null)
                     {
                         iconSource = slotIconImage.Source;
@@ -669,7 +669,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 获取格子图标Source
         /// </summary>
-        private ImageSource GetSlotIconSource(int slotIndex)
+        private ImageSource? GetSlotIconSource(int slotIndex)
         {
             var iconImage = GetSlotIconImage(slotIndex);
             return iconImage?.Source;
@@ -924,7 +924,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 获取图标Image控件
         /// </summary>
-        private System.Windows.Controls.Image GetIconImage(int index)
+        private System.Windows.Controls.Image? GetIconImage(int index)
         {
             foreach (var child in HotbarSlotsGrid.Children)
             {
@@ -947,7 +947,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 获取格子Border控件
         /// </summary>
-        private Border GetSlotBorder(int index)
+        private Border? GetSlotBorder(int index)
         {
             foreach (var child in HotbarSlotsGrid.Children)
             {

@@ -126,7 +126,7 @@ namespace CraftSharp.Windows.Dialogs
 
             // 更新样式名称（国际化）
             string styleNameKey = GetStyleNameKey(fileName);
-            string styleName = System.Windows.Application.Current.TryFindResource(styleNameKey) as string;
+            string? styleName = System.Windows.Application.Current.TryFindResource(styleNameKey) as string;
             if (string.IsNullOrEmpty(styleName))
             {
                 // 如果没有找到国际化字符串，使用文件名

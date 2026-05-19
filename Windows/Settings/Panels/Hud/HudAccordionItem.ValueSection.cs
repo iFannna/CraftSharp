@@ -270,7 +270,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                     RefreshHudElement(id);
                 }
             };
-            _valueContainer.Children.Add(currentRow);
+            _valueContainer!.Children.Add(currentRow);
         }
 
         private void AddMaxValueRow(string id, int maxValue, int maxValueLimit)
@@ -329,7 +329,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             maxRow.Children.Add(maxInputContainer);
             Grid.SetColumn(maxInputContainer, 1);
-            _valueContainer.Children.Add(maxRow);
+            _valueContainer!.Children.Add(maxRow);
 
             _maxValueTextBox.LostFocus += (s, e) =>
             {
@@ -435,7 +435,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             saturationRow.Children.Add(saturationInputContainer);
             Grid.SetColumn(saturationInputContainer, 1);
-            _valueContainer.Children.Add(saturationRow);
+            _valueContainer!.Children.Add(saturationRow);
 
             _saturationTextBox.LostFocus += (s, e) =>
             {

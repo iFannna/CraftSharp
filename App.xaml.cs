@@ -398,7 +398,7 @@ namespace CraftSharp
             IconService.Instance.InitializeForTaskbarIcon(
                 _appSettings?.Appearance.AppIconPath ?? "minecraft/textures/block/block/glass.png",
                 _taskbarIcon,
-                _settingsWindow);
+                _settingsWindow!);
         }
 
         /// <summary>

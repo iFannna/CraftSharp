@@ -149,7 +149,7 @@ namespace CraftSharp.Windows.StatusBar
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2;
 
-            Canvas armorCanvas = ArmorGrid.Children.OfType<Canvas>().FirstOrDefault();
+            Canvas? armorCanvas = ArmorGrid.Children.OfType<Canvas>().FirstOrDefault();
             if (armorCanvas == null) return;
 
             // 计算当前值

@@ -253,7 +253,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             // 根据当前样式获取国际化名称
             string currentStyle = _settings!.Inventory.StylePath;
             string styleNameKey = GetStyleNameKey(currentStyle);
-            string styleName = System.Windows.Application.Current.TryFindResource(styleNameKey) as string;
+            string? styleName = System.Windows.Application.Current.TryFindResource(styleNameKey) as string;
             if (string.IsNullOrEmpty(styleName))
             {
                 // 如果没有找到国际化字符串，使用文件名
@@ -277,7 +277,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
                     // 更新显示名称
                     string newStyleNameKey = GetStyleNameKey(selectedStyle);
-                    string newStyleName = System.Windows.Application.Current.TryFindResource(newStyleNameKey) as string;
+                    string? newStyleName = System.Windows.Application.Current.TryFindResource(newStyleNameKey) as string;
                     if (string.IsNullOrEmpty(newStyleName))
                     {
                         newStyleName = Path.GetFileNameWithoutExtension(selectedStyle);
@@ -453,7 +453,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             comboBox.Items.Clear();
 
             bool hasCustomColor = !string.IsNullOrEmpty(_settings.Inventory.CustomFileNameColor) &&
-                                  !ColorPickerHelper.PresetColors.Contains(_settings.Inventory.CustomFileNameColor);
+                                  !ColorPickerHelper.PresetColors.Contains(_settings.Inventory.CustomFileNameColor!);
 
             int selectedIndex = -1;
             int autoIndexOffset = hasCustomColor ? 1 : 0;
