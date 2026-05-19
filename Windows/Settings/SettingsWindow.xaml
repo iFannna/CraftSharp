@@ -11,16 +11,20 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="1"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- 顶部透明边距：让 Windows 识别窗口边缘以触发调整大小光标 -->
+        <Border Grid.Row="0" Background="Transparent"/>
+
         <!-- 标题栏 -->
-        <ui:TitleBar Grid.Row="0" Title="{DynamicResource AppTitle}" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
+        <ui:TitleBar Grid.Row="1" Title="{DynamicResource AppTitle}" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
                      FontSize="16" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 主内容区 -->
-        <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid Grid.Row="2" Background="{DynamicResource ApplicationBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="220"/>
                 <ColumnDefinition Width="*"/>
