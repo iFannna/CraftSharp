@@ -5,6 +5,9 @@
     <!-- Window Title -->
     <sys:String x:Key="AppTitle">Craft#</sys:String>
     <sys:String x:Key="SettingsTitle">Craft# Settings</sys:String>
+    <sys:String x:Key="BossBarWindowTitle">Boss Bar</sys:String>
+    <sys:String x:Key="StatusBarWindowTitle">Status Bar</sys:String>
+    <sys:String x:Key="InventoryWindowTitle">Inventory</sys:String>
 
     <!-- Navigation Menu -->
     <sys:String x:Key="NavSystem">System</sys:String>
@@ -242,6 +245,7 @@
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">Show fullscreen gray overlay when inventory is open</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacity">Opacity</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacityDesc">Adjust gray overlay opacity (0-100)</sys:String>
+    <sys:String x:Key="GrayOverlayOpacityMax">/100%</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBar">Hide Status Bar</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBarDesc">Hide status bar window when inventory is open</sys:String>
     <sys:String x:Key="SurvivalInventoryTitle">Survival Inventory</sys:String>
@@ -306,4 +310,54 @@
     <sys:String x:Key="RenameSlotPlaceholder">Enter custom display name</sys:String>
     <sys:String x:Key="RenameSlotCancel">Cancel</sys:String>
     <sys:String x:Key="RenameSlotConfirm">Confirm</sys:String>
+
+    <!-- HUD Icon Options -->
+    <!-- Heart Type -->
+    <sys:String x:Key="IconHeartNormal">Normal</sys:String>
+    <sys:String x:Key="IconHeartHardcore">Hardcore</sys:String>
+    <sys:String x:Key="IconHeartPoisoned">Poisoned</sys:String>
+    <sys:String x:Key="IconHeartPoisonedHardcore">Poisoned Hardcore</sys:String>
+    <sys:String x:Key="IconHeartWithered">Withered</sys:String>
+    <sys:String x:Key="IconHeartWitheredHardcore">Withered Hardcore</sys:String>
+    <sys:String x:Key="IconHeartFrozen">Frozen</sys:String>
+    <sys:String x:Key="IconHeartFrozenHardcore">Frozen Hardcore</sys:String>
+    <sys:String x:Key="IconHeartVehicle">Vehicle</sys:String>
+    <sys:String x:Key="IconHeartAbsorption">Absorption</sys:String>
+    <sys:String x:Key="IconHeartAbsorptionHardcore">Absorption Hardcore</sys:String>
+
+    <!-- Food Type -->
+    <sys:String x:Key="IconFoodNormal">Normal</sys:String>
+    <sys:String x:Key="IconFoodHunger">Hunger Effect</sys:String>
+
+    <!-- Absorbing Type -->
+    <sys:String x:Key="IconAbsorbingNormal">Normal</sys:String>
+    <sys:String x:Key="IconAbsorbingHardcore">Hardcore</sys:String>
+
+    <!-- Armor/Air Type -->
+    <sys:String x:Key="IconArmorNormal">Normal</sys:String>
+    <sys:String x:Key="IconAirNormal">Normal</sys:String>
+
+    <!-- ExpBar Type -->
+    <sys:String x:Key="IconExpBarExperience">Experience Bar</sys:String>
+    <sys:String x:Key="IconExpBarJump">Jump Bar</sys:String>
+
+    <!-- BossBar Type -->
+    <sys:String x:Key="IconBossBarBlue">Blue</sys:String>
+    <sys:String x:Key="IconBossBarGreen">Green</sys:String>
+    <sys:String x:Key="IconBossBarRed">Red</sys:String>
+    <sys:String x:Key="IconBossBarPink">Pink</sys:String>
+    <sys:String x:Key="IconBossBarPurple">Purple</sys:String>
+    <sys:String x:Key="IconBossBarWhite">White</sys:String>
+    <sys:String x:Key="IconBossBarYellow">Yellow</sys:String>
+
+    <!-- Notch Type -->
+    <sys:String x:Key="IconNotchNone">None</sys:String>
+    <sys:String x:Key="IconNotch6">6 Notches</sys:String>
+    <sys:String x:Key="IconNotch10">10 Notches</sys:String>
+    <sys:String x:Key="IconNotch12">12 Notches</sys:String>
+    <sys:String x:Key="IconNotch20">20 Notches</sys:String>
+
+    <!-- Other -->
+    <sys:String x:Key="IconPickerNone">None</sys:String>
+    <sys:String x:Key="BossBarDefaultName">New Boss</sys:String>
 </ResourceDictionary>

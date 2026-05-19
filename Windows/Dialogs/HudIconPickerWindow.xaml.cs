@@ -85,27 +85,22 @@ namespace CraftSharp.Windows.Dialogs
             if (_elementType == "heart")
             {
                 // 生命值：显示所有 full 图标
-                // 可选样式：
-                // - 基础：full, hardcore_full
-                // - 效果：poisoned_full, withered_full, frozen_full, vehicle_full
-                // - 效果+极限：poisoned_hardcore_full, withered_hardcore_full, frozen_hardcore_full（vehicle无hardcore版本）
-                // - 伤害吸收：absorbing_full, absorbing_hardcore_full
                 var heartStyles = new[]
                 {
-                    ("full", "普通 / Normal"),
-                    ("hardcore_full", "极限模式 / Hardcore"),
-                    ("poisoned_full", "中毒 / Poisoned"),
-                    ("poisoned_hardcore_full", "中毒极限 / Poisoned Hardcore"),
-                    ("withered_full", "凋零 / Withered"),
-                    ("withered_hardcore_full", "凋零极限 / Withered Hardcore"),
-                    ("frozen_full", "冻结 / Frozen"),
-                    ("frozen_hardcore_full", "冻结极限 / Frozen Hardcore"),
-                    ("vehicle_full", "载具 / Vehicle"),
-                    ("absorbing_full", "伤害吸收 / Absorption"),
-                    ("absorbing_hardcore_full", "伤害吸收极限 / Absorption Hardcore")
+                    ("full", "IconHeartNormal"),
+                    ("hardcore_full", "IconHeartHardcore"),
+                    ("poisoned_full", "IconHeartPoisoned"),
+                    ("poisoned_hardcore_full", "IconHeartPoisonedHardcore"),
+                    ("withered_full", "IconHeartWithered"),
+                    ("withered_hardcore_full", "IconHeartWitheredHardcore"),
+                    ("frozen_full", "IconHeartFrozen"),
+                    ("frozen_hardcore_full", "IconHeartFrozenHardcore"),
+                    ("vehicle_full", "IconHeartVehicle"),
+                    ("absorbing_full", "IconHeartAbsorption"),
+                    ("absorbing_hardcore_full", "IconHeartAbsorptionHardcore")
                 };
 
-                foreach (var (style, displayName) in heartStyles)
+                foreach (var (style, resourceKey) in heartStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
                     if (bitmap != null)
@@ -113,7 +108,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap
                         });
                     }
@@ -124,11 +119,11 @@ namespace CraftSharp.Windows.Dialogs
                 // 饥饿值：food_full 和 food_full_hunger
                 var foodStyles = new[]
                 {
-                    ("food_full", "普通 / Normal"),
-                    ("food_full_hunger", "饥饿效果 / Hunger Effect")
+                    ("food_full", "IconFoodNormal"),
+                    ("food_full_hunger", "IconFoodHunger")
                 };
 
-                foreach (var (style, displayName) in foodStyles)
+                foreach (var (style, resourceKey) in foodStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
                     if (bitmap != null)
@@ -136,7 +131,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap
                         });
                     }
@@ -147,11 +142,11 @@ namespace CraftSharp.Windows.Dialogs
                 // 伤害吸收值：absorbing_full 和 absorbing_hardcore_full
                 var absorbingStyles = new[]
                 {
-                    ("absorbing_full", "普通 / Normal"),
-                    ("absorbing_hardcore_full", "极限模式 / Hardcore")
+                    ("absorbing_full", "IconAbsorbingNormal"),
+                    ("absorbing_hardcore_full", "IconAbsorbingHardcore")
                 };
 
-                foreach (var (style, displayName) in absorbingStyles)
+                foreach (var (style, resourceKey) in absorbingStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
                     if (bitmap != null)
@@ -159,7 +154,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap
                         });
                     }
@@ -170,10 +165,10 @@ namespace CraftSharp.Windows.Dialogs
                 // 护甲值：只有 armor_full
                 var armorStyles = new[]
                 {
-                    ("armor_full", "普通 / Normal")
+                    ("armor_full", "IconArmorNormal")
                 };
 
-                foreach (var (style, displayName) in armorStyles)
+                foreach (var (style, resourceKey) in armorStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
                     if (bitmap != null)
@@ -181,7 +176,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap
                         });
                     }
@@ -192,10 +187,10 @@ namespace CraftSharp.Windows.Dialogs
                 // 空气值：只有 air
                 var airStyles = new[]
                 {
-                    ("air", "普通 / Normal")
+                    ("air", "IconAirNormal")
                 };
 
-                foreach (var (style, displayName) in airStyles)
+                foreach (var (style, resourceKey) in airStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"{basePath}/{style}.png");
                     if (bitmap != null)
@@ -203,7 +198,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap
                         });
                     }
@@ -214,11 +209,11 @@ namespace CraftSharp.Windows.Dialogs
                 // 经验条：experience_bar_progress 和 jump_bar_progress
                 var expbarStyles = new[]
                 {
-                    ("experience_bar_progress", "经验条 / Experience Bar"),
-                    ("jump_bar_progress", "跳跃进度条 / Jump Bar")
+                    ("experience_bar_progress", "IconExpBarExperience"),
+                    ("jump_bar_progress", "IconExpBarJump")
                 };
 
-                foreach (var (style, displayName) in expbarStyles)
+                foreach (var (style, resourceKey) in expbarStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"assets/minecraft/textures/gui/sprites/hud/experience_bar/{style}.png");
                     if (bitmap != null)
@@ -226,7 +221,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap,
                             MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
@@ -238,16 +233,16 @@ namespace CraftSharp.Windows.Dialogs
                 // BOSS血条颜色样式（不含notches）
                 var bossBarStyles = new[]
                 {
-                    ("blue", "蓝色 / Blue"),
-                    ("green", "绿色 / Green"),
-                    ("red", "红色 / Red"),
-                    ("pink", "粉色 / Pink"),
-                    ("purple", "紫色 / Purple"),
-                    ("white", "白色 / White"),
-                    ("yellow", "黄色 / Yellow")
+                    ("blue", "IconBossBarBlue"),
+                    ("green", "IconBossBarGreen"),
+                    ("red", "IconBossBarRed"),
+                    ("pink", "IconBossBarPink"),
+                    ("purple", "IconBossBarPurple"),
+                    ("white", "IconBossBarWhite"),
+                    ("yellow", "IconBossBarYellow")
                 };
 
-                foreach (var (style, displayName) in bossBarStyles)
+                foreach (var (style, resourceKey) in bossBarStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"assets/minecraft/textures/gui/sprites/hud/boss_bar/{style}_progress.png");
                     if (bitmap != null)
@@ -255,7 +250,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap,
                             MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
@@ -269,19 +264,19 @@ namespace CraftSharp.Windows.Dialogs
                 _iconItems.Add(new HudIconItem
                 {
                     IconStyle = "",
-                    DisplayName = "无 / None",
+                    DisplayName = GetLocalizedString("IconNotchNone"),
                     BitmapImage = null! // 无图标
                 });
 
                 var notchStyles = new[]
                 {
-                    ("notched_6", "6格 / 6 Notches"),
-                    ("notched_10", "10格 / 10 Notches"),
-                    ("notched_12", "12格 / 12 Notches"),
-                    ("notched_20", "20格 / 20 Notches")
+                    ("notched_6", "IconNotch6"),
+                    ("notched_10", "IconNotch10"),
+                    ("notched_12", "IconNotch12"),
+                    ("notched_20", "IconNotch20")
                 };
 
-                foreach (var (style, displayName) in notchStyles)
+                foreach (var (style, resourceKey) in notchStyles)
                 {
                     var bitmap = ImageService.Instance.LoadBitmapImage($"assets/minecraft/textures/gui/sprites/hud/boss_bar/{style}_progress.png");
                     if (bitmap != null)
@@ -289,7 +284,7 @@ namespace CraftSharp.Windows.Dialogs
                         _iconItems.Add(new HudIconItem
                         {
                             IconStyle = style,
-                            DisplayName = displayName,
+                            DisplayName = GetLocalizedString(resourceKey),
                             BitmapImage = bitmap,
                             MaxWidth = bitmap.PixelWidth * _scaleFactor
                         });
@@ -308,6 +303,11 @@ namespace CraftSharp.Windows.Dialogs
             }
 
             LoadingOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private static string GetLocalizedString(string resourceKey)
+        {
+            return System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? resourceKey;
         }
 
         private void IconItem_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)

@@ -1,4 +1,5 @@
 using CraftSharp.Models;
+using CraftSharp.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,14 +17,27 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             InitializeComponent();
             _settings = settings;
             InitializeControls();
+
+            // 订阅语言切换事件
+            LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void OnLanguageChanged()
+        {
+            InitializeControls();
         }
 
         private void InitializeControls()
         {
             InventoryHotkeyBtn.Content = _settings.Hotkeys.Inventory;
             SettingsHotkeyBtn.Content = _settings.Hotkeys.Settings;
-            var notSetText = global::System.Windows.Application.Current.TryFindResource("HotkeyNotSet") as string ?? "未设置";
+            var notSetText = GetResourceString("HotkeyNotSet");
             HotbarToggleHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.HotbarToggle) ? notSetText : _settings.Hotkeys.HotbarToggle;
+        }
+
+        private static string GetResourceString(string key)
+        {
+            return global::System.Windows.Application.Current.TryFindResource(key) as string ?? key;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)

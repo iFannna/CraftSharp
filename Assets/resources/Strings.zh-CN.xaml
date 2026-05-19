@@ -5,6 +5,9 @@
     <!-- 窗口标题 -->
     <sys:String x:Key="AppTitle">Craft#</sys:String>
     <sys:String x:Key="SettingsTitle">Craft# 设置</sys:String>
+    <sys:String x:Key="BossBarWindowTitle">BOSS血条</sys:String>
+    <sys:String x:Key="StatusBarWindowTitle">状态栏</sys:String>
+    <sys:String x:Key="InventoryWindowTitle">物品栏</sys:String>
 
     <!-- 导航菜单 -->
     <sys:String x:Key="NavSystem">系统</sys:String>
@@ -242,6 +245,7 @@
     <sys:String x:Key="InventoryOptionGrayOverlayDesc">打开物品栏时显示全屏灰色遮罩</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacity">不透明度</sys:String>
     <sys:String x:Key="InventoryOptionGrayOverlayOpacityDesc">调节灰色蒙版不透明度（0-100）</sys:String>
+    <sys:String x:Key="GrayOverlayOpacityMax">/100%</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBar">隐藏状态栏</sys:String>
     <sys:String x:Key="InventoryOptionHideStatusBarDesc">打开物品栏时隐藏状态栏窗口</sys:String>
     <sys:String x:Key="SurvivalInventoryTitle">生存物品栏</sys:String>
@@ -306,4 +310,54 @@
     <sys:String x:Key="RenameSlotPlaceholder">输入自定义显示名称</sys:String>
     <sys:String x:Key="RenameSlotCancel">取消</sys:String>
     <sys:String x:Key="RenameSlotConfirm">确定</sys:String>
+
+    <!-- HUD 图标选项 -->
+    <!-- Heart 类型 -->
+    <sys:String x:Key="IconHeartNormal">普通</sys:String>
+    <sys:String x:Key="IconHeartHardcore">极限模式</sys:String>
+    <sys:String x:Key="IconHeartPoisoned">中毒</sys:String>
+    <sys:String x:Key="IconHeartPoisonedHardcore">中毒极限</sys:String>
+    <sys:String x:Key="IconHeartWithered">凋零</sys:String>
+    <sys:String x:Key="IconHeartWitheredHardcore">凋零极限</sys:String>
+    <sys:String x:Key="IconHeartFrozen">冻结</sys:String>
+    <sys:String x:Key="IconHeartFrozenHardcore">冻结极限</sys:String>
+    <sys:String x:Key="IconHeartVehicle">载具</sys:String>
+    <sys:String x:Key="IconHeartAbsorption">伤害吸收</sys:String>
+    <sys:String x:Key="IconHeartAbsorptionHardcore">伤害吸收极限</sys:String>
+
+    <!-- Food 类型 -->
+    <sys:String x:Key="IconFoodNormal">普通</sys:String>
+    <sys:String x:Key="IconFoodHunger">饥饿效果</sys:String>
+
+    <!-- Absorbing 类型 -->
+    <sys:String x:Key="IconAbsorbingNormal">普通</sys:String>
+    <sys:String x:Key="IconAbsorbingHardcore">极限模式</sys:String>
+
+    <!-- Armor/Air 类型 -->
+    <sys:String x:Key="IconArmorNormal">普通</sys:String>
+    <sys:String x:Key="IconAirNormal">普通</sys:String>
+
+    <!-- ExpBar 类型 -->
+    <sys:String x:Key="IconExpBarExperience">经验条</sys:String>
+    <sys:String x:Key="IconExpBarJump">跳跃进度条</sys:String>
+
+    <!-- BossBar 类型 -->
+    <sys:String x:Key="IconBossBarBlue">蓝色</sys:String>
+    <sys:String x:Key="IconBossBarGreen">绿色</sys:String>
+    <sys:String x:Key="IconBossBarRed">红色</sys:String>
+    <sys:String x:Key="IconBossBarPink">粉色</sys:String>
+    <sys:String x:Key="IconBossBarPurple">紫色</sys:String>
+    <sys:String x:Key="IconBossBarWhite">白色</sys:String>
+    <sys:String x:Key="IconBossBarYellow">黄色</sys:String>
+
+    <!-- Notch 类型 -->
+    <sys:String x:Key="IconNotchNone">无</sys:String>
+    <sys:String x:Key="IconNotch6">6格</sys:String>
+    <sys:String x:Key="IconNotch10">10格</sys:String>
+    <sys:String x:Key="IconNotch12">12格</sys:String>
+    <sys:String x:Key="IconNotch20">20格</sys:String>
+
+    <!-- 其他 -->
+    <sys:String x:Key="IconPickerNone">无</sys:String>
+    <sys:String x:Key="BossBarDefaultName">新BOSS</sys:String>
 </ResourceDictionary>

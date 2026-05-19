@@ -44,7 +44,7 @@
                                            Stretch="Uniform"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                            Source="{Binding BitmapImage, TargetNullValue={x:Null}}"/>
-                                    <TextBlock x:Name="NoneText" Text="无"
+                                    <TextBlock x:Name="NoneText" Text="{DynamicResource IconPickerNone}"
                                                Visibility="Collapsed"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"

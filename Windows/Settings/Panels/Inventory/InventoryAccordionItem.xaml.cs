@@ -76,6 +76,17 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
             // 窗口加载后设置初始展开状态
             Loaded += OnLoaded;
+
+            // 订阅语言切换事件，重建内容
+            LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void OnLanguageChanged()
+        {
+            // 清空内容面板并重建
+            ContentPanel.Children.Clear();
+            _grayOverlayOpacityContainer = null;
+            AddCardContent(_titleResourceKey);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

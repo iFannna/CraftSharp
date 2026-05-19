@@ -462,7 +462,7 @@ namespace CraftSharp.Models
         /// 名称
         /// </summary>
         [ObservableProperty]
-        private string _name = "新BOSS";
+        private string _name = "";
 
         /// <summary>
         /// 图标类型（颜色样式）
