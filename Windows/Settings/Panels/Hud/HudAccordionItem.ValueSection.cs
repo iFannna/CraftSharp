@@ -59,7 +59,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             if (_mappingComboBox.SelectedIndex < 0)
                 _mappingComboBox.SelectedIndex = 0;
 
-            _mappingComboBox.SelectionChanged += (s, e) =>
+            _mappingComboBox.SelectionChanged += (_, _) =>
             {
                 if (_mappingComboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
                 {
@@ -75,7 +75,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             ContentPanel.Children.Add(_mappingComboBox);
 
-            _mappingToggle.Checked += (s, e) =>
+            _mappingToggle.Checked += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -99,7 +99,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 RefreshHudElement(id);
                 RefreshContentHeight();
             };
-            _mappingToggle.Unchecked += (s, e) =>
+            _mappingToggle.Unchecked += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -158,7 +158,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             ContentPanel.Children.Add(_valueContainer);
 
-            _customToggle.Checked += (s, e) =>
+            _customToggle.Checked += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -182,7 +182,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 RefreshHudElement(id);
                 RefreshContentHeight();
             };
-            _customToggle.Unchecked += (s, e) =>
+            _customToggle.Unchecked += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -223,11 +223,11 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
-            _currentValueTextBox.PreviewTextInput += (s, e) =>
+            _currentValueTextBox.PreviewTextInput += (_, e) =>
             {
                 e.Handled = !e.Text.All(c => char.IsDigit(c));
             };
-            System.Windows.DataObject.AddPastingHandler(_currentValueTextBox, (s, e) =>
+            System.Windows.DataObject.AddPastingHandler(_currentValueTextBox, (_, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {
@@ -252,7 +252,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             currentRow.Children.Add(inputContainer);
             Grid.SetColumn(inputContainer, 1);
 
-            _currentValueTextBox.LostFocus += (s, e) =>
+            _currentValueTextBox.LostFocus += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -301,11 +301,11 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
-            _maxValueTextBox.PreviewTextInput += (s, e) =>
+            _maxValueTextBox.PreviewTextInput += (_, e) =>
             {
                 e.Handled = !e.Text.All(c => char.IsDigit(c));
             };
-            System.Windows.DataObject.AddPastingHandler(_maxValueTextBox, (s, e) =>
+            System.Windows.DataObject.AddPastingHandler(_maxValueTextBox, (_, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {
@@ -331,7 +331,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             Grid.SetColumn(maxInputContainer, 1);
             _valueContainer!.Children.Add(maxRow);
 
-            _maxValueTextBox.LostFocus += (s, e) =>
+            _maxValueTextBox.LostFocus += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
@@ -407,11 +407,11 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
-            _saturationTextBox.PreviewTextInput += (s, e) =>
+            _saturationTextBox.PreviewTextInput += (_, e) =>
             {
                 e.Handled = !e.Text.All(c => char.IsDigit(c));
             };
-            System.Windows.DataObject.AddPastingHandler(_saturationTextBox, (s, e) =>
+            System.Windows.DataObject.AddPastingHandler(_saturationTextBox, (_, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {
@@ -437,7 +437,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             Grid.SetColumn(saturationInputContainer, 1);
             _valueContainer!.Children.Add(saturationRow);
 
-            _saturationTextBox.LostFocus += (s, e) =>
+            _saturationTextBox.LostFocus += (_, _) =>
             {
                 EnsureHudElementExists(id);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);

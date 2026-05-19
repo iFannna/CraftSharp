@@ -265,7 +265,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             Grid.SetColumn(styleNameText, 1);
 
             // 点击打开样式预览弹窗
-            grid.MouseLeftButtonDown += (s, e) =>
+            grid.MouseLeftButtonDown += (_, e) =>
             {
                 var previewWindow = new StylePreviewWindow(_settings.Inventory.StylePath);
                 previewWindow.Owner = Window.GetWindow(this);
@@ -385,7 +385,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             if (selectedIndex >= 0)
                 comboBox.SelectedIndex = selectedIndex;
 
-            comboBox.SelectionChanged += (s, e) =>
+            comboBox.SelectionChanged += (_, _) =>
             {
                 if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
                 {
@@ -452,8 +452,9 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
         {
             comboBox.Items.Clear();
 
-            bool hasCustomColor = !string.IsNullOrEmpty(_settings.Inventory.CustomFileNameColor) &&
-                                  !ColorPickerHelper.PresetColors.Contains(_settings.Inventory.CustomFileNameColor!);
+            var customColor = _settings.Inventory.CustomFileNameColor;
+            bool hasCustomColor = customColor != null &&
+                                  !ColorPickerHelper.PresetColors.Contains(customColor);
 
             int selectedIndex = -1;
             int autoIndexOffset = hasCustomColor ? 1 : 0;
@@ -464,9 +465,9 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             // 自定义颜色
             if (hasCustomColor)
             {
-                var customItem = ColorPickerHelper.CreateColorComboBoxItem(_settings.Inventory.CustomFileNameColor!);
+                var customItem = ColorPickerHelper.CreateColorComboBoxItem(customColor!);
                 comboBox.Items.Add(customItem);
-                if (selectedColor == _settings.Inventory.CustomFileNameColor)
+                if (selectedColor == customColor)
                     selectedIndex = 0;
             }
 
@@ -588,7 +589,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             else
                 comboBox.SelectedIndex = 1;
 
-            comboBox.SelectionChanged += (s, e) =>
+            comboBox.SelectionChanged += (_, _) =>
             {
                 if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
                 {
@@ -636,12 +637,12 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             grid.Children.Add(left);
 
             var toggle = new ToggleSwitch { IsChecked = currentValue };
-            toggle.Checked += (s, e) =>
+            toggle.Checked += (_, _) =>
             {
                 onToggle(true);
                 SaveSettings();
             };
-            toggle.Unchecked += (s, e) =>
+            toggle.Unchecked += (_, _) =>
             {
                 onToggle(false);
                 SaveSettings();
@@ -699,11 +700,11 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             };
 
             // 输入验证：只允许数字
-            opacityTextBox.PreviewTextInput += (s, e) =>
+            opacityTextBox.PreviewTextInput += (_, e) =>
             {
                 e.Handled = !e.Text.All(c => char.IsDigit(c));
             };
-            System.Windows.DataObject.AddPastingHandler(opacityTextBox, (s, e) =>
+            System.Windows.DataObject.AddPastingHandler(opacityTextBox, (_, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {
@@ -733,7 +734,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             ContentPanel.Children.Add(_grayOverlayOpacityContainer);
 
             // LostFocus 时保存值
-            opacityTextBox.LostFocus += (s, e) =>
+            opacityTextBox.LostFocus += (_, _) =>
             {
                 int val;
                 if (!int.TryParse(opacityTextBox.Text, out val) || opacityTextBox.Text.Length == 0)
@@ -747,7 +748,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             };
 
             // 监听灰色蒙版开关控制透明度输入框可见性
-            grayOverlayToggle.Checked += (s, e) =>
+            grayOverlayToggle.Checked += (_, _) =>
             {
                 if (_grayOverlayOpacityContainer != null)
                 {
@@ -755,7 +756,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     RefreshContentHeight();
                 }
             };
-            grayOverlayToggle.Unchecked += (s, e) =>
+            grayOverlayToggle.Unchecked += (_, _) =>
             {
                 if (_grayOverlayOpacityContainer != null)
                 {
@@ -794,7 +795,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     Duration = TimeSpan.FromMilliseconds(150),
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
                 };
-                animation.Completed += (s, e) =>
+                animation.Completed += (_, _) =>
                 {
                     ContentBorder.Height = double.NaN;
                     _isAnimating = false;

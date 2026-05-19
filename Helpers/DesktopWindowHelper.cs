@@ -27,7 +27,7 @@ namespace CraftSharp.Helpers
             if (hwnd == IntPtr.Zero)
             {
                 // 等待窗口初始化完成
-                window.SourceInitialized += (s, e) =>
+                window.SourceInitialized += (_, _) =>
                 {
                     var handle = new WindowInteropHelper(window).Handle;
                     SetParentToDesktop(handle);
@@ -101,7 +101,7 @@ namespace CraftSharp.Helpers
             if (hwnd == IntPtr.Zero)
             {
                 // 等待窗口初始化完成
-                window.SourceInitialized += (s, e) =>
+                window.SourceInitialized += (_, _) =>
                 {
                     var handle = new WindowInteropHelper(window).Handle;
                     SetParentToDesktop(handle);

@@ -76,7 +76,7 @@ namespace CraftSharp
             StatusBarService.Instance.Initialize(_statusBarWindow, _appSettings!);
 
             // 监听状态栏位置变化（即时保存到配置文件）
-            _statusBarWindow.PositionChanged += (s, e) =>
+            _statusBarWindow.PositionChanged += (_, _) =>
             {
                 if (_appSettings?.StatusBar.RememberPosition ?? false)
                 {
@@ -98,7 +98,7 @@ namespace CraftSharp
             InitializeHudElementsVisibility();
 
             // 状态栏位置定位：在窗口 Loaded 后定位（此时尺寸已计算好）
-            _statusBarWindow.Loaded += (s, e) =>
+            _statusBarWindow.Loaded += (_, _) =>
             {
                 if (_appSettings?.StatusBar.RememberPosition ?? false)
                 {
@@ -154,7 +154,7 @@ namespace CraftSharp
             _inventoryWindow.Hide();
 
             // 监听物品栏位置变化（即时保存到配置文件）
-            _inventoryWindow.PositionChanged += (s, e) =>
+            _inventoryWindow.PositionChanged += (_, _) =>
             {
                 if (_appSettings?.Inventory.RememberPosition ?? false)
                 {
@@ -165,7 +165,7 @@ namespace CraftSharp
             };
 
             // 物品栏位置定位：在窗口第一次显示时定位
-            _inventoryWindow.Loaded += (s, e) =>
+            _inventoryWindow.Loaded += (_, _) =>
             {
                 if (_appSettings?.Inventory.RememberPosition ?? false)
                 {
@@ -217,7 +217,7 @@ namespace CraftSharp
             _skinPreviewWindow.Show();
 
             // 设置窗口关闭时最小化到托盘
-            _settingsWindow.Closing += (s, e) =>
+            _settingsWindow.Closing += (_, e) =>
             {
                 if (_taskbarIcon != null)
                 {
@@ -384,7 +384,7 @@ namespace CraftSharp
             };
 
             // 双击显示设置窗口
-            _taskbarIcon.TrayMouseDoubleClick += (s, e) =>
+            _taskbarIcon.TrayMouseDoubleClick += (_, _) =>
             {
                 _settingsWindow?.Show();
                 _settingsWindow?.Activate();
@@ -418,7 +418,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _showMainItem.Click += (s, e) =>
+            _showMainItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 _settingsWindow?.Show();
@@ -432,7 +432,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _showStatusBarItem.Click += (s, e) =>
+            _showStatusBarItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 _statusBarWindow?.Show();
@@ -445,7 +445,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _hideStatusBarItem.Click += (s, e) =>
+            _hideStatusBarItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 _statusBarWindow?.Hide();
@@ -458,7 +458,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _openInventoryItem.Click += (s, e) =>
+            _openInventoryItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 _inventoryWindow?.Show();
@@ -471,7 +471,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _closeInventoryItem.Click += (s, e) =>
+            _closeInventoryItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 _inventoryWindow?.Hide();
@@ -484,7 +484,7 @@ namespace CraftSharp
                 Header = TryFindResource("TrayExit") as string ?? "退出",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")
             };
-            _exitItem.Click += (s, e) =>
+            _exitItem.Click += (_, _) =>
             {
                 _trayContextMenu.IsOpen = false;
                 Shutdown();

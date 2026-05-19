@@ -50,7 +50,7 @@ namespace CraftSharp.Windows.BossBar
             IconService.Instance.ApplyWindowIcon(this);
 
             // 注册原生拖放（仅显示缩略图，不接受文件） + 隐藏 Alt+Tab
-            SourceInitialized += (s, e) =>
+            SourceInitialized += (_, _) =>
             {
                 DesktopWindowHelper.HideFromAltTab(this);
 
@@ -66,7 +66,7 @@ namespace CraftSharp.Windows.BossBar
             };
 
             // 窗口关闭时释放资源
-            Closed += (s, e) =>
+            Closed += (_, _) =>
             {
                 _nativeDropTarget?.Dispose();
                 _nativeDropTarget = null;

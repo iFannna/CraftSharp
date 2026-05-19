@@ -133,7 +133,7 @@ namespace CraftSharp.Windows.Inventory
             _isLocked = _settings?.Inventory.Locked ?? false;
 
             // 注册原生拖放
-            SourceInitialized += (s, e) =>
+            SourceInitialized += (_, _) =>
             {
                 try
                 {
@@ -149,7 +149,7 @@ namespace CraftSharp.Windows.Inventory
                 }
             };
 
-            Closed += (s, e) =>
+            Closed += (_, _) =>
             {
                 _nativeDropTarget?.Dispose();
                 _nativeDropTarget = null;

@@ -274,7 +274,7 @@ namespace CraftSharp.Windows.StatusBar
             {
                 Interval = TimeSpan.FromMilliseconds(200)
             };
-            _airAnimationTimer.Tick += (s, e) =>
+            _airAnimationTimer.Tick += (_, _) =>
             {
                 _airAnimationTimer.Stop();
                 ClearAirAnimationIcons();

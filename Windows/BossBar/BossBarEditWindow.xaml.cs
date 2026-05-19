@@ -39,7 +39,7 @@ namespace CraftSharp.Windows.BossBar
             IconService.Instance.ApplyWindowIcon(this);
 
             // 注册原生拖放（仅显示缩略图，不接受文件）
-            SourceInitialized += (s, e) =>
+            SourceInitialized += (_, _) =>
             {
                 try
                 {
@@ -53,7 +53,7 @@ namespace CraftSharp.Windows.BossBar
             };
 
             // 窗口关闭时释放资源
-            Closed += (s, e) =>
+            Closed += (_, _) =>
             {
                 _nativeDropTarget?.Dispose();
                 _nativeDropTarget = null;
@@ -67,11 +67,11 @@ namespace CraftSharp.Windows.BossBar
             CustomValueToggle.Click += CustomValueToggle_Click;
 
             // 限制数值输入框只能输入数字
-            CurrentValueTextBox.PreviewTextInput += (s, e) =>
+            CurrentValueTextBox.PreviewTextInput += (_, e) =>
             {
                 e.Handled = !e.Text.All(c => char.IsDigit(c));
             };
-            System.Windows.DataObject.AddPastingHandler(CurrentValueTextBox, (s, e) =>
+            System.Windows.DataObject.AddPastingHandler(CurrentValueTextBox, (_, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {

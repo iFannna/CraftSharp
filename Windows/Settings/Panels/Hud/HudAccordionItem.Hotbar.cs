@@ -18,29 +18,29 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             AddClickModeComboBox();
 
             var hotbarToggle = AddToggleRow("HudOptionShowHotbar", "HudOptionShowHotbarDesc", _settings.Hotbar.Visible);
-            hotbarToggle.Checked += (s, e) => { _settings.Hotbar.Visible = true; StatusBarService.Instance.SetHotbarVisible(true); SaveSettings(); };
-            hotbarToggle.Unchecked += (s, e) => { _settings.Hotbar.Visible = false; StatusBarService.Instance.SetHotbarVisible(false); SaveSettings(); };
+            hotbarToggle.Checked += (_, _) => { _settings.Hotbar.Visible = true; StatusBarService.Instance.SetHotbarVisible(true); SaveSettings(); };
+            hotbarToggle.Unchecked += (_, _) => { _settings.Hotbar.Visible = false; StatusBarService.Instance.SetHotbarVisible(false); SaveSettings(); };
 
             var hoverToggle = AddToggleRow("HudOptionHoverEffect", "HudOptionHoverEffectDesc", _settings.Hotbar.HoverEffect);
-            hoverToggle.Checked += (s, e) => { _settings.Hotbar.HoverEffect = true; StatusBarService.Instance.SetHotbarHoverEffect(true); SaveSettings(); };
-            hoverToggle.Unchecked += (s, e) => { _settings.Hotbar.HoverEffect = false; StatusBarService.Instance.SetHotbarHoverEffect(false); SaveSettings(); };
+            hoverToggle.Checked += (_, _) => { _settings.Hotbar.HoverEffect = true; StatusBarService.Instance.SetHotbarHoverEffect(true); SaveSettings(); };
+            hoverToggle.Unchecked += (_, _) => { _settings.Hotbar.HoverEffect = false; StatusBarService.Instance.SetHotbarHoverEffect(false); SaveSettings(); };
 
             var leftOffhandToggle = AddToggleRow("HudOptionLeftOffhand", "HudOptionLeftOffhandDesc", _settings.Hotbar.LeftOffhand);
-            leftOffhandToggle.Checked += (s, e) => { _settings.Hotbar.LeftOffhand = true; StatusBarService.Instance.SetOffhandConfig(true, _settings.Hotbar.RightOffhand); SaveSettings(); };
-            leftOffhandToggle.Unchecked += (s, e) => { _settings.Hotbar.LeftOffhand = false; StatusBarService.Instance.SetOffhandConfig(false, _settings.Hotbar.RightOffhand); SaveSettings(); };
+            leftOffhandToggle.Checked += (_, _) => { _settings.Hotbar.LeftOffhand = true; StatusBarService.Instance.SetOffhandConfig(true, _settings.Hotbar.RightOffhand); SaveSettings(); };
+            leftOffhandToggle.Unchecked += (_, _) => { _settings.Hotbar.LeftOffhand = false; StatusBarService.Instance.SetOffhandConfig(false, _settings.Hotbar.RightOffhand); SaveSettings(); };
 
             var rightOffhandToggle = AddToggleRow("HudOptionRightOffhand", "HudOptionRightOffhandDesc", _settings.Hotbar.RightOffhand);
-            rightOffhandToggle.Checked += (s, e) => { _settings.Hotbar.RightOffhand = true; StatusBarService.Instance.SetOffhandConfig(_settings.Hotbar.LeftOffhand, true); SaveSettings(); };
-            rightOffhandToggle.Unchecked += (s, e) => { _settings.Hotbar.RightOffhand = false; StatusBarService.Instance.SetOffhandConfig(_settings.Hotbar.LeftOffhand, false); SaveSettings(); };
+            rightOffhandToggle.Checked += (_, _) => { _settings.Hotbar.RightOffhand = true; StatusBarService.Instance.SetOffhandConfig(_settings.Hotbar.LeftOffhand, true); SaveSettings(); };
+            rightOffhandToggle.Unchecked += (_, _) => { _settings.Hotbar.RightOffhand = false; StatusBarService.Instance.SetOffhandConfig(_settings.Hotbar.LeftOffhand, false); SaveSettings(); };
 
             var showTargetIconToggle = AddToggleRow("HudOptionShowTargetIcon", "HudOptionShowTargetIconDesc", _settings.Hotbar.ShowTargetIcon);
-            showTargetIconToggle.Checked += (s, e) => {
+            showTargetIconToggle.Checked += (_, _) => {
                 _settings.Hotbar.ShowTargetIcon = true;
                 StatusBarService.Instance.RefreshHotbarIcons();
                 if (System.Windows.Application.Current is App app) app.GetInventoryWindow()?.RefreshIcons();
                 SaveSettings();
             };
-            showTargetIconToggle.Unchecked += (s, e) => {
+            showTargetIconToggle.Unchecked += (_, _) => {
                 _settings.Hotbar.ShowTargetIcon = false;
                 StatusBarService.Instance.RefreshHotbarIcons();
                 if (System.Windows.Application.Current is App app) app.GetInventoryWindow()?.RefreshIcons();
@@ -136,7 +136,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             if (selectedIndex >= 0)
                 comboBox.SelectedIndex = selectedIndex;
 
-            comboBox.SelectionChanged += (s, e) =>
+            comboBox.SelectionChanged += (_, _) =>
             {
                 if (comboBox.SelectedItem is System.Windows.Controls.ComboBoxItem item)
                 {

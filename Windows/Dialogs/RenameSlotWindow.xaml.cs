@@ -30,7 +30,7 @@ namespace CraftSharp.Windows.Dialogs
             FilePathText.Text = filePath;
 
             // 聚焦到输入框
-            Loaded += (s, e) => DisplayNameTextBox.Focus();
+            Loaded += (_, _) => DisplayNameTextBox.Focus();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

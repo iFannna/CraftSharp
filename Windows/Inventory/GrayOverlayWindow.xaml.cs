@@ -32,7 +32,7 @@ namespace CraftSharp.Windows.Inventory
             // TOOLWINDOW: 隐藏 Alt+Tab
             // TRANSPARENT: 鼠标穿透
             // LAYERED: 支持透明窗口
-            SourceInitialized += (s, e) =>
+            SourceInitialized += (_, _) =>
             {
                 var hwnd = new WindowInteropHelper(this).Handle;
                 Win32Helper.ApplyOverlayWindowStyle(hwnd);

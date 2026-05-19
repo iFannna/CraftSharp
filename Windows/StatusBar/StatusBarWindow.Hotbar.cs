@@ -644,8 +644,8 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private void SwapSlotIconsUI(int sourceIndex, int targetIndex, bool sourceIsEmpty, bool targetIsEmpty)
         {
-            ImageSource sourceIconSource = GetSlotIconSource(sourceIndex);
-            ImageSource targetIconSource = GetSlotIconSource(targetIndex);
+            ImageSource? sourceIconSource = GetSlotIconSource(sourceIndex);
+            ImageSource? targetIconSource = GetSlotIconSource(targetIndex);
             BitmapScalingMode sourceRenderMode = GetSlotRenderMode(sourceIndex);
             BitmapScalingMode targetRenderMode = GetSlotRenderMode(targetIndex);
 
@@ -656,7 +656,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 获取格子图标Image控件
         /// </summary>
-        private System.Windows.Controls.Image GetSlotIconImage(int slotIndex)
+        private System.Windows.Controls.Image? GetSlotIconImage(int slotIndex)
         {
             if (slotIndex == 0)
                 return GetIconImage("LeftOffhand");
@@ -691,7 +691,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 设置格子图标Source和渲染模式UI
         /// </summary>
-        private void SetSlotIconSourceUI(int slotIndex, ImageSource iconSource, BitmapScalingMode renderMode, bool isEmpty)
+        private void SetSlotIconSourceUI(int slotIndex, ImageSource? iconSource, BitmapScalingMode renderMode, bool isEmpty)
         {
             var iconImage = GetSlotIconImage(slotIndex);
 
@@ -909,7 +909,7 @@ namespace CraftSharp.Windows.StatusBar
         /// <summary>
         /// 获取选中框Image控件
         /// </summary>
-        private System.Windows.Controls.Image GetSelectionImage(int index)
+        private System.Windows.Controls.Image? GetSelectionImage(int index)
         {
             foreach (var child in SelectionOverlayCanvas.Children)
             {
