@@ -38,7 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="assets\minecraft\textures\block\data\" />
     <Folder Include="assets\minecraft\textures\gui\sprites\hud\" />
+    <Folder Include="assets\minecraft\textures\item\data\" />
   </ItemGroup>
 
 </Project>

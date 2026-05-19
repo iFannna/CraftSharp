@@ -72,17 +72,36 @@ namespace CraftSharp.Windows.Dialogs
 
         private void LoadCategoryConfig()
         {
-            var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "icon_categories.json");
-            if (File.Exists(configPath))
+            _categoryConfig = new IconCategoriesConfig();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            // 加载方块分类
+            var blockCategoriesPath = Path.Combine(_assetsBasePath, "minecraft", "textures", "block", "data", "categories.json");
+            if (File.Exists(blockCategoriesPath))
             {
                 try
                 {
-                    var json = File.ReadAllText(configPath);
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-                    _categoryConfig = JsonSerializer.Deserialize<IconCategoriesConfig>(json, options);
+                    var json = File.ReadAllText(blockCategoriesPath);
+                    var blocks = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(json, options);
+                    if (blocks != null)
+                        _categoryConfig.Blocks = blocks;
+                }
+                catch { }
+            }
+
+            // 加载物品分类
+            var itemCategoriesPath = Path.Combine(_assetsBasePath, "minecraft", "textures", "item", "data", "categories.json");
+            if (File.Exists(itemCategoriesPath))
+            {
+                try
+                {
+                    var json = File.ReadAllText(itemCategoriesPath);
+                    var items = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(json, options);
+                    if (items != null)
+                        _categoryConfig.Items = items;
                 }
                 catch { }
             }

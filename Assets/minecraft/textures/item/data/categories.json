@@ -1,0 +1,1795 @@
+{
+  "acacia_boat.png": [],
+  "acacia_chest_boat.png": [],
+  "acacia_door.png": [],
+  "acacia_hanging_sign.png": [],
+  "acacia_sign.png": [],
+  "allay_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "amethyst_shard.png": [
+    "ingredient"
+  ],
+  "angler_pottery_sherd.png": [],
+  "apple.png": [
+    "food_and_drink"
+  ],
+  "archer_pottery_sherd.png": [],
+  "armadillo_scute.png": [
+    "ingredient"
+  ],
+  "armadillo_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "armor_stand.png": [],
+  "arms_up_pottery_sherd.png": [],
+  "arrow.png": [
+    "combat"
+  ],
+  "axolotl_bucket.png": [
+    "tool_and_utility"
+  ],
+  "axolotl_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "baked_potato.png": [
+    "food_and_drink"
+  ],
+  "bamboo.png": [
+    "food_and_drink"
+  ],
+  "bamboo_chest_raft.png": [],
+  "bamboo_door.png": [],
+  "bamboo_hanging_sign.png": [],
+  "bamboo_raft.png": [],
+  "bamboo_sign.png": [],
+  "barrier.png": [],
+  "bat_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "beef.png": [
+    "food_and_drink"
+  ],
+  "beetroot.png": [
+    "food_and_drink"
+  ],
+  "beetroot_seeds.png": [
+    "food_and_drink"
+  ],
+  "beetroot_soup.png": [
+    "food_and_drink"
+  ],
+  "bee_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "bell.png": [],
+  "birch_boat.png": [],
+  "birch_chest_boat.png": [],
+  "birch_door.png": [],
+  "birch_hanging_sign.png": [],
+  "birch_sign.png": [],
+  "black_bundle.png": [],
+  "black_bundle_open_back.png": [],
+  "black_bundle_open_front.png": [],
+  "black_candle.png": [],
+  "black_dye.png": [],
+  "black_harness.png": [],
+  "blade_pottery_sherd.png": [],
+  "blaze_powder.png": [
+    "ingredient"
+  ],
+  "blaze_rod.png": [
+    "ingredient"
+  ],
+  "blaze_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "blue_bundle.png": [],
+  "blue_bundle_open_back.png": [],
+  "blue_bundle_open_front.png": [],
+  "blue_candle.png": [],
+  "blue_dye.png": [],
+  "blue_egg.png": [],
+  "blue_harness.png": [],
+  "bogged_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "bolt_armor_trim_smithing_template.png": [],
+  "bone.png": [
+    "ingredient"
+  ],
+  "bone_meal.png": [
+    "ingredient"
+  ],
+  "book.png": [
+    "ingredient"
+  ],
+  "bordure_indented_banner_pattern.png": [],
+  "bow.png": [],
+  "bowl.png": [],
+  "bow_pulling_0.png": [],
+  "bow_pulling_1.png": [],
+  "bow_pulling_2.png": [],
+  "bread.png": [
+    "food_and_drink"
+  ],
+  "breeze_rod.png": [
+    "ingredient"
+  ],
+  "breeze_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "brewer_pottery_sherd.png": [],
+  "brewing_stand.png": [],
+  "brick.png": [
+    "ingredient"
+  ],
+  "brown_bundle.png": [],
+  "brown_bundle_open_back.png": [],
+  "brown_bundle_open_front.png": [],
+  "brown_candle.png": [],
+  "brown_dye.png": [],
+  "brown_egg.png": [],
+  "brown_harness.png": [],
+  "brush.png": [
+    "tool_and_utility"
+  ],
+  "bucket.png": [
+    "tool_and_utility"
+  ],
+  "bundle.png": [],
+  "bundle_open_back.png": [],
+  "bundle_open_front.png": [],
+  "burn_pottery_sherd.png": [],
+  "cake.png": [
+    "food_and_drink"
+  ],
+  "camel_husk_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "camel_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "campfire.png": [],
+  "candle.png": [],
+  "carrot.png": [
+    "food_and_drink"
+  ],
+  "carrot_on_a_stick.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "cat_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "cauldron.png": [],
+  "cave_spider_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "chainmail_boots.png": [
+    "combat"
+  ],
+  "chainmail_chestplate.png": [
+    "combat"
+  ],
+  "chainmail_helmet.png": [
+    "combat"
+  ],
+  "chainmail_leggings.png": [
+    "combat"
+  ],
+  "charcoal.png": [
+    "ingredient"
+  ],
+  "cherry_boat.png": [],
+  "cherry_chest_boat.png": [],
+  "cherry_door.png": [],
+  "cherry_hanging_sign.png": [],
+  "cherry_sign.png": [],
+  "chest_minecart.png": [],
+  "chicken.png": [
+    "food_and_drink"
+  ],
+  "chicken_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "chorus_fruit.png": [
+    "food_and_drink"
+  ],
+  "clay_ball.png": [
+    "ingredient"
+  ],
+  "clock_00.png": [
+    "tool_and_utility"
+  ],
+  "clock_01.png": [
+    "tool_and_utility"
+  ],
+  "clock_02.png": [
+    "tool_and_utility"
+  ],
+  "clock_03.png": [
+    "tool_and_utility"
+  ],
+  "clock_04.png": [
+    "tool_and_utility"
+  ],
+  "clock_05.png": [
+    "tool_and_utility"
+  ],
+  "clock_06.png": [
+    "tool_and_utility"
+  ],
+  "clock_07.png": [
+    "tool_and_utility"
+  ],
+  "clock_08.png": [
+    "tool_and_utility"
+  ],
+  "clock_09.png": [
+    "tool_and_utility"
+  ],
+  "clock_10.png": [
+    "tool_and_utility"
+  ],
+  "clock_11.png": [
+    "tool_and_utility"
+  ],
+  "clock_12.png": [
+    "tool_and_utility"
+  ],
+  "clock_13.png": [
+    "tool_and_utility"
+  ],
+  "clock_14.png": [
+    "tool_and_utility"
+  ],
+  "clock_15.png": [
+    "tool_and_utility"
+  ],
+  "clock_16.png": [
+    "tool_and_utility"
+  ],
+  "clock_17.png": [
+    "tool_and_utility"
+  ],
+  "clock_18.png": [
+    "tool_and_utility"
+  ],
+  "clock_19.png": [
+    "tool_and_utility"
+  ],
+  "clock_20.png": [
+    "tool_and_utility"
+  ],
+  "clock_21.png": [
+    "tool_and_utility"
+  ],
+  "clock_22.png": [
+    "tool_and_utility"
+  ],
+  "clock_23.png": [
+    "tool_and_utility"
+  ],
+  "clock_24.png": [
+    "tool_and_utility"
+  ],
+  "clock_25.png": [
+    "tool_and_utility"
+  ],
+  "clock_26.png": [
+    "tool_and_utility"
+  ],
+  "clock_27.png": [
+    "tool_and_utility"
+  ],
+  "clock_28.png": [
+    "tool_and_utility"
+  ],
+  "clock_29.png": [
+    "tool_and_utility"
+  ],
+  "clock_30.png": [
+    "tool_and_utility"
+  ],
+  "clock_31.png": [
+    "tool_and_utility"
+  ],
+  "clock_32.png": [
+    "tool_and_utility"
+  ],
+  "clock_33.png": [
+    "tool_and_utility"
+  ],
+  "clock_34.png": [
+    "tool_and_utility"
+  ],
+  "clock_35.png": [
+    "tool_and_utility"
+  ],
+  "clock_36.png": [
+    "tool_and_utility"
+  ],
+  "clock_37.png": [
+    "tool_and_utility"
+  ],
+  "clock_38.png": [
+    "tool_and_utility"
+  ],
+  "clock_39.png": [
+    "tool_and_utility"
+  ],
+  "clock_40.png": [
+    "tool_and_utility"
+  ],
+  "clock_41.png": [
+    "tool_and_utility"
+  ],
+  "clock_42.png": [
+    "tool_and_utility"
+  ],
+  "clock_43.png": [
+    "tool_and_utility"
+  ],
+  "clock_44.png": [
+    "tool_and_utility"
+  ],
+  "clock_45.png": [
+    "tool_and_utility"
+  ],
+  "clock_46.png": [
+    "tool_and_utility"
+  ],
+  "clock_47.png": [
+    "tool_and_utility"
+  ],
+  "clock_48.png": [
+    "tool_and_utility"
+  ],
+  "clock_49.png": [
+    "tool_and_utility"
+  ],
+  "clock_50.png": [
+    "tool_and_utility"
+  ],
+  "clock_51.png": [
+    "tool_and_utility"
+  ],
+  "clock_52.png": [
+    "tool_and_utility"
+  ],
+  "clock_53.png": [
+    "tool_and_utility"
+  ],
+  "clock_54.png": [
+    "tool_and_utility"
+  ],
+  "clock_55.png": [
+    "tool_and_utility"
+  ],
+  "clock_56.png": [
+    "tool_and_utility"
+  ],
+  "clock_57.png": [
+    "tool_and_utility"
+  ],
+  "clock_58.png": [
+    "tool_and_utility"
+  ],
+  "clock_59.png": [
+    "tool_and_utility"
+  ],
+  "clock_60.png": [
+    "tool_and_utility"
+  ],
+  "clock_61.png": [
+    "tool_and_utility"
+  ],
+  "clock_62.png": [
+    "tool_and_utility"
+  ],
+  "clock_63.png": [
+    "tool_and_utility"
+  ],
+  "coal.png": [
+    "ingredient"
+  ],
+  "coast_armor_trim_smithing_template.png": [],
+  "cocoa_beans.png": [],
+  "cod.png": [
+    "food_and_drink"
+  ],
+  "cod_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "cod_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "command_block_minecart.png": [],
+  "comparator.png": [],
+  "compass_00.png": [
+    "tool_and_utility"
+  ],
+  "compass_01.png": [
+    "tool_and_utility"
+  ],
+  "compass_02.png": [
+    "tool_and_utility"
+  ],
+  "compass_03.png": [
+    "tool_and_utility"
+  ],
+  "compass_04.png": [
+    "tool_and_utility"
+  ],
+  "compass_05.png": [
+    "tool_and_utility"
+  ],
+  "compass_06.png": [
+    "tool_and_utility"
+  ],
+  "compass_07.png": [
+    "tool_and_utility"
+  ],
+  "compass_08.png": [
+    "tool_and_utility"
+  ],
+  "compass_09.png": [
+    "tool_and_utility"
+  ],
+  "compass_10.png": [
+    "tool_and_utility"
+  ],
+  "compass_11.png": [
+    "tool_and_utility"
+  ],
+  "compass_12.png": [
+    "tool_and_utility"
+  ],
+  "compass_13.png": [
+    "tool_and_utility"
+  ],
+  "compass_14.png": [
+    "tool_and_utility"
+  ],
+  "compass_15.png": [
+    "tool_and_utility"
+  ],
+  "compass_16.png": [
+    "tool_and_utility"
+  ],
+  "compass_17.png": [
+    "tool_and_utility"
+  ],
+  "compass_18.png": [
+    "tool_and_utility"
+  ],
+  "compass_19.png": [
+    "tool_and_utility"
+  ],
+  "compass_20.png": [
+    "tool_and_utility"
+  ],
+  "compass_21.png": [
+    "tool_and_utility"
+  ],
+  "compass_22.png": [
+    "tool_and_utility"
+  ],
+  "compass_23.png": [
+    "tool_and_utility"
+  ],
+  "compass_24.png": [
+    "tool_and_utility"
+  ],
+  "compass_25.png": [
+    "tool_and_utility"
+  ],
+  "compass_26.png": [
+    "tool_and_utility"
+  ],
+  "compass_27.png": [
+    "tool_and_utility"
+  ],
+  "compass_28.png": [
+    "tool_and_utility"
+  ],
+  "compass_29.png": [
+    "tool_and_utility"
+  ],
+  "compass_30.png": [
+    "tool_and_utility"
+  ],
+  "compass_31.png": [
+    "tool_and_utility"
+  ],
+  "cooked_beef.png": [
+    "food_and_drink"
+  ],
+  "cooked_chicken.png": [
+    "food_and_drink"
+  ],
+  "cooked_cod.png": [
+    "food_and_drink"
+  ],
+  "cooked_mutton.png": [
+    "food_and_drink"
+  ],
+  "cooked_porkchop.png": [
+    "food_and_drink"
+  ],
+  "cooked_rabbit.png": [
+    "food_and_drink"
+  ],
+  "cooked_salmon.png": [
+    "food_and_drink"
+  ],
+  "cookie.png": [
+    "food_and_drink"
+  ],
+  "copper_axe.png": [
+    "combat"
+  ],
+  "copper_boots.png": [
+    "combat"
+  ],
+  "copper_chain.png": [],
+  "copper_chestplate.png": [
+    "combat"
+  ],
+  "copper_door.png": [],
+  "copper_golem_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "copper_helmet.png": [
+    "combat"
+  ],
+  "copper_hoe.png": [
+    "tool_and_utility"
+  ],
+  "copper_horse_armor.png": [
+    "combat"
+  ],
+  "copper_ingot.png": [
+    "ingredient"
+  ],
+  "copper_lantern.png": [],
+  "copper_leggings.png": [
+    "combat"
+  ],
+  "copper_nautilus_armor.png": [],
+  "copper_nugget.png": [
+    "ingredient"
+  ],
+  "copper_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "copper_shovel.png": [
+    "tool_and_utility"
+  ],
+  "copper_spear.png": [],
+  "copper_spear_in_hand.png": [],
+  "copper_sword.png": [
+    "combat"
+  ],
+  "cow_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "creaking_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "creeper_banner_pattern.png": [],
+  "creeper_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "crimson_door.png": [],
+  "crimson_hanging_sign.png": [],
+  "crimson_sign.png": [],
+  "crossbow_arrow.png": [
+    "combat"
+  ],
+  "crossbow_firework.png": [
+    "combat",
+    "tool_and_utility"
+  ],
+  "crossbow_pulling_0.png": [
+    "combat"
+  ],
+  "crossbow_pulling_1.png": [
+    "combat"
+  ],
+  "crossbow_pulling_2.png": [
+    "combat"
+  ],
+  "crossbow_standby.png": [
+    "combat"
+  ],
+  "cyan_bundle.png": [],
+  "cyan_bundle_open_back.png": [],
+  "cyan_bundle_open_front.png": [],
+  "cyan_candle.png": [],
+  "cyan_dye.png": [],
+  "cyan_harness.png": [],
+  "danger_pottery_sherd.png": [],
+  "dark_oak_boat.png": [],
+  "dark_oak_chest_boat.png": [],
+  "dark_oak_door.png": [],
+  "dark_oak_hanging_sign.png": [],
+  "dark_oak_sign.png": [],
+  "diamond.png": [
+    "ingredient"
+  ],
+  "diamond_axe.png": [
+    "combat"
+  ],
+  "diamond_boots.png": [
+    "combat"
+  ],
+  "diamond_chestplate.png": [
+    "combat"
+  ],
+  "diamond_helmet.png": [
+    "combat"
+  ],
+  "diamond_hoe.png": [
+    "tool_and_utility"
+  ],
+  "diamond_horse_armor.png": [
+    "combat"
+  ],
+  "diamond_leggings.png": [
+    "combat"
+  ],
+  "diamond_nautilus_armor.png": [],
+  "diamond_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "diamond_shovel.png": [
+    "tool_and_utility"
+  ],
+  "diamond_spear.png": [],
+  "diamond_spear_in_hand.png": [],
+  "diamond_sword.png": [
+    "combat"
+  ],
+  "disc_fragment_5.png": [
+    "ingredient"
+  ],
+  "dolphin_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "donkey_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "dragon_breath.png": [
+    "ingredient"
+  ],
+  "dried_kelp.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "drowned_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "dune_armor_trim_smithing_template.png": [],
+  "echo_shard.png": [
+    "ingredient"
+  ],
+  "egg.png": [
+    "food_and_drink"
+  ],
+  "elder_guardian_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "elytra.png": [
+    "tool_and_utility"
+  ],
+  "elytra_broken.png": [
+    "tool_and_utility"
+  ],
+  "emerald.png": [
+    "ingredient"
+  ],
+  "enchanted_book.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "enderman_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "endermite_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ender_dragon_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ender_eye.png": [
+    "ingredient"
+  ],
+  "ender_pearl.png": [
+    "ingredient"
+  ],
+  "end_crystal.png": [],
+  "evoker_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "experience_bottle.png": [
+    "ingredient"
+  ],
+  "explorer_pottery_sherd.png": [],
+  "exposed_copper_chain.png": [],
+  "exposed_copper_door.png": [],
+  "exposed_copper_lantern.png": [],
+  "eye_armor_trim_smithing_template.png": [],
+  "feather.png": [
+    "ingredient"
+  ],
+  "fermented_spider_eye.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "field_masoned_banner_pattern.png": [],
+  "filled_map.png": [
+    "tool_and_utility"
+  ],
+  "filled_map_markings.png": [
+    "tool_and_utility"
+  ],
+  "firefly_bush.png": [],
+  "firework_rocket.png": [
+    "tool_and_utility"
+  ],
+  "firework_star.png": [
+    "tool_and_utility"
+  ],
+  "firework_star_overlay.png": [
+    "tool_and_utility"
+  ],
+  "fire_charge.png": [
+    "combat"
+  ],
+  "fishing_rod.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "fishing_rod_cast.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "flint.png": [
+    "ingredient"
+  ],
+  "flint_and_steel.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "flower_banner_pattern.png": [],
+  "flower_pot.png": [],
+  "flow_armor_trim_smithing_template.png": [],
+  "flow_banner_pattern.png": [],
+  "flow_pottery_sherd.png": [],
+  "fox_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "friend_pottery_sherd.png": [],
+  "frog_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "furnace_minecart.png": [],
+  "ghast_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ghast_tear.png": [
+    "ingredient"
+  ],
+  "glass_bottle.png": [],
+  "glistering_melon_slice.png": [
+    "food_and_drink"
+  ],
+  "globe_banner_pattern.png": [],
+  "glowstone_dust.png": [
+    "ingredient"
+  ],
+  "glow_berries.png": [
+    "food_and_drink"
+  ],
+  "glow_ink_sac.png": [],
+  "glow_item_frame.png": [],
+  "glow_squid_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "goat_horn.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "goat_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "golden_apple.png": [
+    "food_and_drink"
+  ],
+  "golden_axe.png": [
+    "combat"
+  ],
+  "golden_boots.png": [
+    "combat"
+  ],
+  "golden_carrot.png": [
+    "food_and_drink"
+  ],
+  "golden_chestplate.png": [
+    "combat"
+  ],
+  "golden_helmet.png": [
+    "combat"
+  ],
+  "golden_hoe.png": [
+    "tool_and_utility"
+  ],
+  "golden_horse_armor.png": [
+    "combat"
+  ],
+  "golden_leggings.png": [
+    "combat"
+  ],
+  "golden_nautilus_armor.png": [],
+  "golden_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "golden_shovel.png": [
+    "tool_and_utility"
+  ],
+  "golden_spear.png": [],
+  "golden_spear_in_hand.png": [],
+  "golden_sword.png": [
+    "combat"
+  ],
+  "gold_ingot.png": [
+    "ingredient"
+  ],
+  "gold_nugget.png": [
+    "ingredient"
+  ],
+  "gray_bundle.png": [],
+  "gray_bundle_open_back.png": [],
+  "gray_bundle_open_front.png": [],
+  "gray_candle.png": [],
+  "gray_dye.png": [],
+  "gray_harness.png": [],
+  "green_bundle.png": [],
+  "green_bundle_open_back.png": [],
+  "green_bundle_open_front.png": [],
+  "green_candle.png": [],
+  "green_dye.png": [],
+  "green_harness.png": [],
+  "guardian_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "gunpowder.png": [
+    "ingredient"
+  ],
+  "guster_banner_pattern.png": [],
+  "guster_pottery_sherd.png": [],
+  "happy_ghast_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "heartbreak_pottery_sherd.png": [],
+  "heart_of_the_sea.png": [
+    "ingredient"
+  ],
+  "heart_pottery_sherd.png": [],
+  "hoglin_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "honeycomb.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "honey_bottle.png": [
+    "food_and_drink"
+  ],
+  "hopper.png": [],
+  "hopper_minecart.png": [],
+  "horse_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "host_armor_trim_smithing_template.png": [],
+  "howl_pottery_sherd.png": [],
+  "husk_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ink_sac.png": [],
+  "iron_axe.png": [
+    "combat"
+  ],
+  "iron_boots.png": [
+    "combat"
+  ],
+  "iron_chain.png": [],
+  "iron_chestplate.png": [
+    "combat"
+  ],
+  "iron_door.png": [],
+  "iron_golem_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "iron_helmet.png": [
+    "combat"
+  ],
+  "iron_hoe.png": [
+    "tool_and_utility"
+  ],
+  "iron_horse_armor.png": [
+    "combat"
+  ],
+  "iron_ingot.png": [
+    "ingredient"
+  ],
+  "iron_leggings.png": [
+    "combat"
+  ],
+  "iron_nautilus_armor.png": [],
+  "iron_nugget.png": [
+    "ingredient"
+  ],
+  "iron_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "iron_shovel.png": [
+    "tool_and_utility"
+  ],
+  "iron_spear.png": [],
+  "iron_spear_in_hand.png": [],
+  "iron_sword.png": [
+    "combat"
+  ],
+  "item_frame.png": [],
+  "jungle_boat.png": [],
+  "jungle_chest_boat.png": [],
+  "jungle_door.png": [],
+  "jungle_hanging_sign.png": [],
+  "jungle_sign.png": [],
+  "kelp.png": [
+    "ingredient"
+  ],
+  "knowledge_book.png": [
+    "ingredient"
+  ],
+  "lantern.png": [],
+  "lapis_lazuli.png": [
+    "ingredient"
+  ],
+  "lava_bucket.png": [
+    "tool_and_utility"
+  ],
+  "lead.png": [
+    "tool_and_utility"
+  ],
+  "leaf_litter.png": [],
+  "leather.png": [
+    "ingredient"
+  ],
+  "leather_boots.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_boots_overlay.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_chestplate.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_chestplate_overlay.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_helmet.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_helmet_overlay.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_horse_armor.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_horse_armor_overlay.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_leggings.png": [
+    "combat",
+    "ingredient"
+  ],
+  "leather_leggings_overlay.png": [
+    "combat",
+    "ingredient"
+  ],
+  "light.png": [],
+  "light_00.png": [],
+  "light_01.png": [],
+  "light_02.png": [],
+  "light_03.png": [],
+  "light_04.png": [],
+  "light_05.png": [],
+  "light_06.png": [],
+  "light_07.png": [],
+  "light_08.png": [],
+  "light_09.png": [],
+  "light_10.png": [],
+  "light_11.png": [],
+  "light_12.png": [],
+  "light_13.png": [],
+  "light_14.png": [],
+  "light_15.png": [],
+  "light_blue_bundle.png": [],
+  "light_blue_bundle_open_back.png": [],
+  "light_blue_bundle_open_front.png": [],
+  "light_blue_candle.png": [],
+  "light_blue_dye.png": [],
+  "light_blue_harness.png": [],
+  "light_gray_bundle.png": [],
+  "light_gray_bundle_open_back.png": [],
+  "light_gray_bundle_open_front.png": [],
+  "light_gray_candle.png": [],
+  "light_gray_dye.png": [],
+  "light_gray_harness.png": [],
+  "lime_bundle.png": [],
+  "lime_bundle_open_back.png": [],
+  "lime_bundle_open_front.png": [],
+  "lime_candle.png": [],
+  "lime_dye.png": [],
+  "lime_harness.png": [],
+  "lingering_potion.png": [
+    "food_and_drink"
+  ],
+  "llama_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "mace.png": [
+    "combat"
+  ],
+  "magenta_bundle.png": [],
+  "magenta_bundle_open_back.png": [],
+  "magenta_bundle_open_front.png": [],
+  "magenta_candle.png": [],
+  "magenta_dye.png": [],
+  "magenta_harness.png": [],
+  "magma_cream.png": [
+    "ingredient"
+  ],
+  "magma_cube_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "mangrove_boat.png": [],
+  "mangrove_chest_boat.png": [],
+  "mangrove_door.png": [],
+  "mangrove_hanging_sign.png": [],
+  "mangrove_propagule.png": [],
+  "mangrove_sign.png": [],
+  "map.png": [
+    "tool_and_utility"
+  ],
+  "melon_seeds.png": [
+    "food_and_drink"
+  ],
+  "melon_slice.png": [
+    "food_and_drink"
+  ],
+  "milk_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "minecart.png": [],
+  "miner_pottery_sherd.png": [],
+  "mojang_banner_pattern.png": [],
+  "mooshroom_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "mourner_pottery_sherd.png": [],
+  "mule_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "mushroom_stew.png": [
+    "food_and_drink"
+  ],
+  "music_disc_11.png": [],
+  "music_disc_13.png": [],
+  "music_disc_5.png": [],
+  "music_disc_blocks.png": [],
+  "music_disc_cat.png": [],
+  "music_disc_chirp.png": [],
+  "music_disc_creator.png": [],
+  "music_disc_creator_music_box.png": [],
+  "music_disc_far.png": [],
+  "music_disc_lava_chicken.png": [
+    "food_and_drink"
+  ],
+  "music_disc_mall.png": [],
+  "music_disc_mellohi.png": [],
+  "music_disc_otherside.png": [],
+  "music_disc_pigstep.png": [],
+  "music_disc_precipice.png": [],
+  "music_disc_relic.png": [],
+  "music_disc_stal.png": [],
+  "music_disc_strad.png": [],
+  "music_disc_tears.png": [],
+  "music_disc_wait.png": [],
+  "music_disc_ward.png": [],
+  "mutton.png": [
+    "food_and_drink"
+  ],
+  "name_tag.png": [
+    "tool_and_utility"
+  ],
+  "nautilus_shell.png": [
+    "ingredient"
+  ],
+  "nautilus_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "netherite_axe.png": [
+    "combat"
+  ],
+  "netherite_boots.png": [
+    "combat"
+  ],
+  "netherite_chestplate.png": [
+    "combat"
+  ],
+  "netherite_helmet.png": [
+    "combat"
+  ],
+  "netherite_hoe.png": [
+    "tool_and_utility"
+  ],
+  "netherite_horse_armor.png": [
+    "combat"
+  ],
+  "netherite_ingot.png": [
+    "ingredient"
+  ],
+  "netherite_leggings.png": [
+    "combat"
+  ],
+  "netherite_nautilus_armor.png": [],
+  "netherite_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "netherite_scrap.png": [
+    "ingredient"
+  ],
+  "netherite_shovel.png": [
+    "tool_and_utility"
+  ],
+  "netherite_spear.png": [],
+  "netherite_spear_in_hand.png": [],
+  "netherite_sword.png": [
+    "combat"
+  ],
+  "netherite_upgrade_smithing_template.png": [],
+  "nether_brick.png": [
+    "ingredient"
+  ],
+  "nether_sprouts.png": [],
+  "nether_star.png": [
+    "ingredient"
+  ],
+  "nether_wart.png": [],
+  "oak_boat.png": [],
+  "oak_chest_boat.png": [],
+  "oak_door.png": [],
+  "oak_hanging_sign.png": [],
+  "oak_sign.png": [],
+  "ocelot_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ominous_bottle.png": [
+    "tool_and_utility"
+  ],
+  "ominous_trial_key.png": [
+    "tool_and_utility"
+  ],
+  "orange_bundle.png": [],
+  "orange_bundle_open_back.png": [],
+  "orange_bundle_open_front.png": [],
+  "orange_candle.png": [],
+  "orange_dye.png": [],
+  "orange_harness.png": [],
+  "oxidized_copper_chain.png": [],
+  "oxidized_copper_door.png": [],
+  "oxidized_copper_lantern.png": [],
+  "painting.png": [],
+  "pale_oak_boat.png": [],
+  "pale_oak_chest_boat.png": [],
+  "pale_oak_door.png": [],
+  "pale_oak_hanging_sign.png": [],
+  "pale_oak_sign.png": [],
+  "panda_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "paper.png": [
+    "ingredient"
+  ],
+  "parched_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "parrot_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "phantom_membrane.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "phantom_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "piglin_banner_pattern.png": [],
+  "piglin_brute_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "piglin_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "pig_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "pillager_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "pink_bundle.png": [],
+  "pink_bundle_open_back.png": [],
+  "pink_bundle_open_front.png": [],
+  "pink_candle.png": [],
+  "pink_dye.png": [],
+  "pink_harness.png": [],
+  "pink_petals.png": [],
+  "pitcher_plant.png": [],
+  "pitcher_pod.png": [],
+  "plenty_pottery_sherd.png": [],
+  "pointed_dripstone.png": [],
+  "poisonous_potato.png": [
+    "food_and_drink"
+  ],
+  "polar_bear_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "popped_chorus_fruit.png": [
+    "food_and_drink"
+  ],
+  "porkchop.png": [
+    "food_and_drink"
+  ],
+  "potato.png": [
+    "food_and_drink"
+  ],
+  "potion.png": [
+    "food_and_drink"
+  ],
+  "potion_overlay.png": [
+    "food_and_drink"
+  ],
+  "powder_snow_bucket.png": [
+    "tool_and_utility"
+  ],
+  "prismarine_crystals.png": [
+    "ingredient"
+  ],
+  "prismarine_shard.png": [
+    "ingredient"
+  ],
+  "prize_pottery_sherd.png": [],
+  "pufferfish.png": [
+    "food_and_drink"
+  ],
+  "pufferfish_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "pufferfish_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "pumpkin_pie.png": [
+    "food_and_drink"
+  ],
+  "pumpkin_seeds.png": [
+    "food_and_drink"
+  ],
+  "purple_bundle.png": [],
+  "purple_bundle_open_back.png": [],
+  "purple_bundle_open_front.png": [],
+  "purple_candle.png": [],
+  "purple_dye.png": [],
+  "purple_harness.png": [],
+  "quartz.png": [
+    "ingredient"
+  ],
+  "rabbit.png": [
+    "food_and_drink"
+  ],
+  "rabbit_foot.png": [
+    "food_and_drink"
+  ],
+  "rabbit_hide.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "rabbit_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "rabbit_stew.png": [
+    "food_and_drink"
+  ],
+  "raiser_armor_trim_smithing_template.png": [],
+  "ravager_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "raw_copper.png": [
+    "ingredient"
+  ],
+  "raw_gold.png": [
+    "ingredient"
+  ],
+  "raw_iron.png": [
+    "ingredient"
+  ],
+  "recovery_compass_00.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_01.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_02.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_03.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_04.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_05.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_06.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_07.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_08.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_09.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_10.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_11.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_12.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_13.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_14.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_15.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_16.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_17.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_18.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_19.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_20.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_21.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_22.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_23.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_24.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_25.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_26.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_27.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_28.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_29.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_30.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "recovery_compass_31.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "redstone.png": [
+    "ingredient"
+  ],
+  "red_bundle.png": [],
+  "red_bundle_open_back.png": [],
+  "red_bundle_open_front.png": [],
+  "red_candle.png": [],
+  "red_dye.png": [],
+  "red_harness.png": [],
+  "repeater.png": [],
+  "resin_brick.png": [
+    "ingredient"
+  ],
+  "resin_clump.png": [
+    "ingredient"
+  ],
+  "rib_armor_trim_smithing_template.png": [],
+  "rotten_flesh.png": [
+    "food_and_drink"
+  ],
+  "saddle.png": [
+    "tool_and_utility"
+  ],
+  "salmon.png": [
+    "food_and_drink"
+  ],
+  "salmon_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "salmon_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "scrape_pottery_sherd.png": [],
+  "seagrass.png": [],
+  "sea_pickle.png": [],
+  "sentry_armor_trim_smithing_template.png": [],
+  "shaper_armor_trim_smithing_template.png": [],
+  "sheaf_pottery_sherd.png": [],
+  "shears.png": [
+    "tool_and_utility"
+  ],
+  "sheep_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "shelter_pottery_sherd.png": [],
+  "shulker_shell.png": [
+    "ingredient"
+  ],
+  "shulker_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "silence_armor_trim_smithing_template.png": [],
+  "silverfish_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "skeleton_horse_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "skeleton_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "skull_banner_pattern.png": [],
+  "skull_pottery_sherd.png": [],
+  "slime_ball.png": [
+    "ingredient"
+  ],
+  "slime_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "sniffer_egg.png": [
+    "food_and_drink"
+  ],
+  "sniffer_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "snort_pottery_sherd.png": [],
+  "snout_armor_trim_smithing_template.png": [],
+  "snowball.png": [],
+  "snow_golem_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "soul_campfire.png": [],
+  "soul_lantern.png": [],
+  "spectral_arrow.png": [
+    "combat"
+  ],
+  "spider_eye.png": [
+    "food_and_drink"
+  ],
+  "spider_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "spire_armor_trim_smithing_template.png": [],
+  "splash_potion.png": [
+    "food_and_drink"
+  ],
+  "spruce_boat.png": [],
+  "spruce_chest_boat.png": [],
+  "spruce_door.png": [],
+  "spruce_hanging_sign.png": [],
+  "spruce_sign.png": [],
+  "spyglass.png": [
+    "tool_and_utility"
+  ],
+  "spyglass_model.png": [
+    "tool_and_utility"
+  ],
+  "squid_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "stick.png": [
+    "ingredient"
+  ],
+  "stone_axe.png": [
+    "combat"
+  ],
+  "stone_hoe.png": [
+    "tool_and_utility"
+  ],
+  "stone_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "stone_shovel.png": [
+    "tool_and_utility"
+  ],
+  "stone_spear.png": [],
+  "stone_spear_in_hand.png": [],
+  "stone_sword.png": [
+    "combat"
+  ],
+  "stray_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "strider_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "string.png": [
+    "ingredient"
+  ],
+  "structure_void.png": [],
+  "sugar.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "sugar_cane.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "suspicious_stew.png": [
+    "food_and_drink"
+  ],
+  "sweet_berries.png": [
+    "food_and_drink"
+  ],
+  "tadpole_bucket.png": [
+    "tool_and_utility"
+  ],
+  "tadpole_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "tide_armor_trim_smithing_template.png": [],
+  "tipped_arrow_base.png": [
+    "combat"
+  ],
+  "tipped_arrow_head.png": [
+    "combat"
+  ],
+  "tnt_minecart.png": [],
+  "torchflower_seeds.png": [
+    "food_and_drink"
+  ],
+  "totem_of_undying.png": [],
+  "trader_llama_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "trial_key.png": [
+    "tool_and_utility"
+  ],
+  "trident.png": [
+    "combat"
+  ],
+  "tropical_fish.png": [
+    "food_and_drink"
+  ],
+  "tropical_fish_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "tropical_fish_spawn_egg.png": [
+    "food_and_drink",
+    "spawn_egg"
+  ],
+  "turtle_egg.png": [
+    "food_and_drink"
+  ],
+  "turtle_helmet.png": [
+    "combat"
+  ],
+  "turtle_scute.png": [
+    "ingredient"
+  ],
+  "turtle_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "vex_armor_trim_smithing_template.png": [],
+  "vex_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "villager_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "vindicator_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "wandering_trader_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "warden_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "ward_armor_trim_smithing_template.png": [],
+  "warped_door.png": [],
+  "warped_fungus_on_a_stick.png": [
+    "ingredient",
+    "tool_and_utility"
+  ],
+  "warped_hanging_sign.png": [],
+  "warped_sign.png": [],
+  "water_bucket.png": [
+    "food_and_drink",
+    "tool_and_utility"
+  ],
+  "wayfinder_armor_trim_smithing_template.png": [],
+  "weathered_copper_chain.png": [],
+  "weathered_copper_door.png": [],
+  "weathered_copper_lantern.png": [],
+  "wheat.png": [
+    "food_and_drink",
+    "ingredient"
+  ],
+  "wheat_seeds.png": [
+    "food_and_drink"
+  ],
+  "white_bundle.png": [],
+  "white_bundle_open_back.png": [],
+  "white_bundle_open_front.png": [],
+  "white_candle.png": [],
+  "white_dye.png": [],
+  "white_harness.png": [],
+  "wildflowers.png": [],
+  "wild_armor_trim_smithing_template.png": [],
+  "wind_charge.png": [
+    "tool_and_utility"
+  ],
+  "witch_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "wither_skeleton_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "wither_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "wolf_armor.png": [
+    "combat"
+  ],
+  "wolf_armor_overlay.png": [
+    "combat"
+  ],
+  "wolf_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "wooden_axe.png": [
+    "combat"
+  ],
+  "wooden_hoe.png": [
+    "tool_and_utility"
+  ],
+  "wooden_pickaxe.png": [
+    "tool_and_utility"
+  ],
+  "wooden_shovel.png": [
+    "tool_and_utility"
+  ],
+  "wooden_spear.png": [],
+  "wooden_spear_in_hand.png": [],
+  "wooden_sword.png": [
+    "combat"
+  ],
+  "writable_book.png": [
+    "ingredient"
+  ],
+  "written_book.png": [
+    "ingredient"
+  ],
+  "yellow_bundle.png": [],
+  "yellow_bundle_open_back.png": [],
+  "yellow_bundle_open_front.png": [],
+  "yellow_candle.png": [],
+  "yellow_dye.png": [],
+  "yellow_harness.png": [],
+  "zoglin_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "zombie_horse_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "zombie_nautilus_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "zombie_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "zombie_villager_spawn_egg.png": [
+    "spawn_egg"
+  ],
+  "zombified_piglin_spawn_egg.png": [
+    "spawn_egg"
+  ]
+}
