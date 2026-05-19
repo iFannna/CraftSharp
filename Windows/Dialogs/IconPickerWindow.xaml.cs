@@ -29,6 +29,7 @@ namespace CraftSharp.Windows.Dialogs
 
         private readonly string _assetsBasePath;
         private readonly ObservableCollection<IconItem> _iconItems = new();
+        private readonly Dictionary<string, List<IconItem>> _iconCache = new();
         private IconCategoriesConfig? _categoryConfig;
 
         // 原生拖放目标（支持 Windows 拖拽缩略图）
@@ -144,6 +145,16 @@ namespace CraftSharp.Windows.Dialogs
 
         private async void LoadIconsForTagAsync(string tag)
         {
+            // 先检查缓存
+            if (_iconCache.TryGetValue(tag, out var cachedItems))
+            {
+                _iconItems.Clear();
+                foreach (var item in cachedItems)
+                    _iconItems.Add(item);
+                IconGrid.ItemsSource = _iconItems;
+                return;
+            }
+
             // 在后台线程收集文件路径
             var iconDataList = await Task.Run(() => CollectIconPaths(tag));
 
@@ -182,6 +193,9 @@ namespace CraftSharp.Windows.Dialogs
             }
 
             IconGrid.ItemsSource = _iconItems;
+
+            // 存入缓存
+            _iconCache[tag] = _iconItems.ToList();
 
             // 隐藏加载提示
             LoadingOverlay.Visibility = Visibility.Collapsed;
