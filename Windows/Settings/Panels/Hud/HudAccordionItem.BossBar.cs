@@ -1,4 +1,3 @@
-using CraftSharp.Controls;
 using CraftSharp.Models;
 using CraftSharp.Windows.BossBar;
 using System.Windows;

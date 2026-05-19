@@ -1,7 +1,7 @@
 <Window x:Class="CraftSharp.Windows.Inventory.InventoryTooltipWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:CraftSharp.Controls"
+        xmlns:local="clr-namespace:CraftSharp.Windows.Inventory"
         Title="Tooltip"
         AllowsTransparency="True"
         WindowStyle="None"
@@ -13,12 +13,12 @@
 
     <Grid x:Name="TooltipGrid">
         <!-- 背景层（九宫格贴图） -->
-        <controls:NineSliceImage x:Name="BackgroundImage"
+        <local:NineSliceImage x:Name="BackgroundImage"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"/>
 
         <!-- 边框层（九宫格贴图） -->
-        <controls:NineSliceImage x:Name="FrameImage"
+        <local:NineSliceImage x:Name="FrameImage"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"/>
 

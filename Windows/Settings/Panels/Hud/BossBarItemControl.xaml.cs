@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
-namespace CraftSharp.Controls
+namespace CraftSharp.Windows.Settings.Panels.Hud
 {
     /// <summary>
     /// BOSS血条列表项控件

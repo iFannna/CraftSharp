@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace CraftSharp.Controls
+namespace CraftSharp.Windows.Inventory
 {
     /// <summary>
     /// 九宫格贴图控件，边框拉伸不变形

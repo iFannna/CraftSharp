@@ -217,10 +217,10 @@ namespace CraftSharp
             _skinPreviewWindow.Show();
 
             // 设置窗口关闭时最小化到托盘
-            _settingsWindow.Closing += (_, e) =>
+            _settingsWindow.Closing += (_, cancelEventArgs) =>
             {
                 if (_taskbarIcon == null) return;
-                e.Cancel = true;
+                cancelEventArgs.Cancel = true;
                 _settingsWindow.Hide();
             };
 
