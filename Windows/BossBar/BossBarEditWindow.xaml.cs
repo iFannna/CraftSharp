@@ -104,7 +104,7 @@ namespace CraftSharp.Windows.BossBar
                 // 新建模式：默认配置（自定义数值100，数据映射关闭）
                 _iconType = "blue";
                 _notchType = "";
-                NameTextBox.Text = System.Windows.Application.Current.TryFindResource("BossBarDefaultName") as string ?? "新BOSS";
+                NameTextBox.Text = null!;
                 DataMappingToggle.IsChecked = false;
                 CustomValueToggle.IsChecked = true;
                 CurrentValueTextBox.Text = "100";

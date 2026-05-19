@@ -327,56 +327,82 @@ namespace CraftSharp.Models
         /// </summary>
         public static GroupModel3D CreatePlayerModel(string skinPath, string uvJsonPath)
         {
+            var (bodyGroup, _) = CreatePlayerModelWithSeparateHead(skinPath, uvJsonPath);
+            return bodyGroup;
+        }
+
+        /// <summary>
+        /// 创建玩家模型（头部独立分组，支持头部单独旋转）
+        /// </summary>
+        /// <returns>身体组（包含头部组作为子元素）和头部组</returns>
+        public static (GroupModel3D BodyGroup, GroupModel3D HeadGroup) CreatePlayerModelWithSeparateHead(string skinPath, string uvJsonPath)
+        {
             var uvData = LoadUvData(uvJsonPath);
-            var playerGroup = new GroupModel3D();
+            var bodyGroup = new GroupModel3D { Name = "BodyGroup" };
+            var headGroup = new GroupModel3D { Name = "HeadGroup" };
 
             if (uvData.Parts == null || uvData.TextureSize == null)
-                return playerGroup;
+                return (bodyGroup, headGroup);
 
             var material = CreateSkinMaterial(skinPath);
             var outerMaterial = CreateOuterLayerMaterial(skinPath);
             var texWidth = uvData.TextureSize.Width;
             var texHeight = uvData.TextureSize.Height;
 
-            var innerParts = new List<(string Name, PartData? Data)>
+            // 头部部分（内层和外层）
+            if (uvData.Parts.Head != null)
             {
-                ("Head", uvData.Parts.Head),
-                ("Body", uvData.Parts.Body),
-                ("RightArm", uvData.Parts.RightArm),
-                ("LeftArm", uvData.Parts.LeftArm),
-                ("RightLeg", uvData.Parts.RightLeg),
-                ("LeftLeg", uvData.Parts.LeftLeg)
+                var headModel = CreatePartModel(material, uvData.Parts.Head, texWidth, texHeight);
+                headGroup.Children.Add(headModel);
+            }
+            if (uvData.Parts.OuterHead != null)
+            {
+                var outerHeadModel = CreatePartModel(outerMaterial, uvData.Parts.OuterHead, texWidth, texHeight);
+                headGroup.Children.Add(outerHeadModel);
+            }
+
+            // 身体部分（不含头部）
+            var bodyParts = new List<PartData?>
+            {
+                uvData.Parts.Body,
+                uvData.Parts.RightArm,
+                uvData.Parts.LeftArm,
+                uvData.Parts.RightLeg,
+                uvData.Parts.LeftLeg
             };
 
-            var outerParts = new List<(string Name, PartData? Data)>
-            {
-                ("OuterHead", uvData.Parts.OuterHead),
-                ("OuterBody", uvData.Parts.OuterBody),
-                ("OuterRightArm", uvData.Parts.OuterRightArm),
-                ("OuterLeftArm", uvData.Parts.OuterLeftArm),
-                ("OuterRightLeg", uvData.Parts.OuterRightLeg),
-                ("OuterLeftLeg", uvData.Parts.OuterLeftLeg)
-            };
-
-            foreach (var (_, data) in innerParts)
+            foreach (var data in bodyParts)
             {
                 if (data != null)
                 {
                     var partModel = CreatePartModel(material, data, texWidth, texHeight);
-                    playerGroup.Children.Add(partModel);
+                    bodyGroup.Children.Add(partModel);
                 }
             }
 
-            foreach (var (_, data) in outerParts)
+            // 身体外层部分（不含头部外层）
+            var outerBodyParts = new List<PartData?>
+            {
+                uvData.Parts.OuterBody,
+                uvData.Parts.OuterRightArm,
+                uvData.Parts.OuterLeftArm,
+                uvData.Parts.OuterRightLeg,
+                uvData.Parts.OuterLeftLeg
+            };
+
+            foreach (var data in outerBodyParts)
             {
                 if (data != null)
                 {
                     var partModel = CreatePartModel(outerMaterial, data, texWidth, texHeight);
-                    playerGroup.Children.Add(partModel);
+                    bodyGroup.Children.Add(partModel);
                 }
             }
 
-            return playerGroup;
+            // 将头部组添加到身体组（嵌套关系）
+            bodyGroup.Children.Add(headGroup);
+
+            return (bodyGroup, headGroup);
         }
     }
 

@@ -75,6 +75,9 @@ namespace CraftSharp.Windows.Inventory
         // Tooltip 窗口
         private InventoryTooltipWindow? _tooltipWindow;
 
+        // 玩家预览控件
+        private PlayerPreviewControl? _playerPreviewControl;
+
         // 双击检测：上次点击的格子ID和时间
         private string? _lastClickedSlotId = null;
         private DateTime _lastClickTime = DateTime.MinValue;
@@ -593,9 +596,23 @@ namespace CraftSharp.Windows.Inventory
             _slotIcons.Clear();
             _slotHoverOverlays.Clear();
 
+            // 清理旧的玩家预览控件
+            if (_playerPreviewControl != null)
+            {
+                RootGrid.Children.Remove(_playerPreviewControl);
+                _playerPreviewControl = null;
+            }
+
             foreach (var coord in _slotCoords)
             {
                 var slotId = coord.slot_id;
+
+                // player 格子作为玩家预览区域，不创建格子控件
+                if (slotId == "player")
+                {
+                    SetupPlayerPreview(coord);
+                    continue;
+                }
 
                 // 根据配置尺寸缩放
                 double slotWidth = coord.width * _scaleFactor;
@@ -657,6 +674,44 @@ namespace CraftSharp.Windows.Inventory
                 _slotIcons[slotId] = icon;
                 _slotHoverOverlays[slotId] = hoverOverlay;
             }
+        }
+
+        /// <summary>
+        /// 设置玩家预览控件
+        /// </summary>
+        private void SetupPlayerPreview(SlotCoord coord)
+        {
+            double previewWidth = coord.width * _scaleFactor;
+            double previewHeight = coord.height * _scaleFactor;
+            double previewX = coord.x * _scaleFactor;
+            double previewY = coord.y * _scaleFactor;
+
+            _playerPreviewControl = new PlayerPreviewControl
+            {
+                Width = previewWidth,
+                Height = previewHeight,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(previewX, previewY, 0, 0)
+            };
+
+            RootGrid.Children.Add(_playerPreviewControl);
+
+            // 在 SourceInitialized 后更新预览位置（确保窗口位置已确定）
+            SourceInitialized += (_, _) => UpdatePlayerPreviewPosition();
+            LocationChanged += (_, _) => UpdatePlayerPreviewPosition();
+        }
+
+        /// <summary>
+        /// 更新玩家预览控件的位置信息
+        /// </summary>
+        private void UpdatePlayerPreviewPosition()
+        {
+            if (_playerPreviewControl == null) return;
+
+            // 获取预览控件在屏幕上的位置
+            var previewPosition = _playerPreviewControl.PointToScreen(new Point(0, 0));
+            _playerPreviewControl.UpdatePreviewPosition(previewPosition, _playerPreviewControl.ActualWidth, _playerPreviewControl.ActualHeight);
         }
 
         /// <summary>
