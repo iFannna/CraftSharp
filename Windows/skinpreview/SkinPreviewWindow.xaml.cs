@@ -4,10 +4,10 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using HelixToolkit.SharpDX;
 using HelixToolkit.Wpf.SharpDX;
 using CraftSharp.Models;
 using Wpf.Ui.Controls;
-using SharpDX.Direct3D11;
 
 namespace CraftSharp.Windows.SkinPreview
 {

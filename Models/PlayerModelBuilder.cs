@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
+using HelixToolkit;
+using HelixToolkit.SharpDX;
 using HelixToolkit.Wpf.SharpDX;
 using Newtonsoft.Json;
-using SharpDX;
 using SharpDX.Direct3D11;
 
 namespace CraftSharp.Models
@@ -78,8 +80,8 @@ namespace CraftSharp.Models
                 var material = new PhongMaterial
                 {
                     DiffuseMap = textureModel,
-                    DiffuseColor = new Color4(1, 1, 1, 1),
-                    SpecularColor = new Color4(0, 0, 0, 0),
+                    DiffuseColor = HelixToolkit.Maths.Color4.White,
+                    SpecularColor = HelixToolkit.Maths.Color4.Black,
                     SpecularShininess = 1,
                     DiffuseMapSampler = new SamplerStateDescription
                     {
@@ -111,8 +113,8 @@ namespace CraftSharp.Models
                 var material = new PhongMaterial
                 {
                     DiffuseMap = textureModel,
-                    DiffuseColor = new Color4(1, 1, 1, 1),
-                    SpecularColor = new Color4(0, 0, 0, 0),
+                    DiffuseColor = HelixToolkit.Maths.Color4.White,
+                    SpecularColor = HelixToolkit.Maths.Color4.Black,
                     SpecularShininess = 1,
                     DiffuseMapSampler = new SamplerStateDescription
                     {
@@ -153,23 +155,18 @@ namespace CraftSharp.Models
         /// <summary>
         /// 判断面是否需要镜像UV映射
         /// </summary>
-        /// <param name="face">面类型</param>
-        /// <returns>(mirroredU, mirroredV) - U坐标镜像和V坐标镜像</returns>
         private static (bool mirroredU, bool mirroredV) NeedsMirroredUv(FaceType face)
         {
-            // Top 面：上下颠倒 + 镜像翻转
-            // Bottom 面：镜像翻转
-
             return face switch
             {
-                FaceType.Top => (true, true),     // U镜像 + V镜像
-                FaceType.Bottom => (true, false), // U镜像，V不镜像
+                FaceType.Top => (true, true),
+                FaceType.Bottom => (true, false),
                 _ => (false, false)
             };
         }
 
         /// <summary>
-        /// 创建单个面的网格，UV 坐标指向纹理中的实际像素位置
+        /// 创建单个面的网格
         /// </summary>
         public static MeshGeometry3D CreateFaceMesh(
             Vector3 center, float width, float height, float depth,
@@ -179,7 +176,6 @@ namespace CraftSharp.Models
             var hh = height / 2f;
             var hd = depth / 2f;
 
-            // 计算顶点位置
             var (p0, p1, p2, p3) = face switch
             {
                 FaceType.Front => (
@@ -226,21 +222,18 @@ namespace CraftSharp.Models
                 _ => throw new ArgumentException($"Invalid face type: {face}")
             };
 
-            // UV 坐标归一化到纹理像素位置
-            // 纹理坐标系：原点在左上角，X 向右，Y 向下
             var u0 = uvData.X / (float)textureWidth;
             var u1 = (uvData.X + uvData.W) / (float)textureWidth;
             var v0 = uvData.Y / (float)textureHeight;
             var v1 = (uvData.Y + uvData.H) / (float)textureHeight;
 
-            // 根据镜像设置选择UV坐标
             var (mirroredU, mirroredV) = NeedsMirroredUv(face);
             var uvCoords = new Vector2Collection
             {
-                new Vector2(mirroredU ? u1 : u0, mirroredV ? v0 : v1),  // p0
-                new Vector2(mirroredU ? u0 : u1, mirroredV ? v0 : v1),  // p1
-                new Vector2(mirroredU ? u0 : u1, mirroredV ? v1 : v0),  // p2
-                new Vector2(mirroredU ? u1 : u0, mirroredV ? v1 : v0)   // p3
+                new Vector2(mirroredU ? u1 : u0, mirroredV ? v0 : v1),
+                new Vector2(mirroredU ? u0 : u1, mirroredV ? v0 : v1),
+                new Vector2(mirroredU ? u0 : u1, mirroredV ? v1 : v0),
+                new Vector2(mirroredU ? u1 : u0, mirroredV ? v1 : v0)
             };
 
             return new MeshGeometry3D
@@ -266,8 +259,8 @@ namespace CraftSharp.Models
 
             var faces = new[]
             {
-                (FaceType.Front, uv.Back),    // Front 面使用 Back 的 UV
-                (FaceType.Back, uv.Front),    // Back 面使用 Front 的 UV
+                (FaceType.Front, uv.Back),
+                (FaceType.Back, uv.Front),
                 (FaceType.Top, uv.Top),
                 (FaceType.Bottom, uv.Bottom),
                 (FaceType.Right, uv.Right),
@@ -283,12 +276,10 @@ namespace CraftSharp.Models
 
                 var baseIndex = positions.Count;
 
-                // 添加顶点数据
                 positions.AddRange(faceMesh.Positions);
                 normals.AddRange(faceMesh.Normals);
                 textureCoords.AddRange(faceMesh.TextureCoordinates);
 
-                // 添加索引数据，偏移到当前顶点位置
                 foreach (var idx in faceMesh.Indices)
                 {
                     indices.Add(baseIndex + idx);
@@ -312,7 +303,6 @@ namespace CraftSharp.Models
             if (partData.Size == null || partData.Position == null || partData.Uv == null)
                 return new MeshGeometryModel3D();
 
-            // 直接使用 JSON 配置中的位置，不做任何翻转
             var center = new Vector3(
                 partData.Position.X,
                 partData.Position.Y,
@@ -347,13 +337,11 @@ namespace CraftSharp.Models
             if (uvData.Parts == null || uvData.TextureSize == null)
                 return playerGroup;
 
-            // 创建或获取单一材质，所有部位共享
             var material = CreateSkinMaterial(skinPath);
             var outerMaterial = CreateOuterLayerMaterial(skinPath);
             var texWidth = uvData.TextureSize.Width;
             var texHeight = uvData.TextureSize.Height;
 
-            // 内层部位
             var innerParts = new List<(string Name, PartData? Data)>
             {
                 ("Head", uvData.Parts.Head),
@@ -364,7 +352,6 @@ namespace CraftSharp.Models
                 ("LeftLeg", uvData.Parts.LeftLeg)
             };
 
-            // 外层覆盖物部位
             var outerParts = new List<(string Name, PartData? Data)>
             {
                 ("OuterHead", uvData.Parts.OuterHead),
@@ -375,7 +362,6 @@ namespace CraftSharp.Models
                 ("OuterLeftLeg", uvData.Parts.OuterLeftLeg)
             };
 
-            // 先添加内层部位
             foreach (var (_, data) in innerParts)
             {
                 if (data != null)
@@ -385,7 +371,6 @@ namespace CraftSharp.Models
                 }
             }
 
-            // 后添加外层覆盖物（渲染顺序在内层之后）
             foreach (var (_, data) in outerParts)
             {
                 if (data != null)
