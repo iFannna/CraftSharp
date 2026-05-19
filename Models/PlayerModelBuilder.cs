@@ -66,7 +66,7 @@ namespace CraftSharp.Models
         }
 
         /// <summary>
-        /// 创建或获取皮肤材质（带缓存）
+        /// 创建或获取皮肤材质（带缓存，使用 DiffuseMaterial 不受光照影响）
         /// </summary>
         public static Material CreateSkinMaterial(string skinPath)
         {
@@ -77,12 +77,10 @@ namespace CraftSharp.Models
 
                 var textureModel = new TextureModel(skinPath);
 
-                var material = new PhongMaterial
+                var material = new DiffuseMaterial
                 {
                     DiffuseMap = textureModel,
                     DiffuseColor = HelixToolkit.Maths.Color4.White,
-                    SpecularColor = HelixToolkit.Maths.Color4.Black,
-                    SpecularShininess = 1,
                     DiffuseMapSampler = new SamplerStateDescription
                     {
                         Filter = Filter.MinMagMipPoint,
@@ -98,7 +96,7 @@ namespace CraftSharp.Models
         }
 
         /// <summary>
-        /// 创建外层覆盖物材质（支持 Alpha 混合）
+        /// 创建外层覆盖物材质（支持 Alpha 混合，使用 DiffuseMaterial 不受光照影响）
         /// </summary>
         public static Material CreateOuterLayerMaterial(string skinPath)
         {
@@ -110,12 +108,10 @@ namespace CraftSharp.Models
 
                 var textureModel = new TextureModel(skinPath);
 
-                var material = new PhongMaterial
+                var material = new DiffuseMaterial
                 {
                     DiffuseMap = textureModel,
                     DiffuseColor = HelixToolkit.Maths.Color4.White,
-                    SpecularColor = HelixToolkit.Maths.Color4.Black,
-                    SpecularShininess = 1,
                     DiffuseMapSampler = new SamplerStateDescription
                     {
                         Filter = Filter.MinMagMipPoint,
