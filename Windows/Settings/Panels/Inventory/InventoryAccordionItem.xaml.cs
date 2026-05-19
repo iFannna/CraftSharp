@@ -452,8 +452,8 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
         {
             comboBox.Items.Clear();
 
-            var customColor = _settings.Inventory.CustomFileNameColor;
-            bool hasCustomColor = customColor != null &&
+            string? customColor = _settings?.Inventory.CustomFileNameColor;
+            bool hasCustomColor = !string.IsNullOrEmpty(customColor) &&
                                   !ColorPickerHelper.PresetColors.Contains(customColor);
 
             int selectedIndex = -1;

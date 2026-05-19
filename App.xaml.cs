@@ -13,7 +13,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 
 namespace CraftSharp
 {
-    public partial class App : System.Windows.Application
+    public partial class App
     {
         private StatusBarWindow? _statusBarWindow;
         private CrosshairWindow? _crosshairWindow;
@@ -138,7 +138,7 @@ namespace CraftSharp
             BossBarService.Instance.Initialize(_bossBarWindow, _appSettings!);
 
             // 默认显示BOSS血条窗口（如果有启用项）
-            if (_appSettings?.BossBars?.Any(b => b.IsEnabled) ?? false)
+            if (_appSettings?.BossBars.Any(b => b.IsEnabled) ?? false)
                 _bossBarWindow.Show();
             else
                 _bossBarWindow.Hide();
@@ -219,11 +219,9 @@ namespace CraftSharp
             // 设置窗口关闭时最小化到托盘
             _settingsWindow.Closing += (_, e) =>
             {
-                if (_taskbarIcon != null)
-                {
-                    e.Cancel = true;
-                    _settingsWindow.Hide();
-                }
+                if (_taskbarIcon == null) return;
+                e.Cancel = true;
+                _settingsWindow.Hide();
             };
 
             // 注册全局快捷键
@@ -243,7 +241,7 @@ namespace CraftSharp
                     _appSettings = JsonSerializer.Deserialize<Models.AppSettings>(json);
 
                     // 清理重复的HudElements（只保留每个ID的第一个）
-                    if (_appSettings?.HudElements != null && _appSettings.HudElements.Count > 0)
+                    if (_appSettings?.HudElements is { Count: > 0 })
                     {
                         var uniqueElements = _appSettings.HudElements
                             .GroupBy(h => h.Id)
@@ -362,7 +360,7 @@ namespace CraftSharp
 
             foreach (var kvp in defaultConfigs)
             {
-                if (!_appSettings.HudElements.Any(h => h.Id == kvp.Key))
+                if (_appSettings.HudElements.All(h => h.Id != kvp.Key))
                 {
                     _appSettings.HudElements.Add(kvp.Value);
                 }
@@ -408,7 +406,7 @@ namespace CraftSharp
         {
             _trayContextMenu = new System.Windows.Controls.ContextMenu
             {
-                Style = (Style)FindResource("WpfUiContextMenuStyle"),
+                Style = (Style)FindResource("WpfUiContextMenuStyle")!,
                 Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint
             };
 
@@ -416,80 +414,80 @@ namespace CraftSharp
             _showMainItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _showMainItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 _settingsWindow?.Show();
                 _settingsWindow?.Activate();
             };
-            _trayContextMenu.Items.Add(_showMainItem);
+            _trayContextMenu!.Items.Add(_showMainItem);
 
             // 显示状态栏
             _showStatusBarItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _showStatusBarItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 _statusBarWindow?.Show();
             };
-            _trayContextMenu.Items.Add(_showStatusBarItem);
+            _trayContextMenu!.Items.Add(_showStatusBarItem);
 
             // 隐藏状态栏
             _hideStatusBarItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _hideStatusBarItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 _statusBarWindow?.Hide();
             };
-            _trayContextMenu.Items.Add(_hideStatusBarItem);
+            _trayContextMenu!.Items.Add(_hideStatusBarItem);
 
             // 打开物品栏
             _openInventoryItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _openInventoryItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 _inventoryWindow?.Show();
             };
-            _trayContextMenu.Items.Add(_openInventoryItem);
+            _trayContextMenu!.Items.Add(_openInventoryItem);
 
             // 关闭物品栏
             _closeInventoryItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _closeInventoryItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 _inventoryWindow?.Hide();
             };
-            _trayContextMenu.Items.Add(_closeInventoryItem);
+            _trayContextMenu!.Items.Add(_closeInventoryItem);
 
             // 退出
             _exitItem = new System.Windows.Controls.MenuItem
             {
                 Header = TryFindResource("TrayExit") as string ?? "退出",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")
+                Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
             _exitItem.Click += (_, _) =>
             {
-                _trayContextMenu.IsOpen = false;
+                _trayContextMenu!.IsOpen = false;
                 Shutdown();
             };
-            _trayContextMenu.Items.Add(_exitItem);
+            _trayContextMenu!.Items.Add(_exitItem);
 
             return _trayContextMenu;
         }
@@ -531,13 +529,13 @@ namespace CraftSharp
             // 在主窗口上监听键盘事件
             EventManager.RegisterClassHandler(typeof(Window),
                 Keyboard.KeyDownEvent,
-                new System.Windows.Input.KeyEventHandler(GlobalKeyDown));
+                new KeyEventHandler(GlobalKeyDown));
         }
 
         /// <summary>
         /// 全局键盘按下事件
         /// </summary>
-        private void GlobalKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void GlobalKeyDown(object sender, KeyEventArgs e)
         {
             // E键 - 切换背包显示（仅当显示物品栏开启时）
             if (e.Key == Key.E && (_appSettings?.Inventory.Visible ?? true))
@@ -575,7 +573,10 @@ namespace CraftSharp
                 var json = JsonSerializer.Serialize(_appSettings, new JsonSerializerOptions { WriteIndented = true });
                 System.IO.File.WriteAllText(_settingsPath, json);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         /// <summary>
@@ -670,14 +671,14 @@ namespace CraftSharp
         /// </summary>
         private void InitializeBrushes()
         {
-            Resources.Add("ApplicationBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x20, 0x20, 0x20)));
-            Resources.Add("CardBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2D, 0x2D, 0x2D)));
-            Resources.Add("AccentBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x78, 0xD4)));
-            Resources.Add("TextPrimaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF)));
-            Resources.Add("TextSecondaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x99, 0x99, 0x99)));
-            Resources.Add("TextTertiaryBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66)));
-            Resources.Add("DividerBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x40, 0x40, 0x40)));
-            Resources.Add("HoverBackgroundBrush", new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x3D, 0x3D, 0x3D)));
+            Resources.Add("ApplicationBackgroundBrush", new SolidColorBrush(Color.FromRgb(0x20, 0x20, 0x20)));
+            Resources.Add("CardBackgroundBrush", new SolidColorBrush(Color.FromRgb(0x2D, 0x2D, 0x2D)));
+            Resources.Add("AccentBrush", new SolidColorBrush(Color.FromRgb(0x00, 0x78, 0xD4)));
+            Resources.Add("TextPrimaryBrush", new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xFF)));
+            Resources.Add("TextSecondaryBrush", new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0x99)));
+            Resources.Add("TextTertiaryBrush", new SolidColorBrush(Color.FromRgb(0x66, 0x66, 0x66)));
+            Resources.Add("DividerBrush", new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x40)));
+            Resources.Add("HoverBackgroundBrush", new SolidColorBrush(Color.FromRgb(0x3D, 0x3D, 0x3D)));
         }
     }
 }

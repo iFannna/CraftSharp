@@ -614,8 +614,8 @@ namespace CraftSharp.Windows.StatusBar
         {
             if (slotIndex < 0 || slotIndex >= _slotIds.Length) return;
 
-            ImageSource cachedIconSource = DragIconImage.Source;
-            System.Windows.Controls.Image iconImage = GetSlotIconImage(slotIndex);
+            ImageSource? cachedIconSource = DragIconImage.Source;
+            System.Windows.Controls.Image? iconImage = GetSlotIconImage(slotIndex);
 
             if (iconImage != null && cachedIconSource != null)
             {
