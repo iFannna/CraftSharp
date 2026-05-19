@@ -65,7 +65,7 @@ namespace CraftSharp.Windows.StatusBar
             double airGap = _airGap * _scaleFactor;
 
             // 获取配置值
-            var settings = GetHudElementSettings("air");
+            var settings = GetHudElementSettings("Air");
             int maxValue = Math.Max(2, settings?.CustomMaxValue ?? 20); // 最大值最小为2
             int slotCount = maxValue / 2; // 图标数量
 
@@ -136,7 +136,7 @@ namespace CraftSharp.Windows.StatusBar
         private void UpdateAirLevel()
         {
             // 获取配置值
-            var settings = GetHudElementSettings("air");
+            var settings = GetHudElementSettings("Air");
             int maxValue = Math.Max(2, settings?.CustomMaxValue ?? 20);
             int slotCount = maxValue / 2;
 
@@ -147,7 +147,7 @@ namespace CraftSharp.Windows.StatusBar
             if (dataMappingEnabled)
             {
                 // 数据映射开启：从数据源获取百分比，转换为空气值
-                string mappingType = settings?.DataMappingType ?? "电池电量";
+                string mappingType = settings?.DataMappingType ?? "BatteryLevel";
                 double percent = DataMappingService.Instance.GetValue(mappingType);
                 currentValue = (int)(percent * maxValue);
             }

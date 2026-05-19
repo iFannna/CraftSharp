@@ -204,7 +204,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
         private void RefreshHudElement(string id)
         {
-            if (id == "crosshair" || id == "attackindicator")
+            if (id == "Crosshair" || id == "AttackIndicator")
             {
                 CrosshairService.Instance.RefreshHudElement(id);
             }
@@ -250,11 +250,11 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             return id switch
             {
-                "expbar" => StatusBarService.Instance.SetExpBarVisible,
-                "food" => StatusBarService.Instance.SetFoodVisible,
-                "air" => StatusBarService.Instance.SetAirVisible,
-                "armor" => StatusBarService.Instance.SetArmorVisible,
-                "absorbing" => StatusBarService.Instance.SetAbsorbingVisible,
+                "ExpBar" => StatusBarService.Instance.SetExpBarVisible,
+                "Food" => StatusBarService.Instance.SetFoodVisible,
+                "Air" => StatusBarService.Instance.SetAirVisible,
+                "Armor" => StatusBarService.Instance.SetArmorVisible,
+                "Absorbing" => StatusBarService.Instance.SetAbsorbingVisible,
                 _ => null
             };
         }

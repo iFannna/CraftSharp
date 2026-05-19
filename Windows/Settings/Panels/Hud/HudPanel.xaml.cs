@@ -38,14 +38,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             // 状态栏元素
             var statusBarElements = new[]
             {
-                ("statusbar", "HudElementStatusBar"),
-                ("hotbar", "HudElementHotbar"),
-                ("expbar", "HudElementExpbar"),
-                ("health", "HudElementHealth"),
-                ("food", "HudElementFood"),
-                ("air", "HudElementAir"),
-                ("absorbing", "HudElementAbsorbing"),
-                ("armor", "HudElementArmor"),
+                ("StatusBar", "HudElementStatusBar"),
+                ("Hotbar", "HudElementHotbar"),
+                ("ExpBar", "HudElementExpbar"),
+                ("Health", "HudElementHealth"),
+                ("Food", "HudElementFood"),
+                ("Air", "HudElementAir"),
+                ("Absorbing", "HudElementAbsorbing"),
+                ("Armor", "HudElementArmor"),
             };
 
             foreach (var (id, resourceKey) in statusBarElements)
@@ -59,8 +59,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             // 准星元素
             var crosshairElements = new[]
             {
-                ("crosshair", "HudElementCrosshair"),
-                ("attackindicator", "HudElementAttackIndicator"),
+                ("Crosshair", "HudElementCrosshair"),
+                ("AttackIndicator", "HudElementAttackIndicator"),
             };
 
             foreach (var (id, resourceKey) in crosshairElements)
@@ -74,7 +74,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             // BOSS血条元素
             var bossBarElements = new[]
             {
-                ("bossbar", "HudElementBossBar"),
+                ("BossBar", "HudElementBossBar"),
             };
 
             foreach (var (id, resourceKey) in bossBarElements)

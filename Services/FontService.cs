@@ -13,7 +13,7 @@ namespace CraftSharp.Services
         /// <summary>
         /// 当前字体标识符
         /// </summary>
-        public string CurrentFontTag { get; private set; } = "yahei";
+        public string CurrentFontTag { get; private set; } = "YaHei";
 
         /// <summary>
         /// 当前字体大小

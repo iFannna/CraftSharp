@@ -39,22 +39,22 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
             }
         }
 
-        private static int GetThemeIndex(string theme) => theme switch { "暗色" => 1, "亮色" => 2, _ => 0 };
-
-        private static int GetFontIndex(string fontTag)
+        private static int GetThemeIndex(string theme) => theme switch
         {
-            // 处理旧版本存储的中文名称
-            var tag = fontTag switch
-            {
-                "像素字体" => "pixel",
-                "统一字体" => "unifont",
-                "宋体" => "songti",
-                "黑体" => "heiti",
-                "楷体" => "kaiti",
-                _ => fontTag
-            };
-            return tag switch { "pixel" => 1, "unifont" => 2, "songti" => 3, "kaiti" => 4, "heiti" => 5, _ => 0 };
-        }
+            "dark" => 1,
+            "light" => 2,
+            _ => 0 // system
+        };
+
+        private static int GetFontIndex(string fontTag) => fontTag switch
+        {
+            "Pixel" => 1,
+            "UniFont" => 2,
+            "SongTi" => 3,
+            "KaiTi" => 4,
+            "HeiTi" => 5,
+            _ => 0 // YaHei
+        };
 
         private static int GetFontSizeIndex(int fontSize) => fontSize switch { 10 => 0, 12 => 1, 16 => 3, 18 => 4, 20 => 5, _ => 2 };
 
@@ -67,9 +67,9 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
                 var tag = item.Tag?.ToString() ?? "system";
                 var themeValue = tag switch
                 {
-                    "dark" => "暗色",
-                    "light" => "亮色",
-                    _ => "跟随系统"
+                    "dark" => "dark",
+                    "light" => "light",
+                    _ => "system"
                 };
                 _settings.Appearance.Theme = themeValue;
 
@@ -87,7 +87,7 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
             if (FontComboBox.SelectedItem is ComboBoxItem item)
             {
                 // 直接使用 Tag 作为字体标识符存储
-                var tag = item.Tag?.ToString() ?? "yahei";
+                var tag = item.Tag?.ToString() ?? "YaHei";
                 _settings.Appearance.Font = tag;
 
                 // 切换字体（使用标识符）

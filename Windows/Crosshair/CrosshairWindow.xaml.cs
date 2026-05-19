@@ -142,7 +142,7 @@ namespace CraftSharp.Windows.Crosshair
             if (_appSettings == null) return;
 
             // 准星配置
-            var crosshairSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+            var crosshairSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
             if (crosshairSettings != null)
             {
                 _crosshairVisible = crosshairSettings.IsVisible;
@@ -152,7 +152,7 @@ namespace CraftSharp.Windows.Crosshair
             }
 
             // 攻击指示器配置
-            var attackIndicatorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+            var attackIndicatorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
             if (attackIndicatorSettings != null)
             {
                 _attackIndicatorVisible = attackIndicatorSettings.IsVisible;
@@ -288,7 +288,7 @@ namespace CraftSharp.Windows.Crosshair
         /// </summary>
         private double GetAttackIndicatorPercent()
         {
-            var settings = _appSettings?.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+            var settings = _appSettings?.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
 
             // 如果启用自定义数值，使用配置的当前值（0-100）
             if (settings?.CustomValueEnabled == true)
@@ -298,7 +298,7 @@ namespace CraftSharp.Windows.Crosshair
             }
 
             // 否则使用数据映射
-            string mappingType = settings?.DataMappingType ?? "电池电量";
+            string mappingType = settings?.DataMappingType ?? "BatteryLevel";
             return DataMappingService.Instance.GetValue(mappingType);
         }
 

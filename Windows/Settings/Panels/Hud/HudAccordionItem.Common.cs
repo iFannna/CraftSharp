@@ -192,9 +192,9 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             return hudId switch
             {
-                "health" => AssetPaths.HeartContainer,
-                "food" => AssetPaths.FoodEmpty,
-                "absorbing" => AssetPaths.HeartContainer,
+                "Health" => AssetPaths.HeartContainer,
+                "Food" => AssetPaths.FoodEmpty,
+                "Absorbing" => AssetPaths.HeartContainer,
                 _ => null
             };
         }
@@ -246,14 +246,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             return hudId switch
             {
-                "health" => "heart",
-                "food" => "food",
-                "absorbing" => "absorbing",
-                "armor" => "armor",
-                "air" => "air",
-                "expbar" => "expbar",
-                "crosshair" => "crosshair",
-                "attackindicator" => "attackindicator",
+                "Health" => "heart",
+                "Food" => "food",
+                "Absorbing" => "absorbing",
+                "Armor" => "armor",
+                "Air" => "air",
+                "ExpBar" => "ExpBar",
+                "Crosshair" => "crosshair",
+                "AttackIndicator" => "AttackIndicator",
                 _ => hudId
             };
         }
@@ -262,14 +262,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             return hudId switch
             {
-                "health" => AssetPaths.GetHeartPathWithFallback(iconStyle, "full"),
-                "food" => AssetPaths.GetFoodPath(iconStyle, "full"),
-                "absorbing" => GetAbsorbingIconPath(iconStyle),
-                "armor" => AssetPaths.ArmorFull,
-                "air" => AssetPaths.Air,
-                "expbar" => GetExpBarIconPath(iconStyle),
-                "crosshair" => AssetPaths.Crosshair,
-                "attackindicator" => AssetPaths.CrosshairAttackIndicatorFull,
+                "Health" => AssetPaths.GetHeartPathWithFallback(iconStyle, "full"),
+                "Food" => AssetPaths.GetFoodPath(iconStyle, "full"),
+                "Absorbing" => GetAbsorbingIconPath(iconStyle),
+                "Armor" => AssetPaths.ArmorFull,
+                "Air" => AssetPaths.Air,
+                "ExpBar" => GetExpBarIconPath(iconStyle),
+                "Crosshair" => AssetPaths.Crosshair,
+                "AttackIndicator" => AssetPaths.CrosshairAttackIndicatorFull,
                 _ => ""
             };
         }

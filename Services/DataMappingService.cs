@@ -55,10 +55,10 @@ namespace CraftSharp.Services
         {
             switch (mappingType)
             {
-                case "电池电量":
+                case "BatteryLevel":
                     return Win32Helper.GetBatteryLevel();
 
-                case "内存占用率":
+                case "MemoryUsage":
                     try
                     {
                         if (_availableMemoryCounter != null)
@@ -75,7 +75,7 @@ namespace CraftSharp.Services
                         return 0;
                     }
 
-                case "CPU利用率":
+                case "CpuUsage":
                     try
                     {
                         if (_cpuCounter != null)
@@ -89,7 +89,7 @@ namespace CraftSharp.Services
                         return 0;
                     }
 
-                case "GPU利用率":
+                case "GpuUsage":
                     try
                     {
                         // 初始化LibreHardwareMonitor（仅第一次）

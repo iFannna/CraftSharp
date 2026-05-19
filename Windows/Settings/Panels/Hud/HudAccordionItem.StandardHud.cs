@@ -12,48 +12,48 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
     {
         private void AddHealthContent()
         {
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "health");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "Health");
             string iconStyle = settings?.IconStyle ?? "";
             string iconPath = AssetPaths.GetHeartPathWithFallback(iconStyle, "full");
-            AddStandardHudElement("health", StatusBarService.Instance.SetHealthVisible, hasRegenAnimation: true, iconPath: iconPath);
+            AddStandardHudElement("Health", StatusBarService.Instance.SetHealthVisible, hasRegenAnimation: true, iconPath: iconPath);
         }
 
         private void AddFoodContent()
         {
-            var setVisibleAction = GetSetVisibleAction("food");
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "food");
+            var setVisibleAction = GetSetVisibleAction("Food");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "Food");
             string iconStyle = settings?.IconStyle ?? "";
             string iconPath = AssetPaths.GetFoodPath(iconStyle, "full");
-            AddStandardHudElement("food", setVisibleAction, hasSaturation: true, iconPath: iconPath);
+            AddStandardHudElement("Food", setVisibleAction, hasSaturation: true, iconPath: iconPath);
         }
 
         private void AddAirContent()
         {
-            var setVisibleAction = GetSetVisibleAction("air");
-            AddStandardHudElement("air", setVisibleAction, hasRegenAnimation: true, hasAirAnimation: true, iconPath: AssetPaths.Air);
+            var setVisibleAction = GetSetVisibleAction("Air");
+            AddStandardHudElement("Air", setVisibleAction, hasRegenAnimation: true, hasAirAnimation: true, iconPath: AssetPaths.Air);
         }
 
         private void AddExpBarContent()
         {
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "expbar");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "ExpBar");
             string iconStyle = settings?.IconStyle ?? "";
             string iconPath = GetExpBarIconPath(iconStyle);
-            AddStandardHudElement("expbar", StatusBarService.Instance.SetExpBarVisible, hasMaxValue: false, iconPath: iconPath);
+            AddStandardHudElement("ExpBar", StatusBarService.Instance.SetExpBarVisible, hasMaxValue: false, iconPath: iconPath);
         }
 
         private void AddAbsorbingContent()
         {
-            var setVisibleAction = GetSetVisibleAction("absorbing");
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "absorbing");
+            var setVisibleAction = GetSetVisibleAction("Absorbing");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "Absorbing");
             string iconStyle = settings?.IconStyle ?? "";
             string iconPath = GetAbsorbingIconPath(iconStyle);
-            AddStandardHudElement("absorbing", setVisibleAction, maxValueLimit: 1024, iconPath: iconPath);
+            AddStandardHudElement("Absorbing", setVisibleAction, maxValueLimit: 1024, iconPath: iconPath);
         }
 
         private void AddArmorContent()
         {
-            var setVisibleAction = GetSetVisibleAction("armor");
-            AddStandardHudElement("armor", setVisibleAction, iconPath: AssetPaths.ArmorFull);
+            var setVisibleAction = GetSetVisibleAction("Armor");
+            AddStandardHudElement("Armor", setVisibleAction, iconPath: AssetPaths.ArmorFull);
         }
 
         private void AddStandardHudElement(string id, Action<bool>? setVisibleAction, bool hasRegenAnimation = false, bool hasAirAnimation = false, bool hasMaxValue = true, int maxValueLimit = 20, bool hasSaturation = false, string iconPath = "")
@@ -63,7 +63,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             bool isVisible = settings?.IsVisible ?? true;
             bool regenAnim = settings?.RegenAnimation ?? false;
             bool dataMappingEnabled = settings?.DataMappingEnabled ?? false;
-            string dataMappingType = settings?.DataMappingType ?? "电池电量";
+            string dataMappingType = settings?.DataMappingType ?? "BatteryLevel";
             bool customValueEnabled = settings?.CustomValueEnabled ?? false;
             int customCurrentValue = settings?.CustomCurrentValue ?? 10;
             int customMaxValue = settings?.CustomMaxValue ?? 20;

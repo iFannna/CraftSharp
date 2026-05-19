@@ -13,14 +13,14 @@ namespace CraftSharp.Services
         public static ThemeService Instance => _instance ??= new ThemeService();
 
         /// <summary>
-        /// 当前设置的主题模式（跟随系统/暗色/亮色）
+        /// 当前设置的主题模式（system/light/dark）
         /// </summary>
-        public string ThemeMode { get; private set; } = "跟随系统";
+        public string ThemeMode { get; private set; } = "system";
 
         /// <summary>
         /// 当前实际应用的主题
         /// </summary>
-        public string CurrentTheme { get; private set; } = "暗色";
+        public string CurrentTheme { get; private set; } = "dark";
 
         /// <summary>
         /// 系统主题变化事件
@@ -44,8 +44,8 @@ namespace CraftSharp.Services
             if (e.Category == UserPreferenceCategory.General)
             {
                 // 检查系统主题是否变化
-                var systemTheme = IsSystemLightTheme() ? "亮色" : "暗色";
-                if (systemTheme != CurrentTheme && ThemeMode == "跟随系统")
+                var systemTheme = IsSystemLightTheme() ? "light" : "dark";
+                if (systemTheme != CurrentTheme && ThemeMode == "system")
                 {
                     CurrentTheme = systemTheme;
                     ApplyTheme(systemTheme);
@@ -71,7 +71,7 @@ namespace CraftSharp.Services
         private void ApplyTheme(string theme)
         {
             // 使用 WPF UI 的 ApplicationThemeManager 切换主题
-            var wpfTheme = theme == "亮色" ? ApplicationTheme.Light : ApplicationTheme.Dark;
+            var wpfTheme = theme == "light" ? ApplicationTheme.Light : ApplicationTheme.Dark;
             ApplicationThemeManager.Apply(wpfTheme);
 
             // 更新自定义颜色画笔
@@ -86,7 +86,7 @@ namespace CraftSharp.Services
             var app = System.Windows.Application.Current;
             if (app == null) return;
 
-            var isLight = theme == "亮色";
+            var isLight = theme == "light";
 
             UpdateBrush(app, "ApplicationBackgroundBrush",
                 isLight ? System.Windows.Media.Color.FromRgb(0xF3, 0xF3, 0xF3) : System.Windows.Media.Color.FromRgb(0x20, 0x20, 0x20));
@@ -118,9 +118,9 @@ namespace CraftSharp.Services
         /// </summary>
         public string GetActualTheme(string settingValue)
         {
-            if (settingValue == "跟随系统")
+            if (settingValue == "system")
             {
-                return IsSystemLightTheme() ? "亮色" : "暗色";
+                return IsSystemLightTheme() ? "light" : "dark";
             }
             return settingValue;
         }

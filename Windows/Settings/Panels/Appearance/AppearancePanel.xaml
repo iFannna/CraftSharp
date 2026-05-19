@@ -72,42 +72,42 @@
                 </StackPanel>
                 <ComboBox Grid.Column="1" Width="160" x:Name="FontComboBox"
                           SelectionChanged="FontComboBox_SelectionChanged">
-                    <ComboBoxItem Content="{DynamicResource FontYaHei}" Tag="yahei">
+                    <ComboBoxItem Content="{DynamicResource FontYaHei}" Tag="YaHei">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="Microsoft YaHei" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
-                    <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="pixel">
+                    <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="Pixel">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="pack://application:,,,/Fonts/zpix.ttf#Zpix" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
-                    <ComboBoxItem Content="{DynamicResource FontUnifont}" Tag="unifont">
+                    <ComboBoxItem Content="{DynamicResource FontUnifont}" Tag="UniFont">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="pack://application:,,,/Fonts/unifont-16.0.04.ttf#Unifont" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
-                    <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="songti">
+                    <ComboBoxItem Content="{DynamicResource FontSongTi}" Tag="SongTi">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="SimSun" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
-                    <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="kaiti">
+                    <ComboBoxItem Content="{DynamicResource FontKaiTi}" Tag="KaiTi">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="KaiTi" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
-                    <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="heiti">
+                    <ComboBoxItem Content="{DynamicResource FontHeiTi}" Tag="HeiTi">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" FontFamily="SimHei" Style="{x:Null}"/>

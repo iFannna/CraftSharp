@@ -78,7 +78,7 @@ namespace CraftSharp.Windows.StatusBar
             double absorbingGap = _absorbingGap * _scaleFactor;
 
             // 获取配置值
-            var settings = GetHudElementSettings("absorbing");
+            var settings = GetHudElementSettings("Absorbing");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
             string iconStyle = settings?.IconStyle ?? ""; // 图标样式
@@ -182,7 +182,7 @@ namespace CraftSharp.Windows.StatusBar
         private void UpdateAbsorbing()
         {
             // 获取配置值
-            var settings = GetHudElementSettings("absorbing");
+            var settings = GetHudElementSettings("Absorbing");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2;
 
@@ -193,7 +193,7 @@ namespace CraftSharp.Windows.StatusBar
             if (dataMappingEnabled)
             {
                 // 数据映射开启：从数据源获取百分比，转换为伤害吸收值
-                string mappingType = settings?.DataMappingType ?? "电池电量";
+                string mappingType = settings?.DataMappingType ?? "BatteryLevel";
                 double percent = DataMappingService.Instance.GetValue(mappingType);
                 currentValue = (int)(percent * maxValue);
             }

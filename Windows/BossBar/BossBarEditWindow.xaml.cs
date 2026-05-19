@@ -108,7 +108,7 @@ namespace CraftSharp.Windows.BossBar
                 DataMappingToggle.IsChecked = false;
                 CustomValueToggle.IsChecked = true;
                 CurrentValueTextBox.Text = "100";
-                SetDataMappingComboBox("电池电量");
+                SetDataMappingComboBox("BatteryLevel");
             }
 
             // 更新可见性
@@ -217,10 +217,10 @@ namespace CraftSharp.Windows.BossBar
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             // 获取数据映射类型
-            string dataMappingType = "电池电量";
+            string dataMappingType = "BatteryLevel";
             if (DataMappingComboBox.SelectedItem is ComboBoxItem item)
             {
-                dataMappingType = item.Tag as string ?? "电池电量";
+                dataMappingType = item.Tag as string ?? "BatteryLevel";
             }
 
             // 验证并获取自定义数值

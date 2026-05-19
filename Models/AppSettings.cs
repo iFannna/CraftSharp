@@ -83,7 +83,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 界面语言
         /// </summary>
-        public string Language { get; set; } = "简体中文";
+        public string Language { get; set; } = "zh-CN";
 
         /// <summary>
         /// 开机自启动
@@ -121,9 +121,9 @@ namespace CraftSharp.Models
         public double WindowHeight { get; set; } = 720;
 
         /// <summary>
-        /// 设置窗口状态（Normal/Maximized）
+        /// 设置窗口状态（normal/maximized）
         /// </summary>
-        public string WindowState { get; set; } = "Normal";
+        public string WindowState { get; set; } = "normal";
 
         /// <summary>
         /// 记住卡片状态
@@ -154,22 +154,17 @@ namespace CraftSharp.Models
         /// <summary>
         /// 主题风格
         /// </summary>
-        public string Theme { get; set; } = "跟随系统";
+        public string Theme { get; set; } = "system";
 
         /// <summary>
-        /// 字体（使用标识符：yahei/pixel/unifont/songti/heiti/kaiti）
+        /// 字体（使用标识符：YaHei/Pixel/UniFont/SongTi/HeiTi/KaiTi）
         /// </summary>
-        public string Font { get; set; } = "yahei";
+        public string Font { get; set; } = "YaHei";
 
         /// <summary>
         /// 字体大小
         /// </summary>
         public int FontSize { get; set; } = 14;
-
-        /// <summary>
-        /// 图标样式
-        /// </summary>
-        public string IconStyle { get; set; } = "默认";
 
         /// <summary>
         /// 应用图标路径（相对于Assets目录）
@@ -424,7 +419,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 数据映射类型
         /// </summary>
-        public string DataMappingType { get; set; } = "电池电量";
+        public string DataMappingType { get; set; } = "BatteryLevel";
 
         /// <summary>
         /// 自定义数值开启
@@ -497,7 +492,7 @@ namespace CraftSharp.Models
         /// 数据映射类型
         /// </summary>
         [ObservableProperty]
-        private string _dataMappingType = "电池电量";
+        private string _dataMappingType = "BatteryLevel";
 
         /// <summary>
         /// 自定义数值开启

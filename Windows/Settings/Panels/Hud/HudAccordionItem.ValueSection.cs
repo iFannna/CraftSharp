@@ -46,7 +46,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 Visibility = enabled ? Visibility.Visible : Visibility.Collapsed
             };
 
-            var types = new[] { "电池电量", "内存占用率", "CPU利用率", "GPU利用率" };
+            var types = new[] { "BatteryLevel", "MemoryUsage", "CpuUsage", "GpuUsage" };
             var typeKeys = new[] { "DataMappingBattery", "DataMappingMemory", "DataMappingCpu", "DataMappingGpu" };
 
             for (int i = 0; i < types.Length; i++)
@@ -67,7 +67,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                     var elem = _settings.HudElements.FirstOrDefault(h => h.Id == id);
                     if (elem != null)
                     {
-                        elem.DataMappingType = item.Tag?.ToString() ?? "电池电量";
+                        elem.DataMappingType = item.Tag?.ToString() ?? "BatteryLevel";
                         SaveSettings();
                     }
                 }

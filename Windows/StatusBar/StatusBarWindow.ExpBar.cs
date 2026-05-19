@@ -52,7 +52,7 @@ namespace CraftSharp.Windows.StatusBar
             double coreWidth = GetCoreContainerWidth();
 
             // 获取配置值
-            var settings = GetHudElementSettings("expbar");
+            var settings = GetHudElementSettings("ExpBar");
             string iconStyle = settings?.IconStyle ?? "";
 
             // 设置经验条尺寸（高度按原图比例，宽度可适当调整）
@@ -98,7 +98,7 @@ namespace CraftSharp.Windows.StatusBar
         /// </summary>
         private double GetExpBarPercent()
         {
-            var settings = GetHudElementSettings("expbar");
+            var settings = GetHudElementSettings("ExpBar");
 
             // 如果启用自定义数值，使用配置的当前值（0-100）
             if (settings?.CustomValueEnabled == true)
@@ -108,7 +108,7 @@ namespace CraftSharp.Windows.StatusBar
             }
 
             // 否则使用数据映射
-            string mappingType = settings?.DataMappingType ?? "电池电量";
+            string mappingType = settings?.DataMappingType ?? "BatteryLevel";
             return DataMappingService.Instance.GetValue(mappingType);
         }
     }

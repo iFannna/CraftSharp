@@ -21,37 +21,37 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             switch (id)
             {
-                case "statusbar":
+                case "StatusBar":
                     AddStatusBarContent();
                     break;
-                case "hotbar":
+                case "Hotbar":
                     AddHotbarContent();
                     break;
-                case "health":
+                case "Health":
                     AddHealthContent();
                     break;
-                case "expbar":
+                case "ExpBar":
                     AddExpBarContent();
                     break;
-                case "absorbing":
+                case "Absorbing":
                     AddAbsorbingContent();
                     break;
-                case "air":
+                case "Air":
                     AddAirContent();
                     break;
-                case "food":
+                case "Food":
                     AddFoodContent();
                     break;
-                case "armor":
+                case "Armor":
                     AddArmorContent();
                     break;
-                case "crosshair":
+                case "Crosshair":
                     AddCrosshairContent();
                     break;
-                case "attackindicator":
+                case "AttackIndicator":
                     AddAttackIndicatorContent();
                     break;
-                case "bossbar":
+                case "BossBar":
                     AddBossBarContent();
                     break;
             }

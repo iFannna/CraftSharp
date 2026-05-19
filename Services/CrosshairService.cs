@@ -70,16 +70,16 @@ namespace CraftSharp.Services
 
             switch (id)
             {
-                case "crosshair":
+                case "Crosshair":
                     // 准星没有进度，只需检查可见性
-                    var crosshairSettings = _appSettings?.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+                    var crosshairSettings = _appSettings?.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
                     if (crosshairSettings != null)
                     {
                         SetCrosshairVisible(crosshairSettings.IsVisible);
                         SetTopMost(crosshairSettings.TopMost);
                     }
                     break;
-                case "attackindicator":
+                case "AttackIndicator":
                     RefreshAttackIndicator();
                     break;
             }

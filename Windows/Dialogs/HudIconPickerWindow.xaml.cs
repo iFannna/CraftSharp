@@ -37,7 +37,7 @@ namespace CraftSharp.Windows.Dialogs
             _scaleFactor = ScaleService.Instance.ScaleFactor;
 
             // 纵向布局元素类型（经验条、BOSS血条、BOSS等级）
-            _useVerticalLayout = elementType == "expbar" || elementType == "boss_bar" || elementType == "boss_bar_notch";
+            _useVerticalLayout = elementType == "ExpBar" || elementType == "boss_bar" || elementType == "boss_bar_notch";
 
             // 切换布局
             if (_useVerticalLayout)
@@ -209,7 +209,7 @@ namespace CraftSharp.Windows.Dialogs
                     }
                 }
             }
-            else if (_elementType == "expbar")
+            else if (_elementType == "ExpBar")
             {
                 // 经验条：experience_bar_progress 和 jump_bar_progress
                 var expbarStyles = new[]

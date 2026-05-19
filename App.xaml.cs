@@ -52,13 +52,13 @@ namespace CraftSharp
             SlotFileValidator.Instance.ValidateAllSlots(_appSettings);
 
             // 初始化语言
-            LocalizationService.Instance.Initialize(_appSettings?.System.Language ?? "简体中文");
+            LocalizationService.Instance.Initialize(_appSettings?.System.Language ?? "zh-CN");
 
             // 初始化主题
-            ThemeService.Instance.Initialize(_appSettings?.Appearance.Theme ?? "跟随系统");
+            ThemeService.Instance.Initialize(_appSettings?.Appearance.Theme ?? "System");
 
             // 初始化字体（使用标识符）
-            FontService.Instance.Initialize(_appSettings?.Appearance.Font ?? "yahei", _appSettings?.Appearance.FontSize ?? 14);
+            FontService.Instance.Initialize(_appSettings?.Appearance.Font ?? "YaHei", _appSettings?.Appearance.FontSize ?? 14);
 
             // 创建设置窗口（主窗口）
             _settingsWindow = new SettingsWindow(_appSettings!);
@@ -273,7 +273,7 @@ namespace CraftSharp
         /// 默认配置：
         /// - 经验条：默认开启自定义数值，当前值0
         /// - 生命值、饥饿值、伤害吸收值、护甲值：默认开启自定义数值，当前值20最大值20
-        /// - 所有组件：数据映射默认为电池电量
+        /// - 所有组件：数据映射默认为 BatteryLevel
         /// </summary>
         private void EnsureAllHudElementsExist()
         {
@@ -281,79 +281,79 @@ namespace CraftSharp
 
             var defaultConfigs = new Dictionary<string, Models.HudElementSettings>
             {
-                { "expbar", new Models.HudElementSettings
+                { "ExpBar", new Models.HudElementSettings
                     {
-                        Id = "expbar",
+                        Id = "ExpBar",
                         IsVisible = true,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 0,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "health", new Models.HudElementSettings
+                { "Health", new Models.HudElementSettings
                     {
-                        Id = "health",
+                        Id = "Health",
                         IsVisible = true,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "food", new Models.HudElementSettings
+                { "Food", new Models.HudElementSettings
                     {
-                        Id = "food",
+                        Id = "Food",
                         IsVisible = true,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "air", new Models.HudElementSettings
+                { "Air", new Models.HudElementSettings
                     {
-                        Id = "air",
+                        Id = "Air",
                         IsVisible = false,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "armor", new Models.HudElementSettings
+                { "Armor", new Models.HudElementSettings
                     {
-                        Id = "armor",
+                        Id = "Armor",
                         IsVisible = false,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "absorbing", new Models.HudElementSettings
+                { "Absorbing", new Models.HudElementSettings
                     {
-                        Id = "absorbing",
+                        Id = "Absorbing",
                         IsVisible = false,
                         CustomValueEnabled = true,
                         CustomCurrentValue = 20,
                         CustomMaxValue = 20,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
-                { "crosshair", new Models.HudElementSettings
+                { "Crosshair", new Models.HudElementSettings
                     {
-                        Id = "crosshair",
+                        Id = "Crosshair",
                         IsVisible = false, // 默认不显示
                         TopMost = false,
                     }
                 },
-                { "attackindicator", new Models.HudElementSettings
+                { "AttackIndicator", new Models.HudElementSettings
                     {
-                        Id = "attackindicator",
+                        Id = "AttackIndicator",
                         IsVisible = false, // 默认不显示
                         CustomValueEnabled = true,
                         CustomCurrentValue = 99,
-                        DataMappingType = "电池电量",
+                        DataMappingType = "BatteryLevel",
                     }
                 },
             };
@@ -570,7 +570,11 @@ namespace CraftSharp
 
             try
             {
-                var json = JsonSerializer.Serialize(_appSettings, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(_appSettings, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
                 System.IO.File.WriteAllText(_settingsPath, json);
             }
             catch
@@ -634,12 +638,12 @@ namespace CraftSharp
 
             var visibilityMap = new Dictionary<string, Action<bool>>
             {
-                { "expbar", StatusBarService.Instance.SetExpBarVisible },
-                { "health", StatusBarService.Instance.SetHealthVisible },
-                { "food", StatusBarService.Instance.SetFoodVisible },
-                { "air", StatusBarService.Instance.SetAirVisible },
-                { "armor", StatusBarService.Instance.SetArmorVisible },
-                { "absorbing", StatusBarService.Instance.SetAbsorbingVisible },
+                { "ExpBar", StatusBarService.Instance.SetExpBarVisible },
+                { "Health", StatusBarService.Instance.SetHealthVisible },
+                { "Food", StatusBarService.Instance.SetFoodVisible },
+                { "Air", StatusBarService.Instance.SetAirVisible },
+                { "Armor", StatusBarService.Instance.SetArmorVisible },
+                { "Absorbing", StatusBarService.Instance.SetAbsorbingVisible },
             };
 
             foreach (var kvp in visibilityMap)
@@ -657,12 +661,12 @@ namespace CraftSharp
             if (_appSettings == null) return;
 
             // 准星
-            var crosshairSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+            var crosshairSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
             CrosshairService.Instance.SetCrosshairVisible(crosshairSettings?.IsVisible ?? false);
             CrosshairService.Instance.SetTopMost(crosshairSettings?.TopMost ?? false);
 
             // 攻击指示器
-            var attackIndicatorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+            var attackIndicatorSettings = _appSettings.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
             CrosshairService.Instance.SetAttackIndicatorVisible(attackIndicatorSettings?.IsVisible ?? false);
         }
 

@@ -79,7 +79,7 @@ namespace CraftSharp.Windows.StatusBar
             double foodGap = _foodGap * _scaleFactor;
 
             // 获取配置值
-            var settings = GetHudElementSettings("food");
+            var settings = GetHudElementSettings("Food");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2; // 每个槽位代表2点（一个完整图标）
             string iconStyle = settings?.IconStyle ?? ""; // 图标样式（food_full 或 food_full_hunger）
@@ -206,7 +206,7 @@ namespace CraftSharp.Windows.StatusBar
         private void UpdateFoodLevel()
         {
             // 获取配置值
-            var settings = GetHudElementSettings("food");
+            var settings = GetHudElementSettings("Food");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int slotCount = maxValue / 2;
 
@@ -217,7 +217,7 @@ namespace CraftSharp.Windows.StatusBar
             if (dataMappingEnabled)
             {
                 // 数据映射开启：从数据源获取百分比，转换为饥饿值
-                string mappingType = settings?.DataMappingType ?? "电池电量";
+                string mappingType = settings?.DataMappingType ?? "BatteryLevel";
                 double percent = DataMappingService.Instance.GetValue(mappingType);
                 currentValue = (int)(percent * maxValue);
             }
@@ -270,7 +270,7 @@ namespace CraftSharp.Windows.StatusBar
         private void UpdateSaturationLevel()
         {
             // 获取配置值
-            var settings = GetHudElementSettings("food");
+            var settings = GetHudElementSettings("Food");
             int maxValue = settings?.CustomMaxValue ?? 20;
             int saturationValue = settings?.CustomSaturationValue ?? 0;
             int slotCount = maxValue / 2;

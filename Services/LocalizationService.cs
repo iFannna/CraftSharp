@@ -57,13 +57,12 @@ namespace CraftSharp.Services
         }
 
         /// <summary>
-        /// 初始化语言（传入保存的显示名称）
+        /// 初始化语言（传入语言代码）
         /// </summary>
-        public void Initialize(string savedDisplayName)
+        public void Initialize(string savedLanguageCode)
         {
-            var lang = GetLanguageCode(savedDisplayName);
-            CurrentLanguage = lang;
-            ApplyLanguage(lang);
+            CurrentLanguage = savedLanguageCode;
+            ApplyLanguage(savedLanguageCode);
         }
 
         /// <summary>

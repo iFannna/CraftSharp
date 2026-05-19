@@ -1075,22 +1075,22 @@ namespace CraftSharp.Windows.StatusBar
         {
             switch (id)
             {
-                case "health":
+                case "Health":
                     SetupHearts();
                     break;
-                case "food":
+                case "Food":
                     SetupFood();
                     break;
-                case "armor":
+                case "Armor":
                     SetupArmor();
                     break;
-                case "absorbing":
+                case "Absorbing":
                     SetupAbsorbing();
                     break;
-                case "air":
+                case "Air":
                     SetupAir();
                     break;
-                case "expbar":
+                case "ExpBar":
                     SetupExperienceBar();
                     break;
             }

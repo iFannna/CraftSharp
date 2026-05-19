@@ -42,7 +42,7 @@ namespace CraftSharp.Windows.Settings
                     // 在窗口句柄创建后恢复窗口状态，确保 TitleBar 图标同步
                     if (_settings.System.RememberWindowPosition || _settings.System.RememberWindowSize)
                     {
-                        if (_settings.System.WindowState == "Maximized")
+                        if (_settings.System.WindowState == "maximized")
                         {
                             WindowState = System.Windows.WindowState.Maximized;
                         }
@@ -152,12 +152,12 @@ namespace CraftSharp.Windows.Settings
             {
                 if (WindowState == System.Windows.WindowState.Maximized)
                 {
-                    _settings.System.WindowState = "Maximized";
+                    _settings.System.WindowState = "maximized";
                     SaveSettings();
                 }
                 else if (WindowState == System.Windows.WindowState.Normal)
                 {
-                    _settings.System.WindowState = "Normal";
+                    _settings.System.WindowState = "normal";
                     SaveSettings();
                 }
                 // Minimized: 不保存，保持之前的状态

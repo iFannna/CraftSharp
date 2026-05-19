@@ -13,8 +13,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
     {
         private void AddCrosshairContent()
         {
-            EnsureHudElementExists("crosshair");
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+            EnsureHudElementExists("Crosshair");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
             bool isVisible = settings?.IsVisible ?? false;
             bool topMost = settings?.TopMost ?? false;
 
@@ -23,16 +23,16 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
             showToggle.Checked += (s, e) =>
             {
-                EnsureHudElementExists("crosshair");
-                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+                EnsureHudElementExists("Crosshair");
+                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
                 if (elem != null) elem.IsVisible = true;
                 CrosshairService.Instance.SetCrosshairVisible(true);
                 SaveSettings();
             };
             showToggle.Unchecked += (s, e) =>
             {
-                EnsureHudElementExists("crosshair");
-                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+                EnsureHudElementExists("Crosshair");
+                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
                 if (elem != null) elem.IsVisible = false;
                 CrosshairService.Instance.SetCrosshairVisible(false);
                 SaveSettings();
@@ -52,8 +52,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
                     if (confirmWindow.IsConfirmed)
                     {
-                        EnsureHudElementExists("crosshair");
-                        var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "crosshair");
+                        EnsureHudElementExists("Crosshair");
+                        var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "Crosshair");
                         if (elem != null) elem.TopMost = true;
                         CrosshairService.Instance.SetTopMost(true);
                         SaveSettings();
@@ -76,11 +76,11 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
         private void AddAttackIndicatorContent()
         {
-            EnsureHudElementExists("attackindicator");
-            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+            EnsureHudElementExists("AttackIndicator");
+            var settings = _settings.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
             bool isVisible = settings?.IsVisible ?? false;
             bool dataMappingEnabled = settings?.DataMappingEnabled ?? false;
-            string dataMappingType = settings?.DataMappingType ?? "电池电量";
+            string dataMappingType = settings?.DataMappingType ?? "BatteryLevel";
             bool customValueEnabled = settings?.CustomValueEnabled ?? true;
             int customCurrentValue = settings?.CustomCurrentValue ?? 100;
 
@@ -89,24 +89,24 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             var showToggle = AddToggleRow("HudOptionShowElement", "HudOptionShowElementDesc", isVisible);
             showToggle.Checked += (s, e) =>
             {
-                EnsureHudElementExists("attackindicator");
-                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+                EnsureHudElementExists("AttackIndicator");
+                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
                 if (elem != null) elem.IsVisible = true;
                 CrosshairService.Instance.SetAttackIndicatorVisible(true);
                 SaveSettings();
             };
             showToggle.Unchecked += (s, e) =>
             {
-                EnsureHudElementExists("attackindicator");
-                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "attackindicator");
+                EnsureHudElementExists("AttackIndicator");
+                var elem = _settings.HudElements.FirstOrDefault(h => h.Id == "AttackIndicator");
                 if (elem != null) elem.IsVisible = false;
                 CrosshairService.Instance.SetAttackIndicatorVisible(false);
                 SaveSettings();
             };
 
-            AddDataMappingSection("attackindicator", dataMappingEnabled, dataMappingType);
+            AddDataMappingSection("AttackIndicator", dataMappingEnabled, dataMappingType);
 
-            AddCustomValueSection("attackindicator", customValueEnabled, customCurrentValue, 100, hasMaxValue: false, maxValueLimit: 100);
+            AddCustomValueSection("AttackIndicator", customValueEnabled, customCurrentValue, 100, hasMaxValue: false, maxValueLimit: 100);
         }
     }
 }

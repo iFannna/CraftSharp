@@ -23,7 +23,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
 
         private void InitializeControls()
         {
-            LanguageComboBox.SelectedIndex = _settings.System.Language == "简体中文" ? 0 : 1;
+            LanguageComboBox.SelectedIndex = _settings.System.Language == "zh-CN" ? 0 : 1;
             AutoStartToggle.IsChecked = _settings.System.AutoStart;
             RememberPositionToggle.IsChecked = _settings.System.RememberWindowPosition;
             RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
@@ -36,12 +36,13 @@ namespace CraftSharp.Windows.Settings.Panels.General
             if (_settings == null) return;
             if (LanguageComboBox.SelectedItem is ComboBoxItem item)
             {
-                // 使用显示名称作为设置值
-                var language = item.Content.ToString() ?? "简体中文";
-                _settings.System.Language = language;
+                // 从显示名称获取语言代码
+                var displayName = item.Content.ToString() ?? "简体中文";
+                var languageCode = displayName == "English" ? "en-US" : "zh-CN";
+                _settings.System.Language = languageCode;
 
                 // 切换语言
-                LocalizationService.Instance.SetLanguage(language);
+                LocalizationService.Instance.SetLanguage(displayName);
 
                 // 即时保存设置
                 SaveSettings();
@@ -70,7 +71,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
                 {
                     _settings.System.WindowPositionX = 0;
                     _settings.System.WindowPositionY = 0;
-                    _settings.System.WindowState = "Normal";
+                    _settings.System.WindowState = "normal";
                 }
 
                 // 即时保存设置
@@ -90,7 +91,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
                 {
                     _settings.System.WindowWidth = 1080;
                     _settings.System.WindowHeight = 720;
-                    _settings.System.WindowState = "Normal";
+                    _settings.System.WindowState = "normal";
                 }
 
                 // 即时保存设置
