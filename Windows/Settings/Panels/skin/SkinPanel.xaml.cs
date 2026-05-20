@@ -197,6 +197,11 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 LoadSkinsAsync();
                 UpdateOptionButtonState(newIsWide);
             }
+            else
+            {
+                // 取消上传，恢复当前类型选项状态
+                UpdateOptionButtonState(_isWide);
+            }
         }
 
         private void UpdateOptionButtonState(bool isWide)
