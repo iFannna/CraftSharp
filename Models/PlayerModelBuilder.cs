@@ -358,6 +358,7 @@ namespace CraftSharp.Models
             if (uvData.Parts.OuterHead != null)
             {
                 var outerHeadModel = CreatePartModel(outerMaterial, uvData.Parts.OuterHead, texWidth, texHeight);
+                outerHeadModel.IsTransparent = true;
                 headGroup.Children.Add(outerHeadModel);
             }
 
@@ -395,6 +396,7 @@ namespace CraftSharp.Models
                 if (data != null)
                 {
                     var partModel = CreatePartModel(outerMaterial, data, texWidth, texHeight);
+                    partModel.IsTransparent = true;
                     bodyGroup.Children.Add(partModel);
                 }
             }

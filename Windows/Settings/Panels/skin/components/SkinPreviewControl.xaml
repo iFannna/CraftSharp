@@ -11,7 +11,8 @@
                     ShowViewCube="False"
                     IsPanEnabled="False"
                     IsZoomEnabled="True"
-                    CameraRotationMode="Turntable">
+                    CameraRotationMode="Turntable"
+                    OITRenderMode="None">
         <hx:AmbientLight3D Color="White"/>
         <hx:GroupModel3D x:Name="ModelGroup"/>
     </hx:Viewport3DX>

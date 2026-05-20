@@ -12,7 +12,8 @@
                         IsPanEnabled="False"
                         IsZoomEnabled="False"
                         IsRotationEnabled="False"
-                        ModelUpDirection="0,1,0">
+                        ModelUpDirection="0,1,0"
+                        OITRenderMode="None">
             <hx:AmbientLight3D Color="White"/>
             <hx:GroupModel3D x:Name="BodyModelGroup"/>
         </hx:Viewport3DX>

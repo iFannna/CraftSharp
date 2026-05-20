@@ -36,7 +36,8 @@
                         IsPanEnabled="False"
                         IsZoomEnabled="True"
                         ZoomDistanceLimitNear="10"
-                        ZoomDistanceLimitFar="200">
+                        ZoomDistanceLimitFar="200"
+                        OITRenderMode="None">
             <!-- 单一环境光：均匀照明，不受方向影响 -->
             <hx:AmbientLight3D Color="White"/>
             <hx:GroupModel3D x:Name="PlayerModelGroup"/>

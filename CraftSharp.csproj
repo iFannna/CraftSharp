@@ -21,6 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="tmp\**\*.cs" />
+    <EmbeddedResource Remove="tmp\**\*" />
+    <Content Remove="tmp\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- assets 目录作为运行时资源（排除嵌入资源） -->
     <Content Include="assets\**\*" Exclude="assets\fonts\*.ttf;assets\resources\*.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
