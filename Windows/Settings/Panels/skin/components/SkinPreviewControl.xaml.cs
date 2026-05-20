@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HelixToolkit.SharpDX;
@@ -12,6 +13,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
     {
         private static readonly string WideUvPath = "assets/minecraft/textures/entity/player/uv/wide.json";
         private static readonly string SlimUvPath = "assets/minecraft/textures/entity/player/uv/slim.json";
+
+        private bool _isDragging;
+        private Point _lastMousePosition;
 
         public SkinPreviewControl()
         {
@@ -59,6 +63,37 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
         public void Clear()
         {
             ModelGroup.Children.Clear();
+        }
+
+        private void UserControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                _isDragging = true;
+                _lastMousePosition = e.GetPosition(Viewport);
+                e.Handled = true;
+            }
+        }
+
+        private void UserControl_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var currentPosition = e.GetPosition(Viewport);
+                var delta = currentPosition - _lastMousePosition;
+                Viewport.AddRotateForce((float)delta.X * 0.5f, (float)delta.Y * 0.5f);
+                _lastMousePosition = currentPosition;
+                e.Handled = true;
+            }
+        }
+
+        private void UserControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && _isDragging)
+            {
+                _isDragging = false;
+                e.Handled = true;
+            }
         }
     }
 }

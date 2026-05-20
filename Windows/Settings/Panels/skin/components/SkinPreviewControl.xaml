@@ -1,7 +1,10 @@
 <UserControl x:Class="CraftSharp.Windows.Settings.Panels.Skin.Components.SkinPreviewControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX">
+             xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX"
+             PreviewMouseDown="UserControl_PreviewMouseDown"
+             PreviewMouseMove="UserControl_PreviewMouseMove"
+             PreviewMouseUp="UserControl_PreviewMouseUp">
     <hx:Viewport3DX x:Name="Viewport"
                     Background="Transparent"
                     ShowCoordinateSystem="False"
