@@ -63,14 +63,22 @@
                                       VirtualizingStackPanel.IsVirtualizing="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" ItemWidth="154"/>
+                                    <WrapPanel Orientation="Horizontal"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <components:SkinItemControl Width="150" Height="150" Margin="2"
-                                                                Loaded="SkinItemControl_Loaded"
-                                                                Selected="SkinItemControl_Selected"/>
+                                    <StackPanel Width="156">
+                                        <components:SkinItemControl Width="150" Height="150" Margin="2,2,4,0"
+                                                                    Loaded="SkinItemControl_Loaded"
+                                                                    Selected="SkinItemControl_Selected"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Margin="0,4,0,8"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

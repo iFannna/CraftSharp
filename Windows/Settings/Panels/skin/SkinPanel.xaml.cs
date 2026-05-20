@@ -70,9 +70,13 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 foreach (var file in files)
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
+                    // 首字母大写
+                    var displayName = string.IsNullOrEmpty(name) ? name :
+                        name.Substring(0, 1).ToUpper() + (name.Length > 1 ? name.Substring(1) : "");
+
                     newItems.Add(new SkinItem
                     {
-                        Name = name,
+                        Name = displayName,
                         Path = file,
                         IsWide = _isWide,
                         IsCustom = false
