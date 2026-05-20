@@ -142,9 +142,10 @@ namespace CraftSharp.Windows.Skin
                 return;
             }
 
-            // 确定目标目录
+            // 确定目标目录（上传到 skins 子目录）
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
-            var targetFolder = _isWide ? WideSkinFolder : SlimSkinFolder;
+            var baseFolder = _isWide ? WideSkinFolder : SlimSkinFolder;
+            var targetFolder = Path.Combine(baseFolder, "skins");
             var targetPath = Path.Combine(basePath, targetFolder, name + ".png");
 
             // 检查重名冲突

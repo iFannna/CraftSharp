@@ -67,22 +67,35 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             // 强制 UI 更新，让 LoadingOverlay 先显示出来
             await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
 
-            // 在后台准备好新数据，避免闪烁
-            var newItems = new ObservableCollection<SkinItem>();
-
             var skinFolder = _isWide ? WideSkinFolder : SlimSkinFolder;
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
-
             var fullPath = Path.Combine(basePath, skinFolder);
+            var skinsDir = Path.Combine(fullPath, "skins");
+
+            // 先加载上传皮肤（skins 子目录），再加载内置皮肤
+            var newItems = new ObservableCollection<SkinItem>();
+
+            // 上传皮肤
+            if (Directory.Exists(skinsDir))
+            {
+                foreach (var file in Directory.GetFiles(skinsDir, "*.png"))
+                {
+                    newItems.Add(new SkinItem
+                    {
+                        Name = Path.GetFileNameWithoutExtension(file),
+                        Path = file,
+                        IsWide = _isWide,
+                        IsCustom = true
+                    });
+                }
+            }
+
+            // 内置皮肤
             if (Directory.Exists(fullPath))
             {
-                var files = Directory.GetFiles(fullPath, "*.png");
-                _totalSkinCount = files.Length;
-
-                foreach (var file in files)
+                foreach (var file in Directory.GetFiles(fullPath, "*.png"))
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
-                    // 首字母大写
                     var displayName = string.IsNullOrEmpty(name) ? name :
                         name.Substring(0, 1).ToUpper() + (name.Length > 1 ? name.Substring(1) : "");
 
@@ -94,23 +107,14 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                         IsCustom = false
                     });
                 }
-
-                // 一次性替换 ItemsSource
-                _skinItems = newItems;
-                SkinGrid.ItemsSource = _skinItems;
-
-                // 如果没有皮肤，隐藏加载提示并显示网格
-                if (_totalSkinCount == 0)
-                {
-                    LoadingOverlay.Visibility = Visibility.Collapsed;
-                    SkinGrid.Visibility = Visibility.Visible;
-                }
             }
-            else
+
+            _totalSkinCount = newItems.Count;
+            _skinItems = newItems;
+            SkinGrid.ItemsSource = _skinItems;
+
+            if (_totalSkinCount == 0)
             {
-                _totalSkinCount = 0;
-                _skinItems = newItems;
-                SkinGrid.ItemsSource = _skinItems;
                 LoadingOverlay.Visibility = Visibility.Collapsed;
                 SkinGrid.Visibility = Visibility.Visible;
             }
@@ -165,16 +169,17 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
             if (uploadWindow.ShowDialog() == true)
             {
-                // 上传成功，刷新皮肤列表
-                // 切换到新上传的皮肤类型
-                _isWide = uploadWindow.ResultIsWide;
+                // 上传成功，立即使用新皮肤
+                var newSkinPath = uploadWindow.ResultSkinPath!;
+                var newIsWide = uploadWindow.ResultIsWide;
+
+                // 保存配置并刷新物品栏模型
+                SetCurrentSkin(newSkinPath, newIsWide);
+
+                // 切换到新上传的皮肤类型并刷新列表
+                _isWide = newIsWide;
                 LoadSkinsAsync();
-
-                // 更新选项按钮状态
-                UpdateOptionButtonState(uploadWindow.ResultIsWide);
-
-                // 刷新物品栏窗口的玩家模型
-                RefreshInventoryPlayerModel();
+                UpdateOptionButtonState(newIsWide);
             }
         }
 
@@ -204,15 +209,6 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             }
         }
 
-        private void RefreshInventoryPlayerModel()
-        {
-            // 获取物品栏窗口实例并刷新玩家模型
-            if (System.Windows.Application.Current is App app)
-            {
-                app.RefreshInventoryPlayerModel();
-            }
-        }
-
         private void SkinItemControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is SkinItemControl control && control.DataContext is SkinItem skinItem)
@@ -224,10 +220,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 control.LoadSkin(skinItem.Path, fullUvPath, skinItem.IsWide);
 
                 // 检查是否是当前皮肤（根据配置）
-                var currentSkinPath = _settings.Player.Skin;
-                var currentSkinFullPath = Path.Combine(basePath, currentSkinPath);
+                var currentSkinFullPath = Path.GetFullPath(Path.Combine(basePath, _settings.Player.Skin));
 
-                if (skinItem.Path == currentSkinFullPath)
+                if (Path.GetFullPath(skinItem.Path) == currentSkinFullPath)
                 {
                     // 自动选中当前皮肤
                     if (_selectedSkinControl == null)
