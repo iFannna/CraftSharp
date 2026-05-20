@@ -12,10 +12,16 @@
     <!-- Navigation Menu -->
     <sys:String x:Key="NavSystem">System</sys:String>
     <sys:String x:Key="NavAppearance">Appearance</sys:String>
+    <sys:String x:Key="NavSkin">Skin</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
     <sys:String x:Key="NavInventory">Inventory</sys:String>
     <sys:String x:Key="NavHotkey">Hotkeys</sys:String>
     <sys:String x:Key="NavAbout">About</sys:String>
+
+    <!-- Skin Settings Panel -->
+    <sys:String x:Key="SkinPanelTitle">Skin Settings</sys:String>
+    <sys:String x:Key="SkinTabUpload">Upload Skin</sys:String>
+    <sys:String x:Key="SkinSearchPlaceholder">Search skins...</sys:String>
 
     <!-- System Settings Panel -->
     <sys:String x:Key="SystemPanelTitle">System Settings</sys:String>

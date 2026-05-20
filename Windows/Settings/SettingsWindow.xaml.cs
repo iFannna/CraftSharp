@@ -8,6 +8,7 @@ using CraftSharp.Windows.Settings.Panels.General;
 using CraftSharp.Windows.Settings.Panels.Appearance;
 using CraftSharp.Windows.Settings.Panels.Hotkey;
 using CraftSharp.Windows.Settings.Panels.About;
+using CraftSharp.Windows.Settings.Panels.Skin;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Settings
@@ -17,6 +18,7 @@ namespace CraftSharp.Windows.Settings
         private AppSettings _settings;
         private SystemPanel _panelSystem = null!;
         private AppearancePanel _panelAppearance = null!;
+        private SkinPanel _panelSkin = null!;
         private HudPanel _panelHud = null!;
         private InventoryPanel _panelInventory = null!;
         private HotkeyPanel _panelHotkey = null!;
@@ -101,17 +103,22 @@ namespace CraftSharp.Windows.Settings
             _panelSystem.CardStatesRememberChanged += OnCardStatesRememberChanged;
             _panelAppearance = new AppearancePanel(_settings);
             _panelAppearance.SetParentWindow(this);
+            _panelSkin = new SkinPanel(_settings);
             _panelHud = new HudPanel(_settings);
             _panelInventory = new InventoryPanel(_settings);
             _panelHotkey = new HotkeyPanel(_settings);
             _panelAbout = new AboutPanel();
 
+            // 普通面板放入 ContentContainer（带 ScrollViewer 和宽度限制）
             ContentContainer.Children.Add(_panelSystem);
             ContentContainer.Children.Add(_panelAppearance);
             ContentContainer.Children.Add(_panelHud);
             ContentContainer.Children.Add(_panelInventory);
             ContentContainer.Children.Add(_panelHotkey);
             ContentContainer.Children.Add(_panelAbout);
+
+            // 皮肤面板放入独立的 SkinContainer（撑满高度，无宽度限制）
+            SkinContainer.Child = _panelSkin;
 
             // 根据设置恢复导航菜单选项
             string initialNav = _settings.System.RememberNavSelection
@@ -240,6 +247,20 @@ namespace CraftSharp.Windows.Settings
         private void ShowPanel(string tag)
         {
             if (_panelSystem == null) return;
+
+            // 切换容器：皮肤面板使用 SkinContainer，其他面板使用 NormalScrollViewer
+            if (tag == "skin")
+            {
+                NormalScrollViewer.Visibility = System.Windows.Visibility.Collapsed;
+                SkinContainer.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                NormalScrollViewer.Visibility = System.Windows.Visibility.Visible;
+                SkinContainer.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+            // 普通面板的可见性切换（都在 ContentContainer 中）
             _panelSystem.Visibility = tag == "system" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelAppearance.Visibility = tag == "appearance" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHud.Visibility = tag == "hud" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;

@@ -80,6 +80,12 @@
                                 <TextBlock Text="{DynamicResource NavAppearance}" Margin="12,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
+                        <ListBoxItem x:Name="NavSkin" Tag="skin">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Person20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavSkin}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem x:Name="NavHud" Tag="hud">
                             <StackPanel Orientation="Horizontal">
                                 <ui:SymbolIcon Symbol="Grid20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -116,9 +122,15 @@
             </Border>
 
             <!-- 右侧内容区 -->
-            <ScrollViewer Grid.Column="1" Background="{DynamicResource ApplicationBackgroundBrush}" Padding="32,24">
-                <StackPanel x:Name="ContentContainer" MaxWidth="800"/>
-            </ScrollViewer>
+            <Grid Grid.Column="1" Background="{DynamicResource ApplicationBackgroundBrush}" x:Name="ContentGrid">
+                <!-- 普通面板容器（带ScrollViewer和宽度限制） -->
+                <ScrollViewer Padding="32,24" x:Name="NormalScrollViewer">
+                    <StackPanel x:Name="ContentContainer" MaxWidth="800"/>
+                </ScrollViewer>
+
+                <!-- 皮肤面板容器（无宽度限制，撑满高度） -->
+                <Border x:Name="SkinContainer" Padding="32,24" Visibility="Collapsed"/>
+            </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

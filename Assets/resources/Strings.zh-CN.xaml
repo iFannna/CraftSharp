@@ -12,10 +12,16 @@
     <!-- 导航菜单 -->
     <sys:String x:Key="NavSystem">系统</sys:String>
     <sys:String x:Key="NavAppearance">外观</sys:String>
+    <sys:String x:Key="NavSkin">皮肤</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
     <sys:String x:Key="NavInventory">物品栏</sys:String>
     <sys:String x:Key="NavHotkey">快捷键</sys:String>
     <sys:String x:Key="NavAbout">关于</sys:String>
+
+    <!-- 皮肤设置面板 -->
+    <sys:String x:Key="SkinPanelTitle">皮肤设置</sys:String>
+    <sys:String x:Key="SkinTabUpload">上传材质</sys:String>
+    <sys:String x:Key="SkinSearchPlaceholder">搜索皮肤...</sys:String>
 
     <!-- 系统设置面板 -->
     <sys:String x:Key="SystemPanelTitle">系统设置</sys:String>
