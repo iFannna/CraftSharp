@@ -16,6 +16,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
         private global::System.Windows.Controls.Border[] _optionBorders;
         private global::System.Windows.Controls.TextBlock[] _optionTexts;
         private ObservableCollection<SkinItem> _skinItems;
+        private List<SkinItem> _allSkinItems = new();
         private SkinItemControl? _selectedSkinControl;
 
         // 当前选中的类型：wide 或 slim
@@ -125,9 +126,14 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 }
             }
 
-            _totalSkinCount = newItems.Count;
-            _skinItems = newItems;
+            _allSkinItems = newItems.ToList();
+            _skinItems = new ObservableCollection<SkinItem>();
             SkinGrid.ItemsSource = _skinItems;
+
+            // 应用当前搜索关键字
+            FilterSkins(SearchBox.Text);
+
+            _totalSkinCount = _skinItems.Count;
 
             if (_totalSkinCount == 0)
             {
@@ -455,6 +461,31 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
                 // 刷新列表
                 LoadSkinsAsync();
+            }
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            FilterSkins(SearchBox.Text);
+        }
+
+        private void FilterSkins(string? keyword)
+        {
+            _skinItems.Clear();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                foreach (var item in _allSkinItems)
+                    _skinItems.Add(item);
+            }
+            else
+            {
+                var search = keyword.Trim().ToLowerInvariant();
+                foreach (var item in _allSkinItems)
+                {
+                    if (item.Name.ToLowerInvariant().Contains(search))
+                        _skinItems.Add(item);
+                }
             }
         }
     }

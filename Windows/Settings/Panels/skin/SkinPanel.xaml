@@ -41,9 +41,9 @@
                 </StackPanel>
 
                 <!-- 右侧搜索框 -->
-                <ui:TextBox Grid.Column="1" Width="180" HorizontalAlignment="Right"
+                <ui:TextBox x:Name="SearchBox" Grid.Column="1" Width="180" MinWidth="180" MaxWidth="180" HorizontalAlignment="Right"
                             PlaceholderText="{DynamicResource SkinSearchPlaceholder}"
-                            ClearButtonEnabled="True"/>
+                            ClearButtonEnabled="True" TextChanged="SearchBox_TextChanged"/>
             </Grid>
         </ui:Card>
 
