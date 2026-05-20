@@ -4,6 +4,15 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:components="clr-namespace:CraftSharp.Windows.Settings.Panels.Skin.Components"
              VerticalAlignment="Stretch">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -46,23 +55,32 @@
             </Grid.ColumnDefinitions>
 
             <!-- 左侧卡片 - 皮肤列表 -->
-            <ui:Card Grid.Column="0" Margin="0,0,8,0" Padding="8" VerticalAlignment="Stretch">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl x:Name="SkinGrid">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal" ItemWidth="154"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <components:SkinItemControl Width="150" Height="150" Margin="2"
-                                                            Loaded="SkinItemControl_Loaded"
-                                                            Selected="SkinItemControl_Selected"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+            <ui:Card Grid.Column="0" Margin="0,0,8,0" Padding="0" VerticalAlignment="Stretch">
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                                  Padding="8,8,4,8">
+                        <ItemsControl x:Name="SkinGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" ItemWidth="154"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <components:SkinItemControl Width="150" Height="150" Margin="2"
+                                                                Loaded="SkinItemControl_Loaded"
+                                                                Selected="SkinItemControl_Selected"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- 加载提示 -->
+                    <TextBlock x:Name="LoadingOverlay" Text="加载中..." Visibility="Collapsed"
+                               Panel.ZIndex="10"
+                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                </Grid>
             </ui:Card>
 
             <!-- 右侧卡片 -->

@@ -19,6 +19,10 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
         // 当前选中的类型：wide 或 slim
         private bool _isWide = true;
 
+        // 加载计数器
+        private int _loadedCount = 0;
+        private int _totalSkinCount = 0;
+
         private static readonly string WideSkinFolder = "assets/minecraft/textures/entity/player/wide";
         private static readonly string SlimSkinFolder = "assets/minecraft/textures/entity/player/slim";
         private static readonly string WideUvPath = "assets/minecraft/textures/entity/player/uv/wide.json";
@@ -33,7 +37,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             _skinItems = new ObservableCollection<SkinItem>();
             SkinGrid.ItemsSource = _skinItems;
 
-            LoadSkins();
+            LoadSkinsAsync();
         }
 
         public void SetParentWindow(global::System.Windows.Window parent)
@@ -41,8 +45,15 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             // 后续实现
         }
 
-        private void LoadSkins()
+        private async void LoadSkinsAsync()
         {
+            // 显示加载提示
+            LoadingOverlay.Visibility = Visibility.Visible;
+            _loadedCount = 0;
+
+            // 强制 UI 更新，让 LoadingOverlay 先显示出来
+            await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+
             _skinItems.Clear();
 
             var skinFolder = _isWide ? WideSkinFolder : SlimSkinFolder;
@@ -52,6 +63,8 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             if (Directory.Exists(fullPath))
             {
                 var files = Directory.GetFiles(fullPath, "*.png");
+                _totalSkinCount = files.Length;
+
                 foreach (var file in files)
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
@@ -63,6 +76,17 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                         IsCustom = false
                     });
                 }
+
+                // 如果没有皮肤，隐藏加载提示
+                if (_totalSkinCount == 0)
+                {
+                    LoadingOverlay.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                _totalSkinCount = 0;
+                LoadingOverlay.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -93,12 +117,12 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 if (clickedBorder == BorderSteve)
                 {
                     _isWide = true;
-                    LoadSkins();
+                    LoadSkinsAsync();
                 }
                 else if (clickedBorder == BorderAlex)
                 {
                     _isWide = false;
-                    LoadSkins();
+                    LoadSkinsAsync();
                 }
             }
         }
@@ -112,6 +136,13 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 var fullUvPath = Path.Combine(basePath, uvPath);
 
                 control.LoadSkin(skinItem.Path, fullUvPath, skinItem.IsWide);
+
+                // 计数并检查是否全部加载完成
+                _loadedCount++;
+                if (_loadedCount >= _totalSkinCount)
+                {
+                    LoadingOverlay.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
