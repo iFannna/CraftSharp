@@ -96,6 +96,11 @@ namespace CraftSharp.Models
         public bool AutoStart { get; set; } = true;
 
         /// <summary>
+        /// 默认打开面板
+        /// </summary>
+        public bool DefaultOpenPanel { get; set; } = true;
+
+        /// <summary>
         /// 记住设置窗口位置
         /// </summary>
         public bool RememberWindowPosition { get; set; } = true;

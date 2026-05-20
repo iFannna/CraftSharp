@@ -25,6 +25,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
         {
             LanguageComboBox.SelectedIndex = _settings.System.Language == "zh-CN" ? 0 : 1;
             AutoStartToggle.IsChecked = _settings.System.AutoStart;
+            DefaultOpenPanelToggle.IsChecked = _settings.System.DefaultOpenPanel;
             RememberPositionToggle.IsChecked = _settings.System.RememberWindowPosition;
             RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
             RememberCardStatesToggle.IsChecked = _settings.System.RememberCardStates; // 默认开启
@@ -54,6 +55,16 @@ namespace CraftSharp.Windows.Settings.Panels.General
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
                 _settings.System.AutoStart = toggle.IsChecked ?? false;
+                // 即时保存设置
+                SaveSettings();
+            }
+        }
+
+        private void DefaultOpenPanelToggle_Click(object sender, global::System.Windows.RoutedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
+            {
+                _settings.System.DefaultOpenPanel = toggle.IsChecked ?? false;
                 // 即时保存设置
                 SaveSettings();
             }

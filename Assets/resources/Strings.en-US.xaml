@@ -48,6 +48,8 @@
     <sys:String x:Key="LangEnUS">English</sys:String>
     <sys:String x:Key="AutoStartLabel">Auto Start</sys:String>
     <sys:String x:Key="AutoStartDesc">Run Craft# automatically when system starts</sys:String>
+    <sys:String x:Key="DefaultOpenPanelLabel">Open Panel on Launch</sys:String>
+    <sys:String x:Key="DefaultOpenPanelDesc">Automatically open the settings panel when the app starts</sys:String>
     <sys:String x:Key="RememberWindowPositionLabel">Remember Position</sys:String>
     <sys:String x:Key="RememberWindowPositionDesc">Restore settings window position on next launch</sys:String>
     <sys:String x:Key="RememberWindowSizeLabel">Remember Size</sys:String>

@@ -212,7 +212,8 @@ namespace CraftSharp
             // 监听语言切换事件
             LocalizationService.Instance.LanguageChanged += UpdateTrayMenuTexts;
 
-            _settingsWindow.Show();
+            if (_appSettings.System.DefaultOpenPanel)
+                _settingsWindow.Show();
 
             // 创建皮肤预览窗口（暂时不显示）
             _skinPreviewWindow = new SkinPreviewWindow();

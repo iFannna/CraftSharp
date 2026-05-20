@@ -48,6 +48,8 @@
     <sys:String x:Key="LangEnUS">English</sys:String>
     <sys:String x:Key="AutoStartLabel">开机自启动</sys:String>
     <sys:String x:Key="AutoStartDesc">系统启动时自动运行 Craft#</sys:String>
+    <sys:String x:Key="DefaultOpenPanelLabel">默认打开面板</sys:String>
+    <sys:String x:Key="DefaultOpenPanelDesc">程序启动时自动打开设置面板窗口</sys:String>
     <sys:String x:Key="RememberWindowPositionLabel">记住窗口位置</sys:String>
     <sys:String x:Key="RememberWindowPositionDesc">下次启动时恢复设置窗口的位置</sys:String>
     <sys:String x:Key="RememberWindowSizeLabel">记住窗口大小</sys:String>
