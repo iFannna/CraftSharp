@@ -92,9 +92,9 @@
                 </Grid>
             </ui:Card>
 
-            <!-- 右侧卡片 -->
-            <ui:Card Grid.Column="1" Margin="8,0,0,0" Padding="16" VerticalAlignment="Stretch">
-                <!-- 暂不实现具体内容 -->
+            <!-- 右侧卡片 - 皮肤预览 -->
+            <ui:Card Grid.Column="1" Margin="8,0,0,0" Padding="0" VerticalAlignment="Stretch">
+                <components:SkinPreviewControl x:Name="SkinPreview"/>
             </ui:Card>
         </Grid>
     </Grid>

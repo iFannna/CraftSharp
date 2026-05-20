@@ -50,6 +50,8 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             // 显示加载提示，隐藏皮肤网格
             LoadingOverlay.Visibility = Visibility.Visible;
             SkinGrid.Visibility = Visibility.Hidden;
+            SkinPreview.Clear();
+            _selectedSkinControl = null;
             _loadedCount = 0;
 
             // 强制 UI 更新，让 LoadingOverlay 先显示出来
@@ -175,6 +177,12 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 // 设置新的选中
                 _selectedSkinControl = control;
                 control.IsSelected = true;
+
+                // 更新右侧预览
+                if (control.DataContext is SkinItem skinItem)
+                {
+                    SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+                }
             }
         }
     }

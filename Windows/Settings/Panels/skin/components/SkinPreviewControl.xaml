@@ -1,0 +1,15 @@
+<UserControl x:Class="CraftSharp.Windows.Settings.Panels.Skin.Components.SkinPreviewControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX">
+    <hx:Viewport3DX x:Name="Viewport"
+                    Background="Transparent"
+                    ShowCoordinateSystem="False"
+                    ShowViewCube="False"
+                    IsPanEnabled="False"
+                    IsZoomEnabled="True"
+                    CameraRotationMode="Turntable">
+        <hx:AmbientLight3D Color="White"/>
+        <hx:GroupModel3D x:Name="ModelGroup"/>
+    </hx:Viewport3DX>
+</UserControl>
