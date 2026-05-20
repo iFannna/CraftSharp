@@ -214,10 +214,10 @@ namespace CraftSharp
 
             _settingsWindow.Show();
 
-            // 创建皮肤预览窗口
+            // 创建皮肤预览窗口（暂时不显示）
             _skinPreviewWindow = new SkinPreviewWindow();
             SkinPreviewService.Instance.Initialize(_skinPreviewWindow);
-            _skinPreviewWindow.Show();
+            // _skinPreviewWindow.Show();
 
             // 设置窗口关闭时最小化到托盘
             _settingsWindow.Closing += (_, cancelEventArgs) =>
