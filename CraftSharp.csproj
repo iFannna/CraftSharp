@@ -20,11 +20,6 @@
     <PackageReference Include="WPF-UI" Version="3.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="tmp\**\*.cs" />
-    <EmbeddedResource Remove="tmp\**\*" />
-    <Content Remove="tmp\**\*" />
-  </ItemGroup>
 
   <ItemGroup>
     <!-- assets 目录作为运行时资源（排除嵌入资源） -->
