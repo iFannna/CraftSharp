@@ -2,6 +2,7 @@ using CraftSharp.Models;
 using CraftSharp.Windows.Settings.Panels.Skin.Components;
 using CraftSharp.Windows.Skin;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,6 +54,21 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
         public void SetParentWindow(global::System.Windows.Window parent)
         {
             _parentWindow = parent;
+        }
+
+        private void RootGrid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // 关闭可能打开的右键菜单
+            foreach (var item in _skinItems)
+            {
+                var container = SkinGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (container is System.Windows.FrameworkElement element)
+                {
+                    var control = FindSkinItemControl(element);
+                    if (control?.ItemBorder.ContextMenu?.IsOpen == true)
+                        control.ItemBorder.ContextMenu.IsOpen = false;
+                }
+            }
         }
 
         private async void LoadSkinsAsync()
@@ -218,26 +234,30 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 var fullUvPath = Path.Combine(basePath, uvPath);
 
                 control.LoadSkin(skinItem.Path, fullUvPath, skinItem.IsWide);
+                control.IsCustomSkin = skinItem.IsCustom;
+                control.SkinName = skinItem.Name;
 
                 // 检查是否是当前皮肤（根据配置）
                 var currentSkinFullPath = Path.GetFullPath(Path.Combine(basePath, _settings.Player.Skin));
+                var isCurrentSkin = Path.GetFullPath(skinItem.Path) == currentSkinFullPath;
+                control.IsCurrentSkin = isCurrentSkin;
 
-                if (Path.GetFullPath(skinItem.Path) == currentSkinFullPath)
+                if (isCurrentSkin && _selectedSkinControl == null)
                 {
-                    // 自动选中当前皮肤
-                    if (_selectedSkinControl == null)
-                    {
-                        _selectedSkinControl = control;
-                        control.IsSelected = true;
-                        SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
-                    }
+                    _selectedSkinControl = control;
+                    control.IsSelected = true;
+                    SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
                 }
+
+                // 订阅右键菜单事件
+                control.RequestSetCurrent += SkinItem_RequestSetCurrent;
+                control.RequestRename += SkinItem_RequestRename;
+                control.RequestRemove += SkinItem_RequestRemove;
 
                 // 计数并检查是否全部加载完成
                 _loadedCount++;
                 if (_loadedCount >= _totalSkinCount)
                 {
-                    // 所有皮肤加载完成，显示网格并隐藏加载提示
                     SkinGrid.Visibility = Visibility.Visible;
                     LoadingOverlay.Visibility = Visibility.Collapsed;
                 }
@@ -292,6 +312,144 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 app.SaveSettings();
                 // 刷新物品栏窗口的玩家模型
                 app.LoadPlayerSkin(skinPath, isWide);
+            }
+
+            // 更新所有皮肤项的 IsCurrentSkin 状态
+            UpdateCurrentSkinStates(skinPath);
+        }
+
+        private void UpdateCurrentSkinStates(string currentSkinPath)
+        {
+            var normalizedCurrent = Path.GetFullPath(currentSkinPath);
+            foreach (var item in _skinItems)
+            {
+                // 找到对应的 SkinItemControl 并更新状态
+                var container = SkinGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (container is FrameworkElement element)
+                {
+                    var control = FindSkinItemControl(element);
+                    if (control != null)
+                    {
+                        control.IsCurrentSkin = Path.GetFullPath(control.SkinPath!) == normalizedCurrent;
+                    }
+                }
+            }
+        }
+
+        private SkinItemControl? FindSkinItemControl(DependencyObject parent)
+        {
+            if (parent is SkinItemControl control)
+                return control;
+
+            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                var result = FindSkinItemControl(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+        private void SkinItem_RequestSetCurrent(object? sender, EventArgs e)
+        {
+            if (sender is SkinItemControl control && control.DataContext is SkinItem skinItem)
+            {
+                SetCurrentSkin(skinItem.Path, skinItem.IsWide);
+
+                // 同时更新选中状态
+                if (_selectedSkinControl != null)
+                    _selectedSkinControl.IsSelected = false;
+                _selectedSkinControl = control;
+                control.IsSelected = true;
+                SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+            }
+        }
+
+        private void SkinItem_RequestRename(object? sender, EventArgs e)
+        {
+            if (sender is SkinItemControl control && control.DataContext is SkinItem skinItem)
+            {
+                var renameWindow = new RenameSkinWindow(skinItem.Name);
+                renameWindow.Owner = _parentWindow;
+                renameWindow.ShowDialog();
+
+                if (!renameWindow.IsConfirmed)
+                    return;
+
+                var newName = renameWindow.NewName!;
+                if (newName == skinItem.Name)
+                    return;
+
+                // 检查重名
+                var dir = Path.GetDirectoryName(skinItem.Path)!;
+                var newPath = Path.Combine(dir, newName + ".png");
+                if (File.Exists(newPath))
+                {
+                    System.Windows.MessageBox.Show(
+                        $"已存在同名皮肤 \"{newName}\"",
+                        "重命名",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Warning);
+                    return;
+                }
+
+                // 重命名文件
+                File.Move(skinItem.Path, newPath);
+
+                // 如果是当前皮肤，更新配置
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var currentSkinFullPath = Path.GetFullPath(Path.Combine(basePath, _settings.Player.Skin));
+                if (Path.GetFullPath(skinItem.Path) == currentSkinFullPath)
+                {
+                    var relativePath = newPath.StartsWith(basePath)
+                        ? newPath.Substring(basePath.Length).TrimStart('\\', '/')
+                        : newPath;
+                    _settings.Player.Skin = relativePath;
+                    if (System.Windows.Application.Current is App app)
+                        app.SaveSettings();
+                }
+
+                // 刷新列表
+                LoadSkinsAsync();
+            }
+        }
+
+        private void SkinItem_RequestRemove(object? sender, EventArgs e)
+        {
+            if (sender is SkinItemControl control && control.DataContext is SkinItem skinItem)
+            {
+                var confirmWindow = new RemoveSkinConfirmWindow(skinItem.Name);
+                confirmWindow.Owner = _parentWindow;
+                confirmWindow.ShowDialog();
+
+                if (!confirmWindow.IsConfirmed)
+                    return;
+
+                // 删除文件
+                try
+                {
+                    File.Delete(skinItem.Path);
+                }
+                catch
+                {
+                    System.Windows.MessageBox.Show("删除文件失败", "移除皮肤",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+
+                // 如果删除的是当前皮肤，回退到默认皮肤
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var currentSkinFullPath = Path.GetFullPath(Path.Combine(basePath, _settings.Player.Skin));
+                if (Path.GetFullPath(skinItem.Path) == currentSkinFullPath)
+                {
+                    var defaultSkinPath = Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/steve.png");
+                    SetCurrentSkin(defaultSkinPath, true);
+                }
+
+                // 刷新列表
+                LoadSkinsAsync();
             }
         }
     }

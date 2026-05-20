@@ -18,9 +18,25 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
         private static readonly SolidColorBrush NormalBorderBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
         public event EventHandler? Selected;
+        public event EventHandler? RequestSetCurrent;
+        public event EventHandler? RequestRename;
+        public event EventHandler? RequestRemove;
 
         public string? SkinPath { get; private set; }
         public string? SkinName { get; set; }
+        public bool IsCustomSkin { get; set; }
+
+        private bool _isCurrentSkin;
+
+        public bool IsCurrentSkin
+        {
+            get => _isCurrentSkin;
+            set
+            {
+                _isCurrentSkin = value;
+                MenuSetCurrent.Visibility = value ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
 
         public SkinItemControl()
         {
@@ -104,6 +120,45 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
         {
             Selected?.Invoke(this, EventArgs.Empty);
             e.Handled = true;
+        }
+
+        private void ItemBorder_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Selected?.Invoke(this, EventArgs.Empty);
+            e.Handled = true;
+        }
+
+        private void ItemBorder_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
+        {
+            MenuRename.Visibility = IsCustomSkin ? Visibility.Visible : Visibility.Collapsed;
+            MenuRemove.Visibility = IsCustomSkin ? Visibility.Visible : Visibility.Collapsed;
+            MenuSetCurrent.Visibility = IsCurrentSkin ? Visibility.Collapsed : Visibility.Visible;
+
+            if (MenuSetCurrent.Visibility == Visibility.Collapsed &&
+                MenuRename.Visibility == Visibility.Collapsed &&
+                MenuRemove.Visibility == Visibility.Collapsed)
+            {
+                ItemBorder.ContextMenu = null;
+            }
+            else
+            {
+                ItemBorder.ContextMenu = ItemContextMenu;
+            }
+        }
+
+        private void MenuSetCurrent_Click(object sender, RoutedEventArgs e)
+        {
+            RequestSetCurrent?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MenuRename_Click(object sender, RoutedEventArgs e)
+        {
+            RequestRename?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MenuRemove_Click(object sender, RoutedEventArgs e)
+        {
+            RequestRemove?.Invoke(this, EventArgs.Empty);
         }
     }
 }

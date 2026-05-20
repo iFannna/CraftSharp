@@ -5,7 +5,15 @@
              Width="150" Height="150">
     <Border x:Name="ItemBorder" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
             BorderThickness="2" BorderBrush="Transparent" Cursor="Hand"
-            MouseLeftButtonDown="ItemBorder_MouseLeftButtonDown">
+            MouseLeftButtonDown="ItemBorder_MouseLeftButtonDown"
+            ContextMenuOpening="ItemBorder_ContextMenuOpening">
+        <Border.ContextMenu>
+            <ContextMenu x:Name="ItemContextMenu">
+                <MenuItem x:Name="MenuSetCurrent" Header="设置为当前皮肤" Click="MenuSetCurrent_Click"/>
+                <MenuItem x:Name="MenuRename" Header="重命名" Click="MenuRename_Click" Visibility="Collapsed"/>
+                <MenuItem x:Name="MenuRemove" Header="移除" Click="MenuRemove_Click" Visibility="Collapsed"/>
+            </ContextMenu>
+        </Border.ContextMenu>
         <hx:Viewport3DX x:Name="Viewport"
                         Background="Transparent"
                         ShowCoordinateSystem="False"
