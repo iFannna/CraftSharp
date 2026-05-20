@@ -1568,6 +1568,17 @@ namespace CraftSharp.Windows.Inventory
             }
         }
 
+        /// <summary>
+        /// 加载指定的皮肤文件
+        /// </summary>
+        public void LoadPlayerSkin(string skinPath, bool isWide)
+        {
+            if (_playerPreviewControl != null)
+            {
+                _playerPreviewControl.LoadSkin(skinPath, isWide);
+            }
+        }
+
         // ==================== Tooltip 相关 ====================
 
         /// <summary>

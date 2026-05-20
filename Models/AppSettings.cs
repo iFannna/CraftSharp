@@ -54,6 +54,11 @@ namespace CraftSharp.Models
         public ObservableCollection<BossBarSettings> BossBars { get; set; }
 
         /// <summary>
+        /// 玩家设置
+        /// </summary>
+        public PlayerSettings Player { get; set; } = new PlayerSettings();
+
+        /// <summary>
         /// 快捷键设置
         /// </summary>
         public HotkeySettings Hotkeys { get; set; } = new HotkeySettings();
@@ -369,6 +374,22 @@ namespace CraftSharp.Models
         /// 显示/隐藏快捷栏快捷键
         /// </summary>
         public string HotbarToggle { get; set; } = "";
+    }
+
+    /// <summary>
+    /// 玩家设置
+    /// </summary>
+    public class PlayerSettings
+    {
+        /// <summary>
+        /// 当前皮肤路径（相对于程序目录）
+        /// </summary>
+        public string Skin { get; set; } = "assets/minecraft/textures/entity/player/wide/steve.png";
+
+        /// <summary>
+        /// 皮肤类型（wide 或 slim）
+        /// </summary>
+        public string SkinType { get; set; } = "wide";
     }
 
     /// <summary>

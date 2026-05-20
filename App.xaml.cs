@@ -153,6 +153,9 @@ namespace CraftSharp
             _inventoryWindow = new InventoryWindow(_appSettings!);
             _inventoryWindow.Hide();
 
+            // 从配置加载玩家皮肤
+            LoadPlayerSkinFromSettings();
+
             // 监听物品栏位置变化（即时保存到配置文件）
             _inventoryWindow.PositionChanged += (_, _) =>
             {
@@ -637,6 +640,64 @@ namespace CraftSharp
             if (_inventoryWindow != null)
             {
                 _inventoryWindow.RefreshPlayerModel();
+            }
+        }
+
+        /// <summary>
+        /// 加载指定的皮肤到物品栏窗口的玩家模型
+        /// </summary>
+        public void LoadPlayerSkin(string skinPath, bool isWide)
+        {
+            if (_inventoryWindow != null)
+            {
+                _inventoryWindow.LoadPlayerSkin(skinPath, isWide);
+            }
+        }
+
+        /// <summary>
+        /// 设置当前皮肤并保存配置
+        /// </summary>
+        public void SetPlayerSkin(string skinPath, string skinType)
+        {
+            if (_appSettings != null)
+            {
+                _appSettings.Player.Skin = skinPath;
+                _appSettings.Player.SkinType = skinType;
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// 从配置加载玩家皮肤
+        /// </summary>
+        private void LoadPlayerSkinFromSettings()
+        {
+            if (_appSettings == null || _inventoryWindow == null) return;
+
+            var skinPath = _appSettings.Player.Skin;
+            var skinType = _appSettings.Player.SkinType;
+            var isWide = skinType == "wide";
+
+            // 转换为绝对路径
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var fullPath = System.IO.Path.Combine(basePath, skinPath);
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                _inventoryWindow.LoadPlayerSkin(fullPath, isWide);
+            }
+            else
+            {
+                // 如果配置中的皮肤不存在，加载默认皮肤
+                var defaultSkinPath = System.IO.Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/steve.png");
+                if (System.IO.File.Exists(defaultSkinPath))
+                {
+                    _inventoryWindow.LoadPlayerSkin(defaultSkinPath, true);
+                    // 重置配置为默认值
+                    _appSettings.Player.Skin = "assets/minecraft/textures/entity/player/wide/steve.png";
+                    _appSettings.Player.SkinType = "wide";
+                    SaveSettings();
+                }
             }
         }
 

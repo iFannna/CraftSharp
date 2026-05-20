@@ -41,6 +41,12 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             _skinItems = new ObservableCollection<SkinItem>();
             SkinGrid.ItemsSource = _skinItems;
 
+            // 根据设置初始化皮肤类型
+            _isWide = _settings.Player.SkinType == "wide";
+
+            // 初始化选项按钮状态
+            UpdateOptionButtonState(_isWide);
+
             LoadSkinsAsync();
         }
 
@@ -217,6 +223,21 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
                 control.LoadSkin(skinItem.Path, fullUvPath, skinItem.IsWide);
 
+                // 检查是否是当前皮肤（根据配置）
+                var currentSkinPath = _settings.Player.Skin;
+                var currentSkinFullPath = Path.Combine(basePath, currentSkinPath);
+
+                if (skinItem.Path == currentSkinFullPath)
+                {
+                    // 自动选中当前皮肤
+                    if (_selectedSkinControl == null)
+                    {
+                        _selectedSkinControl = control;
+                        control.IsSelected = true;
+                        SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+                    }
+                }
+
                 // 计数并检查是否全部加载完成
                 _loadedCount++;
                 if (_loadedCount >= _totalSkinCount)
@@ -246,7 +267,36 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 if (control.DataContext is SkinItem skinItem)
                 {
                     SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+
+                    // 设置当前皮肤并保存配置
+                    SetCurrentSkin(skinItem.Path, skinItem.IsWide);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 设置当前皮肤并保存配置，同时刷新物品栏窗口的玩家模型
+        /// </summary>
+        private void SetCurrentSkin(string skinPath, bool isWide)
+        {
+            // 转换为相对路径（相对于程序目录）
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var relativePath = skinPath.StartsWith(basePath)
+                ? skinPath.Substring(basePath.Length).TrimStart('\\', '/')
+                : skinPath;
+
+            var skinType = isWide ? "wide" : "slim";
+
+            // 更新设置并保存
+            _settings.Player.Skin = relativePath;
+            _settings.Player.SkinType = skinType;
+
+            // 保存配置文件
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+                // 刷新物品栏窗口的玩家模型
+                app.LoadPlayerSkin(skinPath, isWide);
             }
         }
     }

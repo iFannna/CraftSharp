@@ -120,6 +120,30 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
+        /// 加载指定的皮肤文件
+        /// </summary>
+        public void LoadSkin(string skinPath, bool isWide)
+        {
+            var uvJsonPath = isWide
+                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlayerUvWide)
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssetPaths.PlayerUvSlim);
+
+            if (!File.Exists(skinPath) || !File.Exists(uvJsonPath))
+                return;
+
+            var (bodyGroup, headGroup) = PlayerModelBuilder.CreatePlayerModelWithSeparateHead(skinPath, uvJsonPath);
+
+            BodyModelGroup.Children.Clear();
+            BodyModelGroup.Children.Add(bodyGroup);
+
+            var offsetTransform = new TranslateTransform3D(0, 4, 0);
+            BodyModelGroup.Transform = offsetTransform;
+
+            _bodyGroup = bodyGroup;
+            _headGroup = headGroup;
+        }
+
+        /// <summary>
         /// 刷新玩家模型（重新加载皮肤）
         /// </summary>
         public void RefreshModel()

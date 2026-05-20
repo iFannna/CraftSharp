@@ -77,6 +77,7 @@ namespace CraftSharp.Helpers
         // 皮肤预览
         public const string DefaultSkinWide = "assets/minecraft/textures/entity/player/wide/steve.png";
         public const string PlayerUvWide = "assets/minecraft/textures/entity/player/uv/wide.json";
+        public const string PlayerUvSlim = "assets/minecraft/textures/entity/player/uv/slim.json";
 
         /// <summary>
         /// 根据 IconStyle 获取生命值图标路径
