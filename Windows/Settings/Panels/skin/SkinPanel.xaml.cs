@@ -47,14 +47,16 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
         private async void LoadSkinsAsync()
         {
-            // 显示加载提示
+            // 显示加载提示，隐藏皮肤网格
             LoadingOverlay.Visibility = Visibility.Visible;
+            SkinGrid.Visibility = Visibility.Hidden;
             _loadedCount = 0;
 
             // 强制 UI 更新，让 LoadingOverlay 先显示出来
             await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
 
-            _skinItems.Clear();
+            // 在后台准备好新数据，避免闪烁
+            var newItems = new ObservableCollection<SkinItem>();
 
             var skinFolder = _isWide ? WideSkinFolder : SlimSkinFolder;
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -68,7 +70,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 foreach (var file in files)
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
-                    _skinItems.Add(new SkinItem
+                    newItems.Add(new SkinItem
                     {
                         Name = name,
                         Path = file,
@@ -77,16 +79,24 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                     });
                 }
 
-                // 如果没有皮肤，隐藏加载提示
+                // 一次性替换 ItemsSource
+                _skinItems = newItems;
+                SkinGrid.ItemsSource = _skinItems;
+
+                // 如果没有皮肤，隐藏加载提示并显示网格
                 if (_totalSkinCount == 0)
                 {
                     LoadingOverlay.Visibility = Visibility.Collapsed;
+                    SkinGrid.Visibility = Visibility.Visible;
                 }
             }
             else
             {
                 _totalSkinCount = 0;
+                _skinItems = newItems;
+                SkinGrid.ItemsSource = _skinItems;
                 LoadingOverlay.Visibility = Visibility.Collapsed;
+                SkinGrid.Visibility = Visibility.Visible;
             }
         }
 
@@ -141,6 +151,8 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 _loadedCount++;
                 if (_loadedCount >= _totalSkinCount)
                 {
+                    // 所有皮肤加载完成，显示网格并隐藏加载提示
+                    SkinGrid.Visibility = Visibility.Visible;
                     LoadingOverlay.Visibility = Visibility.Collapsed;
                 }
             }

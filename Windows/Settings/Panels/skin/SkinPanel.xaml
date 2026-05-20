@@ -59,7 +59,8 @@
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                                   Padding="8,8,4,8">
-                        <ItemsControl x:Name="SkinGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ItemsControl x:Name="SkinGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      VirtualizingStackPanel.IsVirtualizing="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Orientation="Horizontal" ItemWidth="154"/>
