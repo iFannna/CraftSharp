@@ -1,5 +1,6 @@
 using CraftSharp.Models;
 using CraftSharp.Windows.Settings.Panels.Skin.Components;
+using CraftSharp.Windows.Skin;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -23,6 +24,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
         private int _loadedCount = 0;
         private int _totalSkinCount = 0;
 
+        // 父窗口引用（用于打开弹窗）
+        private global::System.Windows.Window? _parentWindow;
+
         private static readonly string WideSkinFolder = "assets/minecraft/textures/entity/player/wide";
         private static readonly string SlimSkinFolder = "assets/minecraft/textures/entity/player/slim";
         private static readonly string WideUvPath = "assets/minecraft/textures/entity/player/uv/wide.json";
@@ -42,7 +46,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
         public void SetParentWindow(global::System.Windows.Window parent)
         {
-            // 后续实现
+            _parentWindow = parent;
         }
 
         private async void LoadSkinsAsync()
@@ -140,6 +144,66 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                     _isWide = false;
                     LoadSkinsAsync();
                 }
+                else if (clickedBorder == BorderUpload)
+                {
+                    // 打开上传弹窗
+                    OpenUploadWindow();
+                }
+            }
+        }
+
+        private void OpenUploadWindow()
+        {
+            var uploadWindow = new UploadSkinWindow();
+            uploadWindow.Owner = _parentWindow;
+
+            if (uploadWindow.ShowDialog() == true)
+            {
+                // 上传成功，刷新皮肤列表
+                // 切换到新上传的皮肤类型
+                _isWide = uploadWindow.ResultIsWide;
+                LoadSkinsAsync();
+
+                // 更新选项按钮状态
+                UpdateOptionButtonState(uploadWindow.ResultIsWide);
+
+                // 刷新物品栏窗口的玩家模型
+                RefreshInventoryPlayerModel();
+            }
+        }
+
+        private void UpdateOptionButtonState(bool isWide)
+        {
+            // 根据类型更新选中状态
+            var selectedBorder = isWide ? BorderSteve : BorderAlex;
+            var selectedText = isWide ? TextSteve : TextAlex;
+
+            for (int i = 0; i < _optionBorders.Length; i++)
+            {
+                var border = _optionBorders[i];
+                var text = _optionTexts[i];
+
+                if (border == selectedBorder)
+                {
+                    border.Background = TryFindResource("AccentBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(0, 120, 215));
+                    text.Foreground = TryFindResource("TextPrimaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    text.FontWeight = FontWeights.Medium;
+                }
+                else
+                {
+                    border.Background = Brushes.Transparent;
+                    text.Foreground = TryFindResource("TextSecondaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(150, 150, 150));
+                    text.FontWeight = FontWeights.Normal;
+                }
+            }
+        }
+
+        private void RefreshInventoryPlayerModel()
+        {
+            // 获取物品栏窗口实例并刷新玩家模型
+            if (System.Windows.Application.Current is App app)
+            {
+                app.RefreshInventoryPlayerModel();
             }
         }
 

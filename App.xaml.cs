@@ -630,6 +630,17 @@ namespace CraftSharp
         }
 
         /// <summary>
+        /// 刷新物品栏窗口的玩家模型（上传新皮肤后调用）
+        /// </summary>
+        public void RefreshInventoryPlayerModel()
+        {
+            if (_inventoryWindow != null)
+            {
+                _inventoryWindow.RefreshPlayerModel();
+            }
+        }
+
+        /// <summary>
         /// 初始化HUD元素可见性（根据配置文件）
         /// </summary>
         private void InitializeHudElementsVisibility()

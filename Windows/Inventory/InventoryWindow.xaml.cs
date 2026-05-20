@@ -1557,6 +1557,17 @@ namespace CraftSharp.Windows.Inventory
             PositionWindow();
         }
 
+        /// <summary>
+        /// 刷新玩家预览模型（上传新皮肤后调用）
+        /// </summary>
+        public void RefreshPlayerModel()
+        {
+            if (_playerPreviewControl != null)
+            {
+                _playerPreviewControl.RefreshModel();
+            }
+        }
+
         // ==================== Tooltip 相关 ====================
 
         /// <summary>

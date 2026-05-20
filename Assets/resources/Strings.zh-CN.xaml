@@ -23,6 +23,23 @@
     <sys:String x:Key="SkinTabUpload">上传材质</sys:String>
     <sys:String x:Key="SkinSearchPlaceholder">搜索皮肤...</sys:String>
 
+    <!-- 上传材质弹窗 -->
+    <sys:String x:Key="UploadSkinTitle">上传材质</sys:String>
+    <sys:String x:Key="UploadSkinNameLabel">材质名称</sys:String>
+    <sys:String x:Key="UploadSkinNamePlaceholder">材质名称应小于 32 个字节且不能包含奇怪的符号</sys:String>
+    <sys:String x:Key="UploadSkinTypeLabel">材质类型</sys:String>
+    <sys:String x:Key="UploadSkinFileLabel">皮肤文件</sys:String>
+    <sys:String x:Key="UploadSkinSelectFile">选择文件</sys:String>
+    <sys:String x:Key="UploadSkinCancel">取消</sys:String>
+    <sys:String x:Key="UploadSkinConfirm">确认</sys:String>
+    <sys:String x:Key="UploadSkinNameTooLong">名称长度不能超过32个字符</sys:String>
+    <sys:String x:Key="UploadSkinNameInvalidChars">名称只能包含字母、数字、下划线、横杠和空格</sys:String>
+    <sys:String x:Key="UploadSkinNameRequired">请输入材质名称</sys:String>
+    <sys:String x:Key="UploadSkinNoFile">请先选择一个皮肤文件</sys:String>
+    <sys:String x:Key="UploadSkinNameConflict">已存在同名皮肤 "{0}"，请使用其他名称</sys:String>
+    <sys:String x:Key="UploadSkinCopyFailed">复制文件失败：{0}</sys:String>
+    <sys:String x:Key="UploadSkinSuccess">上传成功</sys:String>
+
     <!-- 系统设置面板 -->
     <sys:String x:Key="SystemPanelTitle">系统设置</sys:String>
     <sys:String x:Key="LanguageLabel">语言 / Language</sys:String>

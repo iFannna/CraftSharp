@@ -104,6 +104,7 @@ namespace CraftSharp.Windows.Settings
             _panelAppearance = new AppearancePanel(_settings);
             _panelAppearance.SetParentWindow(this);
             _panelSkin = new SkinPanel(_settings);
+            _panelSkin.SetParentWindow(this);
             _panelHud = new HudPanel(_settings);
             _panelInventory = new InventoryPanel(_settings);
             _panelHotkey = new HotkeyPanel(_settings);

@@ -40,6 +40,20 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
             };
         }
 
+        /// <summary>
+        /// 设置相机宽度（调整模型显示大小）
+        /// </summary>
+        public void SetCameraWidth(double width)
+        {
+            if (Viewport.Camera is HelixToolkit.Wpf.SharpDX.OrthographicCamera camera)
+            {
+                camera.Width = width;
+                // 调整相机位置让模型居中
+                camera.Position = new Point3D(0, 12, -40);
+                camera.LookDirection = new Vector3D(0, 0, 40);
+            }
+        }
+
         public void LoadSkin(string skinPath, bool isWide)
         {
             try

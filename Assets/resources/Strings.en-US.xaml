@@ -23,6 +23,23 @@
     <sys:String x:Key="SkinTabUpload">Upload Skin</sys:String>
     <sys:String x:Key="SkinSearchPlaceholder">Search skins...</sys:String>
 
+    <!-- Upload Skin Window -->
+    <sys:String x:Key="UploadSkinTitle">Upload Skin</sys:String>
+    <sys:String x:Key="UploadSkinNameLabel">Skin Name</sys:String>
+    <sys:String x:Key="UploadSkinNamePlaceholder">Skin name should be less than 32 bytes and contain no special symbols</sys:String>
+    <sys:String x:Key="UploadSkinTypeLabel">Skin Type</sys:String>
+    <sys:String x:Key="UploadSkinFileLabel">Skin File</sys:String>
+    <sys:String x:Key="UploadSkinSelectFile">Select File</sys:String>
+    <sys:String x:Key="UploadSkinCancel">Cancel</sys:String>
+    <sys:String x:Key="UploadSkinConfirm">Confirm</sys:String>
+    <sys:String x:Key="UploadSkinNameTooLong">Name length cannot exceed 32 characters</sys:String>
+    <sys:String x:Key="UploadSkinNameInvalidChars">Name can only contain letters, numbers, underscores, hyphens and spaces</sys:String>
+    <sys:String x:Key="UploadSkinNameRequired">Please enter a skin name</sys:String>
+    <sys:String x:Key="UploadSkinNoFile">Please select a skin file first</sys:String>
+    <sys:String x:Key="UploadSkinNameConflict">A skin named "{0}" already exists, please use another name</sys:String>
+    <sys:String x:Key="UploadSkinCopyFailed">Failed to copy file: {0}</sys:String>
+    <sys:String x:Key="UploadSkinSuccess">Upload successful</sys:String>
+
     <!-- System Settings Panel -->
     <sys:String x:Key="SystemPanelTitle">System Settings</sys:String>
     <sys:String x:Key="LanguageLabel">Language / 语言</sys:String>

@@ -120,6 +120,14 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
+        /// 刷新玩家模型（重新加载皮肤）
+        /// </summary>
+        public void RefreshModel()
+        {
+            LoadPlayerModel();
+        }
+
+        /// <summary>
         /// 更新预览区域的位置信息（由父窗口调用）
         /// </summary>
         public void UpdatePreviewPosition(Point screenPosition, double width, double height)
