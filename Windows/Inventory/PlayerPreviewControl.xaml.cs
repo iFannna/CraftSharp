@@ -83,14 +83,14 @@ namespace CraftSharp.Windows.Inventory
         {
             // 相机位置：在模型高度中间（y=16），Z轴负坐标
             // LookDirection 水平向前，让模型上下居中显示（各6px边距）
-            Viewport.Camera = new HelixToolkit.Wpf.SharpDX.PerspectiveCamera
+            Viewport.Camera = new HelixToolkit.Wpf.SharpDX.OrthographicCamera
             {
-                Position = new Point3D(0, ModelCenterY, -50),  // y=16（模型中心）
-                LookDirection = new Vector3D(0, 0, 50),        // 水平向前看50单位
+                Position = new Point3D(0, ModelCenterY, -50),
+                LookDirection = new Vector3D(0, 0, 50),
                 UpDirection = new Vector3D(0, 1, 0),
                 FarPlaneDistance = 500,
                 NearPlaneDistance = 0.1,
-                FieldOfView = 45
+                Width = 28
             };
         }
 
