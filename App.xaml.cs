@@ -23,11 +23,9 @@ namespace CraftSharp
         private SettingsWindow? _settingsWindow;
         private TaskbarIcon? _taskbarIcon;
         private System.Windows.Controls.ContextMenu? _trayContextMenu;
-        private System.Windows.Controls.MenuItem? _showMainItem;
-        private System.Windows.Controls.MenuItem? _showStatusBarItem;
-        private System.Windows.Controls.MenuItem? _hideStatusBarItem;
-        private System.Windows.Controls.MenuItem? _openInventoryItem;
-        private System.Windows.Controls.MenuItem? _closeInventoryItem;
+        private System.Windows.Controls.MenuItem? _settingsPanelItem;
+        private System.Windows.Controls.MenuItem? _statusBarItem;
+        private System.Windows.Controls.MenuItem? _inventoryItem;
         private System.Windows.Controls.MenuItem? _exitItem;
         private string _settingsPath = "";
         private Models.AppSettings? _appSettings;
@@ -414,71 +412,53 @@ namespace CraftSharp
                 Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint
             };
 
-            // 显示主窗口
-            _showMainItem = new System.Windows.Controls.MenuItem
+            // 设置面板
+            _settingsPanelItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
-            _showMainItem.Click += (_, _) =>
+            _settingsPanelItem.Click += (_, _) =>
             {
                 _trayContextMenu!.IsOpen = false;
-                _settingsWindow?.Show();
-                _settingsWindow?.Activate();
+                if (_settingsWindow?.IsVisible == true)
+                    _settingsWindow.Hide();
+                else
+                {
+                    _settingsWindow?.Show();
+                    _settingsWindow?.Activate();
+                }
             };
-            _trayContextMenu!.Items.Add(_showMainItem);
+            _trayContextMenu!.Items.Add(_settingsPanelItem);
 
-            // 显示状态栏
-            _showStatusBarItem = new System.Windows.Controls.MenuItem
+            // 状态栏
+            _statusBarItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
-            _showStatusBarItem.Click += (_, _) =>
+            _statusBarItem.Click += (_, _) =>
             {
                 _trayContextMenu!.IsOpen = false;
-                _statusBarWindow?.Show();
+                if (_statusBarWindow?.IsVisible == true)
+                    _statusBarWindow.Hide();
+                else
+                    _statusBarWindow?.Show();
             };
-            _trayContextMenu!.Items.Add(_showStatusBarItem);
+            _trayContextMenu!.Items.Add(_statusBarItem);
 
-            // 隐藏状态栏
-            _hideStatusBarItem = new System.Windows.Controls.MenuItem
+            // 物品栏
+            _inventoryItem = new System.Windows.Controls.MenuItem
             {
-                Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏",
                 Style = (Style)FindResource("WpfUiMenuItemStyle")!
             };
-            _hideStatusBarItem.Click += (_, _) =>
+            _inventoryItem.Click += (_, _) =>
             {
                 _trayContextMenu!.IsOpen = false;
-                _statusBarWindow?.Hide();
+                if (_inventoryWindow?.IsVisible == true)
+                    _inventoryWindow.Hide();
+                else
+                    _inventoryWindow?.Show();
             };
-            _trayContextMenu!.Items.Add(_hideStatusBarItem);
-
-            // 打开物品栏
-            _openInventoryItem = new System.Windows.Controls.MenuItem
-            {
-                Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")!
-            };
-            _openInventoryItem.Click += (_, _) =>
-            {
-                _trayContextMenu!.IsOpen = false;
-                _inventoryWindow?.Show();
-            };
-            _trayContextMenu!.Items.Add(_openInventoryItem);
-
-            // 关闭物品栏
-            _closeInventoryItem = new System.Windows.Controls.MenuItem
-            {
-                Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏",
-                Style = (Style)FindResource("WpfUiMenuItemStyle")!
-            };
-            _closeInventoryItem.Click += (_, _) =>
-            {
-                _trayContextMenu!.IsOpen = false;
-                _inventoryWindow?.Hide();
-            };
-            _trayContextMenu!.Items.Add(_closeInventoryItem);
+            _trayContextMenu!.Items.Add(_inventoryItem);
 
             // 退出
             _exitItem = new System.Windows.Controls.MenuItem
@@ -493,24 +473,47 @@ namespace CraftSharp
             };
             _trayContextMenu!.Items.Add(_exitItem);
 
+            // 每次打开菜单时刷新文字
+            _trayContextMenu.Opened += (_, _) => UpdateTrayMenuTexts();
+
             return _trayContextMenu;
         }
 
         /// <summary>
-        /// 更新托盘菜单文本（语言切换时调用）
+        /// 根据窗口可见状态更新托盘菜单文本
         /// </summary>
         private void UpdateTrayMenuTexts()
         {
-            if (_showMainItem != null)
-                _showMainItem.Header = TryFindResource("TrayShowMain") as string ?? "显示主窗口";
-            if (_showStatusBarItem != null)
-                _showStatusBarItem.Header = TryFindResource("TrayShowStatusBar") as string ?? "显示状态栏";
-            if (_hideStatusBarItem != null)
-                _hideStatusBarItem.Header = TryFindResource("TrayHideStatusBar") as string ?? "隐藏状态栏";
-            if (_openInventoryItem != null)
-                _openInventoryItem.Header = TryFindResource("TrayOpenInventory") as string ?? "打开物品栏";
-            if (_closeInventoryItem != null)
-                _closeInventoryItem.Header = TryFindResource("TrayCloseInventory") as string ?? "关闭物品栏";
+            // 设置面板
+            if (_settingsPanelItem != null)
+            {
+                var showKey = "TrayShowSettingsPanel";
+                var hideKey = "TrayHideSettingsPanel";
+                _settingsPanelItem.Header = _settingsWindow?.IsVisible == true
+                    ? (TryFindResource(hideKey) as string ?? "隐藏设置面板")
+                    : (TryFindResource(showKey) as string ?? "显示设置面板");
+            }
+
+            // 状态栏
+            if (_statusBarItem != null)
+            {
+                var showKey = "TrayShowStatusBar";
+                var hideKey = "TrayHideStatusBar";
+                _statusBarItem.Header = _statusBarWindow?.IsVisible == true
+                    ? (TryFindResource(hideKey) as string ?? "隐藏状态栏")
+                    : (TryFindResource(showKey) as string ?? "显示状态栏");
+            }
+
+            // 物品栏
+            if (_inventoryItem != null)
+            {
+                var showKey = "TrayShowInventory";
+                var hideKey = "TrayHideInventory";
+                _inventoryItem.Header = _inventoryWindow?.IsVisible == true
+                    ? (TryFindResource(hideKey) as string ?? "隐藏物品栏")
+                    : (TryFindResource(showKey) as string ?? "显示物品栏");
+            }
+
             if (_exitItem != null)
                 _exitItem.Header = TryFindResource("TrayExit") as string ?? "退出";
         }

@@ -204,11 +204,12 @@
     <sys:String x:Key="AboutFeedback">Feedback</sys:String>
 
     <!-- Tray Menu -->
-    <sys:String x:Key="TrayShowMain">Show Main Window</sys:String>
+    <sys:String x:Key="TrayShowSettingsPanel">Show Settings Panel</sys:String>
+    <sys:String x:Key="TrayHideSettingsPanel">Hide Settings Panel</sys:String>
     <sys:String x:Key="TrayShowStatusBar">Show Status Bar</sys:String>
     <sys:String x:Key="TrayHideStatusBar">Hide Status Bar</sys:String>
-    <sys:String x:Key="TrayOpenInventory">Open Inventory</sys:String>
-    <sys:String x:Key="TrayCloseInventory">Close Inventory</sys:String>
+    <sys:String x:Key="TrayShowInventory">Show Inventory</sys:String>
+    <sys:String x:Key="TrayHideInventory">Hide Inventory</sys:String>
     <sys:String x:Key="TrayExit">Exit</sys:String>
     <sys:String x:Key="TrayMinimized">Application minimized to system tray</sys:String>
 
