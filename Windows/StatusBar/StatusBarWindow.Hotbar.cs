@@ -113,6 +113,9 @@ namespace CraftSharp.Windows.StatusBar
             _dragService.DragEnded += OnDragEnded;
             _dragService.SwapCompleted += OnSwapCompleted;
             _dragService.HoverChanged += OnHoverChanged;
+
+            // 剪切状态变化事件
+            SlotClipboardService.Instance.CutStateChanged += OnCutStateChanged;
         }
 
         #region 服务事件处理
@@ -194,6 +197,53 @@ namespace CraftSharp.Windows.StatusBar
 
         #endregion
 
+        /// <summary>
+        /// 剪切状态变化事件处理（null=恢复透明度，非null=半透明化）
+        /// </summary>
+        private void OnCutStateChanged(object? sender, string? cutSlotId)
+        {
+            if (cutSlotId != null)
+            {
+                // 对被剪切的格子图标应用半透明效果
+                var iconImage = GetSlotIconImageBySlotId(cutSlotId);
+                if (iconImage != null)
+                {
+                    iconImage.Opacity = 0.5;
+                }
+            }
+            else
+            {
+                // 恢复所有格子图标透明度
+                foreach (var slotId in _slotIds)
+                {
+                    var iconImage = GetSlotIconImageBySlotId(slotId);
+                    if (iconImage != null)
+                    {
+                        iconImage.Opacity = 1.0;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 根据 slotId 获取对应的图标 Image 控件
+        /// </summary>
+        private System.Windows.Controls.Image? GetSlotIconImageBySlotId(string slotId)
+        {
+            // 副手槽
+            if (slotId == "hotbar_left_offhand")
+                return GetIconImage("LeftOffhand");
+            if (slotId == "hotbar_right_offhand")
+                return GetIconImage("RightOffhand");
+
+            // 主快捷栏 hotbar_0 ~ hotbar_8
+            if (slotId.StartsWith("hotbar_") && int.TryParse(slotId.Substring(7), out int index))
+            {
+                return GetIconImage(index);
+            }
+
+            return null;
+        }
         /// <summary>
         /// 加载快捷栏图片尺寸
         /// </summary>
@@ -1414,3 +1464,4 @@ namespace CraftSharp.Windows.StatusBar
         }
     }
 }
+

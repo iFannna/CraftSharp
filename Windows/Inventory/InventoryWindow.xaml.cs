@@ -222,6 +222,9 @@ namespace CraftSharp.Windows.Inventory
             _dragService.DragStarted += OnDragStarted;
             _dragService.DragEnded += OnDragEnded;
             _dragService.SwapCompleted += OnSwapCompleted;
+
+            // 订阅剪切状态变化事件
+            SlotClipboardService.Instance.CutStateChanged += OnCutStateChanged;
         }
 
         /// <summary>
@@ -472,6 +475,28 @@ namespace CraftSharp.Windows.Inventory
             }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
+        /// <summary>
+        /// 剪切状态变化事件处理（null=恢复透明度，非null=半透明化）
+        /// </summary>
+        private void OnCutStateChanged(object? sender, string? cutSlotId)
+        {
+            if (cutSlotId != null)
+            {
+                // 对被剪切的格子图标应用半透明效果
+                if (_slotIcons.TryGetValue(cutSlotId, out var icon))
+                {
+                    icon.Opacity = 0.5;
+                }
+            }
+            else
+            {
+                // 恢复所有格子图标透明度
+                foreach (var kvp in _slotIcons)
+                {
+                    kvp.Value.Opacity = 1.0;
+                }
+            }
+        }
         /// <summary>
         /// 更新指定文件路径的所有格子为占位图
         /// 检查当前格子实际使用的数据源
@@ -1702,3 +1727,4 @@ namespace CraftSharp.Windows.Inventory
         }
     }
 }
+

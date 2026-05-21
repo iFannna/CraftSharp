@@ -22,6 +22,11 @@ namespace CraftSharp.Services.Slot
         private bool _isCut = false; // true=剪切, false=复制
 
         /// <summary>
+        /// 剪切状态变化事件（参数：被剪切的 slotId，null 表示清除剪切状态）
+        /// </summary>
+        public event EventHandler<string?>? CutStateChanged;
+
+        /// <summary>
         /// 当前剪贴板文件路径
         /// </summary>
         public string? ClipboardFilePath => _clipboardFilePath;
@@ -46,6 +51,9 @@ namespace CraftSharp.Services.Slot
         /// </summary>
         public void Copy(string slotId, string filePath, string? displayName = null)
         {
+            // 如果之前有剪切状态，先恢复
+            RestoreCutState();
+
             // 立即更新内部状态（同步，无卡顿）
             _clipboardFilePath = filePath;
             _clipboardDisplayName = displayName;
@@ -61,11 +69,17 @@ namespace CraftSharp.Services.Slot
         /// </summary>
         public void Cut(string slotId, string filePath, string? displayName = null)
         {
+            // 如果之前有剪切状态（不同格子），先恢复
+            RestoreCutState();
+
             // 立即更新内部状态（同步，无卡顿）
             _clipboardFilePath = filePath;
             _clipboardDisplayName = displayName;
             _sourceSlotId = slotId;
             _isCut = true;
+
+            // 通知剪切状态变化
+            CutStateChanged?.Invoke(this, slotId);
 
             // 后台 STA 线程写入 Windows 剪贴板（避免 UI 卡顿）
             StartStaThread(() => TrySetWindowsClipboard(filePath));
@@ -126,10 +140,27 @@ namespace CraftSharp.Services.Slot
         /// </summary>
         public void Clear()
         {
+            // 恢复之前的剪切视觉效果
+            if (_isCut && !string.IsNullOrEmpty(_sourceSlotId))
+            {
+                CutStateChanged?.Invoke(this, null);
+            }
+
             _clipboardFilePath = null;
             _clipboardDisplayName = null;
             _sourceSlotId = null;
             _isCut = false;
+        }
+
+        /// <summary>
+        /// 恢复之前的剪切视觉效果（不改变剪贴板状态）
+        /// </summary>
+        private void RestoreCutState()
+        {
+            if (_isCut && !string.IsNullOrEmpty(_sourceSlotId))
+            {
+                CutStateChanged?.Invoke(this, null);
+            }
         }
 
         /// <summary>
