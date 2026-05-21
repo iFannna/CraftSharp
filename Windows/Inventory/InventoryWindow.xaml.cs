@@ -1052,6 +1052,21 @@ namespace CraftSharp.Windows.Inventory
             // 中键分发模式结束
             if (_isDistributeMode)
             {
+                // 左键抬起时对当前位置执行一次复制（处理单击无移动的情况）
+                var upCanvasPos = e.GetPosition(SlotCanvas);
+                var upSlotId = GetSlotIdAtPosition(upCanvasPos);
+                if (upSlotId != null && upSlotId != _distributeSourceSlotId)
+                {
+                    var upItem = _slotService.GetSlot(upSlotId, _currentStyle, _sharedData);
+                    if (upItem.IsEmpty)
+                    {
+                        var newItem = new SlotItem { FilePath = _distributeFilePath!, DisplayName = "" };
+                        _slotService.SetSlot(upSlotId, newItem, _currentStyle, _sharedData);
+                        SetSlotIcon(upSlotId, _distributeFilePath!);
+                        if (upSlotId.StartsWith("hotbar_")) StatusBarService.Instance.RefreshHotbarIcons();
+                    }
+                }
+
                 _isDistributeMode = false;
                 _distributeSourceSlotId = null;
                 _distributeFilePath = null;
@@ -1060,7 +1075,6 @@ namespace CraftSharp.Windows.Inventory
                 ReleaseMouseCapture();
                 return;
             }
-
             // 窗口拖动结束
             if (_isDragging)
             {
@@ -1240,7 +1254,25 @@ namespace CraftSharp.Windows.Inventory
 
         private void Slot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_isDistributeMode) { e.Handled = true; return; }
+            if (_isDistributeMode)
+            {
+                var dBorder = (Border)sender;
+                var dSlotId = dBorder.Name.Replace("Slot_", "");
+                if (dSlotId != _distributeSourceSlotId && dSlotId != _lastDistributeSlotId)
+                {
+                    var dItem = _slotService.GetSlot(dSlotId, _currentStyle, _sharedData);
+                    if (dItem.IsEmpty)
+                    {
+                        var newItem = new SlotItem { FilePath = _distributeFilePath!, DisplayName = "" };
+                        _slotService.SetSlot(dSlotId, newItem, _currentStyle, _sharedData);
+                        SetSlotIcon(dSlotId, _distributeFilePath!);
+                        if (dSlotId.StartsWith("hotbar_")) StatusBarService.Instance.RefreshHotbarIcons();
+                    }
+                    _lastDistributeSlotId = dSlotId;
+                }
+                e.Handled = true;
+                return;
+            }
             // 拖拽前执行全量检查
             if (System.Windows.Application.Current is App app)
             {
