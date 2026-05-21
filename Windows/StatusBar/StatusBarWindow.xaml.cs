@@ -861,6 +861,16 @@ namespace CraftSharp.Windows.StatusBar
                     e.Handled = true;
                 }
             }
+
+            // Q 键丢弃当前选中的格子内容
+            if (e.Key == Key.Q)
+            {
+                if (_selectedSlotIndex >= 2 && _selectedSlotIndex <= 10)
+                {
+                    DropSlot(_selectedSlotIndex);
+                    e.Handled = true;
+                }
+            }
         }
 
         /// <summary>
@@ -1102,3 +1112,5 @@ namespace CraftSharp.Windows.StatusBar
 }
 
 #pragma warning restore CS8618
+
+

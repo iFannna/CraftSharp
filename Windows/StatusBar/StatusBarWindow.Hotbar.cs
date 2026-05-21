@@ -1239,6 +1239,27 @@ namespace CraftSharp.Windows.StatusBar
         }
 
         /// <summary>
+        /// 丢弃格子内容（Q键功能）
+        /// </summary>
+        private void DropSlot(int slotIndex)
+        {
+            if (slotIndex < 0 || slotIndex >= _slotIds.Length) return;
+
+            var slotId = _slotIds[slotIndex];
+            var item = _slotService.GetSlot(slotId);
+            if (item.IsEmpty) return;
+
+            _slotService.ClearSlot(slotId);
+            ClearSlotIconUI(slotIndex);
+
+            // 通知物品栏刷新
+            if (App.Current is App app)
+            {
+                app.GetInventoryWindow()?.RefreshIcons();
+            }
+        }
+
+        /// <summary>
         /// 移除格子内容
         /// </summary>
         public void RemoveSlot(int index)
@@ -1464,4 +1485,5 @@ namespace CraftSharp.Windows.StatusBar
         }
     }
 }
+
 

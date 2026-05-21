@@ -97,6 +97,10 @@ namespace CraftSharp.Windows.Inventory
         private bool _isShiftMoveMode = false;
         private string? _lastShiftMoveSlotId = null;
 
+        // Q 键丢弃相关状态
+        private bool _isQKeyDown = false;
+        private string? _lastDroppedSlotId = null;
+
         // 静态属性：跳过默认定位（必须在构造函数之前设置）
         public static bool ShouldSkipDefaultPositioning { get; set; } = false;
 
@@ -784,6 +788,67 @@ namespace CraftSharp.Windows.Inventory
         /// <summary>
         /// 窗口鼠标左键按下事件（用于窗口拖动）
         /// </summary>
+        /// <summary>
+        /// 键盘按下 - Q键丢弃鼠标悬浮的格子内容
+        /// </summary>
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q)
+            {
+                // 首次按下：丢弃当前悬浮格子
+                if (!_isQKeyDown)
+                {
+                    _isQKeyDown = true;
+                    _lastDroppedSlotId = null;
+                    DropHoverSlot();
+                }
+                // 长按重复触发（WPF PreviewKeyDown 默认重复）：丢弃当前悬浮格子
+                else
+                {
+                    DropHoverSlot();
+                }
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// 键盘释放 - 重置Q键状态
+        /// </summary>
+        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q)
+            {
+                _isQKeyDown = false;
+                _lastDroppedSlotId = null;
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// 丢弃当前鼠标悬浮的格子内容
+        /// </summary>
+        private void DropHoverSlot()
+        {
+            var mousePos = Mouse.GetPosition(SlotCanvas);
+            var slotId = GetSlotIdAtPosition(mousePos);
+            if (slotId == null) return;
+
+            // 避免重复丢弃同一个格子（长按扫过场景）
+            if (slotId == _lastDroppedSlotId) return;
+
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+            if (item.IsEmpty) { _lastDroppedSlotId = slotId; return; }
+
+            _slotService.ClearSlot(slotId, _currentStyle, _sharedData);
+            ClearSlotIcon(slotId);
+            _lastDroppedSlotId = slotId;
+
+            // 如果涉及 hotbar 格子，通知 StatusBarService 刷新
+            if (slotId.StartsWith("hotbar_"))
+            {
+                StatusBarService.Instance.RefreshHotbarIcons();
+            }
+        }
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Shift 模式检测：从非格子区域开始
@@ -1160,6 +1225,24 @@ namespace CraftSharp.Windows.Inventory
 
         private void Slot_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            // Q键长按扫过丢弃
+            if (_isQKeyDown)
+            {
+                var qBorder = (Border)sender;
+                var qSlotId = qBorder.Name.Replace("Slot_", "");
+                if (qSlotId != _lastDroppedSlotId)
+                {
+                    var qItem = _slotService.GetSlot(qSlotId, _currentStyle, _sharedData);
+                    if (!qItem.IsEmpty)
+                    {
+                        _slotService.ClearSlot(qSlotId, _currentStyle, _sharedData);
+                        ClearSlotIcon(qSlotId);
+                        if (qSlotId.StartsWith("hotbar_")) StatusBarService.Instance.RefreshHotbarIcons();
+                    }
+                    _lastDroppedSlotId = qSlotId;
+                }
+            }
+
             if (!_hoverEffect) return;
 
             var border = (Border)sender;
@@ -1727,4 +1810,7 @@ namespace CraftSharp.Windows.Inventory
         }
     }
 }
+
+
+
 
