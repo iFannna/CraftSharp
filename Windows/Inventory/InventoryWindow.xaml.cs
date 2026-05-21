@@ -1659,7 +1659,7 @@ namespace CraftSharp.Windows.Inventory
         /// <summary>
         /// 隐藏物品栏
         /// </summary>
-        private void HideInventory()
+        internal void HideInventory()
         {
             // 隐藏 Tooltip
             HideTooltip();

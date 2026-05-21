@@ -553,6 +553,13 @@ namespace CraftSharp
                 _inventoryWindow?.Toggle();
                 e.Handled = true;
             }
+
+            // ESC键 - 隐藏物品栏窗口
+            if (e.Key == Key.Escape && _inventoryWindow?.IsVisible == true)
+            {
+                _inventoryWindow.HideInventory();
+                e.Handled = true;
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
