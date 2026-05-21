@@ -3,7 +3,7 @@ using System.Diagnostics;
 using CraftSharp.Helpers;
 using LibreHardwareMonitor.Hardware;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Core
 {
     /// <summary>
     /// 数据映射服务 - 统一管理所有数据映射逻辑（电池/CPU/内存/GPU）

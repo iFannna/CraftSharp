@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Resource
 {
     /// <summary>
     /// 应用图标服务 - 处理图标切换、窗口图标、托盘图标更新

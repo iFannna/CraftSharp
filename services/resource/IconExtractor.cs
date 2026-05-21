@@ -7,7 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ImageMagick;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Resource
 {
     /// <summary>
     /// 图标提取服务 - 使用 Windows Shell API 获取高质量大尺寸图标

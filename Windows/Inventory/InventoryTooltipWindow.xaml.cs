@@ -7,7 +7,10 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 
 namespace CraftSharp.Windows.Inventory
 {
@@ -48,7 +51,7 @@ namespace CraftSharp.Windows.Inventory
         {
             try
             {
-                var bgBitmap = Services.ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/background.png");
+                var bgBitmap = ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/background.png");
                 if (bgBitmap != null)
                 {
                     BackgroundImage.Source = bgBitmap;
@@ -56,7 +59,7 @@ namespace CraftSharp.Windows.Inventory
                     BackgroundImage.ScaleFactor = _scaleFactor;
                 }
 
-                var frameBitmap = Services.ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/frame.png");
+                var frameBitmap = ImageService.Instance.LoadBitmapImage("assets/minecraft/textures/gui/sprites/tooltip/frame.png");
                 if (frameBitmap != null)
                 {
                     FrameImage.Source = frameBitmap;

@@ -2,7 +2,7 @@ using System;
 using CraftSharp.Models;
 using CraftSharp.Windows.StatusBar;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Hud
 {
     /// <summary>
     /// 状态栏窗口管理服务

@@ -2,7 +2,7 @@ using System;
 using CraftSharp.Models;
 using CraftSharp.Windows.Crosshair;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Hud
 {
     /// <summary>
     /// 准星窗口管理服务

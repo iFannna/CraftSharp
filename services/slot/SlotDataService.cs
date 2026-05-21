@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CraftSharp.Models;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子数据存储服务 - App 级单例，数据存储在 settings.json 中

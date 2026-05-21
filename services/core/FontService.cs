@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Core
 {
     /// <summary>
     /// 字体管理服务

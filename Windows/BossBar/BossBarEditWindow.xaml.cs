@@ -1,6 +1,9 @@
 using CraftSharp.Helpers;
 using CraftSharp.Models;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 using CraftSharp.Windows.Dialogs;
 using System;
 using System.Linq;

@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using CraftSharp.Helpers;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Core
 {
     /// <summary>
     /// 屏幕缩放服务 - 基于屏幕分辨率统一计算缩放比例

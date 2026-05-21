@@ -4,9 +4,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子图标管理服务

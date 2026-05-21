@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Resource
 {
     /// <summary>
     /// 图片加载服务 - 统一 BitmapImage 加载和尺寸读取

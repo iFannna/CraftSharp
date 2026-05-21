@@ -1,4 +1,7 @@
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 using System.Windows;
 using Wpf.Ui.Controls;
 

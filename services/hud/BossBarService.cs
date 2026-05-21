@@ -2,7 +2,7 @@ using System;
 using CraftSharp.Models;
 using CraftSharp.Windows.BossBar;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Hud
 {
     /// <summary>
     /// BOSS血条窗口管理服务

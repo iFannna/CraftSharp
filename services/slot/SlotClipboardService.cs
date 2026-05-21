@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using CraftSharp.Models;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子剪贴板服务 - 管理剪切/复制/粘贴操作

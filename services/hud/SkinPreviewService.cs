@@ -1,6 +1,6 @@
 using CraftSharp.Windows.SkinPreview;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Hud
 {
     public class SkinPreviewService
     {

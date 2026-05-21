@@ -2,7 +2,7 @@ using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Microsoft.Win32;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Core
 {
     /// <summary>
     /// 主题管理服务

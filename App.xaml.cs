@@ -7,7 +7,10 @@ using CraftSharp.Windows.Crosshair;
 using CraftSharp.Windows.Settings;
 using CraftSharp.Windows.Inventory;
 using CraftSharp.Windows.SkinPreview;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 using System.Text.Json;
 using Hardcodet.Wpf.TaskbarNotification;
 

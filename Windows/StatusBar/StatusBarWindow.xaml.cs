@@ -8,7 +8,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 
 #pragma warning disable CS8618 // 服务字段在 partial class 的 InitializeSlotServices 中初始化
 

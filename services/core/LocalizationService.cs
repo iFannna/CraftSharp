@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Core
 {
     /// <summary>
     /// 本地化服务，管理语言切换

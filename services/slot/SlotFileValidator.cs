@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CraftSharp.Models;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子文件有效性检测服务（App 级单例）

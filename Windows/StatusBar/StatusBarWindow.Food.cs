@@ -6,7 +6,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CraftSharp.Models;
 using CraftSharp.Helpers;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 
 namespace CraftSharp.Windows.StatusBar
 {

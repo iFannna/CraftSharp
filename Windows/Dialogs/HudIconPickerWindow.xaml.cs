@@ -4,7 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using CraftSharp.Helpers;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Dialogs

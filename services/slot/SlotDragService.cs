@@ -1,9 +1,12 @@
 using System;
 using System.Windows.Threading;
 using CraftSharp.Models;
-using CraftSharp.Services;
+using CraftSharp.Services.Core;
+using CraftSharp.Services.Hud;
+using CraftSharp.Services.Slot;
+using CraftSharp.Services.Resource;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子拖动服务

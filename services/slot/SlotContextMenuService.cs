@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using CraftSharp.Models;
+using CraftSharp.Services.Hud;
 using CraftSharp.Windows.Dialogs;
 
-namespace CraftSharp.Services
+namespace CraftSharp.Services.Slot
 {
     /// <summary>
     /// 格子右键菜单服务 - 创建和管理 ContextMenu
