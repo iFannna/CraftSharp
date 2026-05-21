@@ -101,6 +101,12 @@ namespace CraftSharp.Windows.Inventory
         private bool _isQKeyDown = false;
         private string? _lastDroppedSlotId = null;
 
+        // 中键分发模式状态
+        private bool _isDistributeMode = false;
+        private string? _distributeSourceSlotId = null;
+        private string? _distributeFilePath = null;
+        private string? _lastDistributeSlotId = null;
+
         // 静态属性：跳过默认定位（必须在构造函数之前设置）
         public static bool ShouldSkipDefaultPositioning { get; set; } = false;
 
@@ -667,6 +673,7 @@ namespace CraftSharp.Windows.Inventory
                 };
 
                 border.MouseLeftButtonDown += Slot_MouseLeftButtonDown;
+                border.AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler(Slot_MouseMiddleButtonDown));
                 border.MouseRightButtonDown += Slot_MouseRightButtonDown;
 
                 var icon = new System.Windows.Controls.Image
@@ -956,6 +963,32 @@ namespace CraftSharp.Windows.Inventory
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
         {
             base.OnMouseMove(e);
+            // 中键分发模式处理（最高优先级）
+            if (_isDistributeMode)
+            {
+                var dMousePos = e.GetPosition(this);
+                Canvas.SetLeft(DragIconImage, dMousePos.X - DragIconImage.Width / 2);
+                Canvas.SetTop(DragIconImage, dMousePos.Y - DragIconImage.Height / 2);
+
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    var canvasPos = e.GetPosition(SlotCanvas);
+                    var targetSlotId = GetSlotIdAtPosition(canvasPos);
+                    if (targetSlotId != null && targetSlotId != _distributeSourceSlotId && targetSlotId != _lastDistributeSlotId)
+                    {
+                        var targetItem = _slotService.GetSlot(targetSlotId, _currentStyle, _sharedData);
+                        if (targetItem.IsEmpty)
+                        {
+                            var newItem = new SlotItem { FilePath = _distributeFilePath!, DisplayName = "" };
+                            _slotService.SetSlot(targetSlotId, newItem, _currentStyle, _sharedData);
+                            SetSlotIcon(targetSlotId, _distributeFilePath!);
+                            if (targetSlotId.StartsWith("hotbar_")) StatusBarService.Instance.RefreshHotbarIcons();
+                        }
+                        _lastDistributeSlotId = targetSlotId;
+                    }
+                }
+                return;
+            }
 
             // Shift 模式处理（最高优先级）
             if (_isShiftMoveMode && e.LeftButton == MouseButtonState.Pressed)
@@ -1012,6 +1045,18 @@ namespace CraftSharp.Windows.Inventory
             {
                 _isShiftMoveMode = false;
                 _lastShiftMoveSlotId = null;
+                ReleaseMouseCapture();
+                return;
+            }
+
+            // 中键分发模式结束
+            if (_isDistributeMode)
+            {
+                _isDistributeMode = false;
+                _distributeSourceSlotId = null;
+                _distributeFilePath = null;
+                _lastDistributeSlotId = null;
+                DragIconImage.Visibility = Visibility.Collapsed;
                 ReleaseMouseCapture();
                 return;
             }
@@ -1195,6 +1240,7 @@ namespace CraftSharp.Windows.Inventory
 
         private void Slot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (_isDistributeMode) { e.Handled = true; return; }
             // 拖拽前执行全量检查
             if (System.Windows.Application.Current is App app)
             {
@@ -1220,6 +1266,35 @@ namespace CraftSharp.Windows.Inventory
 
             _longPressStartPoint = e.GetPosition(this);
             _dragService.StartLongPressDetection(slotIndex);
+            e.Handled = true;
+        }
+
+        private void Slot_MouseMiddleButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Middle) return;
+            var border = (Border)sender;
+            var slotId = border.Name.Replace("Slot_", "");
+            var item = _slotService.GetSlot(slotId, _currentStyle, _sharedData);
+            if (item.IsEmpty) return;
+
+            _isDistributeMode = true;
+            _distributeSourceSlotId = slotId;
+            _distributeFilePath = item.FilePath;
+            _lastDistributeSlotId = null;
+
+            if (_slotIcons.TryGetValue(slotId, out var sourceIcon) && sourceIcon.Source != null)
+            {
+                DragIconImage.Source = sourceIcon.Source;
+                DragIconImage.Width = 16 * _scaleFactor;
+                DragIconImage.Height = 16 * _scaleFactor;
+                DragIconImage.Visibility = Visibility.Visible;
+                RenderOptions.SetBitmapScalingMode(DragIconImage, RenderOptions.GetBitmapScalingMode(sourceIcon));
+                var mousePos = e.GetPosition(this);
+                Canvas.SetLeft(DragIconImage, mousePos.X - DragIconImage.Width / 2);
+                Canvas.SetTop(DragIconImage, mousePos.Y - DragIconImage.Height / 2);
+            }
+
+            CaptureMouse();
             e.Handled = true;
         }
 
@@ -1765,6 +1840,7 @@ namespace CraftSharp.Windows.Inventory
         /// </summary>
         private void Slot_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (_isDistributeMode) { e.Handled = true; return; }
             // 执行全量检查
             if (System.Windows.Application.Current is App app)
             {
