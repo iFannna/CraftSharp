@@ -12,11 +12,15 @@
     <!-- 导航菜单 -->
     <sys:String x:Key="NavSystem">系统</sys:String>
     <sys:String x:Key="NavAppearance">外观</sys:String>
+    <sys:String x:Key="NavWallpaper">壁纸</sys:String>
     <sys:String x:Key="NavSkin">皮肤</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
     <sys:String x:Key="NavInventory">物品栏</sys:String>
     <sys:String x:Key="NavHotkey">快捷键</sys:String>
     <sys:String x:Key="NavAbout">关于</sys:String>
+
+    <!-- 壁纸设置面板 -->
+    <sys:String x:Key="WallpaperPanelTitle">壁纸设置</sys:String>
 
     <!-- 皮肤设置面板 -->
     <sys:String x:Key="SkinPanelTitle">皮肤设置</sys:String>

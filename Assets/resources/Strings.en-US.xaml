@@ -12,11 +12,15 @@
     <!-- Navigation Menu -->
     <sys:String x:Key="NavSystem">System</sys:String>
     <sys:String x:Key="NavAppearance">Appearance</sys:String>
+    <sys:String x:Key="NavWallpaper">Wallpaper</sys:String>
     <sys:String x:Key="NavSkin">Skin</sys:String>
     <sys:String x:Key="NavHud">HUD</sys:String>
     <sys:String x:Key="NavInventory">Inventory</sys:String>
     <sys:String x:Key="NavHotkey">Hotkeys</sys:String>
     <sys:String x:Key="NavAbout">About</sys:String>
+
+    <!-- Wallpaper Settings Panel -->
+    <sys:String x:Key="WallpaperPanelTitle">Wallpaper Settings</sys:String>
 
     <!-- Skin Settings Panel -->
     <sys:String x:Key="SkinPanelTitle">Skin Settings</sys:String>

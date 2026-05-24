@@ -80,6 +80,12 @@
                                 <TextBlock Text="{DynamicResource NavAppearance}" Margin="12,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </ListBoxItem>
+                        <ListBoxItem x:Name="NavWallpaper" Tag="wallpaper">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Desktop20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource NavWallpaper}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem x:Name="NavSkin" Tag="skin">
                             <StackPanel Orientation="Horizontal">
                                 <ui:SymbolIcon Symbol="Person20" FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>

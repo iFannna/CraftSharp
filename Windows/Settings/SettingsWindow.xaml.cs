@@ -9,6 +9,7 @@ using CraftSharp.Windows.Settings.Panels.Appearance;
 using CraftSharp.Windows.Settings.Panels.Hotkey;
 using CraftSharp.Windows.Settings.Panels.About;
 using CraftSharp.Windows.Settings.Panels.Skin;
+using CraftSharp.Windows.Settings.Panels.Wallpaper;
 using Wpf.Ui.Controls;
 
 namespace CraftSharp.Windows.Settings
@@ -18,6 +19,7 @@ namespace CraftSharp.Windows.Settings
         private AppSettings _settings;
         private SystemPanel _panelSystem = null!;
         private AppearancePanel _panelAppearance = null!;
+        private WallpaperPanel _panelWallpaper = null!;
         private SkinPanel _panelSkin = null!;
         private HudPanel _panelHud = null!;
         private InventoryPanel _panelInventory = null!;
@@ -103,6 +105,7 @@ namespace CraftSharp.Windows.Settings
             _panelSystem.CardStatesRememberChanged += OnCardStatesRememberChanged;
             _panelAppearance = new AppearancePanel(_settings);
             _panelAppearance.SetParentWindow(this);
+            _panelWallpaper = new WallpaperPanel();
             _panelSkin = new SkinPanel(_settings);
             _panelSkin.SetParentWindow(this);
             _panelHud = new HudPanel(_settings);
@@ -113,6 +116,7 @@ namespace CraftSharp.Windows.Settings
             // 普通面板放入 ContentContainer（带 ScrollViewer 和宽度限制）
             ContentContainer.Children.Add(_panelSystem);
             ContentContainer.Children.Add(_panelAppearance);
+            ContentContainer.Children.Add(_panelWallpaper);
             ContentContainer.Children.Add(_panelHud);
             ContentContainer.Children.Add(_panelInventory);
             ContentContainer.Children.Add(_panelHotkey);
@@ -264,6 +268,7 @@ namespace CraftSharp.Windows.Settings
             // 普通面板的可见性切换（都在 ContentContainer 中）
             _panelSystem.Visibility = tag == "system" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelAppearance.Visibility = tag == "appearance" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            _panelWallpaper.Visibility = tag == "wallpaper" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHud.Visibility = tag == "hud" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelInventory.Visibility = tag == "inventory" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHotkey.Visibility = tag == "hotkey" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
