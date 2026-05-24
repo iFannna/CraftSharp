@@ -185,6 +185,10 @@
 
     <!-- Common -->
     <sys:String x:Key="RestoreDefaults">Restore Default Settings</sys:String>
+    <sys:String x:Key="RestoreDefaultsConfirmTitle">Confirm Restore Defaults</sys:String>
+    <sys:String x:Key="RestoreDefaultsConfirmMessage">This will reset all settings on this page to their default values. Continue?</sys:String>
+    <sys:String x:Key="ConfirmDialogConfirm">Confirm</sys:String>
+    <sys:String x:Key="ConfirmDialogCancel">Cancel</sys:String>
 
     <!-- Hotkey Settings Panel -->
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>

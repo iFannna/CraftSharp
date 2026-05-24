@@ -1,4 +1,6 @@
 using CraftSharp.Models;
+using CraftSharp.Windows.Dialogs;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Settings.Panels.Inventory
@@ -168,6 +170,12 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
         private void RestoreDefaultsBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (_settings == null) return;
+            var title = (string)System.Windows.Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
+            var message = (string)System.Windows.Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
+            var dialog = new ConfirmDialog(title, message) { Owner = System.Windows.Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (!dialog.IsConfirmed) return;
+
             _settings.Inventory = new InventorySettings();
 
             _cards.Clear();

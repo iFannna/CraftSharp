@@ -218,6 +218,12 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
         private void RestoreDefaultsBtn_Click(object sender, RoutedEventArgs e)
         {
+            var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
+            var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
+            var dialog = new ConfirmDialog(title, message) { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (!dialog.IsConfirmed) return;
+
             var defaults = HotkeyService.GetDefaults();
             foreach (var (id, value) in defaults)
             {

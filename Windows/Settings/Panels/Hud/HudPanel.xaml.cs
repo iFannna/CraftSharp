@@ -3,6 +3,7 @@ using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
 using CraftSharp.Services.Slot;
 using CraftSharp.Services.Resource;
+using CraftSharp.Windows.Dialogs;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,6 +123,12 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
         private void RestoreDefaultsBtn_Click(object sender, RoutedEventArgs e)
         {
+            var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
+            var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
+            var dialog = new ConfirmDialog(title, message) { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (!dialog.IsConfirmed) return;
+
             _settings.HudElements.Clear();
             _settings.Hotbar = new HotbarSettings();
             _settings.StatusBar = new StatusBarSettings();
@@ -132,7 +139,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             HudBossBarContainer.Children.Clear();
             InitializeHudAccordion();
 
-            if (System.Windows.Application.Current is App app)
+            if (Application.Current is App app)
             {
                 app.SaveSettings();
             }

@@ -3,7 +3,9 @@ using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
 using CraftSharp.Services.Slot;
 using CraftSharp.Services.Resource;
+using CraftSharp.Windows.Dialogs;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CraftSharp.Windows.Settings.Panels.General
@@ -162,6 +164,12 @@ namespace CraftSharp.Windows.Settings.Panels.General
 
         private void RestoreDefaultsBtn_Click(object sender, global::System.Windows.RoutedEventArgs e)
         {
+            var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
+            var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
+            var dialog = new ConfirmDialog(title, message) { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (!dialog.IsConfirmed) return;
+
             _settings.System = new SystemSettings();
             InitializeControls();
             SaveSettings();
