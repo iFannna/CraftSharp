@@ -192,7 +192,8 @@
 
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
-    <sys:String x:Key="HotkeyPanelDesc">点击按钮后按下新的快捷键进行设置</sys:String>
+    <sys:String x:Key="HotkeyGlobalHotkeys">全局快捷键</sys:String>
+    <sys:String x:Key="HotkeyLocalHotkeys">局部快捷键</sys:String>
     <sys:String x:Key="HotkeyInventoryLabel">打开物品栏</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏物品栏窗口</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">打开设置面板</sys:String>
@@ -201,6 +202,8 @@
     <sys:String x:Key="HotkeyStatusBarDesc">显示/隐藏状态栏窗口</sys:String>
     <sys:String x:Key="HotkeyCrosshairLabel">打开准星</sys:String>
     <sys:String x:Key="HotkeyCrosshairDesc">显示/隐藏准星窗口</sys:String>
+    <sys:String x:Key="HotkeyDropItemLabel">丢弃物品</sys:String>
+    <sys:String x:Key="HotkeyDropItemDesc">丢弃物品栏窗口中鼠标悬浮格子内的物品</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">恢复默认设置</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
@@ -402,6 +405,31 @@
     <sys:String x:Key="IconNotch10">10格</sys:String>
     <sys:String x:Key="IconNotch12">12格</sys:String>
     <sys:String x:Key="IconNotch20">20格</sys:String>
+
+    <!-- 皮肤选项 -->
+    <sys:String x:Key="SkinTabSteve">Steve</sys:String>
+    <sys:String x:Key="SkinTabAlex">Alex</sys:String>
+    <sys:String x:Key="SkinLoading">加载中...</sys:String>
+
+    <!-- 重命名皮肤弹窗 -->
+    <sys:String x:Key="RenameSkinTitle">重命名皮肤</sys:String>
+    <sys:String x:Key="RenameSkinNewLabel">新名称</sys:String>
+    <sys:String x:Key="RenameSkinCancel">取消</sys:String>
+    <sys:String x:Key="RenameSkinConfirm">确认</sys:String>
+    <sys:String x:Key="RenameSkinDuplicate">已存在同名皮肤 "{0}"</sys:String>
+    <sys:String x:Key="RenameSkinDuplicateTitle">重命名</sys:String>
+    <sys:String x:Key="RenameSkinDeleteFailed">删除文件失败</sys:String>
+    <sys:String x:Key="RenameSkinDeleteTitle">移除皮肤</sys:String>
+
+    <!-- 移除皮肤确认弹窗 -->
+    <sys:String x:Key="RemoveSkinTitle">移除皮肤</sys:String>
+    <sys:String x:Key="RemoveSkinConfirmHint">确定要移除该皮肤吗？此操作无法撤销。</sys:String>
+    <sys:String x:Key="RemoveSkinCancel">取消</sys:String>
+    <sys:String x:Key="RemoveSkinConfirm">移除</sys:String>
+
+    <!-- 关于面板 -->
+    <sys:String x:Key="AboutCheckUpdateMessage">当前已是最新版本</sys:String>
+    <sys:String x:Key="AboutCheckUpdateTitle">检查更新</sys:String>
 
     <!-- 其他 -->
     <sys:String x:Key="IconPickerNone">无</sys:String>

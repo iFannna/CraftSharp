@@ -179,6 +179,7 @@ namespace CraftSharp.Services.Core
                 { "StatusBar", "Ctrl+Alt+H" },
                 { "Crosshair", "Ctrl+Alt+C" },
                 { "Inventory", "Ctrl+Alt+E" },
+                { "DropItem", "Q" },
             };
         }
 

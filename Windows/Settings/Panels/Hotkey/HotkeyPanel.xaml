@@ -5,10 +5,10 @@
 
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="{DynamicResource HotkeyPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+        <TextBlock Text="{DynamicResource HotkeyPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-        <TextBlock Text="{DynamicResource HotkeyPanelDesc}" Margin="0,0,0,16"
+        <TextBlock Text="{DynamicResource HotkeyGlobalHotkeys}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
         <!-- 打开设置面板 -->
@@ -105,6 +105,34 @@
                                Tag="Crosshair"/>
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="CrosshairClearBtn" Click="ClearHotkey_Click" Tag="Crosshair"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <TextBlock Text="{DynamicResource HotkeyLocalHotkeys}" FontSize="16" FontWeight="Medium" Margin="0,24,0,16"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+        <!-- 丢弃物品 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeyDropItemLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeyDropItemDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Q"
+                               x:Name="DropItemHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="DropItem"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="DropItemClearBtn" Click="ClearHotkey_Click" Tag="DropItem"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>

@@ -62,10 +62,10 @@
             <ui:ToggleSwitch x:Name="DataMappingToggle" Margin="0,16,0,8"
                              Content="{DynamicResource HudOptionDataMapping}"/>
             <ComboBox x:Name="DataMappingComboBox" Margin="0,0,0,8" Visibility="Collapsed">
-                <ComboBoxItem Content="{DynamicResource DataMappingBattery}" Tag="电池电量"/>
-                <ComboBoxItem Content="{DynamicResource DataMappingMemory}" Tag="内存占用率"/>
-                <ComboBoxItem Content="{DynamicResource DataMappingCpu}" Tag="CPU利用率"/>
-                <ComboBoxItem Content="{DynamicResource DataMappingGpu}" Tag="GPU利用率"/>
+                <ComboBoxItem Content="{DynamicResource DataMappingBattery}" Tag="BatteryLevel"/>
+                <ComboBoxItem Content="{DynamicResource DataMappingMemory}" Tag="MemoryUsage"/>
+                <ComboBoxItem Content="{DynamicResource DataMappingCpu}" Tag="CpuUsage"/>
+                <ComboBoxItem Content="{DynamicResource DataMappingGpu}" Tag="GpuUsage"/>
             </ComboBox>
 
             <!-- 自定义数值 -->

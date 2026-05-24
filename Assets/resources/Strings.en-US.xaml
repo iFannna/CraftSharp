@@ -192,7 +192,8 @@
 
     <!-- Hotkey Settings Panel -->
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
-    <sys:String x:Key="HotkeyPanelDesc">Click button then press new key to set</sys:String>
+    <sys:String x:Key="HotkeyGlobalHotkeys">Global Hotkeys</sys:String>
+    <sys:String x:Key="HotkeyLocalHotkeys">Local Hotkeys</sys:String>
     <sys:String x:Key="HotkeyInventoryLabel">Open Inventory</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">Show/Hide inventory window</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">Open Settings Panel</sys:String>
@@ -201,6 +202,8 @@
     <sys:String x:Key="HotkeyStatusBarDesc">Show/Hide status bar window</sys:String>
     <sys:String x:Key="HotkeyCrosshairLabel">Open Crosshair</sys:String>
     <sys:String x:Key="HotkeyCrosshairDesc">Show/Hide crosshair window</sys:String>
+    <sys:String x:Key="HotkeyDropItemLabel">Drop Item</sys:String>
+    <sys:String x:Key="HotkeyDropItemDesc">Drop item in the hovered slot of the inventory window</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">Restore Default Settings</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">Clear hotkey</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
@@ -402,6 +405,31 @@
     <sys:String x:Key="IconNotch10">10 Notches</sys:String>
     <sys:String x:Key="IconNotch12">12 Notches</sys:String>
     <sys:String x:Key="IconNotch20">20 Notches</sys:String>
+
+    <!-- Skin Tab Options -->
+    <sys:String x:Key="SkinTabSteve">Steve</sys:String>
+    <sys:String x:Key="SkinTabAlex">Alex</sys:String>
+    <sys:String x:Key="SkinLoading">Loading...</sys:String>
+
+    <!-- Rename Skin Window -->
+    <sys:String x:Key="RenameSkinTitle">Rename Skin</sys:String>
+    <sys:String x:Key="RenameSkinNewLabel">New Name</sys:String>
+    <sys:String x:Key="RenameSkinCancel">Cancel</sys:String>
+    <sys:String x:Key="RenameSkinConfirm">Confirm</sys:String>
+    <sys:String x:Key="RenameSkinDuplicate">A skin named "{0}" already exists</sys:String>
+    <sys:String x:Key="RenameSkinDuplicateTitle">Rename</sys:String>
+    <sys:String x:Key="RenameSkinDeleteFailed">Failed to delete file</sys:String>
+    <sys:String x:Key="RenameSkinDeleteTitle">Remove Skin</sys:String>
+
+    <!-- Remove Skin Confirm Window -->
+    <sys:String x:Key="RemoveSkinTitle">Remove Skin</sys:String>
+    <sys:String x:Key="RemoveSkinConfirmHint">Are you sure you want to remove this skin? This action cannot be undone.</sys:String>
+    <sys:String x:Key="RemoveSkinCancel">Cancel</sys:String>
+    <sys:String x:Key="RemoveSkinConfirm">Remove</sys:String>
+
+    <!-- About Panel -->
+    <sys:String x:Key="AboutCheckUpdateMessage">You are already on the latest version</sys:String>
+    <sys:String x:Key="AboutCheckUpdateTitle">Check Update</sys:String>
 
     <!-- Other -->
     <sys:String x:Key="IconPickerNone">None</sys:String>

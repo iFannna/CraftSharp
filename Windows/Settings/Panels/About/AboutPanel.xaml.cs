@@ -19,7 +19,9 @@ namespace CraftSharp.Windows.Settings.Panels.About
 
         private void CheckUpdate_Click(object sender, RoutedEventArgs e)
         {
-            global::System.Windows.MessageBox.Show("当前已是最新版本", "检查更新", MessageBoxButton.OK, MessageBoxImage.Information);
+            var message = (string)Application.Current.TryFindResource("AboutCheckUpdateMessage") ?? "当前已是最新版本";
+            var title = (string)Application.Current.TryFindResource("AboutCheckUpdateTitle") ?? "检查更新";
+            global::System.Windows.MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Feedback_Click(object sender, RoutedEventArgs e)

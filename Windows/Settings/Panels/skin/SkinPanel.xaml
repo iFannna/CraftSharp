@@ -30,10 +30,10 @@
                 <!-- 左侧选项按钮 -->
                 <StackPanel Orientation="Horizontal">
                     <Border x:Name="BorderSteve" Background="{DynamicResource AccentBrush}" CornerRadius="6" Padding="12,8" Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
-                        <TextBlock x:Name="TextSteve" Text="Steve" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium"/>
+                        <TextBlock x:Name="TextSteve" Text="{DynamicResource SkinTabSteve}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium"/>
                     </Border>
                     <Border x:Name="BorderAlex" Background="Transparent" CornerRadius="6" Padding="12,8" Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
-                        <TextBlock x:Name="TextAlex" Text="Alex" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="TextAlex" Text="{DynamicResource SkinTabAlex}" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </Border>
                     <Border x:Name="BorderUpload" Background="Transparent" CornerRadius="6" Padding="12,8" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
                         <TextBlock x:Name="TextUpload" Text="{DynamicResource SkinTabUpload}" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -85,7 +85,7 @@
                     </ScrollViewer>
 
                     <!-- 加载提示 -->
-                    <TextBlock x:Name="LoadingOverlay" Text="加载中..." Visibility="Collapsed"
+                    <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource SkinLoading}" Visibility="Collapsed"
                                Panel.ZIndex="10"
                                VerticalAlignment="Center" HorizontalAlignment="Center"
                                Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>

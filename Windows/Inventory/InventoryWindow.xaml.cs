@@ -796,11 +796,11 @@ namespace CraftSharp.Windows.Inventory
         /// 窗口鼠标左键按下事件（用于窗口拖动）
         /// </summary>
         /// <summary>
-        /// 键盘按下 - Q键丢弃鼠标悬浮的格子内容
+        /// 键盘按下 - 丢弃快捷键丢弃鼠标悬浮的格子内容
         /// </summary>
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Q)
+            if (IsDropItemHotkey(e))
             {
                 // 首次按下：丢弃当前悬浮格子
                 if (!_isQKeyDown)
@@ -819,16 +819,41 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 键盘释放 - 重置Q键状态
+        /// 键盘释放 - 重置丢弃快捷键状态
         /// </summary>
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Q)
+            if (IsDropItemHotkey(e))
             {
                 _isQKeyDown = false;
                 _lastDroppedSlotId = null;
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// 判断当前按键是否为丢弃物品快捷键
+        /// </summary>
+        private bool IsDropItemHotkey(KeyEventArgs e)
+        {
+            var dropItemHotkey = _settings?.Hotkeys?.DropItem;
+            if (string.IsNullOrEmpty(dropItemHotkey)) return false;
+
+            var parts = dropItemHotkey.Split('+');
+            var lastPart = parts[^1].Trim();
+
+            if (!Enum.TryParse<Key>(lastPart, out var dropKey)) return false;
+
+            if (dropKey != e.Key && dropKey != e.SystemKey) return false;
+
+            // 检查修饰键
+            var requiredCtrl = parts.Length > 1 && parts.Contains("Ctrl", StringComparer.OrdinalIgnoreCase);
+            var requiredShift = parts.Length > 1 && parts.Contains("Shift", StringComparer.OrdinalIgnoreCase);
+            var requiredAlt = parts.Length > 1 && parts.Contains("Alt", StringComparer.OrdinalIgnoreCase);
+
+            return Keyboard.Modifiers.HasFlag(ModifierKeys.Control) == requiredCtrl
+                && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) == requiredShift
+                && Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) == requiredAlt;
         }
 
         /// <summary>

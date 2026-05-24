@@ -32,6 +32,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             InventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Inventory) ? notSetText : _settings.Hotkeys.Inventory;
             StatusBarHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.StatusBar) ? notSetText : _settings.Hotkeys.StatusBar;
             CrosshairHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Crosshair) ? notSetText : _settings.Hotkeys.Crosshair;
+            DropItemHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.DropItem) ? notSetText : _settings.Hotkeys.DropItem;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
@@ -95,8 +96,9 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
             btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
 
-            // 单按键复杂度校验
-            if (!hotkey.Contains('+'))
+            // 局部快捷键跳过复杂度校验
+            bool isLocalHotkey = hotkeyId == "DropItem";
+            if (!isLocalHotkey && !hotkey.Contains('+'))
             {
                 var owner = Window.GetWindow(this);
                 var dialog = new HotkeySimpleDialog(hotkey);
@@ -182,6 +184,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 return (string)Application.Current.TryFindResource("HotkeyStatusBarLabel");
             if (currentHotkeyId != "Crosshair" && _settings.Hotkeys.Crosshair == newHotkey)
                 return (string)Application.Current.TryFindResource("HotkeyCrosshairLabel");
+            if (currentHotkeyId != "DropItem" && _settings.Hotkeys.DropItem == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyDropItemLabel");
             return null;
         }
 
@@ -201,6 +205,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 case "Inventory": _settings.Hotkeys.Inventory = value; break;
                 case "StatusBar": _settings.Hotkeys.StatusBar = value; break;
                 case "Crosshair": _settings.Hotkeys.Crosshair = value; break;
+                case "DropItem": _settings.Hotkeys.DropItem = value; break;
             }
         }
 

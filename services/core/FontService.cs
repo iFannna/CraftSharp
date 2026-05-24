@@ -30,6 +30,7 @@ namespace CraftSharp.Services.Core
         /// </summary>
         public void SetFont(string fontTag)
         {
+            fontTag = fontTag.ToLowerInvariant();
             if (fontTag == CurrentFontTag) return;
 
             CurrentFontTag = fontTag;
@@ -74,7 +75,7 @@ namespace CraftSharp.Services.Core
         /// </summary>
         private System.Windows.Media.FontFamily GetFontFamilyByTag(string tag)
         {
-            return tag switch
+            return tag.ToLowerInvariant() switch
             {
                 "pixel" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/zpix.ttf#Zpix"),
                 "unifont" => new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/"), "/assets/fonts/unifont-16.0.04.ttf#Unifont"),
@@ -108,8 +109,7 @@ namespace CraftSharp.Services.Core
         /// </summary>
         public void Initialize(string savedFontTag, double savedFontSize = 14)
         {
-            // 处理旧版本存储的中文名称，转换为标识符
-            CurrentFontTag = ConvertToTag(savedFontTag);
+            CurrentFontTag = ConvertToTag(savedFontTag).ToLowerInvariant();
             CurrentFontSize = savedFontSize;
             ApplyFont();
             ApplyFontSize();

@@ -397,9 +397,11 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 var newPath = Path.Combine(dir, newName + ".png");
                 if (File.Exists(newPath))
                 {
+                    var duplicateMsg = (string)System.Windows.Application.Current.TryFindResource("RenameSkinDuplicate") ?? $"已存在同名皮肤 \"{newName}\"";
+                    var duplicateTitle = (string)System.Windows.Application.Current.TryFindResource("RenameSkinDuplicateTitle") ?? "重命名";
                     System.Windows.MessageBox.Show(
-                        $"已存在同名皮肤 \"{newName}\"",
-                        "重命名",
+                        string.Format(duplicateMsg, newName),
+                        duplicateTitle,
                         System.Windows.MessageBoxButton.OK,
                         System.Windows.MessageBoxImage.Warning);
                     return;
@@ -444,7 +446,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 }
                 catch
                 {
-                    System.Windows.MessageBox.Show("删除文件失败", "移除皮肤",
+                    var deleteFailedMsg = (string)System.Windows.Application.Current.TryFindResource("RenameSkinDeleteFailed") ?? "删除文件失败";
+                    var deleteFailedTitle = (string)System.Windows.Application.Current.TryFindResource("RenameSkinDeleteTitle") ?? "移除皮肤";
+                    System.Windows.MessageBox.Show(deleteFailedMsg, deleteFailedTitle,
                         System.Windows.MessageBoxButton.OK,
                         System.Windows.MessageBoxImage.Error);
                     return;

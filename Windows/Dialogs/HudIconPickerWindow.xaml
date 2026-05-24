@@ -93,7 +93,7 @@
                                            HorizontalAlignment="Center"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                            Source="{Binding BitmapImage, TargetNullValue={x:Null}}"/>
-                                    <TextBlock x:Name="VerticalNoneText" Text="无"
+                                    <TextBlock x:Name="VerticalNoneText" Text="{DynamicResource IconPickerNone}"
                                                Visibility="Collapsed"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"

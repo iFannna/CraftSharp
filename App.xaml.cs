@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using CraftSharp.Helpers;
 using CraftSharp.Windows.StatusBar;
 using CraftSharp.Windows.BossBar;
 using CraftSharp.Windows.Crosshair;
@@ -548,6 +549,10 @@ namespace CraftSharp
             _hotkeyMessageWindow.ShowInTaskbar = false;
             _hotkeyMessageWindow.SourceInitialized += (_, _) =>
             {
+                var hwnd = new System.Windows.Interop.WindowInteropHelper(_hotkeyMessageWindow!).Handle;
+                int exStyle = Win32Helper.GetWindowLong(hwnd, Win32Helper.GWL_EXSTYLE);
+                Win32Helper.SetWindowLong(hwnd, Win32Helper.GWL_EXSTYLE, exStyle | Win32Helper.WS_EX_TOOLWINDOW);
+
                 HotkeyService.Instance.HookWindow(_hotkeyMessageWindow);
 
                 HotkeyService.Instance.RegisterHotkey("Inventory",

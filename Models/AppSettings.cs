@@ -384,6 +384,11 @@ namespace CraftSharp.Models
         /// 打开背包快捷键
         /// </summary>
         public string Inventory { get; set; } = "Ctrl+Alt+E";
+
+        /// <summary>
+        /// 丢弃物品快捷键（局部快捷键）
+        /// </summary>
+        public string DropItem { get; set; } = "Q";
     }
 
     /// <summary>
