@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -12,8 +13,15 @@ namespace CraftSharp.Services.Core
         private static HotkeyService? _instance;
         public static HotkeyService Instance => _instance ??= new HotkeyService();
 
-        private readonly Dictionary<int, string> _registeredHotkeys = new();
+        // hotkeyString → Win32 注册 ID
+        private readonly Dictionary<string, int> _hotkeyRegIds = new();
+        // Win32 注册 ID → hotkeyString
+        private readonly Dictionary<int, string> _regIdToHotkeyString = new();
+        // hotkeyString → 业务ID列表（支持重复快捷键多个动作）
+        private readonly Dictionary<string, List<string>> _hotkeyStringToBizIds = new();
+        // 业务ID → 动作
         private readonly Dictionary<string, Action> _hotkeyActions = new();
+
         private HwndSource? _hwndSource;
         private IntPtr _hwnd = IntPtr.Zero;
         private int _nextHotkeyId = 1;
@@ -32,62 +40,106 @@ namespace CraftSharp.Services.Core
         {
             if (string.IsNullOrEmpty(hotkeyString)) return false;
 
-            UnregisterHotkeyById(hotkeyId);
+            // 先移除旧绑定（会清理 _hotkeyActions 中的旧值）
+            UnregisterBizId(hotkeyId);
 
-            var (mod, vk) = ParseHotkeyString(hotkeyString);
-            if (vk == 0) return false;
+            // 保存动作
+            _hotkeyActions[hotkeyId] = action;
 
-            int id = _nextHotkeyId++;
-            bool success = Win32Helper.RegisterHotKey(_hwnd, id, mod, vk);
-            if (success)
+            // 添加到新快捷键字符串的列表
+            if (!_hotkeyStringToBizIds.ContainsKey(hotkeyString))
+                _hotkeyStringToBizIds[hotkeyString] = new List<string>();
+            _hotkeyStringToBizIds[hotkeyString].Add(hotkeyId);
+
+            // 如果这个快捷键字符串还没注册过 Win32，则注册
+            if (!_hotkeyRegIds.ContainsKey(hotkeyString))
             {
-                _registeredHotkeys[id] = hotkeyId;
-                _hotkeyActions[hotkeyId] = action;
+                var (mod, vk) = ParseHotkeyString(hotkeyString);
+                if (vk == 0) return false;
+
+                int id = _nextHotkeyId++;
+                bool success = Win32Helper.RegisterHotKey(_hwnd, id, mod, vk);
+                if (success)
+                {
+                    _hotkeyRegIds[hotkeyString] = id;
+                    _regIdToHotkeyString[id] = hotkeyString;
+                }
+                return success;
             }
-            return success;
+
+            return true;
         }
 
-        public void UnregisterHotkeyById(string hotkeyId)
+        public void UnregisterBizId(string hotkeyId)
         {
-            int? idToRemove = null;
-            foreach (var kvp in _registeredHotkeys)
+            // 从 _hotkeyStringToBizIds 中移除
+            foreach (var kvp in _hotkeyStringToBizIds.ToList())
             {
-                if (kvp.Value == hotkeyId)
+                if (kvp.Value.Remove(hotkeyId))
                 {
-                    Win32Helper.UnregisterHotKey(_hwnd, kvp.Key);
-                    idToRemove = kvp.Key;
+                    if (kvp.Value.Count == 0)
+                    {
+                        // 没有业务 ID 使用这个快捷键了，注销 Win32 注册
+                        if (_hotkeyRegIds.TryGetValue(kvp.Key, out var regId))
+                        {
+                            Win32Helper.UnregisterHotKey(_hwnd, regId);
+                            _hotkeyRegIds.Remove(kvp.Key);
+                            _regIdToHotkeyString.Remove(regId);
+                        }
+                        _hotkeyStringToBizIds.Remove(kvp.Key);
+                    }
                     break;
                 }
-            }
-            if (idToRemove.HasValue)
-            {
-                _registeredHotkeys.Remove(idToRemove.Value);
             }
             _hotkeyActions.Remove(hotkeyId);
         }
 
         public void UnregisterAll()
         {
-            foreach (var id in _registeredHotkeys.Keys)
+            foreach (var id in _hotkeyRegIds.Values)
             {
                 Win32Helper.UnregisterHotKey(_hwnd, id);
             }
-            _registeredHotkeys.Clear();
+            _hotkeyRegIds.Clear();
+            _regIdToHotkeyString.Clear();
+            _hotkeyStringToBizIds.Clear();
         }
 
         public void ReRegisterAll(Dictionary<string, string> hotkeyMap)
         {
-            foreach (var id in _registeredHotkeys.Keys)
+            // 注销所有 Win32 注册
+            foreach (var id in _hotkeyRegIds.Values)
             {
                 Win32Helper.UnregisterHotKey(_hwnd, id);
             }
-            _registeredHotkeys.Clear();
+            _hotkeyRegIds.Clear();
+            _regIdToHotkeyString.Clear();
+            _hotkeyStringToBizIds.Clear();
 
-            foreach (var (hotkeyId, hotkeyString) in hotkeyMap)
+            // 按快捷键字符串分组，每组只注册一次 Win32
+            var grouped = new Dictionary<string, List<string>>();
+            foreach (var (bizId, hotkeyString) in hotkeyMap)
             {
-                if (_hotkeyActions.TryGetValue(hotkeyId, out var action))
+                if (!_hotkeyActions.ContainsKey(bizId)) continue;
+                if (string.IsNullOrEmpty(hotkeyString)) continue;
+
+                if (!grouped.ContainsKey(hotkeyString))
+                    grouped[hotkeyString] = new List<string>();
+                grouped[hotkeyString].Add(bizId);
+            }
+
+            foreach (var (hotkeyString, bizIds) in grouped)
+            {
+                var (mod, vk) = ParseHotkeyString(hotkeyString);
+                if (vk == 0) continue;
+
+                int id = _nextHotkeyId++;
+                bool success = Win32Helper.RegisterHotKey(_hwnd, id, mod, vk);
+                if (success)
                 {
-                    RegisterHotkey(hotkeyId, hotkeyString, action);
+                    _hotkeyRegIds[hotkeyString] = id;
+                    _regIdToHotkeyString[id] = hotkeyString;
+                    _hotkeyStringToBizIds[hotkeyString] = bizIds;
                 }
             }
         }
@@ -113,7 +165,6 @@ namespace CraftSharp.Services.Core
                 }
             }
 
-            // 仅在有修饰键时附加 MOD_NOREPEAT
             if (mod != 0)
                 mod |= Win32Helper.MOD_NOREPEAT;
 
@@ -133,11 +184,18 @@ namespace CraftSharp.Services.Core
         {
             if (msg == Win32Helper.WM_HOTKEY)
             {
-                int hotkeyId = wParam.ToInt32();
-                if (_registeredHotkeys.TryGetValue(hotkeyId, out var bizId) &&
-                    _hotkeyActions.TryGetValue(bizId, out var action))
+                int regId = wParam.ToInt32();
+                if (_regIdToHotkeyString.TryGetValue(regId, out var hotkeyString) &&
+                    _hotkeyStringToBizIds.TryGetValue(hotkeyString, out var bizIds))
                 {
-                    Application.Current?.Dispatcher.Invoke(action);
+                    Application.Current?.Dispatcher.Invoke(() =>
+                    {
+                        foreach (var bizId in bizIds)
+                        {
+                            if (_hotkeyActions.TryGetValue(bizId, out var action))
+                                action();
+                        }
+                    });
                     handled = true;
                 }
             }
@@ -146,11 +204,13 @@ namespace CraftSharp.Services.Core
 
         public void Dispose()
         {
-            foreach (var id in _registeredHotkeys.Keys)
+            foreach (var id in _hotkeyRegIds.Values)
             {
                 Win32Helper.UnregisterHotKey(_hwnd, id);
             }
-            _registeredHotkeys.Clear();
+            _hotkeyRegIds.Clear();
+            _regIdToHotkeyString.Clear();
+            _hotkeyStringToBizIds.Clear();
             _hotkeyActions.Clear();
 
             if (_hwndSource != null)

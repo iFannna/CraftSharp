@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  Title="{DynamicResource HotkeyConflictTitle}"
-                 Height="Auto" MinHeight="0" Width="420" MinWidth="320"
+                 Height="Auto" MinHeight="0" Width="320" MinWidth="280"
                  WindowStartupLocation="CenterOwner"
                  SizeToContent="Height"
                  Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -24,10 +24,23 @@
         <StackPanel Grid.Row="1" Margin="16">
             <TextBlock x:Name="MessageText" TextWrapping="Wrap" FontWeight="Medium"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock Text="{DynamicResource HotkeyConflictHint}" TextWrapping="Wrap" Margin="0,8,0,0"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
         </StackPanel>
 
         <Grid Grid.Row="2" Margin="16,0,16,16">
-            <ui:Button HorizontalAlignment="Right"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:Button Grid.Column="1" x:Name="CancelButton"
+                       Content="{DynamicResource HotkeyConflictCancel}"
+                       Appearance="Secondary"
+                       Margin="0,0,8,0"
+                       Click="CancelButton_Click"/>
+            <ui:Button Grid.Column="2" x:Name="ConfirmButton"
                        Content="{DynamicResource HotkeyConflictConfirm}"
                        Appearance="Primary"
                        Click="ConfirmButton_Click"/>

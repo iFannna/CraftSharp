@@ -193,8 +193,10 @@
     <sys:String x:Key="HotkeyRestoreDefaults">Restore Defaults</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">Clear hotkey</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
-    <sys:String x:Key="HotkeyConflictWarning">Hotkey "{0}" is already in use by another function</sys:String>
-    <sys:String x:Key="HotkeyConflictConfirm">OK</sys:String>
+    <sys:String x:Key="HotkeyConflictWarning">Hotkey "{0}" is already used by {1}</sys:String>
+    <sys:String x:Key="HotkeyConflictHint">Do you still want to use this hotkey?</sys:String>
+    <sys:String x:Key="HotkeyConflictConfirm">Confirm</sys:String>
+    <sys:String x:Key="HotkeyConflictCancel">Cancel</sys:String>
     <sys:String x:Key="HotkeyNotSet">Not Set</sys:String>
 
     <!-- About Panel -->

@@ -193,8 +193,10 @@
     <sys:String x:Key="HotkeyRestoreDefaults">恢复默认</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
-    <sys:String x:Key="HotkeyConflictWarning">快捷键 "{0}" 已被其他功能使用</sys:String>
-    <sys:String x:Key="HotkeyConflictConfirm">知道了</sys:String>
+    <sys:String x:Key="HotkeyConflictWarning">快捷键 "{0}" 已被 {1} 占用</sys:String>
+    <sys:String x:Key="HotkeyConflictHint">是否仍要继续使用此快捷键？</sys:String>
+    <sys:String x:Key="HotkeyConflictConfirm">确认</sys:String>
+    <sys:String x:Key="HotkeyConflictCancel">取消</sys:String>
     <sys:String x:Key="HotkeyNotSet">未设置</sys:String>
 
     <!-- 关于面板 -->

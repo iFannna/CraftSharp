@@ -93,9 +93,25 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
             btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
 
-            if (CheckConflict(hotkeyId, hotkey))
+            var conflictFunc = CheckConflict(hotkeyId, hotkey);
+            if (conflictFunc != null)
             {
-                ShowConflictWarning(hotkey);
+                var owner = Window.GetWindow(this);
+                var dialog = new HotkeyConflictDialog(hotkey, conflictFunc);
+                dialog.Owner = owner;
+                dialog.ShowDialog();
+
+                if (!dialog.IsConfirmed)
+                {
+                    btn.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
+                    btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
+                    RefreshDisplay();
+                    _recordingButton = null;
+                    _isRecording = false;
+                    NotifyHotkeyServiceChanged();
+                    e.Handled = true;
+                    return;
+                }
             }
 
             btn.Content = hotkey;
@@ -132,18 +148,20 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             return string.Join("+", parts);
         }
 
-        private bool CheckConflict(string currentHotkeyId, string newHotkey)
+        private string? CheckConflict(string currentHotkeyId, string newHotkey)
         {
-            if (string.IsNullOrEmpty(newHotkey)) return false;
-            if (currentHotkeyId != "Inventory" && _settings.Hotkeys.Inventory == newHotkey) return true;
-            if (currentHotkeyId != "Settings" && _settings.Hotkeys.Settings == newHotkey) return true;
-            return false;
+            if (string.IsNullOrEmpty(newHotkey)) return null;
+            if (currentHotkeyId != "Inventory" && _settings.Hotkeys.Inventory == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyInventoryLabel");
+            if (currentHotkeyId != "Settings" && _settings.Hotkeys.Settings == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeySettingsLabel");
+            return null;
         }
 
         private void ShowConflictWarning(string hotkey)
         {
             var owner = Window.GetWindow(this);
-            var dialog = new HotkeyConflictDialog(hotkey);
+            var dialog = new HotkeyConflictDialog(hotkey, "");
             dialog.Owner = owner;
             dialog.ShowDialog();
         }
