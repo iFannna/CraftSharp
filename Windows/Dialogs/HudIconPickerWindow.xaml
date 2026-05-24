@@ -23,7 +23,7 @@
         <!-- 图标网格 -->
         <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
             <!-- 网格布局（心形、饥饿等） -->
-            <ScrollViewer x:Name="GridScrollViewer" Padding="16" VerticalContentAlignment="Center" Visibility="Visible">
+            <ui:DynamicScrollViewer x:Name="GridScrollViewer" Padding="16" VerticalContentAlignment="Center" Visibility="Visible">
                 <ItemsControl x:Name="IconGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -61,12 +61,11 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </ScrollViewer>
+            </ui:DynamicScrollViewer>
 
             <!-- 纵向布局（经验条、BOSS血条等） -->
-            <ScrollViewer x:Name="VerticalScrollViewer" Padding="16"
+            <ui:DynamicScrollViewer x:Name="VerticalScrollViewer" Padding="16"
                           Visibility="Collapsed"
-                          VerticalScrollBarVisibility="Auto"
                           VerticalContentAlignment="Center">
                 <ItemsControl x:Name="VerticalIconGrid" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
@@ -110,8 +109,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </ScrollViewer>
-
+            </ui:DynamicScrollViewer>
             <!-- 加载指示器 -->
             <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource IconPickerLoading}"
                        Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"

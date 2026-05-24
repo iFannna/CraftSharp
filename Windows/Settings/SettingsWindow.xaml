@@ -124,9 +124,9 @@
             <!-- 右侧内容区 -->
             <Grid Grid.Column="1" Background="{DynamicResource ApplicationBackgroundBrush}" x:Name="ContentGrid">
                 <!-- 普通面板容器（带ScrollViewer和宽度限制） -->
-                <ScrollViewer Padding="32,24" x:Name="NormalScrollViewer">
+                <ui:DynamicScrollViewer Padding="32,24" x:Name="NormalScrollViewer">
                     <StackPanel x:Name="ContentContainer" MaxWidth="800"/>
-                </ScrollViewer>
+                </ui:DynamicScrollViewer>
 
                 <!-- 皮肤面板容器（无宽度限制，撑满高度） -->
                 <Border x:Name="SkinContainer" Padding="32,24" Visibility="Collapsed"/>

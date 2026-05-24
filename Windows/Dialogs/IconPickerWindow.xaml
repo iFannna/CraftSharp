@@ -180,7 +180,7 @@
 
             <!-- 右侧图标网格 -->
             <Grid Grid.Column="1">
-                <ScrollViewer Padding="16">
+                <ui:DynamicScrollViewer Padding="16">
                     <ItemsControl x:Name="IconGrid" HorizontalAlignment="Center">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -203,8 +203,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </ScrollViewer>
-
+                </ui:DynamicScrollViewer>
                 <!-- 加载指示器 -->
                 <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource IconPickerLoading}"
                            Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"

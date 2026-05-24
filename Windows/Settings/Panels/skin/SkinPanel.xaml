@@ -57,7 +57,7 @@
             <!-- 左侧卡片 - 皮肤列表 -->
             <ui:Card Grid.Column="0" Margin="0,0,8,0" Padding="0" VerticalAlignment="Stretch">
                 <Grid>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                    <ui:DynamicScrollViewer HorizontalScrollBarVisibility="Disabled"
                                   Padding="8,8,4,8">
                         <ItemsControl x:Name="SkinGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
                                       VirtualizingStackPanel.IsVirtualizing="False">
@@ -82,8 +82,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </ScrollViewer>
-
+                    </ui:DynamicScrollViewer>
                     <!-- 加载提示 -->
                     <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource SkinLoading}" Visibility="Collapsed"
                                Panel.ZIndex="10"
