@@ -12,6 +12,7 @@ using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
 using CraftSharp.Services.Slot;
 using CraftSharp.Services.Resource;
+using CraftSharp.Services.Wallpaper;
 using System.Text.Json;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -233,6 +234,12 @@ namespace CraftSharp
 
             // 注册全局快捷键（Win32 RegisterHotKey）
             InitializeGlobalHotkeys();
+
+            // 确保壁纸存储目录存在并恢复壁纸
+            var wallpaperDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "wallpaper");
+            if (!System.IO.Directory.Exists(wallpaperDir))
+                System.IO.Directory.CreateDirectory(wallpaperDir);
+            WallpaperService.Instance.RestoreFromSettings();
         }
 
         /// <summary>

@@ -75,6 +75,11 @@ namespace CraftSharp.Models
         public Dictionary<string, Dictionary<string, SlotItem>> StyleSlots { get; set; } = new Dictionary<string, Dictionary<string, SlotItem>>();
 
         /// <summary>
+        /// 壁纸设置
+        /// </summary>
+        public WallpaperSettings Wallpaper { get; set; } = new WallpaperSettings();
+
+        /// <summary>
         /// 应用版本
         /// </summary>
         public string Version { get; set; } = "1.0.0";

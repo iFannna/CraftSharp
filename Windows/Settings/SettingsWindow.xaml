@@ -136,6 +136,9 @@
 
                 <!-- 皮肤面板容器（无宽度限制，撑满高度） -->
                 <Border x:Name="SkinContainer" Padding="32,24" Visibility="Collapsed"/>
+
+                <!-- 壁纸面板容器（无宽度限制，撑满高度） -->
+                <Border x:Name="WallpaperContainer" Padding="32,24" Visibility="Collapsed"/>
             </Grid>
         </Grid>
     </Grid>

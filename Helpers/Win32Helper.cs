@@ -93,6 +93,11 @@ namespace CraftSharp.Helpers
         public const int MOD_SHIFT = 0x0004;
         public const int MOD_NOREPEAT = 0x4000;
 
+        // SystemParametersInfo 常量
+        public const int SPI_SETDESKWALLPAPER = 0x0014;
+        public const int SPIF_UPDATEINIFILE = 0x01;
+        public const int SPIF_SENDWININICHANGE = 0x02;
+
         #endregion
 
         #region User32.dll API
@@ -135,6 +140,9 @@ namespace CraftSharp.Helpers
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
         #endregion
 

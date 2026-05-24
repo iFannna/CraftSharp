@@ -116,7 +116,6 @@ namespace CraftSharp.Windows.Settings
             // 普通面板放入 ContentContainer（带 ScrollViewer 和宽度限制）
             ContentContainer.Children.Add(_panelSystem);
             ContentContainer.Children.Add(_panelAppearance);
-            ContentContainer.Children.Add(_panelWallpaper);
             ContentContainer.Children.Add(_panelHud);
             ContentContainer.Children.Add(_panelInventory);
             ContentContainer.Children.Add(_panelHotkey);
@@ -124,6 +123,9 @@ namespace CraftSharp.Windows.Settings
 
             // 皮肤面板放入独立的 SkinContainer（撑满高度，无宽度限制）
             SkinContainer.Child = _panelSkin;
+
+            // 壁纸面板放入独立的 WallpaperContainer（撑满高度，无宽度限制）
+            WallpaperContainer.Child = _panelWallpaper;
 
             // 根据设置恢复导航菜单选项
             string initialNav = _settings.System.RememberNavSelection
@@ -253,22 +255,29 @@ namespace CraftSharp.Windows.Settings
         {
             if (_panelSystem == null) return;
 
-            // 切换容器：皮肤面板使用 SkinContainer，其他面板使用 NormalScrollViewer
+            // 切换容器：皮肤面板使用 SkinContainer，壁纸面板使用 WallpaperContainer，其他面板使用 NormalScrollViewer
             if (tag == "skin")
             {
                 NormalScrollViewer.Visibility = System.Windows.Visibility.Collapsed;
                 SkinContainer.Visibility = System.Windows.Visibility.Visible;
+                WallpaperContainer.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (tag == "wallpaper")
+            {
+                NormalScrollViewer.Visibility = System.Windows.Visibility.Collapsed;
+                SkinContainer.Visibility = System.Windows.Visibility.Collapsed;
+                WallpaperContainer.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
                 NormalScrollViewer.Visibility = System.Windows.Visibility.Visible;
                 SkinContainer.Visibility = System.Windows.Visibility.Collapsed;
+                WallpaperContainer.Visibility = System.Windows.Visibility.Collapsed;
             }
 
             // 普通面板的可见性切换（都在 ContentContainer 中）
             _panelSystem.Visibility = tag == "system" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelAppearance.Visibility = tag == "appearance" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-            _panelWallpaper.Visibility = tag == "wallpaper" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHud.Visibility = tag == "hud" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelInventory.Visibility = tag == "inventory" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             _panelHotkey.Visibility = tag == "hotkey" ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;

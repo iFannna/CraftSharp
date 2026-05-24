@@ -21,6 +21,30 @@
 
     <!-- 壁纸设置面板 -->
     <sys:String x:Key="WallpaperPanelTitle">壁纸设置</sys:String>
+    <sys:String x:Key="WallpaperAll">全部</sys:String>
+    <sys:String x:Key="WallpaperStatic">静态</sys:String>
+    <sys:String x:Key="WallpaperDynamic">动态</sys:String>
+    <sys:String x:Key="WallpaperSortLatest">最新</sys:String>
+    <sys:String x:Key="WallpaperSortHot">最热</sys:String>
+    <sys:String x:Key="WallpaperSortDownloads">下载量</sys:String>
+    <sys:String x:Key="WallpaperPageInfo">第 {0} / {1} 页</sys:String>
+    <sys:String x:Key="WallpaperPrev">上一页</sys:String>
+    <sys:String x:Key="WallpaperNext">下一页</sys:String>
+    <sys:String x:Key="WallpaperRetry">重试</sys:String>
+    <sys:String x:Key="WallpaperErrorTitle">加载失败</sys:String>
+    <sys:String x:Key="WallpaperErrorDesc">无法加载壁纸列表，请检查网络连接后重试。</sys:String>
+    <sys:String x:Key="WallpaperLoading">加载中...</sys:String>
+    <sys:String x:Key="WallpaperLoadFailed">加载失败</sys:String>
+    <sys:String x:Key="WallpaperDynamicBadge">动态</sys:String>
+    <sys:String x:Key="WallpaperQuickSet">设为壁纸</sys:String>
+    <sys:String x:Key="WallpaperSetWallpaper">设为壁纸</sys:String>
+    <sys:String x:Key="WallpaperDownload">下载</sys:String>
+    <sys:String x:Key="WallpaperSetting">设置中...</sys:String>
+    <sys:String x:Key="WallpaperSetSuccess">壁纸已设置</sys:String>
+    <sys:String x:Key="WallpaperDownloadSuccess">下载完成</sys:String>
+    <sys:String x:Key="WallpaperDynamicNotSupported">动态壁纸暂不支持设置，敬请期待后续更新。</sys:String>
+    <sys:String x:Key="WallpaperPreviewClose">关闭</sys:String>
+    <sys:String x:Key="WallpaperPreviewFit">适应窗口</sys:String>
 
     <!-- 皮肤设置面板 -->
     <sys:String x:Key="SkinPanelTitle">皮肤设置</sys:String>

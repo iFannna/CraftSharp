@@ -21,6 +21,30 @@
 
     <!-- Wallpaper Settings Panel -->
     <sys:String x:Key="WallpaperPanelTitle">Wallpaper Settings</sys:String>
+    <sys:String x:Key="WallpaperAll">All</sys:String>
+    <sys:String x:Key="WallpaperStatic">Static</sys:String>
+    <sys:String x:Key="WallpaperDynamic">Dynamic</sys:String>
+    <sys:String x:Key="WallpaperSortLatest">Latest</sys:String>
+    <sys:String x:Key="WallpaperSortHot">Hottest</sys:String>
+    <sys:String x:Key="WallpaperSortDownloads">Downloads</sys:String>
+    <sys:String x:Key="WallpaperPageInfo">Page {0} / {1}</sys:String>
+    <sys:String x:Key="WallpaperPrev">Previous</sys:String>
+    <sys:String x:Key="WallpaperNext">Next</sys:String>
+    <sys:String x:Key="WallpaperRetry">Retry</sys:String>
+    <sys:String x:Key="WallpaperErrorTitle">Failed to Load</sys:String>
+    <sys:String x:Key="WallpaperErrorDesc">Unable to load wallpaper list. Please check your network connection and try again.</sys:String>
+    <sys:String x:Key="WallpaperLoading">Loading...</sys:String>
+    <sys:String x:Key="WallpaperLoadFailed">Load Failed</sys:String>
+    <sys:String x:Key="WallpaperDynamicBadge">Dynamic</sys:String>
+    <sys:String x:Key="WallpaperQuickSet">Set as Wallpaper</sys:String>
+    <sys:String x:Key="WallpaperSetWallpaper">Set as Wallpaper</sys:String>
+    <sys:String x:Key="WallpaperDownload">Download</sys:String>
+    <sys:String x:Key="WallpaperSetting">Setting...</sys:String>
+    <sys:String x:Key="WallpaperSetSuccess">Wallpaper set!</sys:String>
+    <sys:String x:Key="WallpaperDownloadSuccess">Download complete!</sys:String>
+    <sys:String x:Key="WallpaperDynamicNotSupported">Dynamic wallpaper is not supported yet. Stay tuned for updates.</sys:String>
+    <sys:String x:Key="WallpaperPreviewClose">Close</sys:String>
+    <sys:String x:Key="WallpaperPreviewFit">Fit to Window</sys:String>
 
     <!-- Skin Settings Panel -->
     <sys:String x:Key="SkinPanelTitle">Skin Settings</sys:String>
