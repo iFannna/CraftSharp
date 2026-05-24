@@ -197,6 +197,10 @@
     <sys:String x:Key="HotkeyConflictHint">是否仍要继续使用此快捷键？</sys:String>
     <sys:String x:Key="HotkeyConflictConfirm">确认</sys:String>
     <sys:String x:Key="HotkeyConflictCancel">取消</sys:String>
+    <sys:String x:Key="HotkeySimpleTitle">警告</sys:String>
+    <sys:String x:Key="HotkeySimpleMessage">快捷键 "{0}" 过于简单，为避免与其他功能冲突和误触，请设置更复杂的快捷键组合。确定要使用此快捷键吗？</sys:String>
+    <sys:String x:Key="HotkeySimpleConfirm">确认</sys:String>
+    <sys:String x:Key="HotkeySimpleCancel">取消</sys:String>
     <sys:String x:Key="HotkeyNotSet">未设置</sys:String>
 
     <!-- 关于面板 -->

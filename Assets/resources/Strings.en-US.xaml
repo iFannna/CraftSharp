@@ -197,6 +197,10 @@
     <sys:String x:Key="HotkeyConflictHint">Do you still want to use this hotkey?</sys:String>
     <sys:String x:Key="HotkeyConflictConfirm">Confirm</sys:String>
     <sys:String x:Key="HotkeyConflictCancel">Cancel</sys:String>
+    <sys:String x:Key="HotkeySimpleTitle">Warning</sys:String>
+    <sys:String x:Key="HotkeySimpleMessage">The hotkey "{0}" is too simple. To avoid conflicts with other features and accidental triggers, please use a more complex key combination. Do you want to use this hotkey?</sys:String>
+    <sys:String x:Key="HotkeySimpleConfirm">Confirm</sys:String>
+    <sys:String x:Key="HotkeySimpleCancel">Cancel</sys:String>
     <sys:String x:Key="HotkeyNotSet">Not Set</sys:String>
 
     <!-- About Panel -->

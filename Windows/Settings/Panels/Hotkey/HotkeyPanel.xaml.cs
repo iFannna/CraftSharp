@@ -93,6 +93,27 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
             btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
 
+            // 单按键复杂度校验
+            if (!hotkey.Contains('+'))
+            {
+                var owner = Window.GetWindow(this);
+                var dialog = new HotkeySimpleDialog(hotkey);
+                dialog.Owner = owner;
+                dialog.ShowDialog();
+
+                if (!dialog.IsConfirmed)
+                {
+                    btn.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
+                    btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
+                    RefreshDisplay();
+                    _recordingButton = null;
+                    _isRecording = false;
+                    NotifyHotkeyServiceChanged();
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             var conflictFunc = CheckConflict(hotkeyId, hotkey);
             if (conflictFunc != null)
             {
