@@ -119,5 +119,23 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 }
             }
         }
+
+        private void RestoreDefaultsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _settings.HudElements.Clear();
+            _settings.Hotbar = new HotbarSettings();
+            _settings.StatusBar = new StatusBarSettings();
+
+            _cards.Clear();
+            HudStatusBarContainer.Children.Clear();
+            HudCrosshairContainer.Children.Clear();
+            HudBossBarContainer.Children.Clear();
+            InitializeHudAccordion();
+
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
+        }
     }
 }

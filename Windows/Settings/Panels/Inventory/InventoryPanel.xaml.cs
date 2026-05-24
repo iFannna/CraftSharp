@@ -164,5 +164,27 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                 }
             }
         }
+
+        private void RestoreDefaultsBtn_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (_settings == null) return;
+            _settings.Inventory = new InventorySettings();
+
+            _cards.Clear();
+            PlayerInventoryContainer.Children.Clear();
+            PlayerInventoryExtraContainer.Children.Clear();
+            ContainerInventoryContainer.Children.Clear();
+            FunctionalBlockContainer.Children.Clear();
+            CreatureInventoryContainer.Children.Clear();
+            AddPlayerInventoryCards();
+            AddContainerCards();
+            AddFunctionalBlockCards();
+            AddCreatureInventoryCards();
+
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
+            }
+        }
     }
 }

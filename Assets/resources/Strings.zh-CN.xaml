@@ -183,6 +183,9 @@
     <sys:String x:Key="CustomMaxValue">最大值</sys:String>
     <sys:String x:Key="CustomSaturationValue">饱和度</sys:String>
 
+    <!-- 通用 -->
+    <sys:String x:Key="RestoreDefaults">恢复默认设置</sys:String>
+
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
     <sys:String x:Key="HotkeyPanelDesc">点击按钮后按下新的快捷键进行设置</sys:String>
@@ -194,7 +197,7 @@
     <sys:String x:Key="HotkeyStatusBarDesc">显示/隐藏状态栏窗口</sys:String>
     <sys:String x:Key="HotkeyCrosshairLabel">打开准星</sys:String>
     <sys:String x:Key="HotkeyCrosshairDesc">显示/隐藏准星窗口</sys:String>
-    <sys:String x:Key="HotkeyRestoreDefaults">恢复默认</sys:String>
+    <sys:String x:Key="HotkeyRestoreDefaults">恢复默认设置</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
     <sys:String x:Key="HotkeyConflictWarning">快捷键 "{0}" 已被 {1} 占用</sys:String>

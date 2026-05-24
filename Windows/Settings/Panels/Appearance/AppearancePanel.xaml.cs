@@ -149,5 +149,16 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
                 app.SaveSettings();
             }
         }
+
+        private void RestoreDefaultsBtn_Click(object sender, global::System.Windows.RoutedEventArgs e)
+        {
+            _settings.Appearance = new AppearanceSettings();
+            ThemeService.Instance.SetThemeMode(_settings.Appearance.Theme);
+            FontService.Instance.SetFont(_settings.Appearance.Font);
+            FontService.Instance.SetFontSize(_settings.Appearance.FontSize);
+            IconService.Instance.SetAppIcon(_settings.Appearance.AppIconPath);
+            InitializeControls();
+            SaveSettings();
+        }
     }
 }

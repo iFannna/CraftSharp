@@ -159,5 +159,12 @@ namespace CraftSharp.Windows.Settings.Panels.General
                 app.SaveSettings();
             }
         }
+
+        private void RestoreDefaultsBtn_Click(object sender, global::System.Windows.RoutedEventArgs e)
+        {
+            _settings.System = new SystemSettings();
+            InitializeControls();
+            SaveSettings();
+        }
     }
 }

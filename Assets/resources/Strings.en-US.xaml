@@ -183,6 +183,9 @@
     <sys:String x:Key="CustomMaxValue">Max Value</sys:String>
     <sys:String x:Key="CustomSaturationValue">Saturation</sys:String>
 
+    <!-- Common -->
+    <sys:String x:Key="RestoreDefaults">Restore Default Settings</sys:String>
+
     <!-- Hotkey Settings Panel -->
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
     <sys:String x:Key="HotkeyPanelDesc">Click button then press new key to set</sys:String>
@@ -194,7 +197,7 @@
     <sys:String x:Key="HotkeyStatusBarDesc">Show/Hide status bar window</sys:String>
     <sys:String x:Key="HotkeyCrosshairLabel">Open Crosshair</sys:String>
     <sys:String x:Key="HotkeyCrosshairDesc">Show/Hide crosshair window</sys:String>
-    <sys:String x:Key="HotkeyRestoreDefaults">Restore Defaults</sys:String>
+    <sys:String x:Key="HotkeyRestoreDefaults">Restore Default Settings</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">Clear hotkey</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
     <sys:String x:Key="HotkeyConflictWarning">Hotkey "{0}" is already used by {1}</sys:String>

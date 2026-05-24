@@ -115,7 +115,7 @@
         <Grid Margin="0,24,0,0">
             <ui:Button HorizontalAlignment="Right" Appearance="Secondary"
                        x:Name="RestoreDefaultsBtn" Click="RestoreDefaultsBtn_Click"
-                       Content="{DynamicResource HotkeyRestoreDefaults}"/>
+                       Content="{DynamicResource RestoreDefaults}"/>
         </Grid>
     </StackPanel>
 </UserControl>
