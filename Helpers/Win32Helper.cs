@@ -84,6 +84,15 @@ namespace CraftSharp.Helpers
         // 消息常量
         public const int WM_COMMAND = 0x0111;
 
+        // WM_HOTKEY 消息常量
+        public const int WM_HOTKEY = 0x0312;
+
+        // RegisterHotKey/UnregisterHotKey 修饰键常量
+        public const int MOD_ALT = 0x0001;
+        public const int MOD_CONTROL = 0x0002;
+        public const int MOD_SHIFT = 0x0004;
+        public const int MOD_NOREPEAT = 0x4000;
+
         #endregion
 
         #region User32.dll API
@@ -120,6 +129,12 @@ namespace CraftSharp.Helpers
 
         [DllImport("user32.dll")]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         #endregion
 

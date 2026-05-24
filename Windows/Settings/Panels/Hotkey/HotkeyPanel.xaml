@@ -18,15 +18,14 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{DynamicResource HotkeyInventoryLabel}" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeyInventoryLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{DynamicResource HotkeyInventoryDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="E"
-                           x:Name="InventoryHotkeyBtn" Click="HotkeyButton_Click"/>
+                <ui:Button Grid.Column="1" Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+E"
+                           x:Name="InventoryHotkeyBtn" Click="HotkeyButton_Click"
+                           Tag="Inventory"/>
             </Grid>
         </ui:Card>
 
@@ -38,36 +37,22 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{DynamicResource HotkeySettingsLabel}" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeySettingsLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="{DynamicResource HotkeySettingsDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="Ctrl+S"
-                           x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"/>
+                <ui:Button Grid.Column="1" Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+S"
+                           x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"
+                           Tag="Settings"/>
             </Grid>
         </ui:Card>
 
-        <!-- 显示/隐藏快捷栏 -->
-        <ui:Card Margin="0,0,0,12" Padding="16">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{DynamicResource HotkeyHotbarLabel}" FontWeight="Medium" VerticalAlignment="Center"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    </StackPanel>
-                    <TextBlock Text="{DynamicResource HotkeyHotbarDesc}" Margin="0,8,0,0"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" Width="100" Content="{DynamicResource HotkeyNotSet}"
-                           x:Name="HotbarToggleHotkeyBtn" Click="HotkeyButton_Click"/>
-            </Grid>
-        </ui:Card>
+        <!-- 恢复默认按钮 -->
+        <Grid Margin="0,24,0,0">
+            <ui:Button HorizontalAlignment="Right" Appearance="Secondary"
+                       x:Name="RestoreDefaultsBtn" Click="RestoreDefaultsBtn_Click"
+                       Content="{DynamicResource HotkeyRestoreDefaults}"/>
+        </Grid>
     </StackPanel>
 </UserControl>

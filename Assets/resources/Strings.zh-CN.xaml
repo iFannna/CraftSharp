@@ -189,9 +189,11 @@
     <sys:String x:Key="HotkeyInventoryLabel">打开背包</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏背包窗口（27格扩展槽位）</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">打开设置</sys:String>
-    <sys:String x:Key="HotkeySettingsDesc">快速打开此设置面板</sys:String>
-    <sys:String x:Key="HotkeyHotbarLabel">显示/隐藏快捷栏</sys:String>
-    <sys:String x:Key="HotkeyHotbarDesc">快速切换快捷栏窗口可见性</sys:String>
+    <sys:String x:Key="HotkeySettingsDesc">显示/隐藏设置面板窗口</sys:String>
+    <sys:String x:Key="HotkeyRestoreDefaults">恢复默认</sys:String>
+    <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
+    <sys:String x:Key="HotkeyConflictWarning">快捷键 "{0}" 已被其他功能使用</sys:String>
+    <sys:String x:Key="HotkeyConflictConfirm">知道了</sys:String>
     <sys:String x:Key="HotkeyNotSet">未设置</sys:String>
 
     <!-- 关于面板 -->

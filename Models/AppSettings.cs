@@ -368,17 +368,12 @@ namespace CraftSharp.Models
         /// <summary>
         /// 打开背包快捷键
         /// </summary>
-        public string Inventory { get; set; } = "E";
+        public string Inventory { get; set; } = "Ctrl+Alt+E";
 
         /// <summary>
         /// 打开设置快捷键
         /// </summary>
-        public string Settings { get; set; } = "Ctrl+S";
-
-        /// <summary>
-        /// 显示/隐藏快捷栏快捷键
-        /// </summary>
-        public string HotbarToggle { get; set; } = "";
+        public string Settings { get; set; } = "Ctrl+Alt+S";
     }
 
     /// <summary>

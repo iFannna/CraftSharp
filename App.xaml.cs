@@ -32,6 +32,7 @@ namespace CraftSharp
         private System.Windows.Controls.MenuItem? _exitItem;
         private string _settingsPath = "";
         private Models.AppSettings? _appSettings;
+        private Window? _hotkeyMessageWindow;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -229,8 +230,8 @@ namespace CraftSharp
                 _settingsWindow.Hide();
             };
 
-            // 注册全局快捷键
-            RegisterHotkeys();
+            // 注册全局快捷键（Win32 RegisterHotKey）
+            InitializeGlobalHotkeys();
         }
 
         /// <summary>
@@ -521,45 +522,54 @@ namespace CraftSharp
                 _exitItem.Header = TryFindResource("TrayExit") as string ?? "退出";
         }
 
-        /// <summary>
-        /// 注册全局快捷键
-        /// </summary>
-        private void RegisterHotkeys()
+        private void InitializeGlobalHotkeys()
         {
-            // E键 - 打开/关闭背包
-            // 使用 Keyboard.AddKeyDownHandler 实现全局快捷键
-            AddKeyDownHandler();
-        }
-
-        /// <summary>
-        /// 添加键盘事件处理
-        /// </summary>
-        private void AddKeyDownHandler()
-        {
-            // 在主窗口上监听键盘事件
+            // ESC 保持 WPF 级别处理（仅关闭物品栏）
             EventManager.RegisterClassHandler(typeof(Window),
                 Keyboard.KeyDownEvent,
-                new KeyEventHandler(GlobalKeyDown));
-        }
+                new KeyEventHandler((sender, e) =>
+                {
+                    if (e.Key == Key.Escape && _inventoryWindow?.IsVisible == true)
+                    {
+                        _inventoryWindow.HideInventory();
+                        e.Handled = true;
+                    }
+                }));
 
-        /// <summary>
-        /// 全局键盘按下事件
-        /// </summary>
-        private void GlobalKeyDown(object sender, KeyEventArgs e)
-        {
-            // E键 - 切换背包显示（仅当显示物品栏开启时）
-            if (e.Key == Key.E && (_appSettings?.Inventory.Visible ?? true))
+            // Win32 全局快捷键（使用独立的隐藏窗口接收 WM_HOTKEY）
+            _hotkeyMessageWindow = new Window
             {
-                _inventoryWindow?.Toggle();
-                e.Handled = true;
-            }
+                Width = 0, Height = 0,
+                ShowInTaskbar = false,
+                WindowStyle = WindowStyle.None,
+                AllowsTransparency = true,
+                Opacity = 0
+            };
+            _hotkeyMessageWindow.ShowInTaskbar = false;
+            _hotkeyMessageWindow.SourceInitialized += (_, _) =>
+            {
+                HotkeyService.Instance.HookWindow(_hotkeyMessageWindow);
 
-            // ESC键 - 隐藏物品栏窗口
-            if (e.Key == Key.Escape && _inventoryWindow?.IsVisible == true)
-            {
-                _inventoryWindow.HideInventory();
-                e.Handled = true;
-            }
+                HotkeyService.Instance.RegisterHotkey("Inventory",
+                    _appSettings?.Hotkeys.Inventory ?? "E", () =>
+                    {
+                        if (_appSettings?.Inventory.Visible ?? true)
+                            _inventoryWindow?.Toggle();
+                    });
+
+                HotkeyService.Instance.RegisterHotkey("Settings",
+                    _appSettings?.Hotkeys.Settings ?? "Ctrl+Alt+S", () =>
+                    {
+                        if (_settingsWindow?.IsVisible == true)
+                            _settingsWindow.Hide();
+                        else
+                        {
+                            _settingsWindow?.Show();
+                            _settingsWindow?.Activate();
+                        }
+                    });
+            };
+            _hotkeyMessageWindow.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -574,6 +584,8 @@ namespace CraftSharp
             // 退出时始终保存所有设置到文件
             SaveSettings();
 
+            HotkeyService.Instance.Dispose();
+            _hotkeyMessageWindow?.Close();
             _taskbarIcon?.Dispose();
             base.OnExit(e);
         }

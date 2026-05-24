@@ -189,9 +189,11 @@
     <sys:String x:Key="HotkeyInventoryLabel">Open Inventory</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">Show/Hide inventory window (27 slots)</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">Open Settings</sys:String>
-    <sys:String x:Key="HotkeySettingsDesc">Quickly open this settings panel</sys:String>
-    <sys:String x:Key="HotkeyHotbarLabel">Show/Hide Hotbar</sys:String>
-    <sys:String x:Key="HotkeyHotbarDesc">Toggle hotbar window visibility</sys:String>
+    <sys:String x:Key="HotkeySettingsDesc">Show/Hide settings panel window</sys:String>
+    <sys:String x:Key="HotkeyRestoreDefaults">Restore Defaults</sys:String>
+    <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
+    <sys:String x:Key="HotkeyConflictWarning">Hotkey "{0}" is already in use by another function</sys:String>
+    <sys:String x:Key="HotkeyConflictConfirm">OK</sys:String>
     <sys:String x:Key="HotkeyNotSet">Not Set</sys:String>
 
     <!-- About Panel -->
