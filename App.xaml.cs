@@ -551,7 +551,7 @@ namespace CraftSharp
                 HotkeyService.Instance.HookWindow(_hotkeyMessageWindow);
 
                 HotkeyService.Instance.RegisterHotkey("Inventory",
-                    _appSettings?.Hotkeys.Inventory ?? "E", () =>
+                    _appSettings?.Hotkeys.Inventory ?? "Ctrl+Alt+E", () =>
                     {
                         if (_appSettings?.Inventory.Visible ?? true)
                             _inventoryWindow?.Toggle();
@@ -567,6 +567,18 @@ namespace CraftSharp
                             _settingsWindow?.Show();
                             _settingsWindow?.Activate();
                         }
+                    });
+
+                HotkeyService.Instance.RegisterHotkey("StatusBar",
+                    _appSettings?.Hotkeys.StatusBar ?? "Ctrl+Alt+H", () =>
+                    {
+                        StatusBarService.Instance.Toggle();
+                    });
+
+                HotkeyService.Instance.RegisterHotkey("Crosshair",
+                    _appSettings?.Hotkeys.Crosshair ?? "Ctrl+Alt+C", () =>
+                    {
+                        CrosshairService.Instance.Toggle();
                     });
             };
             _hotkeyMessageWindow.Show();

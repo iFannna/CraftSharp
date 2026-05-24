@@ -58,6 +58,11 @@ namespace CraftSharp.Services.Hud
             VisibilityChanged?.Invoke(visible);
         }
 
+        public void Toggle()
+        {
+            SetVisible(!IsVisible());
+        }
+
         /// <summary>
         /// 获取状态栏可见性
         /// </summary>

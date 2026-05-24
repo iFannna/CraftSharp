@@ -34,6 +34,15 @@ namespace CraftSharp.Services.Hud
             _crosshairWindow.SetCrosshairVisible(visible);
         }
 
+        public void Toggle()
+        {
+            if (_crosshairWindow == null) return;
+            if (_crosshairWindow.IsVisible)
+                _crosshairWindow.Hide();
+            else
+                _crosshairWindow.Show();
+        }
+
         /// <summary>
         /// 设置攻击指示器可见性
         /// </summary>

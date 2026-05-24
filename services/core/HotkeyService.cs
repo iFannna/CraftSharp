@@ -175,8 +175,10 @@ namespace CraftSharp.Services.Core
         {
             return new Dictionary<string, string>
             {
-                { "Inventory", "Ctrl+Alt+E" },
                 { "Settings", "Ctrl+Alt+S" },
+                { "StatusBar", "Ctrl+Alt+H" },
+                { "Crosshair", "Ctrl+Alt+C" },
+                { "Inventory", "Ctrl+Alt+E" },
             };
         }
 

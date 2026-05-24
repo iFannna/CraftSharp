@@ -11,7 +11,32 @@
         <TextBlock Text="{DynamicResource HotkeyPanelDesc}" Margin="0,0,0,16"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
-        <!-- 打开背包 -->
+        <!-- 打开设置面板 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeySettingsLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeySettingsDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+S"
+                               x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="Settings"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="SettingsClearBtn" Click="ClearHotkey_Click" Tag="Settings"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <!-- 打开物品栏 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -36,7 +61,7 @@
             </Grid>
         </ui:Card>
 
-        <!-- 打开设置 -->
+        <!-- 打开状态栏 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -44,17 +69,42 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="{DynamicResource HotkeySettingsLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource HotkeyStatusBarLabel}" FontWeight="Medium" VerticalAlignment="Center"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="{DynamicResource HotkeySettingsDesc}" Margin="0,8,0,0"
+                    <TextBlock Text="{DynamicResource HotkeyStatusBarDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+S"
-                               x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"
-                               Tag="Settings"/>
-                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0" 
-                               x:Name="SettingsClearBtn" Click="ClearHotkey_Click" Tag="Settings"
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+H"
+                               x:Name="StatusBarHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="StatusBar"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="StatusBarClearBtn" Click="ClearHotkey_Click" Tag="StatusBar"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <!-- 打开准星 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeyCrosshairLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeyCrosshairDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+C"
+                               x:Name="CrosshairHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="Crosshair"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="CrosshairClearBtn" Click="ClearHotkey_Click" Tag="Crosshair"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>

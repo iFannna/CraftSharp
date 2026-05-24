@@ -28,8 +28,10 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         private void RefreshDisplay()
         {
             var notSetText = (string)Application.Current.TryFindResource("HotkeyNotSet") ?? "";
-            InventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Inventory) ? notSetText : _settings.Hotkeys.Inventory;
             SettingsHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Settings) ? notSetText : _settings.Hotkeys.Settings;
+            InventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Inventory) ? notSetText : _settings.Hotkeys.Inventory;
+            StatusBarHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.StatusBar) ? notSetText : _settings.Hotkeys.StatusBar;
+            CrosshairHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Crosshair) ? notSetText : _settings.Hotkeys.Crosshair;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
@@ -172,10 +174,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         private string? CheckConflict(string currentHotkeyId, string newHotkey)
         {
             if (string.IsNullOrEmpty(newHotkey)) return null;
-            if (currentHotkeyId != "Inventory" && _settings.Hotkeys.Inventory == newHotkey)
-                return (string)Application.Current.TryFindResource("HotkeyInventoryLabel");
             if (currentHotkeyId != "Settings" && _settings.Hotkeys.Settings == newHotkey)
                 return (string)Application.Current.TryFindResource("HotkeySettingsLabel");
+            if (currentHotkeyId != "Inventory" && _settings.Hotkeys.Inventory == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyInventoryLabel");
+            if (currentHotkeyId != "StatusBar" && _settings.Hotkeys.StatusBar == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyStatusBarLabel");
+            if (currentHotkeyId != "Crosshair" && _settings.Hotkeys.Crosshair == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyCrosshairLabel");
             return null;
         }
 
@@ -191,8 +197,10 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         {
             switch (hotkeyId)
             {
-                case "Inventory": _settings.Hotkeys.Inventory = value; break;
                 case "Settings": _settings.Hotkeys.Settings = value; break;
+                case "Inventory": _settings.Hotkeys.Inventory = value; break;
+                case "StatusBar": _settings.Hotkeys.StatusBar = value; break;
+                case "Crosshair": _settings.Hotkeys.Crosshair = value; break;
             }
         }
 
@@ -200,8 +208,10 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         {
             var map = new Dictionary<string, string>
             {
-                { "Inventory", _settings.Hotkeys.Inventory },
                 { "Settings", _settings.Hotkeys.Settings },
+                { "Inventory", _settings.Hotkeys.Inventory },
+                { "StatusBar", _settings.Hotkeys.StatusBar },
+                { "Crosshair", _settings.Hotkeys.Crosshair },
             };
             HotkeyService.Instance.ReRegisterAll(map);
         }

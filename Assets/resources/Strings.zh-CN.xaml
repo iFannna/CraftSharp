@@ -186,10 +186,14 @@
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
     <sys:String x:Key="HotkeyPanelDesc">点击按钮后按下新的快捷键进行设置</sys:String>
-    <sys:String x:Key="HotkeyInventoryLabel">打开背包</sys:String>
-    <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏背包窗口（27格扩展槽位）</sys:String>
-    <sys:String x:Key="HotkeySettingsLabel">打开设置</sys:String>
+    <sys:String x:Key="HotkeyInventoryLabel">打开物品栏</sys:String>
+    <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏物品栏窗口</sys:String>
+    <sys:String x:Key="HotkeySettingsLabel">打开设置面板</sys:String>
     <sys:String x:Key="HotkeySettingsDesc">显示/隐藏设置面板窗口</sys:String>
+    <sys:String x:Key="HotkeyStatusBarLabel">打开状态栏</sys:String>
+    <sys:String x:Key="HotkeyStatusBarDesc">显示/隐藏状态栏窗口</sys:String>
+    <sys:String x:Key="HotkeyCrosshairLabel">打开准星</sys:String>
+    <sys:String x:Key="HotkeyCrosshairDesc">显示/隐藏准星窗口</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">恢复默认</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>

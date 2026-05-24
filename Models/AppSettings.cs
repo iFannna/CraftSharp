@@ -366,14 +366,24 @@ namespace CraftSharp.Models
     public class HotkeySettings
     {
         /// <summary>
-        /// 打开背包快捷键
-        /// </summary>
-        public string Inventory { get; set; } = "Ctrl+Alt+E";
-
-        /// <summary>
         /// 打开设置快捷键
         /// </summary>
         public string Settings { get; set; } = "Ctrl+Alt+S";
+
+        /// <summary>
+        /// 打开状态栏快捷键
+        /// </summary>
+        public string StatusBar { get; set; } = "Ctrl+Alt+H";
+
+        /// <summary>
+        /// 打开准星快捷键
+        /// </summary>
+        public string Crosshair { get; set; } = "Ctrl+Alt+C";
+
+        /// <summary>
+        /// 打开背包快捷键
+        /// </summary>
+        public string Inventory { get; set; } = "Ctrl+Alt+E";
     }
 
     /// <summary>
