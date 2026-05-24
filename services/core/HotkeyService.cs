@@ -175,6 +175,7 @@ namespace CraftSharp.Services.Core
         {
             return new Dictionary<string, string>
             {
+                { "DesktopIcons", "Ctrl+Alt+D" },
                 { "Settings", "Ctrl+Alt+S" },
                 { "StatusBar", "Ctrl+Alt+H" },
                 { "Crosshair", "Ctrl+Alt+C" },

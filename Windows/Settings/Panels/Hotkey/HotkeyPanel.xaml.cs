@@ -28,6 +28,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         private void RefreshDisplay()
         {
             var notSetText = (string)Application.Current.TryFindResource("HotkeyNotSet") ?? "";
+            DesktopIconsHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.DesktopIcons) ? notSetText : _settings.Hotkeys.DesktopIcons;
             SettingsHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Settings) ? notSetText : _settings.Hotkeys.Settings;
             InventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Inventory) ? notSetText : _settings.Hotkeys.Inventory;
             StatusBarHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.StatusBar) ? notSetText : _settings.Hotkeys.StatusBar;
@@ -176,6 +177,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         private string? CheckConflict(string currentHotkeyId, string newHotkey)
         {
             if (string.IsNullOrEmpty(newHotkey)) return null;
+            if (currentHotkeyId != "DesktopIcons" && _settings.Hotkeys.DesktopIcons == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyDesktopIconsLabel");
             if (currentHotkeyId != "Settings" && _settings.Hotkeys.Settings == newHotkey)
                 return (string)Application.Current.TryFindResource("HotkeySettingsLabel");
             if (currentHotkeyId != "Inventory" && _settings.Hotkeys.Inventory == newHotkey)
@@ -201,6 +204,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         {
             switch (hotkeyId)
             {
+                case "DesktopIcons": _settings.Hotkeys.DesktopIcons = value; break;
                 case "Settings": _settings.Hotkeys.Settings = value; break;
                 case "Inventory": _settings.Hotkeys.Inventory = value; break;
                 case "StatusBar": _settings.Hotkeys.StatusBar = value; break;
@@ -213,6 +217,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         {
             var map = new Dictionary<string, string>
             {
+                { "DesktopIcons", _settings.Hotkeys.DesktopIcons },
                 { "Settings", _settings.Hotkeys.Settings },
                 { "Inventory", _settings.Hotkeys.Inventory },
                 { "StatusBar", _settings.Hotkeys.StatusBar },

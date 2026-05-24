@@ -194,6 +194,8 @@
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>
     <sys:String x:Key="HotkeyGlobalHotkeys">全局快捷键</sys:String>
     <sys:String x:Key="HotkeyLocalHotkeys">局部快捷键</sys:String>
+    <sys:String x:Key="HotkeyDesktopIconsLabel">显示桌面图标</sys:String>
+    <sys:String x:Key="HotkeyDesktopIconsDesc">显示/隐藏 Windows 桌面图标</sys:String>
     <sys:String x:Key="HotkeyInventoryLabel">打开物品栏</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">显示/隐藏物品栏窗口</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">打开设置面板</sys:String>

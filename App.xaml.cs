@@ -555,6 +555,9 @@ namespace CraftSharp
 
                 HotkeyService.Instance.HookWindow(_hotkeyMessageWindow);
 
+                HotkeyService.Instance.RegisterHotkey("DesktopIcons",
+                    _appSettings?.Hotkeys.DesktopIcons ?? "Ctrl+Alt+D", ToggleDesktopIcons);
+
                 HotkeyService.Instance.RegisterHotkey("Inventory",
                     _appSettings?.Hotkeys.Inventory ?? "Ctrl+Alt+E", () =>
                     {
@@ -587,6 +590,23 @@ namespace CraftSharp
                     });
             };
             _hotkeyMessageWindow.Show();
+        }
+
+        private bool _desktopIconsVisible = true;
+
+        private void ToggleDesktopIcons()
+        {
+            var shellWnd = Win32Helper.FindWindow("Progman", null);
+            if (shellWnd == IntPtr.Zero) return;
+
+            var defView = Win32Helper.FindWindowEx(shellWnd, IntPtr.Zero, "SHELLDLL_DefView", null);
+            if (defView == IntPtr.Zero) return;
+
+            var listWnd = Win32Helper.FindWindowEx(defView, IntPtr.Zero, "SysListView32", null);
+            if (listWnd == IntPtr.Zero) return;
+
+            _desktopIconsVisible = !_desktopIconsVisible;
+            Win32Helper.ShowWindow(listWnd, _desktopIconsVisible ? Win32Helper.SW_SHOW : 0);
         }
 
         protected override void OnExit(ExitEventArgs e)

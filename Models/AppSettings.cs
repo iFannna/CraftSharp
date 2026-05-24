@@ -366,6 +366,11 @@ namespace CraftSharp.Models
     public class HotkeySettings
     {
         /// <summary>
+        /// 显示/隐藏桌面图标快捷键
+        /// </summary>
+        public string DesktopIcons { get; set; } = "Ctrl+Alt+D";
+
+        /// <summary>
         /// 打开设置快捷键
         /// </summary>
         public string Settings { get; set; } = "Ctrl+Alt+S";

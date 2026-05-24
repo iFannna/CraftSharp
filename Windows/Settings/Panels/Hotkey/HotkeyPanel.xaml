@@ -11,6 +11,31 @@
         <TextBlock Text="{DynamicResource HotkeyGlobalHotkeys}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
+        <!-- 显示桌面图标 -->
+        <ui:Card Margin="0,0,0,12" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource HotkeyDesktopIconsLabel}" FontWeight="Medium" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{DynamicResource HotkeyDesktopIconsDesc}" Margin="0,8,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+D"
+                               x:Name="DesktopIconsHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="DesktopIcons"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="DesktopIconsClearBtn" Click="ClearHotkey_Click" Tag="DesktopIcons"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
         <!-- 打开设置面板 -->
         <ui:Card Margin="0,0,0,12" Padding="16">
             <Grid>

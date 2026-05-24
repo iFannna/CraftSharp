@@ -194,6 +194,8 @@
     <sys:String x:Key="HotkeyPanelTitle">Hotkey Settings</sys:String>
     <sys:String x:Key="HotkeyGlobalHotkeys">Global Hotkeys</sys:String>
     <sys:String x:Key="HotkeyLocalHotkeys">Local Hotkeys</sys:String>
+    <sys:String x:Key="HotkeyDesktopIconsLabel">Show Desktop Icons</sys:String>
+    <sys:String x:Key="HotkeyDesktopIconsDesc">Show/Hide Windows desktop icons</sys:String>
     <sys:String x:Key="HotkeyInventoryLabel">Open Inventory</sys:String>
     <sys:String x:Key="HotkeyInventoryDesc">Show/Hide inventory window</sys:String>
     <sys:String x:Key="HotkeySettingsLabel">Open Settings Panel</sys:String>
