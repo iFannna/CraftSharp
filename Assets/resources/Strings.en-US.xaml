@@ -191,6 +191,7 @@
     <sys:String x:Key="HotkeySettingsLabel">Open Settings</sys:String>
     <sys:String x:Key="HotkeySettingsDesc">Show/Hide settings panel window</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">Restore Defaults</sys:String>
+    <sys:String x:Key="HotkeyClearTooltip">Clear hotkey</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
     <sys:String x:Key="HotkeyConflictWarning">Hotkey "{0}" is already in use by another function</sys:String>
     <sys:String x:Key="HotkeyConflictConfirm">OK</sys:String>

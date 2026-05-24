@@ -191,6 +191,7 @@
     <sys:String x:Key="HotkeySettingsLabel">打开设置</sys:String>
     <sys:String x:Key="HotkeySettingsDesc">显示/隐藏设置面板窗口</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">恢复默认</sys:String>
+    <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
     <sys:String x:Key="HotkeyConflictWarning">快捷键 "{0}" 已被其他功能使用</sys:String>
     <sys:String x:Key="HotkeyConflictConfirm">知道了</sys:String>

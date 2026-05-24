@@ -27,8 +27,9 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
         private void RefreshDisplay()
         {
-            InventoryHotkeyBtn.Content = _settings.Hotkeys.Inventory;
-            SettingsHotkeyBtn.Content = _settings.Hotkeys.Settings;
+            var notSetText = (string)Application.Current.TryFindResource("HotkeyNotSet") ?? "";
+            InventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Inventory) ? notSetText : _settings.Hotkeys.Inventory;
+            SettingsHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Settings) ? notSetText : _settings.Hotkeys.Settings;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
@@ -37,7 +38,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
             if (_isRecording)
             {
-                // 录制中点击任意按钮 -> 结束录制（不保存）
                 FinishRecording();
             }
 
@@ -48,7 +48,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             btn.Appearance = Wpf.Ui.Controls.ControlAppearance.Primary;
             btn.LostKeyboardFocus += OnRecordingButtonLostFocus;
 
-            // 录制时临时注销全局快捷键，避免 Win32 拦截按键事件
             HotkeyService.Instance.UnregisterAll();
         }
 
@@ -62,7 +61,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             _isRecording = false;
             _recordingButton = null;
 
-            // 重新注册全局快捷键
             NotifyHotkeyServiceChanged();
         }
 
@@ -79,7 +77,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
         {
             if (!_isRecording || _recordingButton == null) return;
 
-            // 忽略纯修饰键
             if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
                 e.Key == Key.LeftShift || e.Key == Key.RightShift ||
                 e.Key == Key.LeftAlt || e.Key == Key.RightAlt ||
@@ -90,29 +87,38 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             var hotkey = BuildHotkeyString(e);
             if (string.IsNullOrEmpty(hotkey)) return;
 
-            var hotkeyId = (string)_recordingButton.Tag;
+            // 暂存引用，防止弹窗导致失焦后 _recordingButton 被清空
+            var btn = _recordingButton;
+            var hotkeyId = (string)btn.Tag;
 
-            // 冲突检测
+            btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
+
             if (CheckConflict(hotkeyId, hotkey))
             {
                 ShowConflictWarning(hotkey);
             }
 
-            // 更新按钮和设置
-            _recordingButton.Content = hotkey;
-            SetHotkeyString(hotkeyId, hotkey);
-            SaveSettings();
-
-            // 结束录制（不恢复按钮内容）
-            _recordingButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
-            _recordingButton.LostKeyboardFocus -= OnRecordingButtonLostFocus;
+            btn.Content = hotkey;
+            btn.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
             _isRecording = false;
             _recordingButton = null;
 
-            // 重新注册全局快捷键
+            SetHotkeyString(hotkeyId, hotkey);
+            SaveSettings();
             NotifyHotkeyServiceChanged();
 
             e.Handled = true;
+        }
+
+        private void ClearHotkey_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement fe || fe.Tag is not string hotkeyId) return;
+
+            var notSetText = (string)Application.Current.TryFindResource("HotkeyNotSet") ?? "";
+            SetHotkeyString(hotkeyId, "");
+            RefreshDisplay();
+            SaveSettings();
+            NotifyHotkeyServiceChanged();
         }
 
         private static string BuildHotkeyString(KeyEventArgs e)

@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
     <StackPanel>
         <!-- 标题 -->
         <TextBlock Text="{DynamicResource HotkeyPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
@@ -23,9 +24,15 @@
                     <TextBlock Text="{DynamicResource HotkeyInventoryDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+E"
-                           x:Name="InventoryHotkeyBtn" Click="HotkeyButton_Click"
-                           Tag="Inventory"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+E"
+                               x:Name="InventoryHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="Inventory"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
+                               x:Name="InventoryClearBtn" Click="ClearHotkey_Click" Tag="Inventory"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Grid>
         </ui:Card>
 
@@ -42,9 +49,15 @@
                     <TextBlock Text="{DynamicResource HotkeySettingsDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <ui:Button Grid.Column="1" Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+S"
-                           x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"
-                           Tag="Settings"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Appearance="Secondary" MinWidth="120" Padding="16,8" Content="Ctrl+Alt+S"
+                               x:Name="SettingsHotkeyBtn" Click="HotkeyButton_Click"
+                               Tag="Settings"/>
+                    <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0" 
+                               x:Name="SettingsClearBtn" Click="ClearHotkey_Click" Tag="Settings"
+                               Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Grid>
         </ui:Card>
 
