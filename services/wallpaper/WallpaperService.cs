@@ -31,18 +31,6 @@ public class WallpaperService
 
             DesktopWallpaperService.Instance.SetWallpaper(filePath);
 
-            if (Application.Current is App app)
-            {
-                var settings = app.GetAppSettings();
-                if (settings != null)
-                {
-                    settings.Wallpaper.CurrentWallpaperId = wallpaper.Id;
-                    settings.Wallpaper.CurrentType = "static";
-                    settings.Wallpaper.LocalFilePath = filePath;
-                    app.SaveSettings();
-                }
-            }
-
             onSuccess?.Invoke(filePath);
         }
         catch (Exception ex)
@@ -67,20 +55,6 @@ public class WallpaperService
         catch (Exception ex)
         {
             onError?.Invoke(ex.Message);
-        }
-    }
-
-    public void RestoreFromSettings()
-    {
-        if (Application.Current is not App app) return;
-        var settings = app.GetAppSettings();
-        if (settings == null) return;
-
-        if (settings.Wallpaper.CurrentType == "static" &&
-            !string.IsNullOrEmpty(settings.Wallpaper.LocalFilePath) &&
-            File.Exists(settings.Wallpaper.LocalFilePath))
-        {
-            DesktopWallpaperService.Instance.SetWallpaper(settings.Wallpaper.LocalFilePath);
         }
     }
 
