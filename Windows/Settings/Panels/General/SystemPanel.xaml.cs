@@ -4,6 +4,7 @@ using CraftSharp.Services.Hud;
 using CraftSharp.Services.Slot;
 using CraftSharp.Services.Resource;
 using CraftSharp.Windows.Dialogs;
+using Microsoft.Win32;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,6 +36,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
             RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
             RememberCardStatesToggle.IsChecked = _settings.System.RememberCardStates; // 默认开启
             RememberNavSelectionToggle.IsChecked = _settings.System.RememberNavSelection; // 默认开启
+            SetAutoStartRegistry(_settings.System.AutoStart);
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -60,6 +62,7 @@ namespace CraftSharp.Windows.Settings.Panels.General
             if (sender is Wpf.Ui.Controls.ToggleSwitch toggle)
             {
                 _settings.System.AutoStart = toggle.IsChecked ?? false;
+                SetAutoStartRegistry(_settings.System.AutoStart);
                 // 即时保存设置
                 SaveSettings();
             }
@@ -152,6 +155,25 @@ namespace CraftSharp.Windows.Settings.Panels.General
                 // 即时保存设置
                 SaveSettings();
             }
+        }
+
+        private void SetAutoStartRegistry(bool enable)
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (key == null) return;
+                if (enable)
+                {
+                    var exePath = Environment.ProcessPath ?? "";
+                    key.SetValue("CraftSharp", $"\"{exePath}\"");
+                }
+                else
+                {
+                    key.DeleteValue("CraftSharp", false);
+                }
+            }
+            catch { }
         }
 
         private void SaveSettings()

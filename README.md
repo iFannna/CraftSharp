@@ -149,7 +149,6 @@ AppSettings
 - \CpuUsage\：CPU 使用率
 - \MemoryUsage\：内存使用率
 - \GpuUsage\：GPU 使用率
-- \NetworkSpeed\：网络速度
 
 每个 HUD 元素可通过 \HudElementSettings.DataMappingType\ 配置映射类型。
 

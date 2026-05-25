@@ -83,15 +83,6 @@ namespace CraftSharp.Services.Hud
         }
 
         /// <summary>
-        /// 保存状态栏位置
-        /// </summary>
-        public void SavePosition()
-        {
-            if (_statusBarWindow == null) return;
-            // TODO: 实现保存位置逻辑
-        }
-
-        /// <summary>
         /// 恢复状态栏位置
         /// </summary>
         public void RestorePosition(double x, double y)
