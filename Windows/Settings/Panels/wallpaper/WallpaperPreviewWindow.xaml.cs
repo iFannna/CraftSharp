@@ -70,16 +70,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         if (_originalUrls.TryGetValue(wallpaper.Id, out var url))
             return url;
 
-        try
-        {
-            var detail = await McBlockApiClient.Instance.GetWallpaperDetailAsync(wallpaper.Id);
-            url = detail.OriginalUrl ?? wallpaper.PreviewUrl;
-        }
-        catch
-        {
-            url = wallpaper.PreviewUrl;
-        }
-
+        url = await WallpaperService.Instance.GetOriginalUrlAsync(wallpaper);
         _originalUrls[wallpaper.Id] = url;
         return url;
     }
@@ -195,7 +186,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         RootGrid.ReleaseMouseCapture();
     }
 
-    private async void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
+    private void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
 
@@ -209,9 +200,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 
         SetWallpaperBtn.IsEnabled = false;
 
-        var imageUrl = await GetOriginalUrlAsync(wallpaper);
-
-        WallpaperService.Instance.ApplyStaticWallpaper(wallpaper, imageUrl,
+        WallpaperService.Instance.ApplyStaticWallpaper(wallpaper,
             onSuccess: _ => Dispatcher.Invoke(() =>
             {
                 SetWallpaperBtn.IsEnabled = true;

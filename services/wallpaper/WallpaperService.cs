@@ -15,14 +15,14 @@ public class WallpaperService
 
     private static string WallpaperDir => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "wallpaper");
 
-    public async Task ApplyStaticWallpaper(WallpaperItem wallpaper, string? imageUrl = null, Action<string>? onSuccess = null, Action<string>? onError = null)
+    public async Task ApplyStaticWallpaper(WallpaperItem wallpaper, Action<string>? onSuccess = null, Action<string>? onError = null)
     {
         try
         {
             if (!Directory.Exists(WallpaperDir))
                 Directory.CreateDirectory(WallpaperDir);
 
-            var url = imageUrl ?? wallpaper.PreviewUrl;
+            var url = await GetOriginalUrlAsync(wallpaper);
             var ext = url.EndsWith(".jpg") || url.EndsWith(".jpeg") ? "jpg" : "webp";
             var filePath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{ext}");
             if (!File.Exists(filePath))
@@ -38,6 +38,19 @@ public class WallpaperService
         catch (Exception ex)
         {
             onError?.Invoke(ex.Message);
+        }
+    }
+
+    public async Task<string> GetOriginalUrlAsync(WallpaperItem wallpaper)
+    {
+        try
+        {
+            var detail = await McBlockApiClient.Instance.GetWallpaperDetailAsync(wallpaper.Id);
+            return detail.OriginalUrl ?? wallpaper.PreviewUrl;
+        }
+        catch
+        {
+            return wallpaper.PreviewUrl;
         }
     }
 
