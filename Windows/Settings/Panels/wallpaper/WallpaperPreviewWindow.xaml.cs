@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
-using ImageMagick;
 using Microsoft.Win32;
 
 namespace CraftSharp.Windows.Settings.Panels.Wallpaper;
@@ -244,8 +243,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         {
             var imageUrl = await GetOriginalUrlAsync(wallpaper);
             var bytes = await WallpaperService.Instance.DownloadBytesAsync(imageUrl);
-            using var image = new MagickImage(bytes);
-            image.Write(dialog.FileName, MagickFormat.Png);
+            await File.WriteAllBytesAsync(dialog.FileName, bytes);
         }
         finally
         {
