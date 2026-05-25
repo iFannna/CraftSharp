@@ -30,13 +30,17 @@ namespace CraftSharp.Windows.Settings.Panels.General
         private void InitializeControls()
         {
             LanguageComboBox.SelectedIndex = _settings.System.Language == "zh-CN" ? 0 : 1;
-            AutoStartToggle.IsChecked = _settings.System.AutoStart;
+
+            // 以注册表 Run 键的实际状态为准
+            var actualAutoStart = IsAutoStartInRegistry();
+            _settings.System.AutoStart = actualAutoStart;
+            AutoStartToggle.IsChecked = actualAutoStart;
+
             DefaultOpenPanelToggle.IsChecked = _settings.System.DefaultOpenPanel;
             RememberPositionToggle.IsChecked = _settings.System.RememberWindowPosition;
             RememberSizeToggle.IsChecked = _settings.System.RememberWindowSize;
             RememberCardStatesToggle.IsChecked = _settings.System.RememberCardStates; // 默认开启
             RememberNavSelectionToggle.IsChecked = _settings.System.RememberNavSelection; // 默认开启
-            SetAutoStartRegistry(_settings.System.AutoStart);
         }
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -155,6 +159,16 @@ namespace CraftSharp.Windows.Settings.Panels.General
                 // 即时保存设置
                 SaveSettings();
             }
+        }
+
+        private static bool IsAutoStartInRegistry()
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false);
+                return key?.GetValue("CraftSharp") != null;
+            }
+            catch { return false; }
         }
 
         private void SetAutoStartRegistry(bool enable)

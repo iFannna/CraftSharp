@@ -13,5 +13,5 @@ installer/
 # NuGet
 packages/
 
-# Installer scripts (generated locally)
-installer.iss
+# Installer output
+installer/
