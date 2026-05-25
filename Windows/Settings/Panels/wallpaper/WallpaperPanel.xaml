@@ -69,11 +69,7 @@
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
-                                RenderTransformOrigin="0.5,0.5">
-                            <Border.RenderTransform>
-                                <ScaleTransform ScaleX="1" ScaleY="1"/>
-                            </Border.RenderTransform>
+                        <Border x:Name="CardRoot" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Cursor="Hand">
                             <Border CornerRadius="8" ClipToBounds="True" Background="{DynamicResource ApplicationBackgroundBrush}">
                                 <Grid>
                                     <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True"
@@ -89,7 +85,11 @@
                                     </StackPanel>
                                     <Image x:Name="ThumbnailImage" Stretch="UniformToFill"
                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                           Visibility="Collapsed"/>
+                                           RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+                                        <Image.RenderTransform>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" x:Name="ImageScale"/>
+                                        </Image.RenderTransform>
+                                    </Image>
                                     <Border x:Name="DynamicBadge" Visibility="Collapsed"
                                             HorizontalAlignment="Left" VerticalAlignment="Top"
                                             Margin="6" Padding="4,2" CornerRadius="4"
@@ -123,17 +123,19 @@
                         </Border>
 
                         <DataTemplate.Triggers>
-                            <EventTrigger RoutedEvent="MouseEnter">
+                            <EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="CardRoot">
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                         To="1.03" Duration="0:0:0.2">
+                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                         Storyboard.TargetProperty="ScaleX"
+                                                         To="1.06" Duration="0:0:0.2">
                                             <DoubleAnimation.EasingFunction>
                                                 <CubicEase EasingMode="EaseOut"/>
                                             </DoubleAnimation.EasingFunction>
                                         </DoubleAnimation>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                         To="1.03" Duration="0:0:0.2">
+                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.06" Duration="0:0:0.2">
                                             <DoubleAnimation.EasingFunction>
                                                 <CubicEase EasingMode="EaseOut"/>
                                             </DoubleAnimation.EasingFunction>
@@ -143,12 +145,14 @@
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
-                            <EventTrigger RoutedEvent="MouseLeave">
+                            <EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="CardRoot">
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                         Storyboard.TargetProperty="ScaleX"
                                                          To="1.0" Duration="0:0:0.15"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                         Storyboard.TargetProperty="ScaleY"
                                                          To="1.0" Duration="0:0:0.15"/>
                                         <DoubleAnimation Storyboard.TargetName="HoverOverlay"
                                                          Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
