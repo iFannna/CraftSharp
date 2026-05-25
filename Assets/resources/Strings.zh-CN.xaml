@@ -252,11 +252,16 @@
 
     <!-- 关于面板 -->
     <sys:String x:Key="AboutPanelTitle">关于</sys:String>
-    <sys:String x:Key="AboutDesc">Minecraft 风格的桌面快捷启动工具</sys:String>
+    <sys:String x:Key="AboutDesc">一款 Minecraft 主题风格的桌面管理工具，集成壁纸引擎与系统增强功能</sys:String>
     <sys:String x:Key="AboutAuthor">作者</sys:String>
     <sys:String x:Key="AboutLicense">许可证</sys:String>
     <sys:String x:Key="AboutProjectUrl">项目地址</sys:String>
+    <sys:String x:Key="AboutTerms">服务条款</sys:String>
+    <sys:String x:Key="AboutPrivacy">隐私政策</sys:String>
+    <sys:String x:Key="AboutCopyright">版权</sys:String>
+    <sys:String x:Key="AboutView">查看</sys:String>
     <sys:String x:Key="AboutCheckUpdate">检查更新</sys:String>
+    <sys:String x:Key="AboutCheckingUpdate">检查中...</sys:String>
     <sys:String x:Key="AboutFeedback">反馈问题</sys:String>
 
     <!-- 托盘菜单 -->
@@ -463,6 +468,9 @@
     <!-- 关于面板 -->
     <sys:String x:Key="AboutCheckUpdateMessage">当前已是最新版本</sys:String>
     <sys:String x:Key="AboutCheckUpdateTitle">检查更新</sys:String>
+    <sys:String x:Key="UpdateDialogDownload">前往下载</sys:String>
+    <sys:String x:Key="UpdateDialogSkip">跳过</sys:String>
+    <sys:String x:Key="UpdateDialogNoChangelog">暂无更新说明</sys:String>
 
     <!-- 其他 -->
     <sys:String x:Key="IconPickerNone">无</sys:String>

@@ -315,8 +315,8 @@ public partial class WallpaperPanel : UserControl
             {
                 Content = message,
                 Placement = System.Windows.Controls.Primitives.PlacementMode.Center,
-                Background = System.Windows.Media.Brushes.White,
-                Foreground = System.Windows.Media.Brushes.Black,
+                Background = (System.Windows.Media.Brush)Application.Current.FindResource("CardBackgroundBrush"),
+                Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("TextPrimaryBrush"),
                 Padding = new Thickness(16, 8, 16, 8)
             };
             tooltip.IsOpen = true;

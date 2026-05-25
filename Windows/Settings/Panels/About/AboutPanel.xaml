@@ -13,7 +13,7 @@
                 <StackPanel Margin="0,0,0,16" VerticalAlignment="Center">
                     <TextBlock Text="Craft#" FontSize="24" FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="v1.0.0" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="14"/>
+                    <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="14"/>
                 </StackPanel>
 
                 <TextBlock Text="{DynamicResource AboutDesc}" Margin="0,0,0,24"
@@ -22,12 +22,14 @@
                 <Separator Margin="0,0,0,16" Background="{DynamicResource DividerBrush}"/>
 
                 <!-- Info Grid -->
-                <Grid Margin="0,0,0,8">
+                <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutAuthor}" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    <TextBlock Text="SAu" HorizontalAlignment="Right"
-                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Cursor="Hand"
+                                MouseLeftButtonDown="AuthorLink_Click">
+                        <TextBlock Text="iFannna" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
-                <Grid Margin="0,0,0,8">
+                <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutLicense}" Foreground="{DynamicResource TextSecondaryBrush}"/>
                     <TextBlock Text="MIT License" HorizontalAlignment="Right"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -39,6 +41,11 @@
                         <TextBlock Text="GitHub" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
+                <Grid Margin="0,0,0,16">
+                    <TextBlock Text="{DynamicResource AboutCopyright}" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="© 2025 iFannna" HorizontalAlignment="Right"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                </Grid>
 
                 <Separator Margin="0,0,0,16" Background="{DynamicResource DividerBrush}"/>
 
@@ -49,5 +56,38 @@
                 </StackPanel>
             </StackPanel>
         </ui:Card>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+            <TextBlock Text="{DynamicResource AboutTerms}"
+                       FontSize="12" Cursor="Hand" Margin="0,0,16,0"
+                       TextDecorations="Underline"
+                       MouseLeftButtonDown="Terms_Click">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <TextBlock Text="{DynamicResource AboutPrivacy}"
+                       FontSize="12" Cursor="Hand"
+                       TextDecorations="Underline"
+                       MouseLeftButtonDown="Privacy_Click">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
     </StackPanel>
 </UserControl>

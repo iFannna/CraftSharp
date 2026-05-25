@@ -252,11 +252,16 @@
 
     <!-- About Panel -->
     <sys:String x:Key="AboutPanelTitle">About</sys:String>
-    <sys:String x:Key="AboutDesc">Minecraft style desktop launcher tool</sys:String>
+    <sys:String x:Key="AboutDesc">A Minecraft-themed desktop management tool with wallpaper engine and system enhancements</sys:String>
     <sys:String x:Key="AboutAuthor">Author</sys:String>
     <sys:String x:Key="AboutLicense">License</sys:String>
     <sys:String x:Key="AboutProjectUrl">Project URL</sys:String>
+    <sys:String x:Key="AboutTerms">Terms of Service</sys:String>
+    <sys:String x:Key="AboutPrivacy">Privacy Policy</sys:String>
+    <sys:String x:Key="AboutCopyright">Copyright</sys:String>
+    <sys:String x:Key="AboutView">View</sys:String>
     <sys:String x:Key="AboutCheckUpdate">Check Update</sys:String>
+    <sys:String x:Key="AboutCheckingUpdate">Checking...</sys:String>
     <sys:String x:Key="AboutFeedback">Feedback</sys:String>
 
     <!-- Tray Menu -->
@@ -463,6 +468,9 @@
     <!-- About Panel -->
     <sys:String x:Key="AboutCheckUpdateMessage">You are already on the latest version</sys:String>
     <sys:String x:Key="AboutCheckUpdateTitle">Check Update</sys:String>
+    <sys:String x:Key="UpdateDialogDownload">Download</sys:String>
+    <sys:String x:Key="UpdateDialogSkip">Skip</sys:String>
+    <sys:String x:Key="UpdateDialogNoChangelog">No changelog available</sys:String>
 
     <!-- Other -->
     <sys:String x:Key="IconPickerNone">None</sys:String>
