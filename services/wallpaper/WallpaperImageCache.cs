@@ -15,6 +15,11 @@ public class WallpaperImageCache
 
     private WallpaperImageCache() { }
 
+    public BitmapImage? GetFromCache(string url)
+    {
+        return _cache.TryGetValue(url, out var cached) ? cached : null;
+    }
+
     public async Task<BitmapImage?> GetAsync(string url)
     {
         if (_cache.TryGetValue(url, out var cached))

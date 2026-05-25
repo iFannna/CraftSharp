@@ -16,11 +16,76 @@ public partial class WallpaperPanel : UserControl
     private const int PageSize = 20;
     private bool _isLoading;
 
+    private bool _isInitialized;
+
     public WallpaperPanel()
     {
         InitializeComponent();
-        Loaded += async (_, _) => await LoadWallpapersAsync(1);
+        Loaded += OnPanelLoaded;
+        IsVisibleChanged += OnPanelVisibleChanged;
         SizeChanged += OnSizeChanged;
+    }
+
+    private void OnPanelLoaded(object sender, RoutedEventArgs e)
+    {
+        // Visibility 可能还是 Collapsed（构造时就添加到 Collapsed 的容器中），
+        // 仅在可见时才加载
+        if (IsVisible)
+            InitializeAndLoad();
+    }
+
+    private void OnPanelVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if ((bool)e.NewValue && !_isInitialized)
+            InitializeAndLoad();
+        else if ((bool)e.NewValue && _isInitialized && _wallpapers.Count > 0)
+            RefreshThumbnails();
+    }
+
+    private async void InitializeAndLoad()
+    {
+        if (_isInitialized) return;
+        _isInitialized = true;
+        await LoadWallpapersAsync(1);
+    }
+
+    private void RefreshThumbnails()
+    {
+        // 面板已经可见，重新绑定缩略图到容器
+        var items = _wallpapers.ToList();
+        for (int i = 0; i < items.Count; i++)
+        {
+            var container = WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(i);
+            if (container == null) continue;
+
+            var thumbnailImage = FindNamedChild<System.Windows.Controls.Image>(container, "ThumbnailImage");
+            var loadingRing = FindNamedChild<FrameworkElement>(container, "LoadingRing");
+            var errorPanel = FindNamedChild<FrameworkElement>(container, "ErrorPanel");
+            var dynamicBadge = FindNamedChild<FrameworkElement>(container, "DynamicBadge");
+            var wallpaper = items[i];
+
+            // 从缓存获取已加载的图片
+            var cached = WallpaperImageCache.Instance.GetFromCache(wallpaper.ThumbnailUrl);
+            if (cached != null)
+            {
+                if (loadingRing != null) loadingRing.Visibility = Visibility.Collapsed;
+                if (errorPanel != null) errorPanel.Visibility = Visibility.Collapsed;
+                if (thumbnailImage != null)
+                {
+                    thumbnailImage.Source = cached;
+                    thumbnailImage.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                if (loadingRing != null) loadingRing.Visibility = Visibility.Visible;
+                if (thumbnailImage != null) thumbnailImage.Visibility = Visibility.Collapsed;
+            }
+
+            if (dynamicBadge != null && wallpaper.Type == "dynamic")
+                dynamicBadge.Visibility = Visibility.Visible;
+        }
+        ApplyCardHeight();
     }
 
     private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -138,43 +203,57 @@ public partial class WallpaperPanel : UserControl
         var items = _wallpapers.ToList();
         var images = new (int index, System.Windows.Media.Imaging.BitmapImage? image)[items.Count];
 
-        // 先并行获取所有图片
         await Task.WhenAll(items.Select(async (wp, i) =>
         {
             images[i] = (i, await WallpaperImageCache.Instance.GetAsync(wp.ThumbnailUrl));
         }));
 
-        // 等布局彻底完成
-        await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+        // 等待布局完成，最多重试 10 次
+        await WaitForItemContainers();
 
         Dispatcher.Invoke(() =>
         {
-            for (int i = 0; i < images.Length; i++)
-            {
-                var (index, image) = images[i];
-                if (image == null) continue;
-
-                var wallpaper = items[index];
-                var container = WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(index);
-                if (container == null) continue;
-
-                var loadingRing = FindNamedChild<FrameworkElement>(container, "LoadingRing");
-                var errorPanel = FindNamedChild<FrameworkElement>(container, "ErrorPanel");
-                var thumbnailImage = FindNamedChild<System.Windows.Controls.Image>(container, "ThumbnailImage");
-                var dynamicBadge = FindNamedChild<FrameworkElement>(container, "DynamicBadge");
-
-                if (loadingRing != null) loadingRing.Visibility = Visibility.Collapsed;
-                if (errorPanel != null) errorPanel.Visibility = Visibility.Collapsed;
-                if (thumbnailImage != null)
-                {
-                    thumbnailImage.Source = image;
-                    thumbnailImage.Visibility = Visibility.Visible;
-                }
-                if (dynamicBadge != null && wallpaper.Type == "dynamic")
-                    dynamicBadge.Visibility = Visibility.Visible;
-            }
-            ApplyCardHeight();
+            ApplyThumbnails(items, images);
         });
+    }
+
+    private async Task WaitForItemContainers()
+    {
+        for (int attempt = 0; attempt < 10; attempt++)
+        {
+            if (WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(0) != null)
+                return;
+            await Task.Delay(30);
+        }
+    }
+
+    private void ApplyThumbnails(List<WallpaperItem> items, (int index, System.Windows.Media.Imaging.BitmapImage? image)[] images)
+    {
+        for (int i = 0; i < images.Length; i++)
+        {
+            var (index, image) = images[i];
+            if (image == null) continue;
+
+            var wallpaper = items[index];
+            var container = WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(index);
+            if (container == null) continue;
+
+            var loadingRing = FindNamedChild<FrameworkElement>(container, "LoadingRing");
+            var errorPanel = FindNamedChild<FrameworkElement>(container, "ErrorPanel");
+            var thumbnailImage = FindNamedChild<System.Windows.Controls.Image>(container, "ThumbnailImage");
+            var dynamicBadge = FindNamedChild<FrameworkElement>(container, "DynamicBadge");
+
+            if (loadingRing != null) loadingRing.Visibility = Visibility.Collapsed;
+            if (errorPanel != null) errorPanel.Visibility = Visibility.Collapsed;
+            if (thumbnailImage != null)
+            {
+                thumbnailImage.Source = image;
+                thumbnailImage.Visibility = Visibility.Visible;
+            }
+            if (dynamicBadge != null && wallpaper.Type == "dynamic")
+                dynamicBadge.Visibility = Visibility.Visible;
+        }
+        ApplyCardHeight();
     }
 
     private static T? FindNamedChild<T>(DependencyObject parent, string name) where T : FrameworkElement
