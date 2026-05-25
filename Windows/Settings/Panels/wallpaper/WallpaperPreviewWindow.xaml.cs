@@ -189,7 +189,6 @@ public partial class WallpaperPreviewWindow : Window
             onSuccess: _ => Dispatcher.Invoke(() =>
             {
                 SetWallpaperBtn.IsEnabled = true;
-                ShowToast((string)Application.Current.FindResource("WallpaperSetSuccess") ?? "Wallpaper set!");
             }),
             onError: msg => Dispatcher.Invoke(() =>
             {

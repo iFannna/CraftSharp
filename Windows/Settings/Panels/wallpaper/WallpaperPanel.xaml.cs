@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
 
@@ -247,10 +246,11 @@ public partial class WallpaperPanel : UserControl
         await LoadWallpapersAsync(_currentPage);
     }
 
-    private void WallpaperListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void ViewImage_Click(object sender, RoutedEventArgs e)
     {
-        if (WallpaperListBox.SelectedItem is not WallpaperItem item) return;
-        OpenPreview(item);
+        if (sender is not FrameworkElement fe) return;
+        var item = FindWallpaperItem(fe);
+        if (item != null) OpenPreview(item);
     }
 
     private void QuickSetWallpaper_Click(object sender, RoutedEventArgs e)
@@ -278,7 +278,6 @@ public partial class WallpaperPanel : UserControl
             {
                 btn.IsEnabled = true;
                 btn.Content = Application.Current.FindResource("WallpaperQuickSet");
-                ShowToast((string)Application.Current.FindResource("WallpaperSetSuccess") ?? "Wallpaper set!");
             }),
             onError: msg => Dispatcher.Invoke(() =>
             {

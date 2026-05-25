@@ -45,8 +45,7 @@
             <ListBox x:Name="WallpaperListBox"
                      Background="Transparent" BorderThickness="0"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     SelectionMode="Single"
-                     MouseDoubleClick="WallpaperListBox_MouseDoubleClick">
+                     SelectionMode="Single">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid x:Name="WallpaperGrid" Columns="4"/>
@@ -101,10 +100,15 @@
                                     <Border x:Name="HoverOverlay"
                                             Background="#80000000"
                                             Visibility="Visible" Opacity="0">
-                                        <ui:Button Content="{DynamicResource WallpaperQuickSet}"
-                                                   Appearance="Primary" FontSize="12" Padding="12,6"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   Click="QuickSetWallpaper_Click"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <ui:Button Content="{DynamicResource WallpaperViewImage}"
+                                                       Appearance="Secondary" FontSize="11" Padding="10,5"
+                                                       Margin="0,0,8,0"
+                                                       Click="ViewImage_Click"/>
+                                            <ui:Button Content="{DynamicResource WallpaperQuickSet}"
+                                                       Appearance="Primary" FontSize="11" Padding="10,5"
+                                                       Click="QuickSetWallpaper_Click"/>
+                                        </StackPanel>
                                     </Border>
                                     <!-- 底部悬浮信息 -->
                                     <Border VerticalAlignment="Bottom" Background="#80000000"

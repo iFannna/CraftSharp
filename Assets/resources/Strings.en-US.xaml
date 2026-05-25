@@ -37,6 +37,7 @@
     <sys:String x:Key="WallpaperLoadFailed">Load Failed</sys:String>
     <sys:String x:Key="WallpaperDynamicBadge">Dynamic</sys:String>
     <sys:String x:Key="WallpaperQuickSet">Set as Wallpaper</sys:String>
+    <sys:String x:Key="WallpaperViewImage">View Image</sys:String>
     <sys:String x:Key="WallpaperSetWallpaper">Set as Wallpaper</sys:String>
     <sys:String x:Key="WallpaperDownload">Download</sys:String>
     <sys:String x:Key="WallpaperSetting">Setting...</sys:String>

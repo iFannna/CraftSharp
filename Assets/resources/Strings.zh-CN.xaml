@@ -37,6 +37,7 @@
     <sys:String x:Key="WallpaperLoadFailed">加载失败</sys:String>
     <sys:String x:Key="WallpaperDynamicBadge">动态</sys:String>
     <sys:String x:Key="WallpaperQuickSet">设为壁纸</sys:String>
+    <sys:String x:Key="WallpaperViewImage">查看图片</sys:String>
     <sys:String x:Key="WallpaperSetWallpaper">设为壁纸</sys:String>
     <sys:String x:Key="WallpaperDownload">下载</sys:String>
     <sys:String x:Key="WallpaperSetting">设置中...</sys:String>
