@@ -15,6 +15,19 @@ public class WallpaperService
 
     private static string WallpaperDir => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "wallpaper");
 
+    private static async Task<byte[]> DownloadWithRetryAsync(string url, int maxRetries = 3)
+    {
+        for (var i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                return await _http.GetByteArrayAsync(url);
+            }
+            catch (HttpRequestException) when (i < maxRetries - 1) { }
+        }
+        return await _http.GetByteArrayAsync(url);
+    }
+
     public async Task ApplyStaticWallpaper(WallpaperItem wallpaper, Action<string>? onSuccess = null, Action<string>? onError = null)
     {
         try
@@ -27,7 +40,7 @@ public class WallpaperService
             var filePath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{ext}");
             if (!File.Exists(filePath))
             {
-                var bytes = await _http.GetByteArrayAsync(url);
+                var bytes = await DownloadWithRetryAsync(url);
                 await File.WriteAllBytesAsync(filePath, bytes);
             }
 
@@ -56,7 +69,7 @@ public class WallpaperService
 
     public async Task<byte[]> DownloadBytesAsync(string url)
     {
-        return await _http.GetByteArrayAsync(url);
+        return await DownloadWithRetryAsync(url);
     }
 
     public async Task DownloadFileAsync(string url, string localPath, Action<string>? onError = null)
@@ -68,7 +81,7 @@ public class WallpaperService
 
             if (!File.Exists(localPath))
             {
-                var bytes = await _http.GetByteArrayAsync(url);
+                var bytes = await DownloadWithRetryAsync(url);
                 await File.WriteAllBytesAsync(localPath, bytes);
             }
         }
