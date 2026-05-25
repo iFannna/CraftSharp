@@ -55,6 +55,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 
         var wallpaper = _wallpapers[_currentIndex];
         PreviewImage.Source = null;
+        ResolutionText.Text = "";
 
         UpdateNavigationButtons();
         ResetZoom();
@@ -62,7 +63,13 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         var imageUrl = await GetOriginalUrlAsync(wallpaper);
         var image = await WallpaperImageCache.Instance.GetAsync(imageUrl);
         if (image != null)
-            Dispatcher.Invoke(() => PreviewImage.Source = image);
+        {
+            Dispatcher.Invoke(() =>
+            {
+                PreviewImage.Source = image;
+                ResolutionText.Text = $"{image.PixelWidth}×{image.PixelHeight}";
+            });
+        }
     }
 
     private async Task<string> GetOriginalUrlAsync(WallpaperItem wallpaper)

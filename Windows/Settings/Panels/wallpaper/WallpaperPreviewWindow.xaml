@@ -56,6 +56,10 @@
 
         <!-- 底部操作栏 -->
         <Grid Grid.Row="2" Background="{DynamicResource ApplicationBackgroundBrush}">
+            <TextBlock x:Name="ResolutionText" VerticalAlignment="Center"
+                       Margin="16,0,0,0" FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       HorizontalAlignment="Left"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                         Margin="0,8,0,12">
                 <!-- 缩小 -->

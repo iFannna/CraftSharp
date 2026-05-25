@@ -113,16 +113,10 @@
                                     <!-- 底部悬浮信息 -->
                                     <Border VerticalAlignment="Bottom" Background="#80000000"
                                             Padding="8,6">
-                                        <Grid>
-                                            <TextBlock Text="{Binding Title}" FontSize="11"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Foreground="White"
-                                                       VerticalAlignment="Center"/>
-                                            <TextBlock Text="{Binding Resolution}" FontSize="11"
-                                                       Foreground="#CCFFFFFF"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Center"/>
-                                        </Grid>
+                                        <TextBlock Text="{Binding Title}" FontSize="11"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"/>
                                     </Border>
                                 </Grid>
                             </Border>
