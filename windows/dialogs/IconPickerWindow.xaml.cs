@@ -46,9 +46,6 @@ namespace CraftSharp.Windows.Dialogs
             // 加载分类配置
             LoadCategoryConfig();
 
-            // 设置窗口图标（使用当前应用图标）
-            IconService.Instance.ApplyWindowIcon(this);
-
             // 注册原生拖放（仅显示缩略图，不接受文件）
             SourceInitialized += (_, _) =>
             {

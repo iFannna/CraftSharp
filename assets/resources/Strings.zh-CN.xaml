@@ -114,9 +114,9 @@
     <sys:String x:Key="IconStyleSimple">简约</sys:String>
     <sys:String x:Key="IconStyleRealistic">写实</sys:String>
 
-    <!-- 应用图标 -->
-    <sys:String x:Key="AppIconLabel">应用图标</sys:String>
-    <sys:String x:Key="AppIconDesc">点击预览更换应用图标</sys:String>
+    <!-- 系统托盘图标 -->
+    <sys:String x:Key="AppIconLabel">图标</sys:String>
+    <sys:String x:Key="AppIconDesc">选择系统托盘图标</sys:String>
     <sys:String x:Key="AppIconTooltip">点击更换图标</sys:String>
 
     <!-- 图标选择窗口 -->

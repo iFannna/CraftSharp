@@ -184,7 +184,7 @@ namespace CraftSharp.Models
         /// <summary>
         /// 应用图标路径（相对于Assets目录）
         /// </summary>
-        public string AppIconPath { get; set; } = "minecraft/textures/block/block/debug.png";
+        public string? AppIconPath { get; set; }
     }
 
     /// <summary>

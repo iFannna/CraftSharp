@@ -384,8 +384,7 @@ namespace CraftSharp
         /// </summary>
         private void CreateTaskbarIcon()
         {
-            // 使用项目内置图标文件
-            var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CraftSharp.ico");
+            var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "craftsharp.ico");
             var icon = new System.Drawing.Icon(iconPath);
             _taskbarIcon = new TaskbarIcon
             {
@@ -406,9 +405,8 @@ namespace CraftSharp
 
             // 初始化图标服务（动态加载图标）
             IconService.Instance.InitializeForTaskbarIcon(
-                _appSettings?.Appearance.AppIconPath ?? "minecraft/textures/block/block/glass.png",
-                _taskbarIcon,
-                _settingsWindow!);
+                _appSettings?.Appearance.AppIconPath,
+                _taskbarIcon);
         }
 
         /// <summary>

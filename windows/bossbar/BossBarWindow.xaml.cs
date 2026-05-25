@@ -49,9 +49,6 @@ namespace CraftSharp.Windows.BossBar
             InitializeComponent();
             _settings = settings;
 
-            // 设置窗口图标
-            IconService.Instance.ApplyWindowIcon(this);
-
             // 注册原生拖放（仅显示缩略图，不接受文件） + 隐藏 Alt+Tab
             SourceInitialized += (_, _) =>
             {

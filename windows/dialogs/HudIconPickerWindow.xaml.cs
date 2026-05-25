@@ -49,9 +49,6 @@ namespace CraftSharp.Windows.Dialogs
                 VerticalScrollViewer.Visibility = Visibility.Visible;
             }
 
-            // 设置窗口图标
-            IconService.Instance.ApplyWindowIcon(this);
-
             // 注册原生拖放（仅显示缩略图，不接受文件）
             SourceInitialized += (_, _) =>
             {
