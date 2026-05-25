@@ -56,19 +56,18 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         var wallpaper = _wallpapers[_currentIndex];
         PreviewImage.Source = null;
         ResolutionText.Text = "";
+        LoadingRing.Visibility = Visibility.Visible;
 
         UpdateNavigationButtons();
         ResetZoom();
 
         var imageUrl = await GetOriginalUrlAsync(wallpaper);
         var image = await WallpaperImageCache.Instance.GetAsync(imageUrl);
+        LoadingRing.Visibility = Visibility.Collapsed;
         if (image != null)
         {
-            Dispatcher.Invoke(() =>
-            {
-                PreviewImage.Source = image;
-                ResolutionText.Text = $"{image.PixelWidth}×{image.PixelHeight}";
-            });
+            PreviewImage.Source = image;
+            ResolutionText.Text = $"{image.PixelWidth}×{image.PixelHeight}";
         }
     }
 
@@ -199,9 +198,11 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 
         if (wallpaper.Type == "dynamic")
         {
-            MessageBox.Show(
-                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.",
-                "Craft#", MessageBoxButton.OK, MessageBoxImage.Information);
+            var dialog = new Dialogs.MessageDialog(
+                "Craft#",
+                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.");
+            dialog.Owner = this;
+            dialog.ShowDialog();
             return;
         }
 

@@ -219,6 +219,7 @@
     <sys:String x:Key="RestoreDefaultsConfirmMessage">此操作将恢复当前页面的所有设置为默认值，是否继续？</sys:String>
     <sys:String x:Key="ConfirmDialogConfirm">确认</sys:String>
     <sys:String x:Key="ConfirmDialogCancel">取消</sys:String>
+    <sys:String x:Key="MessageDialogOk">好的</sys:String>
 
     <!-- 快捷键设置面板 -->
     <sys:String x:Key="HotkeyPanelTitle">快捷键设置</sys:String>

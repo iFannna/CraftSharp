@@ -261,11 +261,11 @@ public partial class WallpaperPanel : UserControl
 
         if (item.Type == "dynamic")
         {
-            MessageBox.Show(
-                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.",
+            var dialog = new Dialogs.MessageDialog(
                 "Craft#",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.");
+            dialog.Owner = Window.GetWindow(this);
+            dialog.ShowDialog();
             return;
         }
 
