@@ -5,11 +5,11 @@ using CraftSharp.Services.Wallpaper;
 
 namespace CraftSharp.Windows.Settings.Panels.Wallpaper;
 
-public partial class WallpaperPreviewWindow : Window
+public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly List<WallpaperItem> _wallpapers;
     private int _currentIndex;
-    private readonly double[] _zoomLevels = { 1.0, 1.25, 1.5, 2.0, 3.0 };
+    private readonly double[] _zoomLevels = { 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0 };
     private int _zoomIndex;
     private bool _isDragging;
     private Point _dragStart;
@@ -23,8 +23,6 @@ public partial class WallpaperPreviewWindow : Window
 
         Width = SystemParameters.PrimaryScreenWidth * 0.8;
         Height = SystemParameters.PrimaryScreenHeight * 0.8;
-
-        Loaded += async (_, _) => await LoadCurrentImage();
 
         KeyDown += (_, e) =>
         {
@@ -41,6 +39,11 @@ public partial class WallpaperPreviewWindow : Window
                     break;
             }
         };
+    }
+
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        await LoadCurrentImage();
     }
 
     private async Task LoadCurrentImage()
@@ -102,7 +105,7 @@ public partial class WallpaperPreviewWindow : Window
 
     private void ResetZoom()
     {
-        _zoomIndex = 0;
+        _zoomIndex = 3;
         ApplyZoom();
         ImageTranslate.X = 0;
         ImageTranslate.Y = 0;
@@ -120,8 +123,6 @@ public partial class WallpaperPreviewWindow : Window
             ImageTranslate.Y = 0;
         }
     }
-
-    private void CloseBtn_Click(object sender, RoutedEventArgs e) => Close();
 
     private void PrevBtn_Click(object sender, RoutedEventArgs e) => NavigatePrev();
     private void NextBtn_Click(object sender, RoutedEventArgs e) => NavigateNext();
@@ -178,7 +179,7 @@ public partial class WallpaperPreviewWindow : Window
         if (wallpaper.Type == "dynamic")
         {
             MessageBox.Show(
-                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper not supported yet.",
+                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.",
                 "Craft#", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
@@ -209,18 +210,6 @@ public partial class WallpaperPreviewWindow : Window
             onError: msg => Dispatcher.Invoke(() =>
                 MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error)));
 
-        Dispatcher.Invoke(() =>
-        {
-            DownloadBtn.IsEnabled = true;
-            ShowToast((string)Application.Current.FindResource("WallpaperDownloadSuccess") ?? "Download complete!");
-        });
-    }
-
-    private void ShowToast(string message)
-    {
-        // Use a simple approach - set window title briefly as toast feedback
-        // In a more complete implementation, this would use SnackbarHost
-        Title = message;
-        Task.Delay(2000).ContinueWith(_ => Dispatcher.Invoke(() => Title = ""));
+        Dispatcher.Invoke(() => { DownloadBtn.IsEnabled = true; });
     }
 }

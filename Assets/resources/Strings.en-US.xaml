@@ -44,6 +44,7 @@
     <sys:String x:Key="WallpaperSetSuccess">Wallpaper set!</sys:String>
     <sys:String x:Key="WallpaperDownloadSuccess">Download complete!</sys:String>
     <sys:String x:Key="WallpaperDynamicNotSupported">Dynamic wallpaper is not supported yet. Stay tuned for updates.</sys:String>
+    <sys:String x:Key="WallpaperPreviewTitle">Wallpaper Preview</sys:String>
     <sys:String x:Key="WallpaperPreviewClose">Close</sys:String>
     <sys:String x:Key="WallpaperPreviewFit">Fit to Window</sys:String>
 
