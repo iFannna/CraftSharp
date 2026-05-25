@@ -49,13 +49,33 @@ public partial class WallpaperPanel : UserControl
         if (WallpaperListBox.ItemsPanel is not System.Windows.Controls.ItemsPanelTemplate)
             return;
 
-        // Find the actual UniformGrid in the visual tree
         var itemsPresenter = FindVisualChild<System.Windows.Controls.ItemsPresenter>(WallpaperListBox);
         if (itemsPresenter == null) return;
 
         var uniformGrid = FindVisualChild<System.Windows.Controls.Primitives.UniformGrid>(itemsPresenter);
         if (uniformGrid != null)
             uniformGrid.Columns = _columnCount;
+
+        ApplyCardHeight();
+    }
+
+    private void ApplyCardHeight()
+    {
+        if (WallpaperListBox.ActualWidth <= 0) return;
+
+        var itemMargin = new Thickness(0, 0, 8, 8);
+        var itemPadding = new Thickness(4);
+        var totalHorizontalMargin = itemMargin.Right * _columnCount;
+        var cardWidth = (WallpaperListBox.ActualWidth - totalHorizontalMargin) / _columnCount
+                        - itemPadding.Left - itemPadding.Right;
+        var cardHeight = cardWidth * 10.0 / 16.0;
+
+        for (int i = 0; i < WallpaperListBox.Items.Count; i++)
+        {
+            var container = WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(i);
+            if (container is FrameworkElement element)
+                element.Height = cardHeight + itemPadding.Top + itemPadding.Bottom;
+        }
     }
 
     private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
@@ -154,6 +174,7 @@ public partial class WallpaperPanel : UserControl
                 if (dynamicBadge != null && wallpaper.Type == "dynamic")
                     dynamicBadge.Visibility = Visibility.Visible;
             }
+            ApplyCardHeight();
         });
     }
 

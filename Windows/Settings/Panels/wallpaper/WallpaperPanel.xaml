@@ -75,61 +75,53 @@
                             <Border.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1"/>
                             </Border.RenderTransform>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- 缩略图 -->
-                                <Border Grid.Row="0" CornerRadius="8,8,0,0" Height="140"
-                                        ClipToBounds="True" Background="#1a1a1a">
-                                    <Grid>
-                                        <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True"
-                                                         Width="32" Height="32" Opacity="0.6"/>
-                                        <StackPanel x:Name="ErrorPanel" Visibility="Collapsed"
-                                                    VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <TextBlock Text="&#xE783;" FontFamily="Segoe MDL2 Assets"
-                                                       FontSize="24" Foreground="{DynamicResource TextTertiaryBrush}"
-                                                       HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                                            <TextBlock Text="{DynamicResource WallpaperLoadFailed}"
-                                                       Foreground="{DynamicResource TextTertiaryBrush}"
-                                                       FontSize="11" HorizontalAlignment="Center"/>
-                                        </StackPanel>
-                                        <Image x:Name="ThumbnailImage" Stretch="UniformToFill"
-                                               Visibility="Collapsed"/>
-                                        <Border x:Name="DynamicBadge" Visibility="Collapsed"
-                                                HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                Margin="6" Padding="4,2" CornerRadius="4"
-                                                Background="#9B59B6" Opacity="0.9">
-                                            <TextBlock Text="{DynamicResource WallpaperDynamicBadge}"
-                                                       FontSize="10" Foreground="White"/>
-                                        </Border>
-                                        <Border x:Name="HoverOverlay"
-                                                Background="#80000000" CornerRadius="8,8,0,0"
-                                                Visibility="Visible" Opacity="0">
-                                            <ui:Button Content="{DynamicResource WallpaperQuickSet}"
-                                                       Appearance="Primary" FontSize="12" Padding="12,6"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                       Click="QuickSetWallpaper_Click"/>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-
-                                <!-- 底部信息 -->
-                                <Border Grid.Row="1" Padding="8,6">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Title}" FontSize="12" MaxHeight="32"
-                                                   TextTrimming="CharacterEllipsis" TextWrapping="Wrap"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                   LineStackingStrategy="MaxHeight"/>
-                                        <TextBlock FontSize="11" Margin="0,2,0,0"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}">
-                                            <Run Text="{Binding Resolution}"/>
-                                        </TextBlock>
+                            <Border CornerRadius="8" ClipToBounds="True" Background="#1a1a1a">
+                                <Grid>
+                                    <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True"
+                                                     Width="32" Height="32" Opacity="0.6"/>
+                                    <StackPanel x:Name="ErrorPanel" Visibility="Collapsed"
+                                                VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="&#xE783;" FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="24" Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{DynamicResource WallpaperLoadFailed}"
+                                                   Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   FontSize="11" HorizontalAlignment="Center"/>
                                     </StackPanel>
-                                </Border>
-                            </Grid>
+                                    <Image x:Name="ThumbnailImage" Stretch="UniformToFill"
+                                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                           Visibility="Collapsed"/>
+                                    <Border x:Name="DynamicBadge" Visibility="Collapsed"
+                                            HorizontalAlignment="Left" VerticalAlignment="Top"
+                                            Margin="6" Padding="4,2" CornerRadius="4"
+                                            Background="#9B59B6" Opacity="0.9">
+                                        <TextBlock Text="{DynamicResource WallpaperDynamicBadge}"
+                                                   FontSize="10" Foreground="White"/>
+                                    </Border>
+                                    <Border x:Name="HoverOverlay"
+                                            Background="#80000000"
+                                            Visibility="Visible" Opacity="0">
+                                        <ui:Button Content="{DynamicResource WallpaperQuickSet}"
+                                                   Appearance="Primary" FontSize="12" Padding="12,6"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Click="QuickSetWallpaper_Click"/>
+                                    </Border>
+                                    <!-- 底部悬浮信息 -->
+                                    <Border VerticalAlignment="Bottom" Background="#80000000"
+                                            Padding="8,6">
+                                        <Grid>
+                                            <TextBlock Text="{Binding Title}" FontSize="11"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="White"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Resolution}" FontSize="11"
+                                                       Foreground="#CCFFFFFF"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </Border>
                         </Border>
 
                         <DataTemplate.Triggers>
