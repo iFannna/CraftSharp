@@ -1,13 +1,17 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
+using ImageMagick;
+using Microsoft.Win32;
 
 namespace CraftSharp.Windows.Settings.Panels.Wallpaper;
 
 public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly List<WallpaperItem> _wallpapers;
+    private readonly Dictionary<string, string> _originalUrls = [];
     private int _currentIndex;
     private readonly double[] _zoomLevels = { 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0 };
     private int _zoomIndex;
@@ -56,9 +60,29 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         UpdateNavigationButtons();
         ResetZoom();
 
-        var image = await WallpaperImageCache.Instance.GetAsync(wallpaper.PreviewUrl);
+        var imageUrl = await GetOriginalUrlAsync(wallpaper);
+        var image = await WallpaperImageCache.Instance.GetAsync(imageUrl);
         if (image != null)
             Dispatcher.Invoke(() => PreviewImage.Source = image);
+    }
+
+    private async Task<string> GetOriginalUrlAsync(WallpaperItem wallpaper)
+    {
+        if (_originalUrls.TryGetValue(wallpaper.Id, out var url))
+            return url;
+
+        try
+        {
+            var detail = await McBlockApiClient.Instance.GetWallpaperDetailAsync(wallpaper.Id);
+            url = detail.OriginalUrl ?? wallpaper.PreviewUrl;
+        }
+        catch
+        {
+            url = wallpaper.PreviewUrl;
+        }
+
+        _originalUrls[wallpaper.Id] = url;
+        return url;
     }
 
     private void UpdateNavigationButtons()
@@ -172,7 +196,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         RootGrid.ReleaseMouseCapture();
     }
 
-    private void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
+    private async void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
 
@@ -186,7 +210,9 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 
         SetWallpaperBtn.IsEnabled = false;
 
-        WallpaperService.Instance.ApplyStaticWallpaper(wallpaper,
+        var imageUrl = await GetOriginalUrlAsync(wallpaper);
+
+        WallpaperService.Instance.ApplyStaticWallpaper(wallpaper, imageUrl,
             onSuccess: _ => Dispatcher.Invoke(() =>
             {
                 SetWallpaperBtn.IsEnabled = true;
@@ -201,15 +227,29 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
     private async void DownloadBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
-        var localPath = WallpaperService.Instance.GetWallpaperFilePath(wallpaper);
+
+        var dialog = new SaveFileDialog
+        {
+            FileName = wallpaper.Title,
+            DefaultExt = ".png",
+            Filter = "PNG 图片|*.png"
+        };
+
+        if (dialog.ShowDialog() != true)
+            return;
 
         DownloadBtn.IsEnabled = false;
 
-        await WallpaperService.Instance.DownloadFileAsync(
-            wallpaper.PreviewUrl, localPath,
-            onError: msg => Dispatcher.Invoke(() =>
-                MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error)));
-
-        Dispatcher.Invoke(() => { DownloadBtn.IsEnabled = true; });
+        try
+        {
+            var imageUrl = await GetOriginalUrlAsync(wallpaper);
+            var bytes = await WallpaperService.Instance.DownloadBytesAsync(imageUrl);
+            using var image = new MagickImage(bytes);
+            image.Write(dialog.FileName, MagickFormat.Png);
+        }
+        finally
+        {
+            Dispatcher.Invoke(() => { DownloadBtn.IsEnabled = true; });
+        }
     }
 }

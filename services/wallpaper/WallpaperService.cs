@@ -15,17 +15,19 @@ public class WallpaperService
 
     private static string WallpaperDir => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "wallpaper");
 
-    public async Task ApplyStaticWallpaper(WallpaperItem wallpaper, Action<string>? onSuccess = null, Action<string>? onError = null)
+    public async Task ApplyStaticWallpaper(WallpaperItem wallpaper, string? imageUrl = null, Action<string>? onSuccess = null, Action<string>? onError = null)
     {
         try
         {
             if (!Directory.Exists(WallpaperDir))
                 Directory.CreateDirectory(WallpaperDir);
 
-            var filePath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.webp");
+            var url = imageUrl ?? wallpaper.PreviewUrl;
+            var ext = url.EndsWith(".jpg") || url.EndsWith(".jpeg") ? "jpg" : "webp";
+            var filePath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{ext}");
             if (!File.Exists(filePath))
             {
-                var bytes = await _http.GetByteArrayAsync(wallpaper.PreviewUrl);
+                var bytes = await _http.GetByteArrayAsync(url);
                 await File.WriteAllBytesAsync(filePath, bytes);
             }
 
@@ -37,6 +39,11 @@ public class WallpaperService
         {
             onError?.Invoke(ex.Message);
         }
+    }
+
+    public async Task<byte[]> DownloadBytesAsync(string url)
+    {
+        return await _http.GetByteArrayAsync(url);
     }
 
     public async Task DownloadFileAsync(string url, string localPath, Action<string>? onError = null)

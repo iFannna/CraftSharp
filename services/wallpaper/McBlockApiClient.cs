@@ -18,4 +18,10 @@ public class McBlockApiClient
     {
         return await _api.GetWallpapers("desktop", page, limit, sort, type);
     }
+
+    public async Task<WallpaperDetail> GetWallpaperDetailAsync(string id)
+    {
+        var response = await _api.GetWallpaperDetail(id);
+        return response.Data;
+    }
 }

@@ -11,4 +11,7 @@ public interface IMcBlockApi
         [Query] int limit,
         [Query] string? sort = null,
         [Query] string? type = null);
+
+    [Get("/api/wallpapers/{id}")]
+    Task<Models.McBlockResponse<Models.WallpaperDetail>> GetWallpaperDetail(string id);
 }
