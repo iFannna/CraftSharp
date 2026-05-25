@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
@@ -96,7 +97,10 @@ public partial class WallpaperPanel : UserControl
 
             UpdatePagination();
             UpdateColumns(ActualWidth);
-            LoadThumbnails();
+
+            // 等待布局完成后再加载缩略图，确保容器已生成
+            Dispatcher.BeginInvoke(() => LoadThumbnails(),
+                System.Windows.Threading.DispatcherPriority.Background);
         }
         catch
         {
@@ -112,15 +116,28 @@ public partial class WallpaperPanel : UserControl
 
     private async void LoadThumbnails()
     {
-        foreach (var wallpaper in _wallpapers)
-        {
-            var image = await WallpaperImageCache.Instance.GetAsync(wallpaper.ThumbnailUrl);
-            if (image == null) continue;
+        var items = _wallpapers.ToList();
+        var images = new (int index, System.Windows.Media.Imaging.BitmapImage? image)[items.Count];
 
-            Dispatcher.Invoke(() =>
+        // 先并行获取所有图片
+        await Task.WhenAll(items.Select(async (wp, i) =>
+        {
+            images[i] = (i, await WallpaperImageCache.Instance.GetAsync(wp.ThumbnailUrl));
+        }));
+
+        // 等布局彻底完成
+        await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+
+        Dispatcher.Invoke(() =>
+        {
+            for (int i = 0; i < images.Length; i++)
             {
-                var container = WallpaperListBox.ItemContainerGenerator.ContainerFromItem(wallpaper);
-                if (container == null) return;
+                var (index, image) = images[i];
+                if (image == null) continue;
+
+                var wallpaper = items[index];
+                var container = WallpaperListBox.ItemContainerGenerator.ContainerFromIndex(index);
+                if (container == null) continue;
 
                 var loadingRing = FindNamedChild<FrameworkElement>(container, "LoadingRing");
                 var errorPanel = FindNamedChild<FrameworkElement>(container, "ErrorPanel");
@@ -136,8 +153,8 @@ public partial class WallpaperPanel : UserControl
                 }
                 if (dynamicBadge != null && wallpaper.Type == "dynamic")
                     dynamicBadge.Visibility = Visibility.Visible;
-            });
-        }
+            }
+        });
     }
 
     private static T? FindNamedChild<T>(DependencyObject parent, string name) where T : FrameworkElement
