@@ -2,7 +2,6 @@
 bin/
 obj/
 publish/
-installer/
 
 # IDE
 .idea/
@@ -12,6 +11,3 @@ installer/
 
 # NuGet
 packages/
-
-# Installer output
-installer/

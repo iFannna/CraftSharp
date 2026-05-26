@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+
+  <String Id="ProductName" Value="CraftSharp" />
+
+  <String Id="WelcomeDlgDescription" Value="The Setup Wizard will install [ProductName] on your computer.&#xD;&#xA;&#xD;&#xA;Click Next to continue or Cancel to exit the Setup Wizard." />
+
+  <String Id="VerifyReadyDlgInstallText" Value="Click Install to begin the installation." />
+
+  <String Id="ExitDialogLaunch" Value="Launch CraftSharp" />
+
+</WixLocalization>

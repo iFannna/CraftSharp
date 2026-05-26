@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="zh-CN" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+
+  <String Id="ProductName" Value="CraftSharp" />
+
+  <String Id="WelcomeDlgDescription" Value="安装向导将在您的计算机上安装 [ProductName]。&#xD;&#xA;&#xD;&#xA;点击 &quot;下一步&quot; 继续安装，或点击 &quot;取消&quot; 退出安装程序。" />
+
+  <String Id="VerifyReadyDlgInstallText" Value="点击 &quot;安装&quot; 按钮开始安装。" />
+
+  <String Id="ExitDialogLaunch" Value="运行 CraftSharp" />
+
+</WixLocalization>

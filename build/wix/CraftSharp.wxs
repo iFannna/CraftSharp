@@ -1,0 +1,82 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="CraftSharp"
+           Manufacturer="SAu"
+           Version="$(var.Version)"
+           ProductCode="*"
+           UpgradeCode="{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+           Language="1033"
+           Codepage="65001">
+
+    <SummaryInformation Description="Minecraft-style desktop manager and wallpaper engine" />
+
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="AppIcon" SourceFile="!(bindpath.ProjectRoot)\craftsharp.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <!-- WixUI 安装向导 -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+
+    <!-- 程序文件目录 -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="CraftSharp" />
+    </StandardDirectory>
+
+    <!-- 发布文件组件组 -->
+    <ComponentGroup Id="PublishFiles" Directory="INSTALLFOLDER">
+      <Files Include="!(bindpath.PublishDir)\**">
+        <Exclude Files="!(bindpath.PublishDir)\**\*.pdb" />
+      </Files>
+    </ComponentGroup>
+
+    <!-- 开始菜单 -->
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="StartMenuDir" Name="CraftSharp" />
+    </StandardDirectory>
+
+    <!-- 桌面 -->
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="MainFeature" Title="CraftSharp" Level="1" Display="expand">
+      <ComponentGroupRef Id="PublishFiles" />
+
+      <!-- 开始菜单快捷方式 -->
+      <Component Id="StartMenuShortcut" Directory="StartMenuDir" Guid="*">
+        <Shortcut Id="StartMenuAppShortcut"
+                  Name="CraftSharp"
+                  Target="[INSTALLFOLDER]CraftSharp.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon">
+          <ShortcutProperty Key="System.AppUserModel.ID" Value="SAu.CraftSharp" />
+        </Shortcut>
+        <RemoveFolder Id="RemoveStartMenuDir" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\SAu\CraftSharp" Name="installed" Type="string" Value="" KeyPath="yes" />
+      </Component>
+
+      <!-- 桌面快捷方式 -->
+      <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="*">
+        <Shortcut Id="DesktopAppShortcut"
+                  Name="CraftSharp"
+                  Target="[INSTALLFOLDER]CraftSharp.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon">
+          <ShortcutProperty Key="System.AppUserModel.ID" Value="SAu.CraftSharp" />
+        </Shortcut>
+        <RegistryValue Root="HKCU" Key="Software\SAu\CraftSharp" Name="desktopShortcut" Type="string" Value="" KeyPath="yes" />
+      </Component>
+
+      <!-- 开机自启动 -->
+      <Component Id="AutoStartRegistry" Guid="*">
+        <RegistryValue Root="HKCU"
+                       Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                       Name="CraftSharp"
+                       Type="expandable"
+                       Value="[INSTALLFOLDER]CraftSharp.exe"
+                       KeyPath="yes" />
+      </Component>
+    </Feature>
+
+  </Package>
+</Wix>
