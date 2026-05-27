@@ -78,9 +78,11 @@ public class WallpaperService
                     return;
             }
 
-            DynamicWallpaperService.Instance.StopPlayback();
-            DesktopWallpaperService.Instance.ClearWallpaper();
-            DynamicWallpaperService.Instance.StartPlayback(filePath);
+            // 只有从静态壁纸切换时才需要清除，动态→动态无需清除（避免触发 WorkerW 刷新）
+            if (!DynamicWallpaperService.Instance.IsPlaying)
+                DesktopWallpaperService.Instance.ClearWallpaper();
+
+            await DynamicWallpaperService.Instance.StartPlaybackAsync(filePath);
 
             onSuccess?.Invoke(filePath);
         }

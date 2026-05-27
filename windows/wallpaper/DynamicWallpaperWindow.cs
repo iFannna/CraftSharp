@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using CraftSharp.Helpers;
@@ -13,8 +14,11 @@ public class DynamicWallpaperWindow : IDisposable
     private IntPtr _workerw;
     private IntPtr _hwnd;
     private Process? _mpvProcess;
+    private TaskCompletionSource<bool>? _renderReadyTcs;
 
-    public void CreateAndShow(bool primary = true)
+    public IntPtr Hwnd => _hwnd;
+
+    public void CreateAndShow(bool primary = true, IntPtr behindWindow = default)
     {
         _workerw = FindDesktopWorkerW();
 
@@ -22,7 +26,6 @@ public class DynamicWallpaperWindow : IDisposable
         int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
         int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
 
-        // 在 WorkerW 内创建隐藏子窗口，mpv 将直接渲染到这里
         IntPtr hInstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(
             typeof(DynamicWallpaperWindow).Assembly.Modules.First());
         _hwnd = Win32Helper.CreateWindowEx(
@@ -31,8 +34,19 @@ public class DynamicWallpaperWindow : IDisposable
             0, 0, screenW, screenH,
             _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
 
-        Win32Helper.SetWindowPos(_hwnd, Win32Helper.HWND_BOTTOM,
-            0, 0, screenW, screenH, 0x0020); // SWP_FRAMECHANGED
+        // 放置到 WorkerW 底层，如果指定了 behindWindow 则放到它后面
+        if (behindWindow != IntPtr.Zero)
+        {
+            Win32Helper.SetWindowPos(_hwnd, behindWindow,
+                0, 0, screenW, screenH,
+                Win32Helper.SWP_FRAMECHANGED | 0x0010); // SWP_NOACTIVATE
+        }
+        else
+        {
+            Win32Helper.SetWindowPos(_hwnd, Win32Helper.HWND_BOTTOM,
+                0, 0, screenW, screenH,
+                Win32Helper.SWP_FRAMECHANGED);
+        }
 
         Debug.WriteLine($"[Wallpaper] Host window {_hwnd} in WorkerW {_workerw}, {screenW}x{screenH}");
     }
@@ -40,11 +54,13 @@ public class DynamicWallpaperWindow : IDisposable
     public void LoadAndPlay(string videoPath)
     {
         Stop();
+        _renderReadyTcs = new TaskCompletionSource<bool>();
 
         string mpvPath = GetMpvPath();
         if (!File.Exists(mpvPath))
         {
             Debug.WriteLine($"[Wallpaper] mpv.exe not found: {mpvPath}");
+            _renderReadyTcs.TrySetResult(false);
             return;
         }
 
@@ -52,7 +68,6 @@ public class DynamicWallpaperWindow : IDisposable
         int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
         int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
 
-        // --wid 直接渲染到宿主窗口，零闪烁
         var args = $"--wid={_hwnd} --no-audio --loop --no-input-default-bindings " +
                    $"--no-input-terminal --no-terminal --hwdec=auto " +
                    $"--vo=gpu --keep-open --panscan=1.0 \"{videoPath}\"";
@@ -66,19 +81,39 @@ public class DynamicWallpaperWindow : IDisposable
             RedirectStandardError = true
         };
 
-        _mpvProcess = Process.Start(psi);
-        if (_mpvProcess != null)
+        _mpvProcess = new Process
         {
-            _mpvProcess.BeginErrorReadLine();
-            _mpvProcess.ErrorDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrEmpty(e.Data))
-                    Debug.WriteLine($"[Wallpaper] mpv: {e.Data}");
-            };
-        }
+            StartInfo = psi,
+            EnableRaisingEvents = true
+        };
+        _mpvProcess.ErrorDataReceived += OnMpvErrorData;
+        _mpvProcess.Exited += OnMpvExited;
+
+        _mpvProcess.Start();
+        _mpvProcess.BeginErrorReadLine();
 
         Debug.WriteLine($"[Wallpaper] mpv started, pid={_mpvProcess?.Id}, wid={_hwnd}");
+
+        // 超时兜底：2秒后无论如何标记完成
+        Task.Delay(2000).ContinueWith(_ => _renderReadyTcs.TrySetResult(true));
     }
+
+    private void OnMpvErrorData(object sender, DataReceivedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Data)) return;
+        Debug.WriteLine($"[Wallpaper] mpv: {e.Data}");
+        // VO: 行表示视频输出已初始化，首帧即将渲染
+        if (e.Data.Contains("VO:"))
+            _renderReadyTcs?.TrySetResult(true);
+    }
+
+    private void OnMpvExited(object? sender, EventArgs e)
+    {
+        _renderReadyTcs?.TrySetResult(false);
+    }
+
+    public Task WaitForRenderReadyAsync() =>
+        _renderReadyTcs?.Task ?? Task.CompletedTask;
 
     private static IntPtr FindProcessWindow(int pid)
     {
@@ -98,12 +133,16 @@ public class DynamicWallpaperWindow : IDisposable
 
     public void Stop()
     {
-        if (_mpvProcess != null && !_mpvProcess.HasExited)
+        if (_mpvProcess == null) return;
+
+        _mpvProcess.ErrorDataReceived -= OnMpvErrorData;
+        _mpvProcess.Exited -= OnMpvExited;
+        if (!_mpvProcess.HasExited)
         {
             try { _mpvProcess.Kill(true); } catch { }
-            _mpvProcess.Dispose();
-            _mpvProcess = null;
         }
+        _mpvProcess.Dispose();
+        _mpvProcess = null;
     }
 
     public void SetVolume(double volume, bool muted)
