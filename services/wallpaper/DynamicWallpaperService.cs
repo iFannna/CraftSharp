@@ -16,6 +16,15 @@ public class DynamicWallpaperService
 
     public async Task StartPlaybackAsync(string videoPath)
     {
+        // 如果已有窗口且 IPC 可用，直接通过 loadfile 切换视频，无需重启 MPV
+        if (_window != null && _window.IsIpcReady && _currentVideoPath != null)
+        {
+            await _window.SwitchVideoAsync(videoPath);
+            _currentVideoPath = videoPath;
+            return;
+        }
+
+        // 首次播放或 IPC 不可用时，走完整的窗口创建流程
         var oldWindow = _window;
         _window = null;
 
@@ -24,10 +33,8 @@ public class DynamicWallpaperService
         _window.CreateAndShow(primary: true, behindWindow: oldWindow?.Hwnd ?? IntPtr.Zero);
         _window.LoadAndPlay(videoPath);
 
-        // 等待新 mpv 渲染首帧，最长等 2 秒（超时会继续，避免卡死）
         await _window.WaitForRenderReadyAsync();
 
-        // 新视频已就绪，关闭旧窗口——视觉上无感知
         oldWindow?.Close();
     }
 
@@ -54,7 +61,6 @@ public class DynamicWallpaperService
         if (string.IsNullOrEmpty(settings.LocalFilePath)) return;
         if (!File.Exists(settings.LocalFilePath)) return;
 
-        // 启动恢复不需要异步等待，没有旧窗口需要处理
         _window = new DynamicWallpaperWindow();
         _window.CreateAndShow(primary: true);
         _window.LoadAndPlay(settings.LocalFilePath);

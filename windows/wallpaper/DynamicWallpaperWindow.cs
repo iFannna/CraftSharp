@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
 using CraftSharp.Helpers;
 
 namespace CraftSharp.Windows.Wallpaper;
@@ -15,6 +15,9 @@ public class DynamicWallpaperWindow : IDisposable
     private IntPtr _hwnd;
     private Process? _mpvProcess;
     private TaskCompletionSource<bool>? _renderReadyTcs;
+    private NamedPipeClientStream? _ipcPipe;
+    private string? _ipcPipeName;
+    private bool _disposed;
 
     public IntPtr Hwnd => _hwnd;
 
@@ -34,7 +37,6 @@ public class DynamicWallpaperWindow : IDisposable
             0, 0, screenW, screenH,
             _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
 
-        // 放置到 WorkerW 底层，如果指定了 behindWindow 则放到它后面
         if (behindWindow != IntPtr.Zero)
         {
             Win32Helper.SetWindowPos(_hwnd, behindWindow,
@@ -64,13 +66,19 @@ public class DynamicWallpaperWindow : IDisposable
             return;
         }
 
+        // 每个 MPV 实例使用唯一的管道名
+        _ipcPipeName = $"craftsharp-mpv-{Guid.NewGuid():N}";
+
         var monitor = Win32Helper.GetPrimaryMonitorInfo();
         int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
         int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
 
         var args = $"--wid={_hwnd} --no-audio --loop --no-input-default-bindings " +
                    $"--no-input-terminal --no-terminal --hwdec=auto " +
-                   $"--vo=gpu --keep-open --panscan=1.0 \"{videoPath}\"";
+                   $"--vo=gpu --keep-open --panscan=1.0 " +
+                   $"--idle=yes --force-window=no " +
+                   $"--input-ipc-server=\\\\.\\pipe\\{_ipcPipeName} " +
+                   $"\"{videoPath}\"";
 
         var psi = new ProcessStartInfo
         {
@@ -98,6 +106,61 @@ public class DynamicWallpaperWindow : IDisposable
         Task.Delay(2000).ContinueWith(_ => _renderReadyTcs.TrySetResult(true));
     }
 
+    /// <summary>
+    /// 通过 IPC 向当前 MPV 进程发送 loadfile 命令切换视频，复用已有进程。
+    /// </summary>
+    public async Task SwitchVideoAsync(string videoPath)
+    {
+        _renderReadyTcs = new TaskCompletionSource<bool>();
+
+        // 等待 IPC 管道可用
+        var pipe = await ConnectIpcAsync();
+        if (pipe == null)
+        {
+            Debug.WriteLine("[Wallpaper] IPC pipe not available, falling back to restart");
+            return;
+        }
+
+        // 发送 loadfile 命令
+        var command = $"{{\"command\":[\"loadfile\",\"{videoPath.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"]}}\n";
+        var bytes = Encoding.UTF8.GetBytes(command);
+        await pipe.WriteAsync(bytes, 0, bytes.Length);
+        await pipe.FlushAsync();
+
+        Debug.WriteLine($"[Wallpaper] IPC loadfile sent: {videoPath}");
+
+        // 等待首帧渲染（VO 日志会触发）
+        await _renderReadyTcs.Task;
+
+        // 超时兜底
+        Task.Delay(2000).ContinueWith(_ => _renderReadyTcs?.TrySetResult(true));
+    }
+
+    /// <summary>
+    /// 指示 IPC 连接是否就绪（MPV 进程存活且管道可连接）。
+    /// </summary>
+    public bool IsIpcReady => _mpvProcess != null && !_mpvProcess.HasExited && _ipcPipeName != null;
+
+    private async Task<NamedPipeClientStream?> ConnectIpcAsync()
+    {
+        if (_ipcPipeName == null || _mpvProcess == null || _mpvProcess.HasExited)
+            return null;
+
+        try
+        {
+            var pipe = new NamedPipeClientStream(".", _ipcPipeName, PipeDirection.Out);
+            // 最多等 1 秒连接管道
+            await pipe.ConnectAsync(1000);
+            _ipcPipe = pipe;
+            return pipe;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Wallpaper] IPC connect failed: {ex.Message}");
+            return null;
+        }
+    }
+
     private void OnMpvErrorData(object sender, DataReceivedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.Data)) return;
@@ -115,24 +178,11 @@ public class DynamicWallpaperWindow : IDisposable
     public Task WaitForRenderReadyAsync() =>
         _renderReadyTcs?.Task ?? Task.CompletedTask;
 
-    private static IntPtr FindProcessWindow(int pid)
-    {
-        IntPtr result = IntPtr.Zero;
-        Win32Helper.EnumWindows((hWnd, _) =>
-        {
-            Win32Helper.GetWindowThreadProcessId(hWnd, out int windowPid);
-            if (windowPid == pid)
-            {
-                result = hWnd;
-                return false;
-            }
-            return true;
-        }, IntPtr.Zero);
-        return result;
-    }
-
     public void Stop()
     {
+        _ipcPipe?.Dispose();
+        _ipcPipe = null;
+
         if (_mpvProcess == null) return;
 
         _mpvProcess.ErrorDataReceived -= OnMpvErrorData;
@@ -201,6 +251,8 @@ public class DynamicWallpaperWindow : IDisposable
 
     public void Dispose()
     {
+        if (_disposed) return;
+        _disposed = true;
         Close();
     }
 }
