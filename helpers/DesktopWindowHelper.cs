@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -40,46 +41,47 @@ namespace CraftSharp.Helpers
         }
 
         /// <summary>
-        /// 将窗口句柄设置为桌面层级
+        /// 将窗口句柄设置为桌面层级（在桌面图标之上）
         /// </summary>
         private static void SetParentToDesktop(IntPtr hwnd)
         {
             // 找到 Program Manager 窗口
             IntPtr progman = Win32Helper.FindWindow("Progman", null);
 
-            // 发送消息创建 WorkerW 窗口（这是 Windows 7+ 的方式）
-            // 0x052C 是一个 undocumented 消息，用于在 Progman 下创建一个新的 WorkerW
-            Win32Helper.SendMessage(progman, Win32Helper.WM_COMMAND, (IntPtr)0x052C, IntPtr.Zero);
+            // 发送消息创建 WorkerW 窗口（使用 SendMessageTimeout 更可靠）
+            Win32Helper.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero,
+                Win32Helper.SMTO_NORMAL, 3000, out _);
 
-            // 找到 WorkerW 窗口
+            // 查找包含 SHELLDLL_DefView 的 WorkerW（桌面图标所在层）
+            IntPtr iconWorkerw = IntPtr.Zero;
             IntPtr workerw = Win32Helper.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "WorkerW", null);
 
-            // 遍历找到正确的 WorkerW（在 Progman 下的那个）
             while (workerw != IntPtr.Zero)
             {
                 IntPtr shelldll = Win32Helper.FindWindowEx(workerw, IntPtr.Zero, "SHELLDLL_DefView", null);
                 if (shelldll != IntPtr.Zero)
                 {
-                    // 找到了正确的 WorkerW
-                    IntPtr desktop = Win32Helper.FindWindowEx(shelldll, IntPtr.Zero, "SysListView32", null);
-                    if (desktop != IntPtr.Zero)
-                    {
-                        // 找到下一个 WorkerW（我们要将窗口放在这个下面）
-                        IntPtr tempWorkerw = Win32Helper.FindWindowEx(IntPtr.Zero, workerw, "WorkerW", null);
-                        if (tempWorkerw != IntPtr.Zero)
-                        {
-                            workerw = tempWorkerw;
-                        }
-                        break;
-                    }
+                    iconWorkerw = workerw;
+                    break;
                 }
                 workerw = Win32Helper.FindWindowEx(IntPtr.Zero, workerw, "WorkerW", null);
             }
 
-            // 设置窗口父级为 WorkerW
-            Win32Helper.SetParent(hwnd, workerw);
+            // 如果找到了图标 WorkerW，设置父级为其前一个 WorkerW
+            if (iconWorkerw != IntPtr.Zero)
+            {
+                IntPtr prevWorkerw = Win32Helper.FindWindowEx(IntPtr.Zero, iconWorkerw, "WorkerW", null);
+                if (prevWorkerw == IntPtr.Zero)
+                {
+                    prevWorkerw = iconWorkerw;
+                }
+                Win32Helper.SetParent(hwnd, prevWorkerw);
+            }
+            else
+            {
+                Win32Helper.SetParent(hwnd, progman);
+            }
 
-            // SetParent 会重置样式，需要重新设置 WS_EX_TOOLWINDOW
             Win32Helper.ApplyToolWindowStyle(hwnd);
         }
 
@@ -111,6 +113,92 @@ namespace CraftSharp.Helpers
             {
                 SetParentToDesktop(hwnd);
             }
+        }
+
+        /// <summary>
+        /// 将窗口设置为桌面背景层级（在桌面图标之下）
+        /// </summary>
+        public static void SetWindowBehindDesktopIcons(Window window)
+        {
+            if (window == null) return;
+
+            if (!window.IsVisible)
+                window.Show();
+
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd == IntPtr.Zero)
+            {
+                window.SourceInitialized += (_, _) =>
+                {
+                    var handle = new WindowInteropHelper(window).Handle;
+                    SetParentBehindIcons(handle);
+                };
+            }
+            else
+            {
+                SetParentBehindIcons(hwnd);
+            }
+        }
+
+        private static void SetParentBehindIcons(IntPtr hwnd)
+        {
+            // 1. 找到 Progman 窗口
+            IntPtr progman = Win32Helper.FindWindow("Progman", null);
+            Debug.WriteLine($"[Wallpaper] Progman handle: {progman}");
+
+            // 2. 发送 0x052C 强制创建 WorkerW 子窗口（使用 SendMessageTimeout 更可靠）
+            Win32Helper.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero,
+                Win32Helper.SMTO_NORMAL, 3000, out _);
+
+            // 3. 查找 Progman 下的 WorkerW 子窗口
+            IntPtr workerw = FindWorkerWUnderProgman(progman);
+            Debug.WriteLine($"[Wallpaper] WorkerW handle: {workerw}");
+
+            // 4. 如果找不到 WorkerW，回退到直接使用 Progman
+            IntPtr targetParent = workerw != IntPtr.Zero ? workerw : progman;
+            Debug.WriteLine($"[Wallpaper] Target parent: {targetParent} ({(workerw != IntPtr.Zero ? "WorkerW" : "Progman fallback")})");
+
+            // 5. 设为子窗口
+            Win32Helper.SetParent(hwnd, targetParent);
+            Win32Helper.ApplyToolWindowStyle(hwnd);
+
+            // 确保壁纸窗口在 Z-Order 最底层
+            Win32Helper.SetWindowPos(hwnd, Win32Helper.HWND_BOTTOM,
+                0, 0, 0, 0,
+                Win32Helper.SWP_NOMOVE | Win32Helper.SWP_NOSIZE | Win32Helper.SWP_FRAMECHANGED);
+
+            Debug.WriteLine($"[Wallpaper] Window {hwnd} parented to {targetParent}");
+        }
+
+        /// <summary>
+        /// 查找 Progman 下的 WorkerW 子窗口（Win11 24H2 兼容）
+        /// </summary>
+        private static IntPtr FindWorkerWUnderProgman(IntPtr progman)
+        {
+            // 方法1：FindWindowEx 直接查找 Progman 的子窗口
+            IntPtr workerw = Win32Helper.FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
+            if (workerw != IntPtr.Zero)
+                return workerw;
+
+            // 方法2：枚举所有顶级窗口，找 Parent == Progman 的 WorkerW
+            IntPtr result = IntPtr.Zero;
+            Win32Helper.EnumWindows((hWnd, _) =>
+            {
+                var className = new System.Text.StringBuilder(256);
+                Win32Helper.GetClassName(hWnd, className, 256);
+                if (className.ToString() == "WorkerW")
+                {
+                    IntPtr parent = Win32Helper.GetParent(hWnd);
+                    if (parent == progman)
+                    {
+                        result = hWnd;
+                        return false; // 停止枚举
+                    }
+                }
+                return true; // 继续枚举
+            }, IntPtr.Zero);
+
+            return result;
         }
 
         /// <summary>

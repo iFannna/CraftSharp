@@ -40,6 +40,11 @@
     <!-- 嵌入资源 -->
     <Resource Include="assets\fonts\*.ttf" />
     <Resource Include="assets\resources\*.xaml" />
+    <!-- mpv 播放器 -->
+    <Content Include="tools\mpv.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tools\mpv.exe</Link>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

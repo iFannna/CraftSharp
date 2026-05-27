@@ -44,7 +44,43 @@ public class WallpaperService
                 await File.WriteAllBytesAsync(filePath, bytes);
             }
 
+            DynamicWallpaperService.Instance.StopPlayback();
             DesktopWallpaperService.Instance.SetWallpaper(filePath);
+
+            onSuccess?.Invoke(filePath);
+        }
+        catch (Exception ex)
+        {
+            onError?.Invoke(ex.Message);
+        }
+    }
+
+    public async Task ApplyDynamicWallpaper(WallpaperItem wallpaper, Action<string>? onSuccess = null, Action<string>? onError = null)
+    {
+        try
+        {
+            if (!Directory.Exists(WallpaperDir))
+                Directory.CreateDirectory(WallpaperDir);
+
+            var videoUrl = wallpaper.PreviewVideoUrl;
+            if (string.IsNullOrEmpty(videoUrl))
+            {
+                onError?.Invoke("No video URL available.");
+                return;
+            }
+
+            var filePath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.mp4");
+
+            if (!File.Exists(filePath))
+            {
+                await DownloadFileAsync(videoUrl, filePath, onError);
+                if (!File.Exists(filePath))
+                    return;
+            }
+
+            DynamicWallpaperService.Instance.StopPlayback();
+            DesktopWallpaperService.Instance.ClearWallpaper();
+            DynamicWallpaperService.Instance.StartPlayback(filePath);
 
             onSuccess?.Invoke(filePath);
         }

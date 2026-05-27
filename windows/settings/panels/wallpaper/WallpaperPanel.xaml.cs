@@ -338,25 +338,34 @@ public partial class WallpaperPanel : UserControl
         var item = FindWallpaperItem(fe);
         if (item == null) return;
 
-        if (item.Type == "dynamic")
-        {
-            var dialog = new Dialogs.MessageDialog(
-                "Craft#",
-                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.");
-            dialog.Owner = Window.GetWindow(this);
-            dialog.ShowDialog();
-            return;
-        }
-
         var btn = (Wpf.Ui.Controls.Button)sender;
         btn.IsEnabled = false;
         btn.Content = Application.Current.FindResource("WallpaperSetting") ?? "...";
 
+        if (item.Type == "dynamic")
+        {
+            WallpaperService.Instance.ApplyDynamicWallpaper(item,
+                onSuccess: filePath => Dispatcher.Invoke(() =>
+                {
+                    btn.IsEnabled = true;
+                    btn.Content = Application.Current.FindResource("WallpaperQuickSet");
+                    SaveWallpaperSettings(item.Id, "dynamic", filePath);
+                }),
+                onError: msg => Dispatcher.Invoke(() =>
+                {
+                    btn.IsEnabled = true;
+                    btn.Content = Application.Current.FindResource("WallpaperQuickSet");
+                    MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
+            return;
+        }
+
         WallpaperService.Instance.ApplyStaticWallpaper(item,
-            onSuccess: _ => Dispatcher.Invoke(() =>
+            onSuccess: filePath => Dispatcher.Invoke(() =>
             {
                 btn.IsEnabled = true;
                 btn.Content = Application.Current.FindResource("WallpaperQuickSet");
+                SaveWallpaperSettings(item.Id, "static", filePath);
             }),
             onError: msg => Dispatcher.Invoke(() =>
             {
@@ -364,6 +373,17 @@ public partial class WallpaperPanel : UserControl
                 btn.Content = Application.Current.FindResource("WallpaperQuickSet");
                 MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
             }));
+    }
+
+    private static void SaveWallpaperSettings(string wallpaperId, string type, string filePath)
+    {
+        var app = (App)Application.Current;
+        var settings = app.GetAppSettings();
+        if (settings == null) return;
+        settings.Wallpaper.CurrentWallpaperId = wallpaperId;
+        settings.Wallpaper.CurrentType = type;
+        settings.Wallpaper.LocalFilePath = filePath;
+        app.SaveSettings();
     }
 
     private WallpaperItem? FindWallpaperItem(FrameworkElement element)

@@ -195,29 +195,46 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
     private void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
+        SetWallpaperBtn.IsEnabled = false;
 
         if (wallpaper.Type == "dynamic")
         {
-            var dialog = new Dialogs.MessageDialog(
-                "Craft#",
-                (string)Application.Current.FindResource("WallpaperDynamicNotSupported") ?? "Dynamic wallpaper is not supported yet.");
-            dialog.Owner = this;
-            dialog.ShowDialog();
+            WallpaperService.Instance.ApplyDynamicWallpaper(wallpaper,
+                onSuccess: filePath => Dispatcher.Invoke(() =>
+                {
+                    SetWallpaperBtn.IsEnabled = true;
+                    SaveWallpaperSettings(wallpaper.Id, "dynamic", filePath);
+                }),
+                onError: msg => Dispatcher.Invoke(() =>
+                {
+                    SetWallpaperBtn.IsEnabled = true;
+                    MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
+                }));
             return;
         }
 
-        SetWallpaperBtn.IsEnabled = false;
-
         WallpaperService.Instance.ApplyStaticWallpaper(wallpaper,
-            onSuccess: _ => Dispatcher.Invoke(() =>
+            onSuccess: filePath => Dispatcher.Invoke(() =>
             {
                 SetWallpaperBtn.IsEnabled = true;
+                SaveWallpaperSettings(wallpaper.Id, "static", filePath);
             }),
             onError: msg => Dispatcher.Invoke(() =>
             {
                 SetWallpaperBtn.IsEnabled = true;
                 MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
             }));
+    }
+
+    private static void SaveWallpaperSettings(string wallpaperId, string type, string filePath)
+    {
+        var app = (App)Application.Current;
+        var settings = app.GetAppSettings();
+        if (settings == null) return;
+        settings.Wallpaper.CurrentWallpaperId = wallpaperId;
+        settings.Wallpaper.CurrentType = type;
+        settings.Wallpaper.LocalFilePath = filePath;
+        app.SaveSettings();
     }
 
     private async void DownloadBtn_Click(object sender, RoutedEventArgs e)

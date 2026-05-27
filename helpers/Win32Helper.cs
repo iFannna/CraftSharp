@@ -73,6 +73,7 @@ namespace CraftSharp.Helpers
         public const int WS_EX_LAYERED = 0x00080000;
 
         // SetWindowPos 标志
+        public static readonly IntPtr HWND_BOTTOM = (IntPtr)1;
         public const uint SWP_NOMOVE = 0x0002;
         public const uint SWP_NOSIZE = 0x0001;
         public const uint SWP_NOZORDER = 0x0004;
@@ -83,6 +84,9 @@ namespace CraftSharp.Helpers
 
         // 消息常量
         public const int WM_COMMAND = 0x0111;
+
+        // SendMessageTimeout 标志
+        public const uint SMTO_NORMAL = 0x0000;
 
         // WM_HOTKEY 消息常量
         public const int WM_HOTKEY = 0x0312;
@@ -122,6 +126,32 @@ namespace CraftSharp.Helpers
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam, uint fuFlags, uint uTimeout, out IntPtr lpdwResult);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
+        public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr CreateWindowEx(
+            uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
+            int x, int y, int nWidth, int nHeight,
+            IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);

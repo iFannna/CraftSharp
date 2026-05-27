@@ -43,7 +43,6 @@
     <sys:String x:Key="WallpaperSetting">设置中...</sys:String>
     <sys:String x:Key="WallpaperSetSuccess">壁纸已设置</sys:String>
     <sys:String x:Key="WallpaperDownloadSuccess">下载完成</sys:String>
-    <sys:String x:Key="WallpaperDynamicNotSupported">动态壁纸暂不支持设置，敬请期待后续更新。</sys:String>
     <sys:String x:Key="WallpaperPreviewTitle">壁纸预览</sys:String>
     <sys:String x:Key="WallpaperPreviewClose">关闭</sys:String>
     <sys:String x:Key="WallpaperPreviewFit">适应窗口</sys:String>

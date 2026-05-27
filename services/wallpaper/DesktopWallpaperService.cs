@@ -26,4 +26,20 @@ public class DesktopWallpaperService
             imagePath,
             Win32Helper.SPIF_UPDATEINIFILE | Win32Helper.SPIF_SENDWININICHANGE);
     }
+
+    public void ClearWallpaper()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+            key?.SetValue("Wallpaper", "");
+        }
+        catch { }
+
+        Win32Helper.SystemParametersInfo(
+            Win32Helper.SPI_SETDESKWALLPAPER,
+            0,
+            "",
+            Win32Helper.SPIF_UPDATEINIFILE | Win32Helper.SPIF_SENDWININICHANGE);
+    }
 }

@@ -35,4 +35,6 @@ public class WallpaperSettings
     public string CurrentWallpaperId { get; set; } = "";
     public string CurrentType { get; set; } = "none";
     public string LocalFilePath { get; set; } = "";
+    public double VideoVolume { get; set; } = 0.0;
+    public bool VideoMuted { get; set; } = true;
 }

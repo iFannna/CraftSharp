@@ -238,6 +238,20 @@ namespace CraftSharp
             var wallpaperDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "wallpaper");
             if (!System.IO.Directory.Exists(wallpaperDir))
                 System.IO.Directory.CreateDirectory(wallpaperDir);
+
+            // 恢复壁纸
+            if (_appSettings?.Wallpaper.CurrentType == "dynamic"
+                && !string.IsNullOrEmpty(_appSettings.Wallpaper.LocalFilePath)
+                && System.IO.File.Exists(_appSettings.Wallpaper.LocalFilePath))
+            {
+                DynamicWallpaperService.Instance.RestoreFromSettings(_appSettings.Wallpaper);
+            }
+            else if (_appSettings?.Wallpaper.CurrentType == "static"
+                     && !string.IsNullOrEmpty(_appSettings.Wallpaper.LocalFilePath)
+                     && System.IO.File.Exists(_appSettings.Wallpaper.LocalFilePath))
+            {
+                DesktopWallpaperService.Instance.SetWallpaper(_appSettings.Wallpaper.LocalFilePath);
+            }
         }
 
         /// <summary>
@@ -614,6 +628,9 @@ namespace CraftSharp
 
         protected override void OnExit(ExitEventArgs e)
         {
+            // 停止动态壁纸播放
+            DynamicWallpaperService.Instance.StopPlayback();
+
             // 如果启用了记住位置，保存状态栏位置
             if (_appSettings?.StatusBar.RememberPosition ?? false)
             {
