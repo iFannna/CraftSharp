@@ -78,9 +78,23 @@ public class WallpaperService
                     return;
             }
 
-            // 只有从静态壁纸切换时才需要清除，动态→动态无需清除（避免触发 WorkerW 刷新）
+            // 同时设置静态壁纸，这样程序关闭后桌面不会变黑
             if (!DynamicWallpaperService.Instance.IsPlaying)
-                DesktopWallpaperService.Instance.ClearWallpaper();
+            {
+                var previewExt = wallpaper.PreviewUrl.EndsWith(".jpg") || wallpaper.PreviewUrl.EndsWith(".jpeg") ? "jpg" : "webp";
+                var previewPath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{previewExt}");
+                if (!File.Exists(previewPath))
+                {
+                    try
+                    {
+                        var previewBytes = await DownloadWithRetryAsync(wallpaper.PreviewUrl);
+                        await File.WriteAllBytesAsync(previewPath, previewBytes);
+                    }
+                    catch { }
+                }
+                if (File.Exists(previewPath))
+                    DesktopWallpaperService.Instance.SetWallpaper(previewPath);
+            }
 
             await DynamicWallpaperService.Instance.StartPlaybackAsync(filePath);
 
