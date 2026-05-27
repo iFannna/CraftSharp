@@ -16,7 +16,25 @@ public class DynamicWallpaperWindow : IDisposable
 
     public void CreateAndShow(bool primary = true)
     {
-        // 不在这里创建窗口，mpv 会自己创建
+        _workerw = FindDesktopWorkerW();
+
+        var monitor = Win32Helper.GetPrimaryMonitorInfo();
+        int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
+        int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
+
+        // 在 WorkerW 内创建隐藏子窗口，mpv 将直接渲染到这里
+        IntPtr hInstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(
+            typeof(DynamicWallpaperWindow).Assembly.Modules.First());
+        _hwnd = Win32Helper.CreateWindowEx(
+            0x00000000, "Static", "CraftSharpWallpaper",
+            0x10000000 | 0x40000000, // WS_VISIBLE | WS_CHILD
+            0, 0, screenW, screenH,
+            _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
+
+        Win32Helper.SetWindowPos(_hwnd, Win32Helper.HWND_BOTTOM,
+            0, 0, screenW, screenH, 0x0020); // SWP_FRAMECHANGED
+
+        Debug.WriteLine($"[Wallpaper] Host window {_hwnd} in WorkerW {_workerw}, {screenW}x{screenH}");
     }
 
     public void LoadAndPlay(string videoPath)
@@ -30,14 +48,14 @@ public class DynamicWallpaperWindow : IDisposable
             return;
         }
 
-        // 先找 WorkerW
-        _workerw = FindDesktopWorkerW();
+        var monitor = Win32Helper.GetPrimaryMonitorInfo();
+        int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
+        int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
 
-        // 启动 mpv，让它自己创建窗口，然后我们再 SetParent
-        var args = $"--no-audio --loop --no-input-default-bindings " +
-                   $"--no-input-terminal --no-terminal --panscan=1.0 --hwdec=auto " +
-                   $"--vo=gpu --keep-open --gpu-api=d3d11 --force-window " +
-                   $"--geometry=1920x1080+0+0 \"{videoPath}\"";
+        // --wid 直接渲染到宿主窗口，零闪烁
+        var args = $"--wid={_hwnd} --no-audio --loop --no-input-default-bindings " +
+                   $"--no-input-terminal --no-terminal --hwdec=auto " +
+                   $"--vo=gpu --keep-open --panscan=1.0 \"{videoPath}\"";
 
         var psi = new ProcessStartInfo
         {
@@ -59,44 +77,7 @@ public class DynamicWallpaperWindow : IDisposable
             };
         }
 
-        Debug.WriteLine($"[Wallpaper] mpv started, pid={_mpvProcess?.Id}, video={videoPath}");
-
-        // 等一下让 mpv 创建窗口，然后把它嵌入 WorkerW
-        System.Threading.Thread.Sleep(500);
-        EmbedMpvWindow();
-    }
-
-    private void EmbedMpvWindow()
-    {
-        if (_mpvProcess == null || _mpvProcess.HasExited) return;
-
-        // 找 mpv 的窗口句柄
-        IntPtr mpvHwnd = FindProcessWindow(_mpvProcess.Id);
-        if (mpvHwnd == IntPtr.Zero)
-        {
-            Debug.WriteLine("[Wallpaper] Could not find mpv window");
-            return;
-        }
-
-        Debug.WriteLine($"[Wallpaper] Found mpv window: {mpvHwnd}, embedding into WorkerW: {_workerw}");
-
-        // 设为 WorkerW 的子窗口
-        Win32Helper.SetParent(mpvHwnd, _workerw);
-
-        // 获取屏幕尺寸
-        var monitor = Win32Helper.GetPrimaryMonitorInfo();
-        int w = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
-        int h = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
-
-        // 调整大小并放到最底层
-        Win32Helper.SetWindowPos(mpvHwnd, Win32Helper.HWND_BOTTOM,
-            0, 0, w, h, Win32Helper.SWP_FRAMECHANGED);
-
-        // 隐藏 Alt+Tab
-        Win32Helper.ApplyToolWindowStyle(mpvHwnd);
-
-        _hwnd = mpvHwnd;
-        Debug.WriteLine($"[Wallpaper] mpv window {mpvHwnd} embedded successfully");
+        Debug.WriteLine($"[Wallpaper] mpv started, pid={_mpvProcess?.Id}, wid={_hwnd}");
     }
 
     private static IntPtr FindProcessWindow(int pid)
