@@ -2,9 +2,10 @@
 bin/
 obj/
 publish/
+installer/
 
 # IDE
-.idea/
+
 .vs/
 *.user
 *.suo
