@@ -19,9 +19,12 @@ public class DynamicWallpaperService
         // 如果已有窗口且 IPC 可用，直接通过 loadfile 切换视频，无需重启 MPV
         if (_window != null && _window.IsIpcReady && _currentVideoPath != null)
         {
-            await _window.SwitchVideoAsync(videoPath);
-            _currentVideoPath = videoPath;
-            return;
+            if (await _window.SwitchVideoAsync(videoPath))
+            {
+                _currentVideoPath = videoPath;
+                return;
+            }
+            // IPC 失败，回退到创建新窗口
         }
 
         // 首次播放或 IPC 不可用时，走完整的窗口创建流程

@@ -108,17 +108,16 @@ public class DynamicWallpaperWindow : IDisposable
 
     /// <summary>
     /// 通过 IPC 向当前 MPV 进程发送 loadfile 命令切换视频，复用已有进程。
+    /// 返回 true 表示成功，false 表示 IPC 不可用需要回退。
     /// </summary>
-    public async Task SwitchVideoAsync(string videoPath)
+    public async Task<bool> SwitchVideoAsync(string videoPath)
     {
-        _renderReadyTcs = new TaskCompletionSource<bool>();
-
         // 等待 IPC 管道可用
         var pipe = await ConnectIpcAsync();
         if (pipe == null)
         {
             Debug.WriteLine("[Wallpaper] IPC pipe not available, falling back to restart");
-            return;
+            return false;
         }
 
         // 发送 loadfile 命令
@@ -129,11 +128,9 @@ public class DynamicWallpaperWindow : IDisposable
 
         Debug.WriteLine($"[Wallpaper] IPC loadfile sent: {videoPath}");
 
-        // 等待首帧渲染（VO 日志会触发）
-        await _renderReadyTcs.Task;
-
-        // 超时兜底
-        Task.Delay(2000).ContinueWith(_ => _renderReadyTcs?.TrySetResult(true));
+        // loadfile 不会触发新的 VO: 日志，短延迟让 MPV 开始解码即可
+        await Task.Delay(200);
+        return true;
     }
 
     /// <summary>
