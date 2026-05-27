@@ -8,7 +8,7 @@
                  ExtendsContentIntoTitleBar="True"
                  Foreground="{DynamicResource TextPrimaryBrush}"
                  ResizeMode="CanResize"
-                 ShowInTaskbar="False"
+                 ShowInTaskbar="True"
                  Loaded="Window_Loaded">
 
     <Grid>
@@ -25,6 +25,8 @@
 
         <!-- 图片预览区 -->
         <Grid Grid.Row="1" x:Name="RootGrid"
+              ClipToBounds="True"
+              Background="{DynamicResource ApplicationBackgroundBrush}"
               MouseLeftButtonDown="RootGrid_MouseLeftButtonDown"
               MouseWheel="RootGrid_MouseWheel">
 
@@ -41,26 +43,68 @@
             </Image>
 
             <!-- 上一张 -->
-            <ui:Button x:Name="PrevBtn" Panel.ZIndex="1"
-                       Width="32" Height="32" Margin="12,0,0,0"
-                       VerticalAlignment="Center" HorizontalAlignment="Left"
-                       Appearance="Secondary" Padding="0" CornerRadius="16"
-                       Click="PrevBtn_Click"
-                       Icon="{ui:SymbolIcon Symbol=ChevronLeft20}"/>
+            <Button x:Name="PrevBtn" Panel.ZIndex="1"
+                    Width="40" Height="40" Margin="12,0,0,0"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Cursor="Hand"
+                    Click="PrevBtn_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="#80A0A0A0"
+                                BorderBrush="#A0A0A0A0" BorderThickness="1"
+                                CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#A0A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#60A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+                <ui:SymbolIcon Symbol="ChevronLeft20" FontSize="26" Foreground="White"/>
+            </Button>
 
             <!-- 下一张 -->
-            <ui:Button x:Name="NextBtn" Panel.ZIndex="1"
-                       Width="32" Height="32" Margin="0,0,12,0"
-                       VerticalAlignment="Center" HorizontalAlignment="Right"
-                       Appearance="Secondary" Padding="0" CornerRadius="16"
-                       Click="NextBtn_Click"
-                       Icon="{ui:SymbolIcon Symbol=ChevronRight20}"/>
+            <Button x:Name="NextBtn" Panel.ZIndex="1"
+                    Width="40" Height="40" Margin="0,0,12,0"
+                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Cursor="Hand"
+                    Click="NextBtn_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="#80A0A0A0"
+                                BorderBrush="#A0A0A0A0" BorderThickness="1"
+                                CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#A0A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#60A0A0A0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+                <ui:SymbolIcon Symbol="ChevronRight20" FontSize="26" Foreground="White"/>
+            </Button>
         </Grid>
 
         <!-- 底部操作栏 -->
         <Grid Grid.Row="2" Background="{DynamicResource ApplicationBackgroundBrush}">
             <TextBlock x:Name="ResolutionText" VerticalAlignment="Center"
-                       Margin="16,0,0,0" FontSize="12"
+                       Margin="16,0,0,0" FontSize="14"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        HorizontalAlignment="Left"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
@@ -69,28 +113,28 @@
                 <ui:Button x:Name="ZoomOutBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
                            Click="ZoomOutBtn_Click">
-                    <ui:SymbolIcon Symbol="ZoomOut20" FontSize="20"/>
+                    <ui:SymbolIcon Symbol="ZoomOut20" FontSize="26"/>
                 </ui:Button>
 
                 <!-- 放大 -->
                 <ui:Button x:Name="ZoomInBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
                            Click="ZoomInBtn_Click">
-                    <ui:SymbolIcon Symbol="ZoomIn20" FontSize="20"/>
+                    <ui:SymbolIcon Symbol="ZoomIn20" FontSize="26"/>
                 </ui:Button>
 
                 <!-- 适应 -->
                 <ui:Button x:Name="FitBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
                            Click="FitBtn_Click" ToolTip="{DynamicResource WallpaperPreviewFit}">
-                    <ui:SymbolIcon Symbol="FullScreenMaximize20" FontSize="20"/>
+                    <ui:SymbolIcon Symbol="FullScreenMaximize20" FontSize="26"/>
                 </ui:Button>
 
                 <!-- 下载 -->
                 <ui:Button x:Name="DownloadBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
                            Click="DownloadBtn_Click">
-                    <ui:SymbolIcon Symbol="ArrowDownload20" FontSize="20"/>
+                    <ui:SymbolIcon Symbol="ArrowDownload20" FontSize="26"/>
                 </ui:Button>
 
                 <!-- 分隔线 -->
