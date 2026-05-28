@@ -78,22 +78,27 @@ public class WallpaperService
                     return;
             }
 
-            // 同时设置静态壁纸，这样程序关闭后桌面不会变黑
-            if (!DynamicWallpaperService.Instance.IsPlaying)
+            // 先设置静态壁纸作为回退，这样程序关闭后桌面不会变黑
+            // SetWallpaper 会销毁 WorkerW，必须先设完并等待重建，再启动动态壁纸
+            if (DynamicWallpaperService.Instance.IsPlaying)
+                DynamicWallpaperService.Instance.StopPlayback();
+
+            var previewExt = wallpaper.PreviewUrl.EndsWith(".jpg") || wallpaper.PreviewUrl.EndsWith(".jpeg") ? "jpg" : "webp";
+            var previewPath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{previewExt}");
+            if (!File.Exists(previewPath))
             {
-                var previewExt = wallpaper.PreviewUrl.EndsWith(".jpg") || wallpaper.PreviewUrl.EndsWith(".jpeg") ? "jpg" : "webp";
-                var previewPath = Path.Combine(WallpaperDir, $"{wallpaper.Id}.{previewExt}");
-                if (!File.Exists(previewPath))
+                try
                 {
-                    try
-                    {
-                        var previewBytes = await DownloadWithRetryAsync(wallpaper.PreviewUrl);
-                        await File.WriteAllBytesAsync(previewPath, previewBytes);
-                    }
-                    catch { }
+                    var previewBytes = await DownloadWithRetryAsync(wallpaper.PreviewUrl);
+                    await File.WriteAllBytesAsync(previewPath, previewBytes);
                 }
-                if (File.Exists(previewPath))
-                    DesktopWallpaperService.Instance.SetWallpaper(previewPath);
+                catch { }
+            }
+            if (File.Exists(previewPath))
+            {
+                DesktopWallpaperService.Instance.SetWallpaper(previewPath);
+                // 等待 WorkerW 销毁重建完成
+                await Task.Delay(500);
             }
 
             await DynamicWallpaperService.Instance.StartPlaybackAsync(filePath);
