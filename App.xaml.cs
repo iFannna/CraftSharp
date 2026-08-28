@@ -35,6 +35,7 @@ namespace CraftSharp
         private string _settingsPath = "";
         private Models.AppSettings? _appSettings;
         private Window? _hotkeyMessageWindow;
+        private Window? _wallpaperWatcherHost;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -239,18 +240,33 @@ namespace CraftSharp
             if (!System.IO.Directory.Exists(wallpaperDir))
                 System.IO.Directory.CreateDirectory(wallpaperDir);
 
-            // 恢复壁纸
-            if (_appSettings?.Wallpaper.CurrentType == "dynamic"
-                && !string.IsNullOrEmpty(_appSettings.Wallpaper.LocalFilePath)
-                && System.IO.File.Exists(_appSettings.Wallpaper.LocalFilePath))
+            // 多显示器壁纸：初始化服务 + 迁移旧配置 + 监听显示变更 + 按配置重排
+            DesktopWallpaperService.Instance.Initialize();
+            MonitorLayoutService.Instance.Initialize();
+
+            if (_appSettings != null)
             {
-                DynamicWallpaperService.Instance.RestoreFromSettings(_appSettings.Wallpaper);
-            }
-            else if (_appSettings?.Wallpaper.CurrentType == "static"
-                     && !string.IsNullOrEmpty(_appSettings.Wallpaper.LocalFilePath)
-                     && System.IO.File.Exists(_appSettings.Wallpaper.LocalFilePath))
-            {
-                DesktopWallpaperService.Instance.SetWallpaper(_appSettings.Wallpaper.LocalFilePath);
+                Services.Wallpaper.WallpaperService.MigrateLegacySettings(
+                    _appSettings.Wallpaper, MonitorLayoutService.Instance.GetMonitors());
+
+                _wallpaperWatcherHost = new Window
+                {
+                    Width = 0, Height = 0,
+                    ShowInTaskbar = false,
+                    WindowStyle = WindowStyle.None,
+                    AllowsTransparency = true,
+                    Opacity = 0
+                };
+                _wallpaperWatcherHost.SourceInitialized += (_, _) =>
+                {
+                    var hwnd = new System.Windows.Interop.WindowInteropHelper(_wallpaperWatcherHost!).Handle;
+                    int exStyle = Win32Helper.GetWindowLong(hwnd, Win32Helper.GWL_EXSTYLE);
+                    Win32Helper.SetWindowLong(hwnd, Win32Helper.GWL_EXSTYLE, exStyle | Win32Helper.WS_EX_TOOLWINDOW);
+                };
+                _wallpaperWatcherHost.Show();
+                Services.Wallpaper.DisplayChangeWatcher.Instance.Initialize(_wallpaperWatcherHost);
+
+                _ = Services.Wallpaper.WallpaperService.Instance.ApplyLayoutAsync();
             }
         }
 
@@ -628,8 +644,9 @@ namespace CraftSharp
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // 停止动态壁纸播放
-            DynamicWallpaperService.Instance.StopPlayback();
+            // 停止所有动态壁纸播放
+            DynamicWallpaperService.Instance.StopAllPlayback();
+            _wallpaperWatcherHost?.Close();
 
             // 如果启用了记住位置，保存状态栏位置
             if (_appSettings?.StatusBar.RememberPosition ?? false)

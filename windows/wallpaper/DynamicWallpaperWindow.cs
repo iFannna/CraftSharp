@@ -18,39 +18,49 @@ public class DynamicWallpaperWindow : IDisposable
     private NamedPipeClientStream? _ipcPipe;
     private string? _ipcPipeName;
     private bool _disposed;
+    private System.Windows.Threading.Dispatcher? _ownerDispatcher;
 
     public IntPtr Hwnd => _hwnd;
 
-    public void CreateAndShow(bool primary = true, IntPtr behindWindow = default)
+    /// <summary>
+    /// 在桌面 WorkerW 下创建覆盖指定物理矩形的子窗口。
+    /// physicalBounds 为虚拟桌面坐标系（可为负坐标），跨屏拼接时传虚拟屏总矩形。
+    /// </summary>
+    public void CreateAndShow(Win32Helper.RECT physicalBounds)
     {
-        _workerw = FindDesktopWorkerW();
+        // nudge=false：多窗口场景下重复广播 0x052C 会互相销毁 WorkerW，
+        // WorkerW 的建立/重建统一由编排层负责
+        _workerw = FindDesktopWorkerW(nudge: false);
 
-        var monitor = Win32Helper.GetPrimaryMonitorInfo();
-        int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
-        int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
+        // 子窗口坐标相对 WorkerW 客户区原点，实测偏移而非假设其等于虚拟屏原点
+        Win32Helper.GetWindowRect(_workerw, out var workerRect);
+        int x = physicalBounds.Left - workerRect.Left;
+        int y = physicalBounds.Top - workerRect.Top;
+        int w = physicalBounds.Right - physicalBounds.Left;
+        int h = physicalBounds.Bottom - physicalBounds.Top;
 
-        IntPtr hInstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(
-            typeof(DynamicWallpaperWindow).Assembly.Modules.First());
-        _hwnd = Win32Helper.CreateWindowEx(
-            0x00000000, "Static", "CraftSharpWallpaper",
-            0x10000000 | 0x40000000, // WS_VISIBLE | WS_CHILD
-            0, 0, screenW, screenH,
-            _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
-
-        if (behindWindow != IntPtr.Zero)
+        var dpiScope = DpiScope.EnterPerMonitorV2();
+        try
         {
-            Win32Helper.SetWindowPos(_hwnd, behindWindow,
-                0, 0, screenW, screenH,
-                Win32Helper.SWP_FRAMECHANGED | 0x0010); // SWP_NOACTIVATE
-        }
-        else
-        {
+            _ownerDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+            IntPtr hInstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(
+                typeof(DynamicWallpaperWindow).Assembly.Modules.First());
+            _hwnd = Win32Helper.CreateWindowEx(
+                0x00000000, "Static", $"CraftSharpWallpaper_{Guid.NewGuid():N}",
+                0x10000000 | 0x40000000, // WS_VISIBLE | WS_CHILD
+                x, y, w, h,
+                _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
+
             Win32Helper.SetWindowPos(_hwnd, Win32Helper.HWND_BOTTOM,
-                0, 0, screenW, screenH,
+                x, y, w, h,
                 Win32Helper.SWP_FRAMECHANGED);
         }
+        finally
+        {
+            dpiScope?.Dispose();
+        }
 
-        Debug.WriteLine($"[Wallpaper] Host window {_hwnd} in WorkerW {_workerw}, {screenW}x{screenH}");
+        Debug.WriteLine($"[Wallpaper] Host window {_hwnd} in WorkerW {_workerw}, bounds=({physicalBounds.Left},{physicalBounds.Top}) {w}x{h}");
     }
 
     public void LoadAndPlay(string videoPath)
@@ -68,10 +78,6 @@ public class DynamicWallpaperWindow : IDisposable
 
         // 每个 MPV 实例使用唯一的管道名
         _ipcPipeName = $"craftsharp-mpv-{Guid.NewGuid():N}";
-
-        var monitor = Win32Helper.GetPrimaryMonitorInfo();
-        int screenW = monitor.rcMonitor.Right - monitor.rcMonitor.Left;
-        int screenH = monitor.rcMonitor.Bottom - monitor.rcMonitor.Top;
 
         var args = $"--wid={_hwnd} --no-audio --loop --no-input-default-bindings " +
                    $"--no-input-terminal --no-terminal --hwdec=auto " +
@@ -172,8 +178,8 @@ public class DynamicWallpaperWindow : IDisposable
         _renderReadyTcs?.TrySetResult(false);
     }
 
-    public Task WaitForRenderReadyAsync() =>
-        _renderReadyTcs?.Task ?? Task.CompletedTask;
+    public Task<bool> WaitForRenderReadyAsync() =>
+        _renderReadyTcs?.Task ?? Task.FromResult(true);
 
     public void Stop()
     {
@@ -199,6 +205,12 @@ public class DynamicWallpaperWindow : IDisposable
 
     public void Close()
     {
+        // DestroyWindow 只能在创建窗口的线程上执行
+        if (_ownerDispatcher != null && !_ownerDispatcher.CheckAccess())
+        {
+            _ownerDispatcher.BeginInvoke(Close);
+            return;
+        }
         Stop();
         if (_hwnd != IntPtr.Zero)
         {
@@ -218,11 +230,17 @@ public class DynamicWallpaperWindow : IDisposable
         return Path.GetFullPath(path);
     }
 
-    private static IntPtr FindDesktopWorkerW()
+    /// <summary>
+    /// 查找桌面 WorkerW。nudge=true 时先广播 0x052C 确保其存在（仅编排层在重排时使用一次）。
+    /// </summary>
+    public static IntPtr FindDesktopWorkerW(bool nudge)
     {
         IntPtr progman = Win32Helper.FindWindow("Progman", null);
-        Win32Helper.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero,
-            Win32Helper.SMTO_NORMAL, 3000, out _);
+        if (nudge)
+        {
+            Win32Helper.SendMessageTimeout(progman, 0x052C, IntPtr.Zero, IntPtr.Zero,
+                Win32Helper.SMTO_NORMAL, 3000, out _);
+        }
 
         IntPtr workerw = Win32Helper.FindWindowEx(progman, IntPtr.Zero, "WorkerW", null);
         if (workerw != IntPtr.Zero) return workerw;

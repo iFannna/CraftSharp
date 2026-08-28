@@ -102,6 +102,19 @@ namespace CraftSharp.Helpers
         public const int SPIF_UPDATEINIFILE = 0x01;
         public const int SPIF_SENDWININICHANGE = 0x02;
 
+        // DPI 感知上下文（伪句柄）
+        public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new(-4);
+
+        // GetSystemMetrics 索引
+        public const int SM_XVIRTUALSCREEN = 76;
+        public const int SM_YVIRTUALSCREEN = 77;
+        public const int SM_CXVIRTUALSCREEN = 78;
+        public const int SM_CYVIRTUALSCREEN = 79;
+
+        // 显示/环境变更消息
+        public const int WM_DISPLAYCHANGE = 0x007E;
+        public const int WM_DPICHANGED = 0x02E0;
+
         #endregion
 
         #region User32.dll API
@@ -173,6 +186,15 @@ namespace CraftSharp.Helpers
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetThreadDpiAwarenessContext(IntPtr dpiContext);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(int nIndex);
 
         #endregion
 
