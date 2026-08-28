@@ -30,29 +30,68 @@ public class DynamicWallpaperService
         await _gate.WaitAsync().ConfigureAwait(false);
         try
         {
-            StopCore(key);
-
-            var window = new DynamicWallpaperWindow();
-
-            // 窗口创建必须走 UI 线程（消息泵 + STA）
-            var ui = System.Windows.Application.Current?.Dispatcher;
-            if (ui != null && !ui.CheckAccess())
-                await ui.InvokeAsync(() => window.CreateAndShow(bounds)).Task.ConfigureAwait(false);
-            else
-                window.CreateAndShow(bounds);
-
-            window.LoadAndPlay(videoPath);
-            lock (_windows)
-            {
-                _windows[key] = window;
-                _videoPaths[key] = videoPath;
-            }
-            await window.WaitForRenderReadyAsync().ConfigureAwait(false);
+            await StartCoreAsync(key, videoPath, bounds).ConfigureAwait(false);
         }
         finally
         {
             _gate.Release();
         }
+    }
+
+    /// <summary>
+    /// 看门狗入口：某路壁纸的宿主窗口被 WorkerW 重建连带销毁后，
+    /// 在当前 WorkerW 下原位重建（不触碰系统壁纸，避免再次触发重建）。
+    /// </summary>
+    public async Task RestartAsync(string key)
+    {
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            string? videoPath;
+            Win32Helper.RECT bounds;
+            lock (_windows)
+            {
+                if (!_windows.TryGetValue(key, out var window)) return;
+                videoPath = _videoPaths.GetValueOrDefault(key);
+                bounds = window.Bounds;
+            }
+            if (videoPath == null) return;
+
+            StopCore(key);
+            await StartCoreAsync(key, videoPath, bounds).ConfigureAwait(false);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    /// <summary>指定 key 的宿主窗口与 mpv 是否仍存活</summary>
+    public bool IsHostAlive(string key)
+    {
+        lock (_windows) return _windows.TryGetValue(key, out var w) && w.IsAlive;
+    }
+
+    private async Task StartCoreAsync(string key, string videoPath, Win32Helper.RECT bounds)
+    {
+        StopCore(key);
+
+        var window = new DynamicWallpaperWindow();
+
+        // 窗口创建必须走 UI 线程（消息泵 + STA）
+        var ui = System.Windows.Application.Current?.Dispatcher;
+        if (ui != null && !ui.CheckAccess())
+            await ui.InvokeAsync(() => window.CreateAndShow(bounds)).Task.ConfigureAwait(false);
+        else
+            window.CreateAndShow(bounds);
+
+        window.LoadAndPlay(videoPath);
+        lock (_windows)
+        {
+            _windows[key] = window;
+            _videoPaths[key] = videoPath;
+        }
+        await window.WaitForRenderReadyAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -97,6 +136,22 @@ public class DynamicWallpaperService
     public IReadOnlyCollection<string> ActiveKeys
     {
         get { lock (_windows) return new List<string>(_windows.Keys); }
+    }
+
+    /// <summary>
+    /// 指定 key 当前窗口的覆盖矩形，无活动窗口返回 null
+    /// </summary>
+    public Win32Helper.RECT? GetBounds(string key)
+    {
+        lock (_windows) return _windows.TryGetValue(key, out var w) ? w.Bounds : null;
+    }
+
+    public async Task SetPausedAsync(string key, bool paused)
+    {
+        DynamicWallpaperWindow? window;
+        lock (_windows) window = _windows.GetValueOrDefault(key);
+        if (window != null)
+            await window.SetPausedAsync(paused).ConfigureAwait(false);
     }
 
     public void Stop(string key)
