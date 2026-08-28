@@ -137,9 +137,9 @@ public class WallpaperService
             else if (span.Type == "dynamic" && File.Exists(span.LocalFilePath))
             {
                 var previewSource = span.PreviewPath;
-                if (!File.Exists(previewSource) && !string.IsNullOrEmpty(span.WallpaperId))
+                if (IsStalePreviewFallback(previewSource, span.WallpaperId) && !string.IsNullOrEmpty(span.WallpaperId))
                 {
-                    var backfilled = await TryDownloadPreviewAsync(span.WallpaperId);
+                    var backfilled = await EnsureFallbackImageAsync(span.WallpaperId);
                     if (backfilled != null)
                     {
                         span.PreviewPath = backfilled;
@@ -150,7 +150,7 @@ public class WallpaperService
                 if (File.Exists(previewSource))
                 {
                     var crops = await SpanCropService.Instance.ProduceCropsAsync(
-                        previewSource, $"{span.WallpaperId}_preview", monitors, fingerprint);
+                        previewSource, span.WallpaperId, monitors, fingerprint);
                     statics.AddRange(crops.Select(c => new MonitorStaticPlan(c.Monitor.DevicePath, c.CropPath)));
                 }
                 dynamics.Add(new DynamicPlan(
@@ -173,9 +173,9 @@ public class WallpaperService
                 else if (entry.Type == "dynamic" && File.Exists(entry.LocalFilePath))
                 {
                     var fallback = entry.PreviewPath;
-                    if (!File.Exists(fallback) && !string.IsNullOrEmpty(entry.WallpaperId))
+                    if (IsStalePreviewFallback(fallback, entry.WallpaperId) && !string.IsNullOrEmpty(entry.WallpaperId))
                     {
-                        var backfilled = await TryDownloadPreviewAsync(entry.WallpaperId);
+                        var backfilled = await EnsureFallbackImageAsync(entry.WallpaperId);
                         if (backfilled != null)
                         {
                             entry.PreviewPath = backfilled;
@@ -337,14 +337,14 @@ public class WallpaperService
         {
             if (string.IsNullOrEmpty(wallpaper.PreviewVideoUrl)) return;
             var video = await EnsureVideoDownloadedAsync(wallpaper);
-            var preview = await EnsurePreviewDownloadedAsync(wallpaper);
+            var fallback = await EnsureImageDownloadedAsync(wallpaper);
             settings.Monitors[monitorDevicePath] = new MonitorWallpaperEntry
             {
                 MonitorId = monitorDevicePath,
                 WallpaperId = wallpaper.Id,
                 Type = "dynamic",
                 LocalFilePath = video,
-                PreviewPath = preview
+                PreviewPath = fallback
             };
         }
         else
@@ -379,13 +379,13 @@ public class WallpaperService
         {
             if (string.IsNullOrEmpty(wallpaper.PreviewVideoUrl)) return;
             var video = await EnsureVideoDownloadedAsync(wallpaper);
-            var preview = await EnsurePreviewDownloadedAsync(wallpaper);
+            var fallback = await EnsureImageDownloadedAsync(wallpaper);
             settings.Span = new SpanWallpaperEntry
             {
                 WallpaperId = wallpaper.Id,
                 Type = "dynamic",
                 LocalFilePath = video,
-                PreviewPath = preview
+                PreviewPath = fallback
             };
         }
         else
@@ -448,41 +448,34 @@ public class WallpaperService
         return path;
     }
 
-    private async Task<string> EnsurePreviewDownloadedAsync(WallpaperItem wallpaper)
-    {
-        var path = BuildPreviewImagePath(wallpaper.PreviewUrl, wallpaper.Id);
-        if (!File.Exists(path))
-        {
-            try
-            {
-                await File.WriteAllBytesAsync(path, await DownloadWithRetryAsync(wallpaper.PreviewUrl));
-            }
-            catch
-            {
-                return ""; // 回退图下载失败不阻塞动态壁纸
-            }
-        }
-        return path;
-    }
+    /// <summary>
+    /// 旧回退图是站点带水印的 _preview 预览，视为过期需重新取原图
+    /// </summary>
+    private static bool IsStalePreviewFallback(string? path, string wallpaperId) =>
+        string.IsNullOrEmpty(path)
+        || !File.Exists(path)
+        || Path.GetFileName(path).StartsWith($"{wallpaperId}_preview.", StringComparison.Ordinal);
 
     /// <summary>
-    /// 迁移场景补拉动态壁纸回退图（离线失败返回 null，不阻塞）
+    /// 按壁纸 Id 取原图作为动态壁纸回退静态图（与静态壁纸同源，无水印）。
+    /// 离线失败返回 null，不阻塞。
     /// </summary>
-    private async Task<string?> TryDownloadPreviewAsync(string wallpaperId)
+    private static async Task<string?> EnsureFallbackImageAsync(string wallpaperId)
     {
         try
         {
             var detail = await McBlockApiClient.Instance.GetWallpaperDetailAsync(wallpaperId);
-            if (string.IsNullOrEmpty(detail.PreviewUrl)) return null;
+            var url = detail.OriginalUrl ?? detail.PreviewUrl;
+            if (string.IsNullOrEmpty(url)) return null;
 
-            var path = BuildPreviewImagePath(detail.PreviewUrl, wallpaperId);
+            var path = BuildImagePath(url, wallpaperId);
             if (!File.Exists(path))
-                await File.WriteAllBytesAsync(path, await DownloadWithRetryAsync(detail.PreviewUrl));
+                await File.WriteAllBytesAsync(path, await DownloadWithRetryAsync(url));
             return path;
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[Wallpaper] Preview backfill failed for {wallpaperId}: {ex.Message}");
+            Debug.WriteLine($"[Wallpaper] Fallback backfill failed for {wallpaperId}: {ex.Message}");
             return null;
         }
     }
@@ -546,12 +539,6 @@ public class WallpaperService
     {
         var ext = url.EndsWith(".jpg") || url.EndsWith(".jpeg") ? "jpg" : "webp";
         return Path.Combine(WallpaperDir, $"{wallpaperId}.{ext}");
-    }
-
-    private static string BuildPreviewImagePath(string url, string wallpaperId)
-    {
-        var ext = url.EndsWith(".jpg") || url.EndsWith(".jpeg") ? "jpg" : "webp";
-        return Path.Combine(WallpaperDir, $"{wallpaperId}_preview.{ext}");
     }
 
     #endregion
