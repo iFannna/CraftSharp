@@ -19,8 +19,21 @@ public class DynamicWallpaperWindow : IDisposable
     private string? _ipcPipeName;
     private bool _disposed;
     private System.Windows.Threading.Dispatcher? _ownerDispatcher;
+    private Win32Helper.RECT _bounds;
 
     public IntPtr Hwnd => _hwnd;
+
+    /// <summary>窗口覆盖的虚拟桌面矩形，用于遮挡判断</summary>
+    public Win32Helper.RECT Bounds => _bounds;
+
+    /// <summary>
+    /// 宿主窗口与 mpv 是否都还活着。WorkerW 被系统重建时会连带销毁子窗口，
+    /// mpv 渲染窗口随 --wid 父窗口消亡后退出，这里用于看门狗检测。
+    /// </summary>
+    public bool IsAlive => _hwnd != IntPtr.Zero
+        && Win32Helper.IsWindow(_hwnd)
+        && _mpvProcess != null
+        && !_mpvProcess.HasExited;
 
     /// <summary>
     /// 在桌面 WorkerW 下创建覆盖指定物理矩形的子窗口。
@@ -31,6 +44,7 @@ public class DynamicWallpaperWindow : IDisposable
         // nudge=false：多窗口场景下重复广播 0x052C 会互相销毁 WorkerW，
         // WorkerW 的建立/重建统一由编排层负责
         _workerw = FindDesktopWorkerW(nudge: false);
+        _bounds = physicalBounds;
 
         // 子窗口坐标相对 WorkerW 客户区原点，实测偏移而非假设其等于虚拟屏原点
         Win32Helper.GetWindowRect(_workerw, out var workerRect);
@@ -50,6 +64,9 @@ public class DynamicWallpaperWindow : IDisposable
                 0x10000000 | 0x40000000, // WS_VISIBLE | WS_CHILD
                 x, y, w, h,
                 _workerw, IntPtr.Zero, hInstance, IntPtr.Zero);
+
+            if (_hwnd == IntPtr.Zero)
+                Debug.WriteLine($"[Wallpaper] Host window creation failed, err={Marshal.GetLastWin32Error()}, workerw={_workerw}");
 
             Win32Helper.SetWindowPos(_hwnd, Win32Helper.HWND_BOTTOM,
                 x, y, w, h,
@@ -83,6 +100,8 @@ public class DynamicWallpaperWindow : IDisposable
                    $"--no-input-terminal --no-terminal --hwdec=auto " +
                    $"--vo=gpu --keep-open --panscan=1.0 " +
                    $"--idle=yes --force-window=no " +
+                   // mpv 默认 demuxer 缓存上限 150+50MiB，循环播放挂机后会涨满，收紧
+                   $"--demuxer-max-bytes=8MiB --demuxer-max-back-bytes=16MiB " +
                    $"--input-ipc-server=\\\\.\\pipe\\{_ipcPipeName} " +
                    $"\"{videoPath}\"";
 
@@ -144,6 +163,28 @@ public class DynamicWallpaperWindow : IDisposable
     /// </summary>
     public bool IsIpcReady => _mpvProcess != null && !_mpvProcess.HasExited && _ipcPipeName != null;
 
+    /// <summary>
+    /// 通过 IPC 暂停/恢复播放（遮挡时停解码省 CPU/GPU）。best-effort，失败静默。
+    /// </summary>
+    public async Task SetPausedAsync(bool paused)
+    {
+        if (!IsIpcReady) return;
+        try
+        {
+            var pipe = await ConnectIpcAsync().ConfigureAwait(false);
+            if (pipe == null) return;
+
+            var command = $"{{\"command\":[\"set_property\",\"pause\",{(paused ? "true" : "false")}]}}\n";
+            var bytes = Encoding.UTF8.GetBytes(command);
+            await pipe.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+            await pipe.FlushAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Wallpaper] SetPaused({paused}) failed: {ex.Message}");
+        }
+    }
+
     private async Task<NamedPipeClientStream?> ConnectIpcAsync()
     {
         if (_ipcPipeName == null || _mpvProcess == null || _mpvProcess.HasExited)
@@ -154,6 +195,7 @@ public class DynamicWallpaperWindow : IDisposable
             var pipe = new NamedPipeClientStream(".", _ipcPipeName, PipeDirection.Out);
             // 最多等 1 秒连接管道
             await pipe.ConnectAsync(1000);
+            _ipcPipe?.Dispose();
             _ipcPipe = pipe;
             return pipe;
         }

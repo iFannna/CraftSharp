@@ -267,7 +267,9 @@ public class WallpaperService
 
         foreach (var d in snapshot.Dynamics)
         {
-            _ = DynamicWallpaperService.Instance.StartPlaybackAsync(d.Key, d.VideoPath, d.Bounds);
+            _ = DynamicWallpaperService.Instance.StartPlaybackAsync(d.Key, d.VideoPath, d.Bounds)
+                .ContinueWith(t => Debug.WriteLine($"[Wallpaper] StartPlayback faulted for {d.Key}: {t.Exception!.GetBaseException().Message}"),
+                    TaskContinuationOptions.OnlyOnFaulted);
             await Task.Delay(200); // 多实例错峰启动
         }
     }
@@ -293,7 +295,14 @@ public class WallpaperService
         {
             var current = DynamicWallpaperWindow.FindDesktopWorkerW(nudge: false);
             if (current != IntPtr.Zero && current != oldWorkerW)
-                return true;
+            {
+                // 壁纸变更可能引发多波延迟重建，句柄变化后再采一样确认稳定，
+                // 避免窗口建在随即又被销毁的 WorkerW 上
+                await Task.Delay(200);
+                if (DynamicWallpaperWindow.FindDesktopWorkerW(nudge: false) == current)
+                    return true;
+                continue;
+            }
 
             // 句柄值被复用的罕见情形：连续多次采样不变视为稳定
             if (current == prev) stableCount++;

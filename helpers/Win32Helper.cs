@@ -191,10 +191,16 @@ namespace CraftSharp.Helpers
         public static extern IntPtr SetThreadDpiAwarenessContext(IntPtr dpiContext);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(int nIndex);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindow(IntPtr hWnd);
 
         #endregion
 

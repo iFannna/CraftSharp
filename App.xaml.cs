@@ -265,6 +265,7 @@ namespace CraftSharp
                 };
                 _wallpaperWatcherHost.Show();
                 Services.Wallpaper.DisplayChangeWatcher.Instance.Initialize(_wallpaperWatcherHost);
+                Services.Wallpaper.FullscreenOcclusionWatcher.Instance.Initialize();
 
                 _ = Services.Wallpaper.WallpaperService.Instance.ApplyLayoutAsync();
             }
