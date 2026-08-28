@@ -20,7 +20,7 @@ public class DesktopWallpaperService
         try
         {
             _com = (IDesktopWallpaper)new DesktopWallpaperComObject();
-            _com.SetPosition(DeskWallpaperPosition.Fill);
+            EnsureFillPosition();
             _comAvailable = true;
         }
         catch (Exception ex)
@@ -42,6 +42,7 @@ public class DesktopWallpaperService
         {
             try
             {
+                EnsureFillPosition();
                 var hr = _com.SetWallpaper(monitorDevicePath, imagePath);
                 if (hr < 0)
                 {
@@ -58,6 +59,26 @@ public class DesktopWallpaperService
         }
 
         return SetWallpaper(imagePath);
+    }
+
+    /// <summary>
+    /// 将壁纸显示位置强制为 Fill（cover）。
+    /// DWM 渲染跟随传统注册表 WallpaperStyle；而 IDesktopWallpaper.SetPosition 在
+    /// Win11 上返回 S_OK 却会异步把该值改写为 6（Fit），导致非 16:9 屏出现黑边，
+    /// 因此绝不能调用 SetPosition，只能直接写注册表。
+    /// </summary>
+    private void EnsureFillPosition()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+            key?.SetValue("WallpaperStyle", "10");
+            key?.SetValue("TileWallpaper", "0");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Wallpaper] EnsureFillPosition failed: {ex.Message}");
+        }
     }
 
     /// <summary>
