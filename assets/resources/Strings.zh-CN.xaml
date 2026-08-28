@@ -28,6 +28,9 @@
     <sys:String x:Key="WallpaperSortHot">最热</sys:String>
     <sys:String x:Key="WallpaperSortDownloads">下载量</sys:String>
     <sys:String x:Key="WallpaperPageInfo">第 {0} / {1} 页</sys:String>
+    <sys:String x:Key="WallpaperModeIndependent">每屏独立</sys:String>
+    <sys:String x:Key="WallpaperModeSpan">跨屏拼接</sys:String>
+    <sys:String x:Key="WallpaperMonitorPrimary">主</sys:String>
     <sys:String x:Key="WallpaperPrev">上一页</sys:String>
     <sys:String x:Key="WallpaperNext">下一页</sys:String>
     <sys:String x:Key="WallpaperRetry">重试</sys:String>

@@ -28,6 +28,9 @@
     <sys:String x:Key="WallpaperSortHot">Hottest</sys:String>
     <sys:String x:Key="WallpaperSortDownloads">Downloads</sys:String>
     <sys:String x:Key="WallpaperPageInfo">Page {0} / {1}</sys:String>
+    <sys:String x:Key="WallpaperModeIndependent">Per-Monitor</sys:String>
+    <sys:String x:Key="WallpaperModeSpan">Span</sys:String>
+    <sys:String x:Key="WallpaperMonitorPrimary">Primary</sys:String>
     <sys:String x:Key="WallpaperPrev">Previous</sys:String>
     <sys:String x:Key="WallpaperNext">Next</sys:String>
     <sys:String x:Key="WallpaperRetry">Retry</sys:String>

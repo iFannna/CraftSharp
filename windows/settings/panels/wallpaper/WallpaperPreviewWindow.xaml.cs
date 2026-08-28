@@ -11,18 +11,21 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly List<WallpaperItem> _wallpapers;
     private readonly Dictionary<string, string> _originalUrls = [];
+    private readonly Func<WallpaperItem, Task> _applyHandler;
     private int _currentIndex;
     private readonly double[] _zoomLevels = { 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0 };
     private int _zoomIndex;
     private bool _isDragging;
     private Point _dragStart;
 
-    public WallpaperPreviewWindow(List<WallpaperItem> wallpapers, int selectedIndex)
+    public WallpaperPreviewWindow(List<WallpaperItem> wallpapers, int selectedIndex,
+        Func<WallpaperItem, Task> applyHandler)
     {
         InitializeComponent();
 
         _wallpapers = wallpapers;
         _currentIndex = selectedIndex;
+        _applyHandler = applyHandler;
 
         Width = SystemParameters.PrimaryScreenWidth * 0.8;
         Height = SystemParameters.PrimaryScreenHeight * 0.8;
@@ -192,49 +195,23 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         RootGrid.ReleaseMouseCapture();
     }
 
-    private void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
+    private async void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
         SetWallpaperBtn.IsEnabled = false;
 
-        if (wallpaper.Type == "dynamic")
+        try
         {
-            WallpaperService.Instance.ApplyDynamicWallpaper(wallpaper,
-                onSuccess: filePath => Dispatcher.Invoke(() =>
-                {
-                    SetWallpaperBtn.IsEnabled = true;
-                    SaveWallpaperSettings(wallpaper.Id, "dynamic", filePath);
-                }),
-                onError: msg => Dispatcher.Invoke(() =>
-                {
-                    SetWallpaperBtn.IsEnabled = true;
-                    MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
-            return;
+            await _applyHandler(wallpaper);
         }
-
-        WallpaperService.Instance.ApplyStaticWallpaper(wallpaper,
-            onSuccess: filePath => Dispatcher.Invoke(() =>
-            {
-                SetWallpaperBtn.IsEnabled = true;
-                SaveWallpaperSettings(wallpaper.Id, "static", filePath);
-            }),
-            onError: msg => Dispatcher.Invoke(() =>
-            {
-                SetWallpaperBtn.IsEnabled = true;
-                MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
-            }));
-    }
-
-    private static void SaveWallpaperSettings(string wallpaperId, string type, string filePath)
-    {
-        var app = (App)Application.Current;
-        var settings = app.GetAppSettings();
-        if (settings == null) return;
-        settings.Wallpaper.CurrentWallpaperId = wallpaperId;
-        settings.Wallpaper.CurrentType = type;
-        settings.Wallpaper.LocalFilePath = filePath;
-        app.SaveSettings();
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            SetWallpaperBtn.IsEnabled = true;
+        }
     }
 
     private async void DownloadBtn_Click(object sender, RoutedEventArgs e)

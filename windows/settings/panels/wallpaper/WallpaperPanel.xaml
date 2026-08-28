@@ -8,6 +8,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -16,8 +17,25 @@
         <TextBlock Grid.Row="0" Text="{DynamicResource WallpaperPanelTitle}" FontSize="20" FontWeight="SemiBold"
                    Margin="0,0,0,20" Foreground="{DynamicResource TextPrimaryBrush}"/>
 
+        <!-- 多显示器选择栏（单显示器时隐藏） -->
+        <StackPanel x:Name="MonitorBar" Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12" Visibility="Collapsed">
+            <ui:Button x:Name="ModeIndependent" Content="{DynamicResource WallpaperModeIndependent}" Tag="independent"
+                       Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="13"
+                       Click="ModeButton_Click"/>
+            <ui:Button x:Name="ModeSpan" Content="{DynamicResource WallpaperModeSpan}" Tag="span"
+                       Appearance="Secondary" Margin="0,0,16,0" Padding="16,6" FontSize="13"
+                       Click="ModeButton_Click"/>
+            <ItemsControl x:Name="MonitorChipPanel">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+
         <!-- 筛选栏 -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,16">
             <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                 <ui:Button x:Name="FilterAll" Content="{DynamicResource WallpaperAll}" Tag="all"
                            Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="13"
@@ -40,7 +58,7 @@
         </StackPanel>
 
         <!-- 内容区 -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <!-- 壁纸网格 -->
             <ListBox x:Name="WallpaperListBox"
                      Background="Transparent" BorderThickness="0"
@@ -189,7 +207,7 @@
         </Grid>
 
         <!-- 分页栏 -->
-        <Grid Grid.Row="3" Margin="0,12,0,0">
+        <Grid Grid.Row="4" Margin="0,12,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <ui:Button x:Name="PrevPageBtn" Content="{DynamicResource WallpaperPrev}"
                            Appearance="Secondary" Padding="16,6" FontSize="13" Margin="0,0,8,0"

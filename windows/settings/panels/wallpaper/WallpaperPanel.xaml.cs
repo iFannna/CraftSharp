@@ -18,6 +18,9 @@ public partial class WallpaperPanel : UserControl
 
     private bool _isInitialized;
 
+    private List<MonitorInfo> _monitors = new();
+    private string? _selectedMonitorId;
+
     public WallpaperPanel()
     {
         InitializeComponent();
@@ -39,15 +42,124 @@ public partial class WallpaperPanel : UserControl
         if ((bool)e.NewValue && !_isInitialized)
             InitializeAndLoad();
         else if ((bool)e.NewValue && _isInitialized && _wallpapers.Count > 0)
+        {
+            RefreshMonitorBar();
             RefreshThumbnails();
+        }
     }
 
     private async void InitializeAndLoad()
     {
         if (_isInitialized) return;
         _isInitialized = true;
+        RefreshMonitorBar();
         await LoadWallpapersAsync(1);
     }
+
+    #region 多显示器选择
+
+    private static WallpaperSettings? WallpaperConfig => (Application.Current as App)?.GetAppSettings()?.Wallpaper;
+
+    private bool IsSpanMode => WallpaperConfig?.Mode == "span";
+
+    /// <summary>
+    /// 刷新显示器选择栏（每次面板可见时调用，感知热插拔）
+    /// </summary>
+    private void RefreshMonitorBar()
+    {
+        _monitors = MonitorLayoutService.Instance.GetMonitors();
+        MonitorBar.Visibility = _monitors.Count >= 2 ? Visibility.Visible : Visibility.Collapsed;
+        if (_monitors.Count < 2) return;
+
+        if (_selectedMonitorId == null || _monitors.All(m => m.DevicePath != _selectedMonitorId))
+            _selectedMonitorId = _monitors[0].DevicePath;
+
+        UpdateModeButtons();
+        BuildMonitorChips();
+    }
+
+    private void UpdateModeButtons()
+    {
+        var span = IsSpanMode;
+        ModeIndependent.Appearance = span
+            ? Wpf.Ui.Controls.ControlAppearance.Secondary
+            : Wpf.Ui.Controls.ControlAppearance.Primary;
+        ModeSpan.Appearance = span
+            ? Wpf.Ui.Controls.ControlAppearance.Primary
+            : Wpf.Ui.Controls.ControlAppearance.Secondary;
+    }
+
+    private void BuildMonitorChips()
+    {
+        MonitorChipPanel.Items.Clear();
+        var spanMode = IsSpanMode;
+        var primaryMark = (string)Application.Current.FindResource("WallpaperMonitorPrimary");
+
+        foreach (var monitor in _monitors)
+        {
+            var label = $"{monitor.Index} · {monitor.Width}x{monitor.Height}";
+            if (monitor.IsPrimary)
+                label += $" ({primaryMark})";
+
+            var chip = new Wpf.Ui.Controls.Button
+            {
+                Content = label,
+                Tag = monitor.DevicePath,
+                Appearance = monitor.DevicePath == _selectedMonitorId
+                    ? Wpf.Ui.Controls.ControlAppearance.Primary
+                    : Wpf.Ui.Controls.ControlAppearance.Secondary,
+                Margin = new Thickness(0, 0, 4, 0),
+                Padding = new Thickness(16, 6, 16, 6),
+                FontSize = 13,
+                IsEnabled = !spanMode
+            };
+            chip.Click += MonitorChip_Click;
+            MonitorChipPanel.Items.Add(chip);
+        }
+    }
+
+    private async void ModeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Wpf.Ui.Controls.Button btn || btn.Tag is not string tag) return;
+
+        var settings = WallpaperConfig;
+        if (settings == null || settings.Mode == tag) return;
+
+        settings.Mode = tag;
+        (Application.Current as App)?.SaveSettings();
+
+        UpdateModeButtons();
+        BuildMonitorChips();
+
+        // 切模式立即应用该模式下的现有配置
+        await WallpaperService.Instance.ApplyLayoutAsync();
+    }
+
+    private void MonitorChip_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Wpf.Ui.Controls.Button btn || btn.Tag is not string devicePath) return;
+
+        _selectedMonitorId = devicePath;
+        BuildMonitorChips();
+    }
+
+    /// <summary>
+    /// 按当前模式与选中显示器应用壁纸（面板快速设置与预览窗口共用入口）
+    /// </summary>
+    private async Task ApplySelectedAsync(WallpaperItem wallpaper)
+    {
+        if (IsSpanMode)
+        {
+            await WallpaperService.Instance.ApplySpanAsync(wallpaper);
+            return;
+        }
+
+        var target = _selectedMonitorId ?? _monitors.FirstOrDefault()?.DevicePath;
+        if (string.IsNullOrEmpty(target)) return;
+        await WallpaperService.Instance.ApplyToMonitorAsync(wallpaper, target);
+    }
+
+    #endregion
 
     private void RefreshThumbnails()
     {
@@ -332,7 +444,7 @@ public partial class WallpaperPanel : UserControl
         if (item != null) OpenPreview(item);
     }
 
-    private void QuickSetWallpaper_Click(object sender, RoutedEventArgs e)
+    private async void QuickSetWallpaper_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement fe) return;
         var item = FindWallpaperItem(fe);
@@ -342,48 +454,19 @@ public partial class WallpaperPanel : UserControl
         btn.IsEnabled = false;
         btn.Content = Application.Current.FindResource("WallpaperSetting") ?? "...";
 
-        if (item.Type == "dynamic")
+        try
         {
-            WallpaperService.Instance.ApplyDynamicWallpaper(item,
-                onSuccess: filePath => Dispatcher.Invoke(() =>
-                {
-                    btn.IsEnabled = true;
-                    btn.Content = Application.Current.FindResource("WallpaperQuickSet");
-                    SaveWallpaperSettings(item.Id, "dynamic", filePath);
-                }),
-                onError: msg => Dispatcher.Invoke(() =>
-                {
-                    btn.IsEnabled = true;
-                    btn.Content = Application.Current.FindResource("WallpaperQuickSet");
-                    MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
-                }));
-            return;
+            await ApplySelectedAsync(item);
         }
-
-        WallpaperService.Instance.ApplyStaticWallpaper(item,
-            onSuccess: filePath => Dispatcher.Invoke(() =>
-            {
-                btn.IsEnabled = true;
-                btn.Content = Application.Current.FindResource("WallpaperQuickSet");
-                SaveWallpaperSettings(item.Id, "static", filePath);
-            }),
-            onError: msg => Dispatcher.Invoke(() =>
-            {
-                btn.IsEnabled = true;
-                btn.Content = Application.Current.FindResource("WallpaperQuickSet");
-                MessageBox.Show(msg, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
-            }));
-    }
-
-    private static void SaveWallpaperSettings(string wallpaperId, string type, string filePath)
-    {
-        var app = (App)Application.Current;
-        var settings = app.GetAppSettings();
-        if (settings == null) return;
-        settings.Wallpaper.CurrentWallpaperId = wallpaperId;
-        settings.Wallpaper.CurrentType = type;
-        settings.Wallpaper.LocalFilePath = filePath;
-        app.SaveSettings();
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Craft#", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            btn.IsEnabled = true;
+            btn.Content = Application.Current.FindResource("WallpaperQuickSet");
+        }
     }
 
     private WallpaperItem? FindWallpaperItem(FrameworkElement element)
@@ -401,7 +484,7 @@ public partial class WallpaperPanel : UserControl
     private void OpenPreview(WallpaperItem item)
     {
         var index = _wallpapers.IndexOf(item);
-        var window = new WallpaperPreviewWindow(_wallpapers, index);
+        var window = new WallpaperPreviewWindow(_wallpapers, index, ApplySelectedAsync);
         window.Owner = Window.GetWindow(this);
         window.Show();
     }
