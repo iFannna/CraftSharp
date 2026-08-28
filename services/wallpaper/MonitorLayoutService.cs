@@ -26,7 +26,8 @@ namespace CraftSharp.Services.Wallpaper
             try
             {
                 _com = (IDesktopWallpaper)new DesktopWallpaperComObject();
-                _com.SetPosition(DeskWallpaperPosition.Fill);
+                // 不调用 SetPosition：Win11 上它会异步把注册表 WallpaperStyle 改写为 Fit，
+                // 显示位置的维护统一由 DesktopWallpaperService.EnsureFillPosition 负责
                 _comAvailable = true;
             }
             catch (Exception ex)
