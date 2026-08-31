@@ -12,7 +12,7 @@ set "PROJECT_ROOT=%~dp0..\.."
 cd /d "%PROJECT_ROOT%"
 
 :: 从 csproj 提取版本号
-for /f "tokens=2 delims=<>" %%a in ('findstr "<Version>" CraftSharp.csproj ^| findstr /v "AssemblyVersion FileVersion PackageReference"') do (
+for /f "tokens=3 delims=<>" %%a in ('findstr "<Version>" CraftSharp.csproj ^| findstr /v "AssemblyVersion FileVersion PackageReference"') do (
     set "APP_VERSION=%%a"
     goto :got_version
 )
