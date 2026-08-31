@@ -92,9 +92,14 @@
                                             <Trigger Property="IsSelected" Value="True">
                                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
                                             </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
+                                            <!-- 绑定表头自身的 IsMouseOver 而非 TreeViewItem 的：
+                                                 后者会沿可视树向上传导，hover/点击子项时父级表头也会被点亮 -->
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <Binding ElementName="Bd" Path="IsMouseOver"/>
+                                                </DataTrigger.Binding>
                                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
-                                            </Trigger>
+                                            </DataTrigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Setter.Value>
