@@ -74,6 +74,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
         private async void LoadSkinsAsync()
         {
+            // 网格即将整批重建，旧卡片控件的原生渲染资源需显式释放（无终结器）
+            ReleaseRealizedControls();
+
             // 显示加载提示，隐藏皮肤网格
             LoadingOverlay.Visibility = Visibility.Visible;
             SkinGrid.Visibility = Visibility.Hidden;
@@ -253,11 +256,33 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 var isCurrentSkin = Path.GetFullPath(skinItem.Path) == currentSkinFullPath;
                 control.IsCurrentSkin = isCurrentSkin;
 
-                if (isCurrentSkin && _selectedSkinControl == null)
+                if (_selectedSkinControl == null)
                 {
-                    _selectedSkinControl = control;
-                    control.IsSelected = true;
-                    SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+                    // 切换 wide/slim 后当前皮肤路径不在本页列表中，回退链（仅预览展示，不写配置）：
+                    // 1. 精确匹配（正常情况）
+                    // 2. 同名回退（wide/slim 两套目录皮肤同名）
+                    // 3. 默认皮肤（当前是自定义皮肤，另一变体没有对应版本；
+                    //    默认皮肤名由配置 Player.DefaultSkin 定义，wide/slim 通用）
+                    var hasExactMatch = _skinItems.Any(i => Path.GetFullPath(i.Path) == currentSkinFullPath);
+                    var hasSameNameSkin = _skinItems.Any(i => string.Equals(
+                        Path.GetFileName(i.Path),
+                        Path.GetFileName(currentSkinFullPath),
+                        StringComparison.OrdinalIgnoreCase));
+                    var isSameNameCard = !hasExactMatch && string.Equals(
+                        Path.GetFileName(skinItem.Path),
+                        Path.GetFileName(currentSkinFullPath),
+                        StringComparison.OrdinalIgnoreCase);
+                    var isDefaultSkin = !hasExactMatch && !hasSameNameSkin && string.Equals(
+                        skinItem.Name,
+                        _settings.Player.DefaultSkin,
+                        StringComparison.OrdinalIgnoreCase);
+
+                    if (isCurrentSkin || isSameNameCard || isDefaultSkin)
+                    {
+                        _selectedSkinControl = control;
+                        control.IsSelected = true;
+                        SkinPreview.LoadSkin(skinItem.Path, skinItem.IsWide);
+                    }
                 }
 
                 // 订阅右键菜单事件
@@ -344,6 +369,20 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                         control.IsCurrentSkin = Path.GetFullPath(control.SkinPath!) == normalizedCurrent;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 释放网格中已实例化卡片的 3D 原生资源。网格重建（宽窄切换/搜索/刷新）前必须调用，
+        /// 否则被丢弃控件的 D3D 资源永久驻留（SharpDX 无终结器）。
+        /// </summary>
+        private void ReleaseRealizedControls()
+        {
+            foreach (var item in _skinItems)
+            {
+                var container = SkinGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (container == null) continue;
+                FindSkinItemControl(container)?.ReleaseGraphics();
             }
         }
 
@@ -459,7 +498,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 var currentSkinFullPath = Path.GetFullPath(Path.Combine(basePath, _settings.Player.Skin));
                 if (Path.GetFullPath(skinItem.Path) == currentSkinFullPath)
                 {
-                    var defaultSkinPath = Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/steve.png");
+                    var defaultSkinPath = Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/alex.png");
                     SetCurrentSkin(defaultSkinPath, true);
                 }
 
@@ -475,6 +514,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
         private void FilterSkins(string? keyword)
         {
+            // 过滤会清空重建集合，容器随之整批重建，先释放旧控件的原生资源
+            ReleaseRealizedControls();
+
             _skinItems.Clear();
 
             if (string.IsNullOrWhiteSpace(keyword))

@@ -409,12 +409,18 @@ namespace CraftSharp.Models
         /// <summary>
         /// 当前皮肤路径（相对于程序目录）
         /// </summary>
-        public string Skin { get; set; } = "assets/minecraft/textures/entity/player/wide/steve.png";
+        public string Skin { get; set; } = "assets/minecraft/textures/entity/player/wide/alex.png";
 
         /// <summary>
         /// 皮肤类型（wide 或 slim）
         /// </summary>
         public string SkinType { get; set; } = "wide";
+
+        /// <summary>
+        /// 默认皮肤名称（wide/slim 两个变体通用），当前皮肤在另一变体
+        /// 没有对应版本时的大预览回退项
+        /// </summary>
+        public string DefaultSkin { get; set; } = "alex";
     }
 
     /// <summary>

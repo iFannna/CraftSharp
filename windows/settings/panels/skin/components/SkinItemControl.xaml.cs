@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -46,7 +47,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 
         private void SetupEffectsManager()
         {
-            Viewport.EffectsManager = new DefaultEffectsManager();
+            // 共享设备：每卡片各建 DefaultEffectsManager = 各一个 D3D11 设备，
+            // 网格重建时旧设备无人 Dispose 即永久泄漏
+            Viewport.EffectsManager = SharedEffectsManager.Instance;
             Viewport.BackgroundColor = Color.FromArgb(0, 0, 0, 0);
 
             // 使用正交相机：没有透视变形，两个模型大小相等
@@ -67,7 +70,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 
             try
             {
-                ModelGroup.Children.Clear();
+                DisposeModelChildren();
 
                 // 正面模型：放在左侧（屏幕左边，X轴负方向）
                 var frontModel = PlayerModelBuilder.CreatePlayerModel(skinPath, uvJsonPath);
@@ -98,6 +101,30 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to load skin: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 控件即将被网格重建丢弃时释放全部原生渲染资源。
+        /// SharpDX COM 资源无终结器，不显式 Dispose 则永不回收；幂等可重复调用。
+        /// RenderHost 必须单独 Dispose：Viewport.Dispose 不会终止其渲染线程，
+        /// 泄漏表现为每控件残留 2 个僵尸线程 + ~7MB 驱动内存。
+        /// </summary>
+        public void ReleaseGraphics()
+        {
+            DisposeModelChildren();
+            (Viewport.RenderHost as IDisposable)?.Dispose();
+            Viewport.Dispose();
+        }
+
+        private void DisposeModelChildren()
+        {
+            foreach (var child in ModelGroup.Children.ToList())
+            {
+                // 必须先脱离场景再 Dispose：附着状态下释放会跳过 detach 链，
+                // RenderHost 节点列表残留冻结死节点（表现为残影/后续模型不渲染）
+                ModelGroup.Children.Remove(child);
+                HelixDispose.Tree(child);
             }
         }
 

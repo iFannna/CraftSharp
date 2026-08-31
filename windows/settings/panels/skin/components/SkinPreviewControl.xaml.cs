@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -6,6 +7,7 @@ using System.Windows.Media.Media3D;
 using HelixToolkit.SharpDX;
 using HelixToolkit.Wpf.SharpDX;
 using CraftSharp.Models;
+using CraftSharp.Helpers;
 
 namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 {
@@ -25,7 +27,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 
         private void SetupEffectsManager()
         {
-            Viewport.EffectsManager = new DefaultEffectsManager();
+            Viewport.EffectsManager = SharedEffectsManager.Instance;
             Viewport.BackgroundColor = Color.FromArgb(0, 0, 0, 0);
 
             // 正交相机：无透视变形
@@ -58,7 +60,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
         {
             try
             {
-                ModelGroup.Children.Clear();
+                DisposeModelChildren();
 
                 var basePath = AppDomain.CurrentDomain.BaseDirectory;
                 var uvPath = isWide ? WideUvPath : SlimUvPath;
@@ -76,7 +78,18 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 
         public void Clear()
         {
-            ModelGroup.Children.Clear();
+            DisposeModelChildren();
+        }
+
+        private void DisposeModelChildren()
+        {
+            foreach (var child in ModelGroup.Children.ToList())
+            {
+                // 必须先脱离场景再 Dispose：附着状态下释放会跳过 detach 链，
+                // RenderHost 节点列表残留冻结死节点（表现为残影/后续模型不渲染）
+                ModelGroup.Children.Remove(child);
+                HelixDispose.Tree(child);
+            }
         }
 
         private void UserControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)

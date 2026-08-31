@@ -662,6 +662,9 @@ namespace CraftSharp
             HotkeyService.Instance.Dispose();
             _hotkeyMessageWindow?.Close();
             _taskbarIcon?.Dispose();
+
+            // 回收全应用共享的 3D 渲染设备（窗口已全部关闭）
+            SharedEffectsManager.Shutdown();
             base.OnExit(e);
         }
 
@@ -790,12 +793,12 @@ namespace CraftSharp
             else
             {
                 // 如果配置中的皮肤不存在，加载默认皮肤
-                var defaultSkinPath = System.IO.Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/steve.png");
+                var defaultSkinPath = System.IO.Path.Combine(basePath, "assets/minecraft/textures/entity/player/wide/alex.png");
                 if (System.IO.File.Exists(defaultSkinPath))
                 {
                     _inventoryWindow.LoadPlayerSkin(defaultSkinPath, true);
                     // 重置配置为默认值
-                    _appSettings.Player.Skin = "assets/minecraft/textures/entity/player/wide/steve.png";
+                    _appSettings.Player.Skin = "assets/minecraft/textures/entity/player/wide/alex.png";
                     _appSettings.Player.SkinType = "wide";
                     SaveSettings();
                 }
