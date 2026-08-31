@@ -52,6 +52,9 @@ Source: "..\..\publish\assets\*"; DestDir: "{app}\assets"; Flags: ignoreversion 
 ; 依赖 DLL
 Source: "..\..\publish\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
+; libmpv 播放库
+Source: "..\..\publish\tools\*"; DestDir: "{app}\tools"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 ; 应用图标（从项目根目录直接复制，不依赖 publish 输出）
 Source: "..\..\craftsharp.ico"; DestDir: "{app}"; Flags: ignoreversion
 
