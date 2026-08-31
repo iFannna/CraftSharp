@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using CraftSharp.Helpers;
 using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
@@ -34,6 +35,8 @@ namespace CraftSharp.Windows.Dialogs
         private readonly ObservableCollection<IconItem> _iconItems = new();
         private readonly Dictionary<string, List<IconItem>> _iconCache = new();
         private IconCategoriesConfig? _categoryConfig;
+        private int _loadGeneration;
+        private const int BatchSize = 50;
 
         // 原生拖放目标（支持 Windows 拖拽缩略图）
         private IDisposable? _nativeDropTarget;
@@ -145,18 +148,42 @@ namespace CraftSharp.Windows.Dialogs
 
         private async void LoadIconsForTagAsync(string tag)
         {
+            // 加载代数：快速切换分类时使旧任务失效，避免向列表交错插入
+            var generation = ++_loadGeneration;
+
+            // 重置加载提示（可见的一定属于已失效的加载）
+            LoadingOverlay.Visibility = Visibility.Collapsed;
+
             // 先检查缓存
             if (_iconCache.TryGetValue(tag, out var cachedItems))
             {
+                // 分批回流：一次性生成上千容器会阻塞UI线程，造成切换分类时的瞬时卡顿
                 _iconItems.Clear();
-                foreach (var item in cachedItems)
-                    _iconItems.Add(item);
                 IconGrid.ItemsSource = _iconItems;
+
+                for (int i = 0; i < cachedItems.Count; i += BatchSize)
+                {
+                    if (generation != _loadGeneration)
+                    {
+                        return;
+                    }
+                    foreach (var item in cachedItems.Skip(i).Take(BatchSize))
+                    {
+                        _iconItems.Add(item);
+                    }
+                    await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+                }
                 return;
             }
 
+            var imageService = ImageService.Instance;
+
             // 在后台线程收集文件路径
             var iconDataList = await Task.Run(() => CollectIconPaths(tag));
+            if (generation != _loadGeneration)
+            {
+                return;
+            }
 
             // 如果是根节点（返回空列表），不更新显示，保持当前状态
             if (iconDataList.Count == 0)
@@ -167,32 +194,45 @@ namespace CraftSharp.Windows.Dialogs
             // 显示加载提示
             LoadingOverlay.Visibility = Visibility.Visible;
 
-            // 在UI线程分批创建BitmapImage
+            // 先挂载再渐进填充
             _iconItems.Clear();
-            const int batchSize = 50;
+            IconGrid.ItemsSource = _iconItems;
 
-            for (int i = 0; i < iconDataList.Count; i += batchSize)
+            for (int i = 0; i < iconDataList.Count; i += BatchSize)
             {
-                var batch = iconDataList.Skip(i).Take(batchSize);
-                foreach (var data in batch)
+                // 解码在线程池完成（冻结的 BitmapImage 可跨线程），UI 线程只做廉价的添加
+                var batchItems = await Task.Run(() =>
                 {
-                    var bitmap = ImageService.Instance.LoadBitmapImageFromPath(data.FilePath);
-                    if (bitmap != null)
+                    var result = new List<IconItem>(BatchSize);
+                    foreach (var data in iconDataList.Skip(i).Take(BatchSize))
                     {
-                        _iconItems.Add(new IconItem
+                        var bitmap = imageService.LoadBitmapImageFromPath(data.FilePath);
+                        if (bitmap != null)
                         {
-                            Name = data.Name,
-                            BitmapImage = bitmap,
-                            RelativePath = data.RelativePath
-                        });
+                            result.Add(new IconItem
+                            {
+                                Name = data.Name,
+                                BitmapImage = bitmap,
+                                RelativePath = data.RelativePath
+                            });
+                        }
                     }
+                    return result;
+                });
+
+                if (generation != _loadGeneration)
+                {
+                    return;
                 }
 
-                // 让UI有机会更新
-                await Task.Delay(1);
-            }
+                foreach (var item in batchItems)
+                {
+                    _iconItems.Add(item);
+                }
 
-            IconGrid.ItemsSource = _iconItems;
+                // 以 Background 优先级让出调度，鼠标输入与渲染优先于后续批次
+                await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Background);
+            }
 
             // 存入缓存
             _iconCache[tag] = _iconItems.ToList();
