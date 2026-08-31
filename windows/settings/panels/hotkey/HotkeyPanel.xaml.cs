@@ -13,7 +13,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
     public partial class HotkeyPanel : UserControl
     {
         private readonly AppSettings _settings;
-        private bool _isRecording = false;
+        public static bool IsRecording { get; private set; }
         private Wpf.Ui.Controls.Button? _recordingButton = null;
 
         public HotkeyPanel(AppSettings settings)
@@ -35,18 +35,19 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             StatusBarHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.StatusBar) ? notSetText : _settings.Hotkeys.StatusBar;
             CrosshairHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.Crosshair) ? notSetText : _settings.Hotkeys.Crosshair;
             DropItemHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.DropItem) ? notSetText : _settings.Hotkeys.DropItem;
+            OpenInventoryHotkeyBtn.Content = string.IsNullOrEmpty(_settings.Hotkeys.OpenInventory) ? notSetText : _settings.Hotkeys.OpenInventory;
         }
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Wpf.Ui.Controls.Button btn) return;
 
-            if (_isRecording)
+            if (IsRecording)
             {
                 FinishRecording();
             }
 
-            _isRecording = true;
+            IsRecording = true;
             _recordingButton = btn;
 
             btn.Content = "...";
@@ -63,7 +64,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 _recordingButton.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
                 _recordingButton.LostKeyboardFocus -= OnRecordingButtonLostFocus;
             }
-            _isRecording = false;
+            IsRecording = false;
             _recordingButton = null;
 
             NotifyHotkeyServiceChanged();
@@ -71,7 +72,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
         private void OnRecordingButtonLostFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (_isRecording)
+            if (IsRecording)
             {
                 RefreshDisplay();
                 FinishRecording();
@@ -80,7 +81,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
         public void HandleKeyDown(KeyEventArgs e)
         {
-            if (!_isRecording || _recordingButton == null) return;
+            if (!IsRecording || _recordingButton == null) return;
 
             if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
                 e.Key == Key.LeftShift || e.Key == Key.RightShift ||
@@ -99,7 +100,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
 
             // 局部快捷键跳过复杂度校验
-            bool isLocalHotkey = hotkeyId == "DropItem";
+            bool isLocalHotkey = hotkeyId == "DropItem" || hotkeyId == "OpenInventory";
             if (!isLocalHotkey && !hotkey.Contains('+'))
             {
                 var owner = Window.GetWindow(this);
@@ -113,7 +114,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                     btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
                     RefreshDisplay();
                     _recordingButton = null;
-                    _isRecording = false;
+                    IsRecording = false;
                     NotifyHotkeyServiceChanged();
                     e.Handled = true;
                     return;
@@ -134,7 +135,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                     btn.LostKeyboardFocus -= OnRecordingButtonLostFocus;
                     RefreshDisplay();
                     _recordingButton = null;
-                    _isRecording = false;
+                    IsRecording = false;
                     NotifyHotkeyServiceChanged();
                     e.Handled = true;
                     return;
@@ -143,7 +144,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
 
             btn.Content = hotkey;
             btn.Appearance = Wpf.Ui.Controls.ControlAppearance.Secondary;
-            _isRecording = false;
+            IsRecording = false;
             _recordingButton = null;
 
             SetHotkeyString(hotkeyId, hotkey);
@@ -190,6 +191,8 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 return (string)Application.Current.TryFindResource("HotkeyCrosshairLabel");
             if (currentHotkeyId != "DropItem" && _settings.Hotkeys.DropItem == newHotkey)
                 return (string)Application.Current.TryFindResource("HotkeyDropItemLabel");
+            if (currentHotkeyId != "OpenInventory" && _settings.Hotkeys.OpenInventory == newHotkey)
+                return (string)Application.Current.TryFindResource("HotkeyOpenInventoryLabel");
             return null;
         }
 
@@ -211,6 +214,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 case "StatusBar": _settings.Hotkeys.StatusBar = value; break;
                 case "Crosshair": _settings.Hotkeys.Crosshair = value; break;
                 case "DropItem": _settings.Hotkeys.DropItem = value; break;
+                case "OpenInventory": _settings.Hotkeys.OpenInventory = value; break;
             }
         }
 

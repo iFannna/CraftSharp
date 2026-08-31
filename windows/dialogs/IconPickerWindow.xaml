@@ -18,7 +18,7 @@
 
         <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource IconPickerTitle}" ShowMinimize="False" ShowMaximize="True" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 主内容区 -->
         <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
@@ -212,7 +212,7 @@
                 <!-- 加载指示器 -->
                 <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource IconPickerLoading}"
                            Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                           Foreground="{DynamicResource TextPrimaryBrush}" FontSize="{DynamicResource GlobalFontSize}"/>
             </Grid>
         </Grid>
     </Grid>

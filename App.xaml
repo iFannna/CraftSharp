@@ -14,6 +14,12 @@
             <!-- 全局字体资源 -->
             <FontFamily x:Key="GlobalFontFamily">Microsoft YaHei</FontFamily>
             <sys:Double x:Key="GlobalFontSize">14</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeTitleXL">24</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeTitle">20</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeSection">16</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeSmall">13</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeCaption">12</sys:Double>
+            <sys:Double x:Key="GlobalFontSizeTiny">11</sys:Double>
 
             <!-- 全局样式：将字体应用到所有 TextBlock -->
             <Style TargetType="TextBlock">

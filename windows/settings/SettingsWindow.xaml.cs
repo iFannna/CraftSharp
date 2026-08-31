@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using CraftSharp.Helpers;
 using CraftSharp.Models;
+using CraftSharp.Services.Update;
 using CraftSharp.Windows.Settings.Panels.Hud;
 using CraftSharp.Windows.Settings.Panels.Inventory;
 using CraftSharp.Windows.Settings.Panels.General;
@@ -35,6 +36,8 @@ namespace CraftSharp.Windows.Settings
             _settings = settings;
 
             InitializeComponent();
+
+            NavVersionText.Text = $"v{UpdateService.CurrentVersion} Craft#";
 
             // 注册原生拖放（仅显示缩略图，不接受文件）
             SourceInitialized += (_, _) =>

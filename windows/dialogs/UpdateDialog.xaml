@@ -22,12 +22,12 @@
         <ui:TitleBar Grid.Row="0"
                      Title="{Binding Title, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
                      ShowMinimize="False" ShowMaximize="False" ShowClose="True"
-                     FontSize="14" FontWeight="Medium"
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium"
                      Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <ScrollViewer Grid.Row="1" MaxHeight="300" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="16">
-                <TextBlock x:Name="NewVersionText" FontSize="15" FontWeight="SemiBold"
+                <TextBlock x:Name="NewVersionText" FontSize="{DynamicResource GlobalFontSizeSection}" FontWeight="SemiBold"
                            Foreground="{DynamicResource TextPrimaryBrush}"
                            Margin="0,0,0,12"/>
                 <TextBlock x:Name="ChangelogText" TextWrapping="Wrap"

@@ -606,6 +606,35 @@ namespace CraftSharp
                     }
                 }));
 
+            // 打开物品栏局部快捷键：应用内任意窗口聚焦时切换物品栏显示
+            EventManager.RegisterClassHandler(typeof(Window),
+                Keyboard.PreviewKeyDownEvent,
+                new KeyEventHandler((sender, e) =>
+                {
+                    // 仅响应本项目窗口（跳过 WPF 内部窗口如 MessageBox）
+                    if (sender is not Window w || w.GetType().Namespace?.StartsWith("CraftSharp") != true) return;
+
+                    // 打字保护：焦点在文本输入控件时不触发
+                    if (Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or
+                        System.Windows.Controls.PasswordBox) return;
+
+                    // 快捷键录制中不触发
+                    if (global::CraftSharp.Windows.Settings.Panels.Hotkey.HotkeyPanel.IsRecording) return;
+
+                    var hotkey = _appSettings?.Hotkeys.OpenInventory;
+                    if (string.IsNullOrEmpty(hotkey) || !HotkeyService.MatchesHotkey(e, hotkey)) return;
+
+                    // 与全局打开背包热键一致：物品栏功能关闭时不响应
+                    if (_appSettings?.Inventory.Visible ?? true)
+                    {
+                        _inventoryWindow?.Toggle();
+                        // 打开后激活使物品栏获得焦点，此时再按快捷键即关闭
+                        if (_inventoryWindow?.IsVisible == true)
+                            _inventoryWindow.Activate();
+                        e.Handled = true;
+                    }
+                }));
+
             // Win32 全局快捷键（使用独立的隐藏窗口接收 WM_HOTKEY）
             _hotkeyMessageWindow = new Window
             {
@@ -914,6 +943,7 @@ namespace CraftSharp
             Resources.Add("TextTertiaryBrush", new SolidColorBrush(Color.FromRgb(0x66, 0x66, 0x66)));
             Resources.Add("DividerBrush", new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x40)));
             Resources.Add("HoverBackgroundBrush", new SolidColorBrush(Color.FromRgb(0x3D, 0x3D, 0x3D)));
+            Resources.Add("DangerBrush", new SolidColorBrush(Color.FromRgb(0xE5, 0x39, 0x35)));
         }
     }
 }

@@ -20,7 +20,7 @@
 
         <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource TopMostConfirmTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 内容区域 -->
         <StackPanel Grid.Row="1" Margin="16">
@@ -36,7 +36,7 @@
             <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,12">
                 <StackPanel>
                     <TextBlock Text="{DynamicResource TopMostConfirmWarningLabel}" FontWeight="Medium"
-                               Foreground="#E74C3C" Margin="0,0,0,8"/>
+                               Foreground="{DynamicResource DangerBrush}" Margin="0,0,0,8"/>
                     <TextBlock Text="{DynamicResource TopMostConfirmWarningContent}"
                                Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
                 </StackPanel>

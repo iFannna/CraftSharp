@@ -19,12 +19,12 @@
         </Grid.RowDefinitions>
 
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource RenameSkinTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <StackPanel Grid.Row="1" Margin="16">
-            <TextBlock Text="{DynamicResource RenameSkinNewLabel}" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource RenameSkinNewLabel}" FontSize="{DynamicResource GlobalFontSize}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
             <ui:TextBox x:Name="NameTextBox" TextChanged="NameTextBox_TextChanged"/>
-            <TextBlock x:Name="ValidationErrorText" Text="" FontSize="12" Foreground="#E53935" Margin="0,4,0,0" Visibility="Collapsed"/>
+            <TextBlock x:Name="ValidationErrorText" Text="" FontSize="{DynamicResource GlobalFontSizeCaption}" Foreground="{DynamicResource DangerBrush}" Margin="0,4,0,0" Visibility="Collapsed"/>
         </StackPanel>
 
         <Grid Grid.Row="2" Margin="16,0,16,16">

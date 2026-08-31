@@ -24,19 +24,19 @@ namespace CraftSharp.Windows.Skin
 
             if (string.IsNullOrEmpty(name))
             {
-                ValidationErrorText.Text = "名称不能为空";
+                ValidationErrorText.Text = TryFindResource("RenameSkinNameEmpty") as string ?? "名称不能为空";
                 ValidationErrorText.Visibility = Visibility.Visible;
                 ConfirmButton.IsEnabled = false;
             }
             else if (!ValidNameRegex.IsMatch(name))
             {
-                ValidationErrorText.Text = "名称只能包含字母、数字、下划线、横杠和空格";
+                ValidationErrorText.Text = TryFindResource("RenameSkinInvalidChars") as string ?? "名称只能包含字母、数字、下划线、横杠和空格";
                 ValidationErrorText.Visibility = Visibility.Visible;
                 ConfirmButton.IsEnabled = false;
             }
             else if (name.Length > 32)
             {
-                ValidationErrorText.Text = "名称长度不能超过32个字符";
+                ValidationErrorText.Text = TryFindResource("RenameSkinNameTooLong") as string ?? "名称长度不能超过32个字符";
                 ValidationErrorText.Visibility = Visibility.Visible;
                 ConfirmButton.IsEnabled = false;
             }

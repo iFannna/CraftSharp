@@ -239,6 +239,8 @@
     <sys:String x:Key="HotkeyCrosshairDesc">Show/Hide crosshair window</sys:String>
     <sys:String x:Key="HotkeyDropItemLabel">Drop Item</sys:String>
     <sys:String x:Key="HotkeyDropItemDesc">Drop item in the hovered slot of the inventory window</sys:String>
+    <sys:String x:Key="HotkeyOpenInventoryLabel">Open Inventory</sys:String>
+    <sys:String x:Key="HotkeyOpenInventoryDesc">Show/Hide the inventory window, only works when an app window is focused</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">Restore Default Settings</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">Clear hotkey</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">Hotkey Conflict</sys:String>
@@ -477,4 +479,21 @@
     <!-- Other -->
     <sys:String x:Key="IconPickerNone">None</sys:String>
     <sys:String x:Key="BossBarDefaultName">New Boss</sys:String>
+
+    <!-- Localization backfill -->
+    <sys:String x:Key="SkinPreviewTitle">Skin Preview</sys:String>
+    <sys:String x:Key="SkinPreviewHint">Drag to rotate | Click ViewCube | Scroll to zoom</sys:String>
+    <sys:String x:Key="ContextMenuSetCurrentSkin">Set as current skin</sys:String>
+    <sys:String x:Key="ContextMenuRemove">Remove</sys:String>
+    <sys:String x:Key="RenameSkinNameEmpty">Name cannot be empty</sys:String>
+    <sys:String x:Key="RenameSkinInvalidChars">Only letters, digits, underscores, hyphens and spaces are allowed</sys:String>
+    <sys:String x:Key="RenameSkinNameTooLong">Name cannot exceed 32 characters</sys:String>
+    <sys:String x:Key="SlotRenameFailedTitle">Rename Failed</sys:String>
+    <sys:String x:Key="SlotRenameExistsMessage">File "{0}" already exists, choose another name.</sys:String>
+    <sys:String x:Key="SlotRenameError">Rename failed: {0}</sys:String>
+    <sys:String x:Key="TooltipFileMissing">File missing</sys:String>
+    <sys:String x:Key="TooltipNoExtension">(no extension)</sys:String>
+    <sys:String x:Key="CrosshairWindowTitle">Crosshair</sys:String>
+    <sys:String x:Key="GrayOverlayWindowTitle">Gray Overlay</sys:String>
+    <sys:String x:Key="PngFileFilter">PNG files (*.png)|*.png</sys:String>
 </ResourceDictionary>

@@ -20,7 +20,7 @@
 
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource WallpaperPreviewTitle}"
                      ShowMinimize="True" ShowMaximize="True" ShowClose="True"
-                     FontSize="14" FontWeight="Medium"
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium"
                      Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 图片预览区 -->
@@ -104,7 +104,7 @@
         <!-- 底部操作栏 -->
         <Grid Grid.Row="2" Background="{DynamicResource ApplicationBackgroundBrush}">
             <TextBlock x:Name="ResolutionText" VerticalAlignment="Center"
-                       Margin="16,0,0,0" FontSize="14"
+                       Margin="16,0,0,0" FontSize="{DynamicResource GlobalFontSize}"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        HorizontalAlignment="Left"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
@@ -142,7 +142,7 @@
 
                 <!-- 设为壁纸 -->
                 <ui:Button x:Name="SetWallpaperBtn" Margin="0,0,6,0"
-                           Appearance="Primary" Padding="14,6" FontSize="12"
+                           Appearance="Primary" Padding="14,6" FontSize="{DynamicResource GlobalFontSizeCaption}"
                            Click="SetWallpaperBtn_Click">
                     <TextBlock Text="{DynamicResource WallpaperSetWallpaper}"/>
                 </ui:Button>

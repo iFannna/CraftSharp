@@ -18,7 +18,7 @@
 
         <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource HudIconPickerTitle}" ShowMinimize="False" ShowMaximize="True" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 图标网格 -->
         <Grid Grid.Row="1" Background="{DynamicResource ApplicationBackgroundBrush}">
@@ -49,7 +49,7 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                Foreground="{DynamicResource TextSecondaryBrush}"
-                                               FontSize="14"/>
+                                               FontSize="{DynamicResource GlobalFontSize}"/>
                                 </Grid>
                             </Border>
                             <DataTemplate.Triggers>
@@ -97,7 +97,7 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                Foreground="{DynamicResource TextSecondaryBrush}"
-                                               FontSize="14"/>
+                                               FontSize="{DynamicResource GlobalFontSize}"/>
                                 </Grid>
                             </Border>
                             <DataTemplate.Triggers>
@@ -113,7 +113,7 @@
             <!-- 加载指示器 -->
             <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource IconPickerLoading}"
                        Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                       Foreground="{DynamicResource TextPrimaryBrush}" FontSize="{DynamicResource GlobalFontSize}"/>
         </Grid>
     </Grid>
 </ui:FluentWindow>

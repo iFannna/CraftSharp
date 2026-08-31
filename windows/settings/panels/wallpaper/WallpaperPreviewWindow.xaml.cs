@@ -222,7 +222,7 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
         {
             FileName = wallpaper.Title,
             DefaultExt = ".png",
-            Filter = "PNG 图片|*.png"
+            Filter = FindResource("PngFileFilter") as string ?? "PNG 图片|*.png"
         };
 
         if (dialog.ShowDialog() != true)

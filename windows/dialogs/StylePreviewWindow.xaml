@@ -21,7 +21,7 @@
 
         <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource StylePreviewTitle}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 图片预览区域 -->
         <Grid Grid.Row="1" Margin="16,8,16,8">
@@ -79,14 +79,14 @@
         <TextBlock x:Name="IndexText" Grid.Row="2"
                    HorizontalAlignment="Center"
                    Margin="0,8,0,8"
-                   FontSize="14"
+                   FontSize="{DynamicResource GlobalFontSize}"
                    Foreground="{DynamicResource TextSecondaryBrush}"/>
 
         <!-- 当前样式名称 -->
         <TextBlock x:Name="StyleNameText" Grid.Row="3"
                    HorizontalAlignment="Center"
                    Margin="0,0,0,16"
-                   FontSize="16" FontWeight="Medium"
+                   FontSize="{DynamicResource GlobalFontSizeSection}" FontWeight="Medium"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
     </Grid>
 </ui:FluentWindow>

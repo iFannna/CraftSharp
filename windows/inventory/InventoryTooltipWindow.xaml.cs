@@ -108,7 +108,7 @@ namespace CraftSharp.Windows.Inventory
                 // 占位图：只显示文件原始名 + 文件已丢失（两个组件）
                 AddTextComponent(Path.GetFileName(filePath), ColorOriginalName, fontSize, true);
                 AddSpacing(componentSpacing);
-                AddTextComponent("文件已丢失", ColorFileMissing, fontSize, true);
+                AddTextComponent(System.Windows.Application.Current?.TryFindResource("TooltipFileMissing") as string ?? "文件已丢失", ColorFileMissing, fontSize, true);
             }
             else
             {
@@ -151,7 +151,7 @@ namespace CraftSharp.Windows.Inventory
                     }
                     else
                     {
-                        AddTextComponent("(无后缀)", ColorFileType, fontSize, true);
+                        AddTextComponent(System.Windows.Application.Current?.TryFindResource("TooltipNoExtension") as string ?? "(无后缀)", ColorFileType, fontSize, true);
                     }
                 }
 

@@ -20,7 +20,7 @@
 
         <!-- 标题栏 -->
         <ui:TitleBar Grid.Row="0" Title="{DynamicResource UploadSkinTitle}" ShowMinimize="False" ShowMaximize="False"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- 内容区域 -->
         <Grid Grid.Row="1" Margin="24,16,24,0">
@@ -32,27 +32,27 @@
             <!-- 左侧表单区域 -->
             <StackPanel Grid.Column="0" Margin="0,0,12,0">
                 <!-- 材质名称输入框 -->
-                <TextBlock Text="{DynamicResource UploadSkinNameLabel}" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="{DynamicResource UploadSkinNameLabel}" FontSize="{DynamicResource GlobalFontSize}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
                 <ui:TextBox x:Name="NameTextBox"
                             PlaceholderText="{DynamicResource UploadSkinNamePlaceholder}"
                             TextChanged="NameTextBox_TextChanged"/>
                 <!-- 验证提示 -->
                 <TextBlock x:Name="ValidationErrorText"
                            Text=""
-                           FontSize="12"
-                           Foreground="#E53935"
+                           FontSize="{DynamicResource GlobalFontSizeCaption}"
+                           Foreground="{DynamicResource DangerBrush}"
                            Margin="0,4,0,0"
                            Visibility="Collapsed"/>
 
                 <!-- 材质类型选择 -->
-                <TextBlock Text="{DynamicResource UploadSkinTypeLabel}" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,16,0,8"/>
+                <TextBlock Text="{DynamicResource UploadSkinTypeLabel}" FontSize="{DynamicResource GlobalFontSize}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,16,0,8"/>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="RadioSteve" Content="Steve" IsChecked="True" Margin="0,0,16,0"/>
                     <RadioButton x:Name="RadioAlex" Content="Alex"/>
                 </StackPanel>
 
                 <!-- 选择文件按钮 -->
-                <TextBlock Text="{DynamicResource UploadSkinFileLabel}" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,16,0,8"/>
+                <TextBlock Text="{DynamicResource UploadSkinFileLabel}" FontSize="{DynamicResource GlobalFontSize}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,16,0,8"/>
                 <ui:Button x:Name="SelectFileButton"
                            Appearance="Secondary"
                            Content="{DynamicResource UploadSkinSelectFile}"
@@ -60,7 +60,7 @@
                 <!-- 文件名显示 -->
                 <TextBlock x:Name="FileNameText"
                            Text=""
-                           FontSize="12"
+                           FontSize="{DynamicResource GlobalFontSizeCaption}"
                            Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,8,0,0"
                            TextWrapping="Wrap"/>
