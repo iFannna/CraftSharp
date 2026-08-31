@@ -1,3 +1,4 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
@@ -126,7 +127,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
             var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
             var dialog = new ConfirmDialog(title, message) { Owner = Window.GetWindow(this) };
-            dialog.ShowDialog();
+            dialog.ShowDialogQuiet();
             if (!dialog.IsConfirmed) return;
 
             _settings.HudElements.Clear();

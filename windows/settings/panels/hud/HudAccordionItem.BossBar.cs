@@ -1,3 +1,4 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Windows.BossBar;
 using System.Windows;
@@ -61,7 +62,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             var editWindow = new BossBarEditWindow(null);
             editWindow.Owner = System.Windows.Window.GetWindow(this);
-            editWindow.ShowDialog();
+            editWindow.ShowDialogQuiet();
             if (editWindow.Result != null)
             {
                 _settings.BossBars.Add(editWindow.Result);
@@ -73,7 +74,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         {
             var editWindow = new BossBarEditWindow(settings);
             editWindow.Owner = System.Windows.Window.GetWindow(this);
-            editWindow.ShowDialog();
+            editWindow.ShowDialogQuiet();
             if (editWindow.Result != null)
             {
                 var existing = _settings.BossBars.FirstOrDefault(b => b.Id == settings.Id);

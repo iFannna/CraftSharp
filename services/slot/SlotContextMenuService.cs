@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services.Hud;
 using CraftSharp.Windows.Dialogs;
@@ -288,7 +289,7 @@ namespace CraftSharp.Services.Slot
             // 弹出重命名对话框
             var renameWindow = new RenameSlotWindow(oldFileName, oldFilePath);
             renameWindow.Owner = GetActiveWindow();
-            renameWindow.ShowDialog();
+            renameWindow.ShowDialogQuiet();
 
             if (!renameWindow.IsConfirmed) return;
 
@@ -349,7 +350,7 @@ namespace CraftSharp.Services.Slot
         {
             var confirmWindow = new SlotMissingConfirmWindow(filePath);
             confirmWindow.Owner = GetActiveWindow();
-            confirmWindow.ShowDialog();
+            confirmWindow.ShowDialogQuiet();
         }
 
         /// <summary>

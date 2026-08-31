@@ -151,7 +151,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                         var colorPicker = new ColorPickerWindow(currentColor);
                         colorPicker.Owner = System.Windows.Window.GetWindow(this);
 
-                        if (colorPicker.ShowDialog() == true)
+                        if (colorPicker.ShowDialogQuiet() == true)
                         {
                             string newColor = colorPicker.SelectedColorHex;
 

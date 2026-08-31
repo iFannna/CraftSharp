@@ -1224,7 +1224,7 @@ namespace CraftSharp.Windows.Inventory
         {
             var confirmWindow = new SlotMissingConfirmWindow(filePath);
             confirmWindow.Owner = Window.GetWindow(this);
-            confirmWindow.ShowDialog();
+            confirmWindow.ShowDialogQuiet();
 
             if (confirmWindow.IsConfirmed)
             {

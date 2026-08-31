@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CraftSharp.Helpers;
 using CraftSharp.Services.Update;
 
 namespace CraftSharp.Windows.Settings.Panels.About
@@ -53,7 +54,7 @@ namespace CraftSharp.Windows.Settings.Panels.About
             {
                 var dialog = new Dialogs.UpdateDialog(release.TagName.TrimStart('v', 'V'), release.Body);
                 dialog.Owner = owner;
-                dialog.ShowDialog();
+                dialog.ShowDialogQuiet();
             }
             else
             {
@@ -61,7 +62,7 @@ namespace CraftSharp.Windows.Settings.Panels.About
                 var title = (string)Application.Current.FindResource("AboutCheckUpdateTitle") ?? "检查更新";
                 var dialog = new Dialogs.MessageDialog(title, message);
                 dialog.Owner = owner;
-                dialog.ShowDialog();
+                dialog.ShowDialogQuiet();
             }
         }
 

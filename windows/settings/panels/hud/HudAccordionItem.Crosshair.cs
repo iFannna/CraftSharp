@@ -51,7 +51,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 {
                     var confirmWindow = new TopMostConfirmWindow();
                     confirmWindow.Owner = System.Windows.Window.GetWindow(this);
-                    confirmWindow.ShowDialog();
+                    confirmWindow.ShowDialogQuiet();
 
                     if (confirmWindow.IsConfirmed)
                     {

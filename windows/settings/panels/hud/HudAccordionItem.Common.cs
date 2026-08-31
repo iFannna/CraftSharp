@@ -212,7 +212,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             var settings = _settings.HudElements.FirstOrDefault(h => h.Id == _hudId);
             string currentStyle = settings?.IconStyle ?? "";
 
-            if (picker.ShowDialog() == true && picker.SelectedIconStyle != null)
+            if (picker.ShowDialogQuiet() == true && picker.SelectedIconStyle != null)
             {
                 EnsureHudElementExists(_hudId);
                 var elem = _settings.HudElements.FirstOrDefault(h => h.Id == _hudId);
