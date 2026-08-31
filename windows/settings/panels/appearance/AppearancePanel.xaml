@@ -20,8 +20,7 @@
                     <TextBlock Text="{DynamicResource AppIconDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <Border Grid.Column="1" Width="48" Height="48" CornerRadius="8"
-                        Background="{DynamicResource CardBackgroundBrush}"
+                <Border Grid.Column="1" Width="48" Height="48"
                         Cursor="Hand" MouseLeftButtonDown="AppIconPreview_Click"
                         x:Name="AppIconPreviewBorder"
                         ToolTip="{DynamicResource AppIconTooltip}">
