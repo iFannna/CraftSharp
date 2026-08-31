@@ -27,7 +27,8 @@ namespace CraftSharp.Windows.SkinPreview
 
         private void SetupEffectsManager()
         {
-            Viewport.EffectsManager = new DefaultEffectsManager();
+            // 共享设备：此窗口常驻隐藏，独立设备只会白占一份驱动堆
+            Viewport.EffectsManager = SharedEffectsManager.Instance;
             Viewport.BackgroundColor = Color.FromArgb(0, 0, 0, 0);
         }
 
@@ -95,7 +96,8 @@ namespace CraftSharp.Windows.SkinPreview
 
         protected override void OnClosed(EventArgs e)
         {
-            Viewport.EffectsManager?.Dispose();
+            // 只释放本窗口视口，EffectsManager 是全应用共享的不能动
+            Viewport.Dispose();
             base.OnClosed(e);
         }
     }

@@ -75,7 +75,7 @@ namespace CraftSharp.Helpers
         public const string CrosshairAttackIndicatorProgress = "assets/minecraft/textures/gui/sprites/hud/crosshair/crosshair_attack_indicator_progress.png";
 
         // 皮肤预览
-        public const string DefaultSkinWide = "assets/minecraft/textures/entity/player/wide/steve.png";
+        public const string DefaultSkinWide = "assets/minecraft/textures/entity/player/wide/alex.png";
         public const string PlayerUvWide = "assets/minecraft/textures/entity/player/uv/wide.json";
         public const string PlayerUvSlim = "assets/minecraft/textures/entity/player/uv/slim.json";
 

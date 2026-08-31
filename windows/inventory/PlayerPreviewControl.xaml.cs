@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
@@ -75,7 +76,8 @@ namespace CraftSharp.Windows.Inventory
 
         private void SetupEffectsManager()
         {
-            Viewport.EffectsManager = new DefaultEffectsManager();
+            // 共享设备：避免与皮肤页/预览窗口各自独立建设备
+            Viewport.EffectsManager = SharedEffectsManager.Instance;
             Viewport.BackgroundColor = Color.FromArgb(0, 0, 0, 0);
         }
 
@@ -105,7 +107,7 @@ namespace CraftSharp.Windows.Inventory
             var (bodyGroup, headGroup) = PlayerModelBuilder.CreatePlayerModelWithSeparateHead(skinPath, uvJsonPath);
 
             // 头部组已经嵌套在身体组中，只需添加身体组
-            BodyModelGroup.Children.Clear();
+            DisposeModelChildren();
             BodyModelGroup.Children.Add(bodyGroup);
 
             // 模型平移：将模型向上偏移4单位
@@ -133,7 +135,7 @@ namespace CraftSharp.Windows.Inventory
 
             var (bodyGroup, headGroup) = PlayerModelBuilder.CreatePlayerModelWithSeparateHead(skinPath, uvJsonPath);
 
-            BodyModelGroup.Children.Clear();
+            DisposeModelChildren();
             BodyModelGroup.Children.Add(bodyGroup);
 
             var offsetTransform = new TranslateTransform3D(0, 4, 0);
@@ -190,6 +192,19 @@ namespace CraftSharp.Windows.Inventory
             double neckScreenY = previewBottom - BottomMargin + (NeckY / ModelHeight) * DisplayHeight;
 
             _neckScreenPosition = new Point(_previewCenter.X, neckScreenY);
+        }
+
+        private void DisposeModelChildren()
+        {
+            foreach (var child in BodyModelGroup.Children.ToList())
+            {
+                // 必须先脱离场景再 Dispose：附着状态下释放会跳过 detach 链，
+                // RenderHost 节点列表残留冻结死节点（表现为残影/后续模型不渲染）
+                BodyModelGroup.Children.Remove(child);
+                HelixDispose.Tree(child);
+            }
+            _bodyGroup = null;
+            _headGroup = null;
         }
 
         private void OnRendering(object? sender, EventArgs e)
@@ -272,7 +287,8 @@ namespace CraftSharp.Windows.Inventory
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             CompositionTarget.Rendering -= OnRendering;
-            Viewport.EffectsManager?.Dispose();
+            // 释放本控件视口；EffectsManager 全应用共享不能动
+            Viewport.Dispose();
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
