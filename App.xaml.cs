@@ -36,10 +36,35 @@ namespace CraftSharp
         private Models.AppSettings? _appSettings;
         private Window? _hotkeyMessageWindow;
         private Window? _wallpaperWatcherHost;
+        private Mutex? _singleInstanceMutex;
+        private EventWaitHandle? _activateSignal;
+        private System.Threading.RegisteredWaitHandle? _activateRegistration;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // 单实例保护：已有实例运行时通知其显示设置窗口，本进程直接退出，不初始化任何服务
+            _singleInstanceMutex = new Mutex(true, @"Local\CraftSharp.SingleInstance", out bool createdNew);
+            if (!createdNew)
+            {
+                // 同名句柄已存在时构造函数等效于打开，未存在时创建（覆盖极小概率的启动竞态）
+                using var activate = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\CraftSharp.Activate");
+                activate.Set();
+                Shutdown();
+                return;
+            }
+
+            // 监听后续进程的激活请求
+            _activateSignal = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\CraftSharp.Activate");
+            _activateRegistration = ThreadPool.RegisterWaitForSingleObject(
+                _activateSignal,
+                (_, _) =>
+                {
+                    try { Dispatcher.Invoke(ActivateSettingsWindow); }
+                    catch { /* 退出中的竞态，直接忽略 */ }
+                },
+                null, Timeout.Infinite, executeOnlyOnce: false);
 
             // 初始化自定义颜色画刷（必须在窗口创建之前）
             InitializeBrushes();
@@ -672,7 +697,24 @@ namespace CraftSharp
 
             // 释放窗口类背景刷占用的 GDI 资源
             WindowFillBrushHelper.Cleanup();
+
+            // 释放单实例相关句柄（互斥体随进程结束由系统回收）
+            _activateRegistration?.Unregister(null);
+            _activateSignal?.Dispose();
+            _singleInstanceMutex?.Dispose();
             base.OnExit(e);
+        }
+
+        /// <summary>
+        /// 重复启动时激活已有实例的设置窗口
+        /// </summary>
+        private void ActivateSettingsWindow()
+        {
+            if (_settingsWindow == null) return;
+            _settingsWindow.Show();
+            if (_settingsWindow.WindowState == WindowState.Minimized)
+                _settingsWindow.WindowState = WindowState.Normal;
+            _settingsWindow.Activate();
         }
 
         /// <summary>
