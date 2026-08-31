@@ -17,6 +17,7 @@ namespace CraftSharp.Services.Resource
         private string? _currentIconPath;
         private TaskbarIcon? _taskbarIcon;
         private IntPtr _appliedIconHandle;
+        private IntPtr _trayIconHandle;
         private const int WM_SETICON = 0x0080;
         private const int ICON_SMALL = 0;
         private const int ICON_BIG = 1;
@@ -161,10 +162,21 @@ namespace CraftSharp.Services.Resource
         /// </summary>
         private static int GetTaskbarIconSize()
         {
+            return GetTrayDpi() / 4;
+        }
+
+        /// <summary>
+        /// 托盘图标槽位为 16 逻辑像素随任务栏 DPI 缩放（100%:16，150%:24，200%:32），
+        /// 与任务栏同理必须提供正好等于槽位的 HICON
+        /// </summary>
+        private static int GetTrayIconSize() => GetTrayDpi() / 6;
+
+        private static int GetTrayDpi()
+        {
             var tray = Win32Helper.FindWindow("Shell_TrayWnd", null);
             uint dpi = tray != IntPtr.Zero ? GetDpiForWindow(tray) : 0;
             dpi = dpi != 0 ? dpi : GetDpiForSystem();
-            return (int)(dpi != 0 ? dpi : 96) / 4;
+            return (int)(dpi != 0 ? dpi : 96);
         }
 
         [DllImport("user32.dll")]
@@ -172,39 +184,6 @@ namespace CraftSharp.Services.Resource
 
         [DllImport("user32.dll")]
         private static extern uint GetDpiForSystem();
-
-        /// <summary>
-        /// 归一化图标尺寸：放大用最近邻保持像素图锐利
-        /// </summary>
-        private static ImageSource NormalizeIconSize(BitmapImage original, int target)
-        {
-            if (original.PixelWidth < target || original.PixelHeight < target)
-            {
-                var scale = (double)target / Math.Max(original.PixelWidth, original.PixelHeight);
-                var width = (int)Math.Round(original.PixelWidth * scale);
-                var height = (int)Math.Round(original.PixelHeight * scale);
-
-                var visual = new System.Windows.Media.DrawingVisual();
-                RenderOptions.SetBitmapScalingMode(visual, BitmapScalingMode.NearestNeighbor);
-                using (var dc = visual.RenderOpen())
-                {
-                    dc.DrawImage(original, new Rect(0, 0, width, height));
-                }
-
-                var rendered = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                rendered.Render(visual);
-                rendered.Freeze();
-                return rendered;
-            }
-            if (original.PixelWidth > target || original.PixelHeight > target)
-            {
-                var transformed = new TransformedBitmap(original,
-                    new ScaleTransform((double)target / original.PixelWidth, (double)target / original.PixelHeight));
-                transformed.Freeze();
-                return transformed;
-            }
-            return original;
-        }
 
         private BitmapSource? GetIcoImageSource()
         {
@@ -232,19 +211,30 @@ namespace CraftSharp.Services.Resource
 
         private void SetTrayIconFromIco()
         {
-            if (_taskbarIcon == null) return;
-
-            var source = GetIcoImageSource();
-            if (source != null)
-            {
-                _taskbarIcon.IconSource = source;
-            }
+            UpdateNotifyIcon(GetIcoImageSource());
         }
 
-        private void UpdateNotifyIcon(BitmapImage original)
+        /// <summary>
+        /// 托盘与任务栏同理：直接写入按槽位精确渲染的 HICON。
+        /// TaskbarIcon.IconSource 的内部转换链不保证像素忠实，
+        /// 而 Icon 属性持有原生 System.Drawing.Icon，HICON 原样进入 NOTIFYICONDATA
+        /// </summary>
+        private void UpdateNotifyIcon(BitmapSource? source)
         {
-            if (_taskbarIcon == null) return;
-            _taskbarIcon.IconSource = NormalizeIconSize(original, 32);
+            if (_taskbarIcon == null || source == null) return;
+
+            var rendered = RenderNearestNeighbor(source, GetTrayIconSize());
+            var newHandle = CreateHIcon(rendered);
+            if (newHandle == IntPtr.Zero) return;
+
+            _taskbarIcon.Icon = System.Drawing.Icon.FromHandle(newHandle);
+
+            // Icon.FromHandle 不持有句柄，替换后由本服务统一销毁旧句柄
+            if (_trayIconHandle != IntPtr.Zero)
+            {
+                DestroyIcon(_trayIconHandle);
+            }
+            _trayIconHandle = newHandle;
         }
 
         public string? GetCurrentIconPath() => _currentIconPath;
