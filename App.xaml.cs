@@ -44,6 +44,10 @@ namespace CraftSharp
             // 初始化自定义颜色画刷（必须在窗口创建之前）
             InitializeBrushes();
 
+            // 所有窗口加载后修正缩放填充色（DWM 暗色标记 + 窗口类背景刷），消除暗色主题下放大闪白
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => WindowFillBrushHelper.Update((Window)sender)));
+
             // 加载设置
             var configDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config");
             if (!System.IO.Directory.Exists(configDir))
@@ -665,6 +669,9 @@ namespace CraftSharp
 
             // 回收全应用共享的 3D 渲染设备（窗口已全部关闭）
             SharedEffectsManager.Shutdown();
+
+            // 释放窗口类背景刷占用的 GDI 资源
+            WindowFillBrushHelper.Cleanup();
             base.OnExit(e);
         }
 

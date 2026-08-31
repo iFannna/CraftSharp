@@ -1,6 +1,7 @@
 using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Microsoft.Win32;
+using CraftSharp.Helpers;
 
 namespace CraftSharp.Services.Core
 {
@@ -76,6 +77,9 @@ namespace CraftSharp.Services.Core
 
             // 更新自定义颜色画笔
             UpdateCustomBrushes(theme);
+
+            // 同步刷新已打开窗口的缩放填充（窗口类背景刷与 DWM 暗色标记随主题变化）
+            WindowFillBrushHelper.RefreshAll();
         }
 
         /// <summary>
