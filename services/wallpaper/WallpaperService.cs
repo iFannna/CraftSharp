@@ -96,7 +96,7 @@ public class WallpaperService
 
         var sw = Stopwatch.StartNew();
 
-        // 快路径：静态全部不变且模式相同，仅动态内容差异 → IPC 热切换
+        // 快路径：静态全部不变且模式相同，仅动态内容差异 → 热切换
         if (_currentSnapshot != null
             && snapshot.Mode == _currentSnapshot.Mode
             && snapshot.Statics.SequenceEqual(_currentSnapshot.Statics)
@@ -200,7 +200,7 @@ public class WallpaperService
     }
 
     /// <summary>
-    /// 动态快路径：静态不变时逐 key IPC 热切换/新建窗口。无法快路径时返回 false。
+    /// 动态快路径：静态不变时逐 key 热切换/新建窗口。无法快路径时返回 false。
     /// </summary>
     private static async Task<bool> ApplyDynamicOnlyAsync(LayoutSnapshot target, LayoutSnapshot current)
     {
@@ -227,7 +227,7 @@ public class WallpaperService
                 continue;
 
             if (!await DynamicWallpaperService.Instance.SwitchVideoAsync(plan.Key, plan.VideoPath))
-                return false; // IPC 不可用，回退全量重排
+                return false; // 实例失效，回退全量重排
         }
         return true;
     }

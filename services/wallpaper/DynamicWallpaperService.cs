@@ -7,7 +7,7 @@ using CraftSharp.Windows.Wallpaper;
 namespace CraftSharp.Services.Wallpaper;
 
 /// <summary>
-/// 动态壁纸多实例管理：每个显示器一个宿主窗口 + mpv 进程，
+/// 动态壁纸多实例管理：每个显示器一个宿主窗口 + 进程内 libmpv 实例，
 /// 跨屏拼接模式为单窗口覆盖虚拟桌面（key 使用 SpanKey）。
 /// </summary>
 public class DynamicWallpaperService
@@ -95,7 +95,7 @@ public class DynamicWallpaperService
     }
 
     /// <summary>
-    /// 通过 IPC 对已有实例热切换视频（零窗口重建）。不可用返回 false。
+    /// 对已有实例热切换视频（零窗口重建）。实例失效返回 false。
     /// </summary>
     public async Task<bool> SwitchVideoAsync(string key, string videoPath)
     {
@@ -104,7 +104,7 @@ public class DynamicWallpaperService
         {
             DynamicWallpaperWindow? window;
             lock (_windows) window = _windows.GetValueOrDefault(key);
-            if (window == null || !window.IsIpcReady) return false;
+            if (window == null || !window.IsPlayerReady) return false;
 
             string? current;
             lock (_windows) current = _videoPaths.GetValueOrDefault(key);

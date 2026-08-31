@@ -7,7 +7,7 @@ using CraftSharp.Helpers;
 namespace CraftSharp.Services.Wallpaper
 {
     /// <summary>
-    /// 一秒轮询看门狗：前台全屏窗口盖住某路动态壁纸时通过 IPC 暂停对应 mpv（省 CPU/GPU），
+    /// 一秒轮询看门狗：前台全屏窗口盖住某路动态壁纸时暂停对应播放实例（省 CPU/GPU），
     /// 前台切换走后自动恢复；宿主窗口被 WorkerW 重建连带销毁时原位重建自愈。
     /// </summary>
     public class FullscreenOcclusionWatcher
@@ -60,7 +60,7 @@ namespace CraftSharp.Services.Wallpaper
 
             foreach (var key in service.ActiveKeys)
             {
-                // 宿主窗口被 WorkerW 延迟重建连带销毁（mpv 随之退出）时原位重建，
+                // 宿主窗口被 WorkerW 延迟重建连带销毁时原位重建，
                 // 编排层快照对此无感知，只有这里能自愈
                 if (!service.IsHostAlive(key))
                 {

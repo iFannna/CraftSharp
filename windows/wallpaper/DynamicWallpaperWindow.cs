@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CraftSharp.Helpers;
 
@@ -13,10 +12,10 @@ public class DynamicWallpaperWindow : IDisposable
 {
     private IntPtr _workerw;
     private IntPtr _hwnd;
-    private Process? _mpvProcess;
+    private IntPtr _mpv;
+    private Thread? _eventThread;
+    private volatile bool _eventThreadStop;
     private TaskCompletionSource<bool>? _renderReadyTcs;
-    private NamedPipeClientStream? _ipcPipe;
-    private string? _ipcPipeName;
     private bool _disposed;
     private System.Windows.Threading.Dispatcher? _ownerDispatcher;
     private Win32Helper.RECT _bounds;
@@ -27,13 +26,12 @@ public class DynamicWallpaperWindow : IDisposable
     public Win32Helper.RECT Bounds => _bounds;
 
     /// <summary>
-    /// 宿主窗口与 mpv 是否都还活着。WorkerW 被系统重建时会连带销毁子窗口，
-    /// mpv 渲染窗口随 --wid 父窗口消亡后退出，这里用于看门狗检测。
+    /// 宿主窗口与 libmpv 实例是否都还活着。WorkerW 被系统重建时会连带销毁子窗口，
+    /// 这里用于看门狗检测。
     /// </summary>
     public bool IsAlive => _hwnd != IntPtr.Zero
         && Win32Helper.IsWindow(_hwnd)
-        && _mpvProcess != null
-        && !_mpvProcess.HasExited;
+        && _mpv != IntPtr.Zero;
 
     /// <summary>
     /// 在桌面 WorkerW 下创建覆盖指定物理矩形的子窗口。
@@ -85,139 +83,144 @@ public class DynamicWallpaperWindow : IDisposable
         Stop();
         _renderReadyTcs = new TaskCompletionSource<bool>();
 
-        string mpvPath = GetMpvPath();
-        if (!File.Exists(mpvPath))
+        if (!MpvNative.EnsureLoaded())
         {
-            Debug.WriteLine($"[Wallpaper] mpv.exe not found: {mpvPath}");
+            MpvDiag("libmpv-2.dll not found in tools/");
             _renderReadyTcs.TrySetResult(false);
             return;
         }
 
-        // 每个 MPV 实例使用唯一的管道名
-        _ipcPipeName = $"craftsharp-mpv-{Guid.NewGuid():N}";
-
-        var args = $"--wid={_hwnd} --no-audio --loop --no-input-default-bindings " +
-                   $"--no-input-terminal --no-terminal --hwdec=auto " +
-                   $"--vo=gpu --keep-open --panscan=1.0 " +
-                   $"--idle=yes --force-window=no " +
-                   // mpv 默认 demuxer 缓存上限 150+50MiB，循环播放挂机后会涨满，收紧
-                   $"--demuxer-max-bytes=8MiB --demuxer-max-back-bytes=16MiB " +
-                   $"--input-ipc-server=\\\\.\\pipe\\{_ipcPipeName} " +
-                   $"\"{videoPath}\"";
-
-        var psi = new ProcessStartInfo
+        var ctx = MpvNative.mpv_create();
+        if (ctx == IntPtr.Zero)
         {
-            FileName = mpvPath,
-            Arguments = args,
-            CreateNoWindow = true,
-            UseShellExecute = false,
-            RedirectStandardError = true
-        };
+            MpvDiag("mpv_create failed");
+            _renderReadyTcs.TrySetResult(false);
+            return;
+        }
 
-        _mpvProcess = new Process
+        MpvNative.mpv_request_log_messages(ctx, "warn");
+
+        void Opt(string name, string value)
         {
-            StartInfo = psi,
-            EnableRaisingEvents = true
-        };
-        _mpvProcess.ErrorDataReceived += OnMpvErrorData;
-        _mpvProcess.Exited += OnMpvExited;
+            var rc = MpvNative.mpv_set_option_string(ctx, name, value);
+            if (rc < 0)
+                MpvDiag($"option {name}={value} rejected, rc={rc}");
+        }
 
-        _mpvProcess.Start();
-        _mpvProcess.BeginErrorReadLine();
+        MpvDiag($"=== LoadAndPlay wid=0x{_hwnd:X} file={videoPath}");
 
-        Debug.WriteLine($"[Wallpaper] mpv started, pid={_mpvProcess?.Id}, wid={_hwnd}");
+        Opt("wid", _hwnd.ToInt64().ToString());
+        Opt("vo", "gpu");
+        Opt("hwdec", "auto");
+        Opt("audio", "no");
+        Opt("loop-file", "inf");
+        Opt("panscan", "1.0");
+        Opt("keep-open", "yes");
+        // mpv 默认 demuxer 缓存上限 150+50MiB，循环播放挂机后会涨满，收紧
+        Opt("demuxer-max-bytes", "8388608");
+        Opt("demuxer-max-back-bytes", "16777216");
+
+        var initRc = MpvNative.mpv_initialize(ctx);
+        if (initRc < 0)
+        {
+            MpvDiag($"mpv_initialize failed rc={initRc}");
+            MpvNative.mpv_terminate_destroy(ctx);
+            _renderReadyTcs.TrySetResult(false);
+            return;
+        }
+
+        _mpv = ctx;
+
+        // 事件线程：PLAYBACK_RESTART（播放开始，首帧已入列）作为渲染就绪信号
+        _eventThreadStop = false;
+        _eventThread = new Thread(EventLoop) { IsBackground = true, Name = "mpv-event" };
+        _eventThread.Start();
+
+        var loadRc = MpvNative.Command(_mpv, "loadfile", videoPath);
+        MpvDiag($"loadfile rc={loadRc}");
+        if (loadRc < 0)
+        {
+            _renderReadyTcs.TrySetResult(false);
+            return;
+        }
 
         // 超时兜底：2秒后无论如何标记完成
         Task.Delay(2000).ContinueWith(_ => _renderReadyTcs.TrySetResult(true));
     }
 
-    /// <summary>
-    /// 通过 IPC 向当前 MPV 进程发送 loadfile 命令切换视频，复用已有进程。
-    /// 返回 true 表示成功，false 表示 IPC 不可用需要回退。
-    /// </summary>
-    public async Task<bool> SwitchVideoAsync(string videoPath)
+    private static readonly object _diagLock = new();
+    private static void MpvDiag(string line)
     {
-        // 等待 IPC 管道可用
-        var pipe = await ConnectIpcAsync();
-        if (pipe == null)
-        {
-            Debug.WriteLine("[Wallpaper] IPC pipe not available, falling back to restart");
-            return false;
-        }
-
-        // 发送 loadfile 命令
-        var command = $"{{\"command\":[\"loadfile\",\"{videoPath.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"]}}\n";
-        var bytes = Encoding.UTF8.GetBytes(command);
-        await pipe.WriteAsync(bytes, 0, bytes.Length);
-        await pipe.FlushAsync();
-
-        Debug.WriteLine($"[Wallpaper] IPC loadfile sent: {videoPath}");
-
-        // loadfile 不会触发新的 VO: 日志，短延迟让 MPV 开始解码即可
-        await Task.Delay(200);
-        return true;
-    }
-
-    /// <summary>
-    /// 指示 IPC 连接是否就绪（MPV 进程存活且管道可连接）。
-    /// </summary>
-    public bool IsIpcReady => _mpvProcess != null && !_mpvProcess.HasExited && _ipcPipeName != null;
-
-    /// <summary>
-    /// 通过 IPC 暂停/恢复播放（遮挡时停解码省 CPU/GPU）。best-effort，失败静默。
-    /// </summary>
-    public async Task SetPausedAsync(bool paused)
-    {
-        if (!IsIpcReady) return;
         try
         {
-            var pipe = await ConnectIpcAsync().ConfigureAwait(false);
-            if (pipe == null) return;
-
-            var command = $"{{\"command\":[\"set_property\",\"pause\",{(paused ? "true" : "false")}]}}\n";
-            var bytes = Encoding.UTF8.GetBytes(command);
-            await pipe.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
-            await pipe.FlushAsync().ConfigureAwait(false);
+            lock (_diagLock)
+                File.AppendAllText(
+                    Path.Combine(Path.GetTempPath(), "craftsharp_mpv.log"),
+                    $"{DateTime.Now:HH:mm:ss.fff} {line}\n");
         }
-        catch (Exception ex)
+        catch { }
+    }
+
+    /// <summary>
+    /// mpv 事件泵。每轮重新读 _mpv：Stop 清零后立即退出，
+    /// 避免对已销毁上下文调用 wait_event。
+    /// </summary>
+    private void EventLoop()
+    {
+        while (!_eventThreadStop)
         {
-            Debug.WriteLine($"[Wallpaper] SetPaused({paused}) failed: {ex.Message}");
+            var ctx = _mpv;
+            if (ctx == IntPtr.Zero) return;
+
+            var ev = MpvNative.mpv_wait_event(ctx, 0.5);
+            if (ev == IntPtr.Zero) return;
+
+            var evt = Marshal.PtrToStructure<MpvNative.MpvEvent>(ev);
+            if (evt.EventId == MpvNative.MpvEventPlaybackRestart)
+                _renderReadyTcs?.TrySetResult(true);
+            else if (evt.EventId == MpvNative.MpvEventLogMessageId)
+            {
+                var msg = Marshal.PtrToStructure<MpvNative.MpvEventLogMessage>(evt.Data);
+                var text = Marshal.PtrToStringUTF8(msg.Text);
+                if (!string.IsNullOrEmpty(text))
+                    MpvDiag($"[mpv/{Marshal.PtrToStringUTF8(msg.Level)}] {text.TrimEnd()}");
+            }
+            else if (evt.EventId == MpvNative.MpvEventShutdown)
+                return;
         }
     }
 
-    private async Task<NamedPipeClientStream?> ConnectIpcAsync()
+    /// <summary>
+    /// 对当前 libmpv 实例热切换视频（零窗口重建）。返回 false 表示实例已失效需重建。
+    /// </summary>
+    public Task<bool> SwitchVideoAsync(string videoPath)
     {
-        if (_ipcPipeName == null || _mpvProcess == null || _mpvProcess.HasExited)
-            return null;
+        var ctx = _mpv;
+        if (ctx == IntPtr.Zero) return Task.FromResult(false);
 
-        try
-        {
-            var pipe = new NamedPipeClientStream(".", _ipcPipeName, PipeDirection.Out);
-            // 最多等 1 秒连接管道
-            await pipe.ConnectAsync(1000);
-            _ipcPipe?.Dispose();
-            _ipcPipe = pipe;
-            return pipe;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[Wallpaper] IPC connect failed: {ex.Message}");
-            return null;
-        }
+        var ok = MpvNative.Command(ctx, "loadfile", videoPath) >= 0;
+        if (!ok)
+            Debug.WriteLine($"[Wallpaper] mpv loadfile failed: {videoPath}");
+        return Task.FromResult(ok);
     }
 
-    private void OnMpvErrorData(object sender, DataReceivedEventArgs e)
-    {
-        if (string.IsNullOrEmpty(e.Data)) return;
-        Debug.WriteLine($"[Wallpaper] mpv: {e.Data}");
-        // VO: 行表示视频输出已初始化，首帧即将渲染
-        if (e.Data.Contains("VO:"))
-            _renderReadyTcs?.TrySetResult(true);
-    }
+    /// <summary>
+    /// 播放实例是否就绪（可用于热切换）。
+    /// </summary>
+    public bool IsPlayerReady => _mpv != IntPtr.Zero;
 
-    private void OnMpvExited(object? sender, EventArgs e)
+    /// <summary>
+    /// 暂停/恢复播放（遮挡时停解码省 CPU/GPU）。
+    /// </summary>
+    public Task SetPausedAsync(bool paused)
     {
-        _renderReadyTcs?.TrySetResult(false);
+        var ctx = _mpv;
+        if (ctx != IntPtr.Zero)
+        {
+            if (MpvNative.mpv_set_property_string(ctx, "pause", paused ? "yes" : "no") < 0)
+                Debug.WriteLine($"[Wallpaper] SetPaused({paused}) failed");
+        }
+        return Task.CompletedTask;
     }
 
     public Task<bool> WaitForRenderReadyAsync() =>
@@ -225,24 +228,23 @@ public class DynamicWallpaperWindow : IDisposable
 
     public void Stop()
     {
-        _ipcPipe?.Dispose();
-        _ipcPipe = null;
+        var ctx = _mpv;
+        if (ctx == IntPtr.Zero) return;
 
-        if (_mpvProcess == null) return;
+        // 先停事件泵再销毁上下文，杜绝 wait_event 触达已释放内存。
+        // 500ms 轮询超时 + wakeup 保证 Join 几乎必然即时返回
+        _eventThreadStop = true;
+        MpvNative.mpv_wakeup(ctx);
+        _eventThread?.Join(2000);
+        _eventThread = null;
 
-        _mpvProcess.ErrorDataReceived -= OnMpvErrorData;
-        _mpvProcess.Exited -= OnMpvExited;
-        if (!_mpvProcess.HasExited)
-        {
-            try { _mpvProcess.Kill(true); } catch { }
-        }
-        _mpvProcess.Dispose();
-        _mpvProcess = null;
+        _mpv = IntPtr.Zero;
+        MpvNative.mpv_terminate_destroy(ctx);
     }
 
     public void SetVolume(double volume, bool muted)
     {
-        // mpv 启动时已 --no-audio，如需后续控制可用 IPC
+        // mpv 启动时已 audio=no，壁纸无音频需求
     }
 
     public void Close()
@@ -259,17 +261,6 @@ public class DynamicWallpaperWindow : IDisposable
             Win32Helper.DestroyWindow(_hwnd);
             _hwnd = IntPtr.Zero;
         }
-    }
-
-    private static string GetMpvPath()
-    {
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string path = Path.Combine(baseDir, "tools", "mpv.exe");
-        if (File.Exists(path)) return path;
-
-        // 开发环境：从项目根目录查找
-        path = Path.Combine(baseDir, "..", "..", "..", "tools", "mpv.exe");
-        return Path.GetFullPath(path);
     }
 
     /// <summary>
