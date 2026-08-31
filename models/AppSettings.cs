@@ -399,6 +399,11 @@ namespace CraftSharp.Models
         /// 丢弃物品快捷键（局部快捷键）
         /// </summary>
         public string DropItem { get; set; } = "Q";
+
+        /// <summary>
+        /// 打开物品栏快捷键（局部快捷键，仅应用窗口聚焦时生效）
+        /// </summary>
+        public string OpenInventory { get; set; } = "E";
     }
 
     /// <summary>

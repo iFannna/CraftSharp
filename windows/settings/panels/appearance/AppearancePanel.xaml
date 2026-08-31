@@ -4,7 +4,7 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="{DynamicResource AppearancePanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+        <TextBlock Text="{DynamicResource AppearancePanelTitle}" FontSize="{DynamicResource GlobalFontSizeTitle}" FontWeight="SemiBold" Margin="0,0,0,24"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <!-- 应用图标卡片 -->
@@ -81,14 +81,14 @@
                     <ComboBoxItem Content="{DynamicResource FontPixel}" Tag="Pixel">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" FontFamily="pack://application:,,,/Fonts/zpix.ttf#Zpix" FontSize="{DynamicResource GlobalFontSize}" Style="{x:Null}"/>
+                                <TextBlock Text="{Binding}" FontFamily="/assets/fonts/zpix.ttf#Zpix" FontSize="{DynamicResource GlobalFontSize}" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>
                     <ComboBoxItem Content="{DynamicResource FontUnifont}" Tag="UniFont">
                         <ComboBoxItem.ContentTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" FontFamily="pack://application:,,,/Fonts/unifont-16.0.04.ttf#Unifont" FontSize="{DynamicResource GlobalFontSize}" Style="{x:Null}"/>
+                                <TextBlock Text="{Binding}" FontFamily="/assets/fonts/unifont-16.0.04.ttf#Unifont" FontSize="{DynamicResource GlobalFontSize}" Style="{x:Null}"/>
                             </DataTemplate>
                         </ComboBoxItem.ContentTemplate>
                     </ComboBoxItem>

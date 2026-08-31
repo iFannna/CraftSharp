@@ -181,7 +181,29 @@ namespace CraftSharp.Services.Core
                 { "Crosshair", "Ctrl+Alt+C" },
                 { "Inventory", "Ctrl+Alt+E" },
                 { "DropItem", "Q" },
+                { "OpenInventory", "E" },
             };
+        }
+
+        /// <summary>
+        /// 判断按键事件是否匹配热键字符串（如 "E" 或 "Ctrl+Shift+K"，用于局部快捷键）
+        /// </summary>
+        public static bool MatchesHotkey(KeyEventArgs e, string hotkey)
+        {
+            if (string.IsNullOrEmpty(hotkey)) return false;
+
+            var parts = hotkey.Split('+');
+            if (!Enum.TryParse<Key>(parts[^1].Trim(), out var key)) return false;
+
+            if (key != e.Key && key != e.SystemKey) return false;
+
+            var requiredCtrl = parts.Length > 1 && parts.Contains("Ctrl", StringComparer.OrdinalIgnoreCase);
+            var requiredShift = parts.Length > 1 && parts.Contains("Shift", StringComparer.OrdinalIgnoreCase);
+            var requiredAlt = parts.Length > 1 && parts.Contains("Alt", StringComparer.OrdinalIgnoreCase);
+
+            return Keyboard.Modifiers.HasFlag(ModifierKeys.Control) == requiredCtrl &&
+                   Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) == requiredShift &&
+                   Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) == requiredAlt;
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

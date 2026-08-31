@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX"
-                 Title="皮肤预览"
+                 Title="{DynamicResource SkinPreviewTitle}"
                  Height="450" Width="450"
                  MinHeight="300" MinWidth="300"
                  WindowStartupLocation="CenterScreen"
@@ -22,8 +22,8 @@
         </Grid.RowDefinitions>
 
         <!-- 标题栏 -->
-        <ui:TitleBar Grid.Row="0" Title="皮肤预览" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+        <ui:TitleBar Grid.Row="0" Title="{DynamicResource SkinPreviewTitle}" ShowMinimize="True" ShowMaximize="True" ShowClose="True"
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <!-- HelixToolkit Viewport3DX -->
         <hx:Viewport3DX Grid.Row="1" x:Name="Viewport"
@@ -46,8 +46,8 @@
         <!-- 视角提示栏 -->
         <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" Padding="10,5">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="拖拽旋转 | 点击ViewCube切换视角 | 滚轮缩放"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBlock Text="{DynamicResource SkinPreviewHint}"
+                           FontSize="{DynamicResource GlobalFontSizeCaption}" Foreground="{DynamicResource TextSecondaryBrush}"/>
             </StackPanel>
         </Border>
     </Grid>

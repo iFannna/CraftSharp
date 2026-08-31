@@ -306,9 +306,13 @@ namespace CraftSharp.Services.Slot
             // 检查新文件名是否已存在
             if (File.Exists(newFilePath))
             {
+                var existsTemplate = System.Windows.Application.Current?.TryFindResource("SlotRenameExistsMessage") as string
+                    ?? "文件 \"{0}\" 已存在，请使用其他名称。";
+                var failedTitle = System.Windows.Application.Current?.TryFindResource("SlotRenameFailedTitle") as string
+                    ?? "重命名失败";
                 System.Windows.MessageBox.Show(
-                    $"文件 \"{newFileName + extension}\" 已存在，请使用其他名称。",
-                    "重命名失败",
+                    string.Format(existsTemplate, newFileName + extension),
+                    failedTitle,
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
                 return;
@@ -335,9 +339,13 @@ namespace CraftSharp.Services.Slot
             }
             catch (Exception ex)
             {
+                var errorTemplate = System.Windows.Application.Current?.TryFindResource("SlotRenameError") as string
+                    ?? "重命名失败：{0}";
+                var failedTitle = System.Windows.Application.Current?.TryFindResource("SlotRenameFailedTitle") as string
+                    ?? "重命名失败";
                 System.Windows.MessageBox.Show(
-                    $"重命名失败：{ex.Message}",
-                    "重命名失败",
+                    string.Format(errorTemplate, ex.Message),
+                    failedTitle,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }

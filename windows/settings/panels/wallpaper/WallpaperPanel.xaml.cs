@@ -110,7 +110,7 @@ public partial class WallpaperPanel : UserControl
                     : Wpf.Ui.Controls.ControlAppearance.Secondary,
                 Margin = new Thickness(0, 0, 4, 0),
                 Padding = new Thickness(16, 6, 16, 6),
-                FontSize = 13,
+                FontSize = (double)FindResource("GlobalFontSizeSmall"),
                 IsEnabled = !spanMode
             };
             chip.Click += MonitorChip_Click;

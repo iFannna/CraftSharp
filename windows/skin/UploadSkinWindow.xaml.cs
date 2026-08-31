@@ -77,7 +77,7 @@ namespace CraftSharp.Windows.Skin
             var dialog = new OpenFileDialog
             {
                 Title = FindResource("UploadSkinTitle") as string ?? "选择皮肤文件",
-                Filter = "PNG 文件 (*.png)|*.png",
+                Filter = FindResource("PngFileFilter") as string ?? "PNG 文件 (*.png)|*.png",
                 CheckFileExists = true
             };
 

@@ -14,16 +14,16 @@
         </Grid.RowDefinitions>
 
         <!-- 标题 -->
-        <TextBlock Grid.Row="0" Text="{DynamicResource WallpaperPanelTitle}" FontSize="20" FontWeight="SemiBold"
+        <TextBlock Grid.Row="0" Text="{DynamicResource WallpaperPanelTitle}" FontSize="{DynamicResource GlobalFontSizeTitle}" FontWeight="SemiBold"
                    Margin="0,0,0,20" Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <!-- 多显示器选择栏（单显示器时隐藏） -->
         <StackPanel x:Name="MonitorBar" Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12" Visibility="Collapsed">
             <ui:Button x:Name="ModeIndependent" Content="{DynamicResource WallpaperModeIndependent}" Tag="independent"
-                       Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="13"
+                       Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                        Click="ModeButton_Click"/>
             <ui:Button x:Name="ModeSpan" Content="{DynamicResource WallpaperModeSpan}" Tag="span"
-                       Appearance="Secondary" Margin="0,0,16,0" Padding="16,6" FontSize="13"
+                       Appearance="Secondary" Margin="0,0,16,0" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                        Click="ModeButton_Click"/>
             <ItemsControl x:Name="MonitorChipPanel">
                 <ItemsControl.ItemsPanel>
@@ -38,17 +38,17 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,16">
             <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                 <ui:Button x:Name="FilterAll" Content="{DynamicResource WallpaperAll}" Tag="all"
-                           Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="13"
+                           Appearance="Primary" Margin="0,0,4,0" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Click="FilterButton_Click"/>
                 <ui:Button x:Name="FilterStatic" Content="{DynamicResource WallpaperStatic}" Tag="static"
-                           Appearance="Secondary" Margin="0,0,4,0" Padding="16,6" FontSize="13"
+                           Appearance="Secondary" Margin="0,0,4,0" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Click="FilterButton_Click"/>
                 <ui:Button x:Name="FilterDynamic" Content="{DynamicResource WallpaperDynamic}" Tag="dynamic"
-                           Appearance="Secondary" Padding="16,6" FontSize="13"
+                           Appearance="Secondary" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Click="FilterButton_Click"/>
             </StackPanel>
 
-            <ComboBox x:Name="SortComboBox" MinWidth="100" Padding="16,6" FontSize="13"
+            <ComboBox x:Name="SortComboBox" MinWidth="100" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                       VerticalAlignment="Center" SelectedIndex="0"
                       SelectionChanged="SortComboBox_SelectionChanged">
                 <ComboBoxItem Content="{DynamicResource WallpaperSortLatest}" Tag="latest"/>
@@ -99,7 +99,7 @@
                                                    HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                         <TextBlock Text="{DynamicResource WallpaperLoadFailed}"
                                                    Foreground="{DynamicResource TextTertiaryBrush}"
-                                                   FontSize="11" HorizontalAlignment="Center"/>
+                                                   FontSize="{DynamicResource GlobalFontSizeTiny}" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                     <Image x:Name="ThumbnailImage" Stretch="UniformToFill"
                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -111,27 +111,27 @@
                                     <Border x:Name="DynamicBadge" Visibility="Collapsed"
                                             HorizontalAlignment="Left" VerticalAlignment="Top"
                                             Margin="6" Padding="4,2" CornerRadius="4"
-                                            Background="#9B59B6" Opacity="0.9">
+                                            Background="{DynamicResource AccentBrush}" Opacity="0.9">
                                         <TextBlock Text="{DynamicResource WallpaperDynamicBadge}"
-                                                   FontSize="10" Foreground="White"/>
+                                                   FontSize="{DynamicResource GlobalFontSizeTiny}" Foreground="White"/>
                                     </Border>
                                     <Border x:Name="HoverOverlay"
                                             Background="#80000000"
                                             Visibility="Visible" Opacity="0">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <ui:Button Content="{DynamicResource WallpaperViewImage}"
-                                                       Appearance="Secondary" FontSize="11" Padding="10,5"
+                                                       Appearance="Secondary" FontSize="{DynamicResource GlobalFontSizeTiny}" Padding="10,5"
                                                        Margin="0,0,8,0"
                                                        Click="ViewImage_Click"/>
                                             <ui:Button Content="{DynamicResource WallpaperQuickSet}"
-                                                       Appearance="Primary" FontSize="11" Padding="10,5"
+                                                       Appearance="Primary" FontSize="{DynamicResource GlobalFontSizeTiny}" Padding="10,5"
                                                        Click="QuickSetWallpaper_Click"/>
                                         </StackPanel>
                                     </Border>
                                     <!-- 底部悬浮信息 -->
                                     <Border VerticalAlignment="Bottom" Background="#80000000"
                                             Padding="8,6">
-                                        <TextBlock Text="{Binding Title}" FontSize="11"
+                                        <TextBlock Text="{Binding Title}" FontSize="{DynamicResource GlobalFontSizeTiny}"
                                                    TextTrimming="CharacterEllipsis"
                                                    Foreground="White"
                                                    VerticalAlignment="Center"/>
@@ -185,15 +185,15 @@
             <!-- 错误状态 -->
             <StackPanel x:Name="ErrorStack" Visibility="Collapsed"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="{DynamicResource WallpaperErrorTitle}" FontSize="16"
+                <TextBlock Text="{DynamicResource WallpaperErrorTitle}" FontSize="{DynamicResource GlobalFontSizeSection}"
                            Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"
                            Margin="0,0,0,8"/>
                 <TextBlock x:Name="ErrorMessage" Text="{DynamicResource WallpaperErrorDesc}"
-                           FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                           FontSize="{DynamicResource GlobalFontSizeSmall}" Foreground="{DynamicResource TextSecondaryBrush}"
                            HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="400"
                            Margin="0,0,0,16"/>
                 <ui:Button Content="{DynamicResource WallpaperRetry}" Appearance="Primary"
-                           HorizontalAlignment="Center" Padding="24,8" FontSize="13"
+                           HorizontalAlignment="Center" Padding="24,8" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Click="RetryButton_Click"/>
             </StackPanel>
 
@@ -201,7 +201,7 @@
             <StackPanel x:Name="LoadingStack" Visibility="Collapsed"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ui:ProgressRing IsIndeterminate="True" Width="40" Height="40" Margin="0,0,0,12"/>
-                <TextBlock Text="{DynamicResource WallpaperLoading}" FontSize="13"
+                <TextBlock Text="{DynamicResource WallpaperLoading}" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
@@ -210,13 +210,13 @@
         <Grid Grid.Row="4" Margin="0,12,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <ui:Button x:Name="PrevPageBtn" Content="{DynamicResource WallpaperPrev}"
-                           Appearance="Secondary" Padding="16,6" FontSize="13" Margin="0,0,8,0"
+                           Appearance="Secondary" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}" Margin="0,0,8,0"
                            Click="PrevPage_Click"/>
-                <TextBlock x:Name="PageInfo" FontSize="13"
+                <TextBlock x:Name="PageInfo" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Foreground="{DynamicResource TextSecondaryBrush}"
                            VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <ui:Button x:Name="NextPageBtn" Content="{DynamicResource WallpaperNext}"
-                           Appearance="Secondary" Padding="16,6" FontSize="13"
+                           Appearance="Secondary" Padding="16,6" FontSize="{DynamicResource GlobalFontSizeSmall}"
                            Click="NextPage_Click"/>
             </StackPanel>
         </Grid>

@@ -87,20 +87,34 @@ namespace CraftSharp.Services.Core
         }
 
         /// <summary>
-        /// 应用字体大小
+        /// 应用字体大小（同时派生各档位字号，跟随基础字号缩放）
         /// </summary>
         private void ApplyFontSize()
         {
             var app = System.Windows.Application.Current;
             if (app == null) return;
 
-            if (app.Resources.Contains("GlobalFontSize"))
+            var sizes = new (string Key, double Size)[]
             {
-                app.Resources["GlobalFontSize"] = CurrentFontSize;
-            }
-            else
+                ("GlobalFontSize", CurrentFontSize),
+                ("GlobalFontSizeTitleXL", Math.Max(8, CurrentFontSize + 10)),
+                ("GlobalFontSizeTitle", Math.Max(8, CurrentFontSize + 6)),
+                ("GlobalFontSizeSection", Math.Max(8, CurrentFontSize + 2)),
+                ("GlobalFontSizeSmall", Math.Max(8, CurrentFontSize - 1)),
+                ("GlobalFontSizeCaption", Math.Max(8, CurrentFontSize - 2)),
+                ("GlobalFontSizeTiny", Math.Max(8, CurrentFontSize - 3)),
+            };
+
+            foreach (var (key, size) in sizes)
             {
-                app.Resources.Add("GlobalFontSize", CurrentFontSize);
+                if (app.Resources.Contains(key))
+                {
+                    app.Resources[key] = size;
+                }
+                else
+                {
+                    app.Resources.Add(key, size);
+                }
             }
         }
 

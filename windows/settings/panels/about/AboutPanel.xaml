@@ -4,16 +4,16 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <StackPanel>
         <!-- 标题 -->
-        <TextBlock Text="{DynamicResource AboutPanelTitle}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"
+        <TextBlock Text="{DynamicResource AboutPanelTitle}" FontSize="{DynamicResource GlobalFontSizeTitle}" FontWeight="SemiBold" Margin="0,0,0,24"
                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
         <ui:Card Padding="24">
             <StackPanel>
                 <!-- Logo and Title -->
                 <StackPanel Margin="0,0,0,16" VerticalAlignment="Center">
-                    <TextBlock Text="Craft#" FontSize="24" FontWeight="Bold"
+                    <TextBlock Text="Craft#" FontSize="{DynamicResource GlobalFontSizeTitleXL}" FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="14"/>
+                    <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="{DynamicResource GlobalFontSize}"/>
                 </StackPanel>
 
                 <TextBlock Text="{DynamicResource AboutDesc}" Margin="0,0,0,24"
@@ -59,7 +59,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
             <TextBlock Text="{DynamicResource AboutTerms}"
-                       FontSize="12" Cursor="Hand" Margin="0,0,16,0"
+                       FontSize="{DynamicResource GlobalFontSizeCaption}" Cursor="Hand" Margin="0,0,16,0"
                        TextDecorations="Underline"
                        MouseLeftButtonDown="Terms_Click">
                 <TextBlock.Style>
@@ -74,7 +74,7 @@
                 </TextBlock.Style>
             </TextBlock>
             <TextBlock Text="{DynamicResource AboutPrivacy}"
-                       FontSize="12" Cursor="Hand"
+                       FontSize="{DynamicResource GlobalFontSizeCaption}" Cursor="Hand"
                        TextDecorations="Underline"
                        MouseLeftButtonDown="Privacy_Click">
                 <TextBlock.Style>

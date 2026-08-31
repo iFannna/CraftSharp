@@ -15,7 +15,6 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
     public partial class SkinItemControl : System.Windows.Controls.UserControl
     {
         private bool _isSelected = false;
-        private static readonly SolidColorBrush SelectedBorderBrush = new SolidColorBrush(Color.FromRgb(0, 120, 215));
         private static readonly SolidColorBrush NormalBorderBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
         public event EventHandler? Selected;
@@ -140,7 +139,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
 
         private void UpdateBorderAppearance()
         {
-            ItemBorder.BorderBrush = _isSelected ? SelectedBorderBrush : NormalBorderBrush;
+            ItemBorder.BorderBrush = _isSelected ? (SolidColorBrush)FindResource("AccentBrush") : NormalBorderBrush;
         }
 
         private void ItemBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -5,14 +5,6 @@
              xmlns:components="clr-namespace:CraftSharp.Windows.Settings.Panels.Skin.Components"
              VerticalAlignment="Stretch">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ui:ControlsDictionary />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Grid x:Name="RootGrid" PreviewMouseLeftButtonDown="RootGrid_PreviewMouseLeftButtonDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -42,6 +34,7 @@
 
                 <!-- 右侧搜索框 -->
                 <ui:TextBox x:Name="SearchBox" Grid.Column="1" Width="180" MinWidth="180" MaxWidth="180" HorizontalAlignment="Right"
+                            FontFamily="{DynamicResource GlobalFontFamily}" FontSize="{DynamicResource GlobalFontSize}"
                             PlaceholderText="{DynamicResource SkinSearchPlaceholder}"
                             ClearButtonEnabled="True" TextChanged="SearchBox_TextChanged"/>
             </Grid>
@@ -73,7 +66,7 @@
                                                                     Loaded="SkinItemControl_Loaded"
                                                                     Selected="SkinItemControl_Selected"/>
                                         <TextBlock Text="{Binding Name}"
-                                                   FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   FontSize="{DynamicResource GlobalFontSize}" Foreground="{DynamicResource TextPrimaryBrush}"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    Margin="0,4,0,8"
                                                    TextTrimming="CharacterEllipsis"
@@ -87,7 +80,7 @@
                     <TextBlock x:Name="LoadingOverlay" Text="{DynamicResource SkinLoading}" Visibility="Collapsed"
                                Panel.ZIndex="10"
                                VerticalAlignment="Center" HorizontalAlignment="Center"
-                               Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                               Foreground="{DynamicResource TextPrimaryBrush}" FontSize="{DynamicResource GlobalFontSize}"/>
                 </Grid>
             </ui:Card>
 

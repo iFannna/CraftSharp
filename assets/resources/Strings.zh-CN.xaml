@@ -239,6 +239,8 @@
     <sys:String x:Key="HotkeyCrosshairDesc">显示/隐藏准星窗口</sys:String>
     <sys:String x:Key="HotkeyDropItemLabel">丢弃物品</sys:String>
     <sys:String x:Key="HotkeyDropItemDesc">丢弃物品栏窗口中鼠标悬浮格子内的物品</sys:String>
+    <sys:String x:Key="HotkeyOpenInventoryLabel">打开物品栏</sys:String>
+    <sys:String x:Key="HotkeyOpenInventoryDesc">显示/隐藏物品栏窗口，仅在应用窗口聚焦时生效</sys:String>
     <sys:String x:Key="HotkeyRestoreDefaults">恢复默认设置</sys:String>
     <sys:String x:Key="HotkeyClearTooltip">清除快捷键</sys:String>
     <sys:String x:Key="HotkeyConflictTitle">快捷键冲突</sys:String>
@@ -477,4 +479,21 @@
     <!-- 其他 -->
     <sys:String x:Key="IconPickerNone">无</sys:String>
     <sys:String x:Key="BossBarDefaultName">新BOSS</sys:String>
+
+    <!-- 适配补全 -->
+    <sys:String x:Key="SkinPreviewTitle">皮肤预览</sys:String>
+    <sys:String x:Key="SkinPreviewHint">拖拽旋转 | 点击ViewCube切换视角 | 滚轮缩放</sys:String>
+    <sys:String x:Key="ContextMenuSetCurrentSkin">设置为当前皮肤</sys:String>
+    <sys:String x:Key="ContextMenuRemove">移除</sys:String>
+    <sys:String x:Key="RenameSkinNameEmpty">名称不能为空</sys:String>
+    <sys:String x:Key="RenameSkinInvalidChars">名称只能包含字母、数字、下划线、横杠和空格</sys:String>
+    <sys:String x:Key="RenameSkinNameTooLong">名称长度不能超过32个字符</sys:String>
+    <sys:String x:Key="SlotRenameFailedTitle">重命名失败</sys:String>
+    <sys:String x:Key="SlotRenameExistsMessage">文件 "{0}" 已存在，请使用其他名称。</sys:String>
+    <sys:String x:Key="SlotRenameError">重命名失败：{0}</sys:String>
+    <sys:String x:Key="TooltipFileMissing">文件已丢失</sys:String>
+    <sys:String x:Key="TooltipNoExtension">(无后缀)</sys:String>
+    <sys:String x:Key="CrosshairWindowTitle">准星</sys:String>
+    <sys:String x:Key="GrayOverlayWindowTitle">灰色蒙版</sys:String>
+    <sys:String x:Key="PngFileFilter">PNG 文件 (*.png)|*.png</sys:String>
 </ResourceDictionary>

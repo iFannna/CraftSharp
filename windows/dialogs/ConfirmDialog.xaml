@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <ui:TitleBar Grid.Row="0" Title="{Binding Title, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}" ShowMinimize="False" ShowMaximize="False" ShowClose="True"
-                     FontSize="14" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
+                     FontSize="{DynamicResource GlobalFontSize}" FontWeight="Medium" Background="{DynamicResource ApplicationBackgroundBrush}"/>
 
         <StackPanel Grid.Row="1" Margin="16">
             <TextBlock x:Name="MessageText" TextWrapping="Wrap"
