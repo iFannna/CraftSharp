@@ -36,9 +36,8 @@ namespace CraftSharp.Services.Resource
 
             if (string.IsNullOrEmpty(relativePath))
             {
-                // 未设置时使用 craftsharp.ico
-                SetTrayIconFromIco();
-                ApplyWindowIcons(GetIcoImageSource());
+                // 未设置时使用 craftsharp.ico：正常显示，不套用像素图管线
+                ResetToDefaultIcon();
                 return;
             }
 
@@ -209,11 +208,6 @@ namespace CraftSharp.Services.Resource
             catch { return null; }
         }
 
-        private void SetTrayIconFromIco()
-        {
-            UpdateNotifyIcon(GetIcoImageSource());
-        }
-
         /// <summary>
         /// 托盘与任务栏同理：直接写入按槽位精确渲染的 HICON。
         /// TaskbarIcon.IconSource 的内部转换链不保证像素忠实，
@@ -235,6 +229,39 @@ namespace CraftSharp.Services.Resource
                 DestroyIcon(_trayIconHandle);
             }
             _trayIconHandle = newHandle;
+        }
+
+        /// <summary>
+        /// 恢复默认图标：托盘回到 IconSource 常规路径，
+        /// 窗口经 WPF 原生 Window.Icon 管线重设（直接清空 WM_SETICON
+        /// 任务栏不会回退刷新，必须写入实际图标）
+        /// </summary>
+        private void ResetToDefaultIcon()
+        {
+            var source = GetIcoImageSource();
+
+            if (_taskbarIcon != null && source != null)
+            {
+                _taskbarIcon.IconSource = source;
+            }
+            if (_trayIconHandle != IntPtr.Zero)
+            {
+                DestroyIcon(_trayIconHandle);
+                _trayIconHandle = IntPtr.Zero;
+            }
+
+            if (source != null)
+            {
+                foreach (Window window in Application.Current.Windows)
+                {
+                    window.Icon = source;
+                }
+            }
+            if (_appliedIconHandle != IntPtr.Zero)
+            {
+                DestroyIcon(_appliedIconHandle);
+                _appliedIconHandle = IntPtr.Zero;
+            }
         }
 
         public string? GetCurrentIconPath() => _currentIconPath;
