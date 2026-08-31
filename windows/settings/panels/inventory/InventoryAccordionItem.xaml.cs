@@ -304,7 +304,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                         app.RefreshInventoryStyle(selectedStyle);
                     }
                 };
-                previewWindow.ShowDialog();
+                previewWindow.ShowDialogQuiet();
                 e.Handled = true;
             };
 
@@ -411,7 +411,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                         var colorPicker = new ColorPickerWindow(currentColor);
                         colorPicker.Owner = Window.GetWindow(this);
 
-                        if (colorPicker.ShowDialog() == true)
+                        if (colorPicker.ShowDialogQuiet() == true)
                         {
                             string newColor = colorPicker.SelectedColorHex;
 

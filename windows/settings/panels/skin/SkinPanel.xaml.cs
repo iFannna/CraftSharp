@@ -1,3 +1,4 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Windows.Settings.Panels.Skin.Components;
 using CraftSharp.Windows.Skin;
@@ -192,7 +193,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             var uploadWindow = new UploadSkinWindow();
             uploadWindow.Owner = _parentWindow;
 
-            if (uploadWindow.ShowDialog() == true)
+            if (uploadWindow.ShowDialogQuiet() == true)
             {
                 // 上传成功，立即使用新皮肤
                 var newSkinPath = uploadWindow.ResultSkinPath!;
@@ -422,7 +423,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             {
                 var renameWindow = new RenameSkinWindow(skinItem.Name);
                 renameWindow.Owner = _parentWindow;
-                renameWindow.ShowDialog();
+                renameWindow.ShowDialogQuiet();
 
                 if (!renameWindow.IsConfirmed)
                     return;
@@ -473,7 +474,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             {
                 var confirmWindow = new RemoveSkinConfirmWindow(skinItem.Name);
                 confirmWindow.Owner = _parentWindow;
-                confirmWindow.ShowDialog();
+                confirmWindow.ShowDialogQuiet();
 
                 if (!confirmWindow.IsConfirmed)
                     return;

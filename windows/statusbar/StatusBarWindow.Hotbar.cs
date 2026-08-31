@@ -1139,7 +1139,7 @@ namespace CraftSharp.Windows.StatusBar
         {
             var confirmWindow = new SlotMissingConfirmWindow(filePath);
             confirmWindow.Owner = Window.GetWindow(this);
-            confirmWindow.ShowDialog();
+            confirmWindow.ShowDialogQuiet();
 
             if (confirmWindow.IsConfirmed)
             {

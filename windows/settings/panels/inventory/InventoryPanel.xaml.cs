@@ -1,3 +1,4 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Windows.Dialogs;
 using System.Windows;
@@ -173,7 +174,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             var title = (string)System.Windows.Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
             var message = (string)System.Windows.Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
             var dialog = new ConfirmDialog(title, message) { Owner = System.Windows.Window.GetWindow(this) };
-            dialog.ShowDialog();
+            dialog.ShowDialogQuiet();
             if (!dialog.IsConfirmed) return;
 
             _settings.Inventory = new InventorySettings();

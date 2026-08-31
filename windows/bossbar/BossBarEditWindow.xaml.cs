@@ -190,7 +190,7 @@ namespace CraftSharp.Windows.BossBar
         {
             var picker = new HudIconPickerWindow("boss_bar");
             picker.Owner = this;
-            if (picker.ShowDialog() == true && picker.SelectedIconStyle != null)
+            if (picker.ShowDialogQuiet() == true && picker.SelectedIconStyle != null)
             {
                 _iconType = picker.SelectedIconStyle;
                 LoadIconPreview();
@@ -201,7 +201,7 @@ namespace CraftSharp.Windows.BossBar
         {
             var picker = new HudIconPickerWindow("boss_bar_notch");
             picker.Owner = this;
-            if (picker.ShowDialog() == true && picker.SelectedIconStyle != null)
+            if (picker.ShowDialogQuiet() == true && picker.SelectedIconStyle != null)
             {
                 _notchType = picker.SelectedIconStyle;
                 LoadNotchPreview();

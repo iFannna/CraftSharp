@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services.Core;
 using CraftSharp.Windows.Dialogs;
@@ -104,7 +105,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 var owner = Window.GetWindow(this);
                 var dialog = new HotkeySimpleDialog(hotkey);
                 dialog.Owner = owner;
-                dialog.ShowDialog();
+                dialog.ShowDialogQuiet();
 
                 if (!dialog.IsConfirmed)
                 {
@@ -125,7 +126,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
                 var owner = Window.GetWindow(this);
                 var dialog = new HotkeyConflictDialog(hotkey, conflictFunc);
                 dialog.Owner = owner;
-                dialog.ShowDialog();
+                dialog.ShowDialogQuiet();
 
                 if (!dialog.IsConfirmed)
                 {
@@ -197,7 +198,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             var owner = Window.GetWindow(this);
             var dialog = new HotkeyConflictDialog(hotkey, "");
             dialog.Owner = owner;
-            dialog.ShowDialog();
+            dialog.ShowDialogQuiet();
         }
 
         private void SetHotkeyString(string hotkeyId, string value)
@@ -231,7 +232,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hotkey
             var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
             var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
             var dialog = new ConfirmDialog(title, message) { Owner = Window.GetWindow(this) };
-            dialog.ShowDialog();
+            dialog.ShowDialogQuiet();
             if (!dialog.IsConfirmed) return;
 
             var defaults = HotkeyService.GetDefaults();

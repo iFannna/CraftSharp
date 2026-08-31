@@ -1,3 +1,4 @@
+using CraftSharp.Helpers;
 using CraftSharp.Models;
 using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
@@ -127,7 +128,7 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
             var picker = new IconPickerWindow();
             picker.Owner = _parentWindow;
 
-            if (picker.ShowDialog() == true && picker.SelectedIconPath != null)
+            if (picker.ShowDialogQuiet() == true && picker.SelectedIconPath != null)
             {
                 // 更新设置
                 _settings.Appearance.AppIconPath = picker.SelectedIconPath;
@@ -156,7 +157,7 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
             var title = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmTitle") ?? "";
             var message = (string)Application.Current.TryFindResource("RestoreDefaultsConfirmMessage") ?? "";
             var dialog = new ConfirmDialog(title, message) { Owner = _parentWindow };
-            dialog.ShowDialog();
+            dialog.ShowDialogQuiet();
             if (!dialog.IsConfirmed) return;
 
             _settings.Appearance = new AppearanceSettings();
