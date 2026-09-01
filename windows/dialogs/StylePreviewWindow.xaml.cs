@@ -51,13 +51,16 @@ namespace CraftSharp.Windows.Dialogs
             // 显示当前样式
             UpdateDisplay();
 
-            // 无障碍：Esc 关闭、左右键翻页、回车选择当前样式
+            // 无障碍：Esc 关闭、左右键翻页；确认动作由图片按钮（SelectStyleButton）承载，
+            // Enter/空格走按钮原生激活。各分支必须 e.Handled，防止关闭弹窗的那次按键
+            // 余波泄到属主窗口刚恢复焦点的"更改样式"按钮上把它再次激活（关了又开的闪烁）
             PreviewKeyDown += (_, e) =>
             {
                 switch (e.Key)
                 {
                     case Key.Escape:
                         Close();
+                        e.Handled = true;
                         break;
                     case Key.Left:
                         if (_currentIndex > 0)
@@ -65,6 +68,7 @@ namespace CraftSharp.Windows.Dialogs
                             _currentIndex--;
                             UpdateDisplay();
                         }
+                        e.Handled = true;
                         break;
                     case Key.Right:
                         if (_currentIndex < _styleFiles.Count - 1)
@@ -72,12 +76,13 @@ namespace CraftSharp.Windows.Dialogs
                             _currentIndex++;
                             UpdateDisplay();
                         }
-                        break;
-                    case Key.Enter:
-                        StyleImage_Click(this, null!);
+                        e.Handled = true;
                         break;
                 }
             };
+
+            // 打开即聚焦确认按钮，键盘用户无需 TAB 直接 Enter 确认
+            Loaded += (_, _) => SelectStyleButton.Focus();
         }
 
         /// <summary>
@@ -164,6 +169,7 @@ namespace CraftSharp.Windows.Dialogs
                 styleName = Path.GetFileNameWithoutExtension(fileName);
             }
             StyleNameText.Text = styleName;
+            System.Windows.Automation.AutomationProperties.SetName(SelectStyleButton, styleName);
 
             // 更新箭头按钮状态
             PrevButton.IsEnabled = _currentIndex > 0;
@@ -230,15 +236,18 @@ namespace CraftSharp.Windows.Dialogs
         }
 
         /// <summary>
-        /// 图片点击选择样式
+        /// 确认选择当前样式（图片按钮点击/键盘激活）
         /// </summary>
-        private void StyleImage_Click(object sender, MouseButtonEventArgs e)
+        private void StyleImage_Click(object sender, RoutedEventArgs e)
         {
             if (_styleFiles.Count == 0 || _currentIndex < 0 || _currentIndex >= _styleFiles.Count)
                 return;
 
             SelectedStyle = _styleFiles[_currentIndex];
             StyleSelected?.Invoke(this, SelectedStyle);
+            // 关闭前清除弹窗内键盘焦点：焦点还原机制会把焦点交还属主"更改样式"按钮，
+            // 若还原目标存在，本次按键的尾随事件可能再次激活它，造成关闭后立即重开
+            Keyboard.ClearFocus();
             DialogResult = true;
             Close();
         }

@@ -45,21 +45,25 @@
                       Stretch="Uniform"/>
             </Button>
 
-            <!-- 图片容器 -->
+            <!-- 图片容器（点击图片确认当前样式；真按钮承载键盘 Enter/空格确认） -->
             <Border Grid.Column="1"
                     Background="{DynamicResource CardBackgroundBrush}"
                     CornerRadius="8"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-                <Viewbox x:Name="ImageViewbox"
-                         Stretch="Uniform"
-                         MaxWidth="400" MaxHeight="280">
-                    <Image x:Name="StyleImage"
-                           Stretch="Uniform"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"
-                           Cursor="Hand"
-                           MouseLeftButtonDown="StyleImage_Click"/>
-                </Viewbox>
+                <Button x:Name="SelectStyleButton"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Click="StyleImage_Click">
+                    <Viewbox x:Name="ImageViewbox"
+                             Stretch="Uniform"
+                             MaxWidth="400" MaxHeight="280">
+                        <Image x:Name="StyleImage"
+                               Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    </Viewbox>
+                </Button>
             </Border>
 
             <!-- 右箭头 -->
