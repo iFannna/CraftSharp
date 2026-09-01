@@ -47,6 +47,8 @@
                     Width="40" Height="40" Margin="12,0,0,0"
                     VerticalAlignment="Center" HorizontalAlignment="Left"
                     Cursor="Hand"
+                    AutomationProperties.Name="{DynamicResource WallpaperPreviewPrev}"
+                    ToolTip="{DynamicResource WallpaperPreviewPrev}"
                     Click="PrevBtn_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -76,6 +78,8 @@
                     Width="40" Height="40" Margin="0,0,12,0"
                     VerticalAlignment="Center" HorizontalAlignment="Right"
                     Cursor="Hand"
+                    AutomationProperties.Name="{DynamicResource WallpaperPreviewNext}"
+                    ToolTip="{DynamicResource WallpaperPreviewNext}"
                     Click="NextBtn_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -112,6 +116,8 @@
                 <!-- 缩小 -->
                 <ui:Button x:Name="ZoomOutBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
+                           AutomationProperties.Name="{DynamicResource WallpaperPreviewZoomOut}"
+                           ToolTip="{DynamicResource WallpaperPreviewZoomOut}"
                            Click="ZoomOutBtn_Click">
                     <ui:SymbolIcon Symbol="ZoomOut20" FontSize="26"/>
                 </ui:Button>
@@ -119,6 +125,8 @@
                 <!-- 放大 -->
                 <ui:Button x:Name="ZoomInBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
+                           AutomationProperties.Name="{DynamicResource WallpaperPreviewZoomIn}"
+                           ToolTip="{DynamicResource WallpaperPreviewZoomIn}"
                            Click="ZoomInBtn_Click">
                     <ui:SymbolIcon Symbol="ZoomIn20" FontSize="26"/>
                 </ui:Button>
@@ -126,6 +134,7 @@
                 <!-- 适应 -->
                 <ui:Button x:Name="FitBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
+                           AutomationProperties.Name="{DynamicResource WallpaperPreviewFit}"
                            Click="FitBtn_Click" ToolTip="{DynamicResource WallpaperPreviewFit}">
                     <ui:SymbolIcon Symbol="FullScreenMaximize20" FontSize="26"/>
                 </ui:Button>
@@ -133,6 +142,8 @@
                 <!-- 下载 -->
                 <ui:Button x:Name="DownloadBtn" Margin="0,0,4,0" Width="36" Height="36"
                            Appearance="Transparent" Padding="0" BorderThickness="0"
+                           AutomationProperties.Name="{DynamicResource WallpaperPreviewDownload}"
+                           ToolTip="{DynamicResource WallpaperPreviewDownload}"
                            Click="DownloadBtn_Click">
                     <ui:SymbolIcon Symbol="ArrowDownload20" FontSize="26"/>
                 </ui:Button>

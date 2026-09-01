@@ -47,6 +47,7 @@
                                 <Setter Property="Padding" Value="12,10"/>
                                 <Setter Property="Margin" Value="0,2"/>
                                 <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListBoxItem">
@@ -59,6 +60,9 @@
                                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
                                                 </Trigger>
                                                 <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
                                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>

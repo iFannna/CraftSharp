@@ -32,6 +32,8 @@
             <ui:Button x:Name="OkButton"
                        Content="{DynamicResource MessageDialogOk}"
                        Appearance="Primary"
+                       IsDefault="True"
+                       IsCancel="True"
                        HorizontalAlignment="Right"
                        Click="OkButton_Click"/>
         </Grid>

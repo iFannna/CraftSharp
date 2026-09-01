@@ -34,8 +34,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ui:Button Grid.Column="1" Content="{DynamicResource RenameSkinCancel}" Appearance="Secondary" Margin="0,0,8,0" Click="CancelButton_Click"/>
-            <ui:Button Grid.Column="2" x:Name="ConfirmButton" Content="{DynamicResource RenameSkinConfirm}" Appearance="Primary" Click="ConfirmButton_Click"/>
+            <ui:Button Grid.Column="1" Content="{DynamicResource RenameSkinCancel}" Appearance="Secondary" IsCancel="True" Margin="0,0,8,0" Click="CancelButton_Click"/>
+            <ui:Button Grid.Column="2" x:Name="ConfirmButton" Content="{DynamicResource RenameSkinConfirm}" Appearance="Primary" IsDefault="True" Click="ConfirmButton_Click"/>
         </Grid>
     </Grid>
 </ui:FluentWindow>

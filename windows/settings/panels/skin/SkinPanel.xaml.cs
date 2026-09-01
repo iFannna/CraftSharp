@@ -14,8 +14,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
     public partial class SkinPanel : global::System.Windows.Controls.UserControl
     {
         private AppSettings _settings;
-        private global::System.Windows.Controls.Border[] _optionBorders;
-        private global::System.Windows.Controls.TextBlock[] _optionTexts;
+        private bool _syncingOptions;
         private ObservableCollection<SkinItem> _skinItems;
         private List<SkinItem> _allSkinItems = new();
         private SkinItemControl? _selectedSkinControl;
@@ -39,8 +38,6 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
         {
             InitializeComponent();
             _settings = settings;
-            _optionBorders = new global::System.Windows.Controls.Border[] { BorderSteve, BorderAlex, BorderUpload };
-            _optionTexts = new global::System.Windows.Controls.TextBlock[] { TextSteve, TextAlex, TextUpload };
             _skinItems = new ObservableCollection<SkinItem>();
             SkinGrid.ItemsSource = _skinItems;
 
@@ -146,46 +143,21 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
             }
         }
 
-        private void OptionBorder_Click(object sender, global::System.Windows.Input.MouseButtonEventArgs e)
+        private void SkinTypeOption_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is global::System.Windows.Controls.Border clickedBorder)
-            {
-                for (int i = 0; i < _optionBorders.Length; i++)
-                {
-                    var border = _optionBorders[i];
-                    var text = _optionTexts[i];
+            if (_syncingOptions) return;
 
-                    if (border == clickedBorder)
-                    {
-                        border.Background = TryFindResource("AccentBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(0, 120, 215));
-                        text.Foreground = TryFindResource("TextPrimaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                        text.FontWeight = FontWeights.Medium;
-                    }
-                    else
-                    {
-                        border.Background = Brushes.Transparent;
-                        text.Foreground = TryFindResource("TextSecondaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(150, 150, 150));
-                        text.FontWeight = FontWeights.Normal;
-                    }
-                }
+            // 切换 wide/slim 类型并刷新列表
+            _isWide = sender == SteveOption;
+            LoadSkinsAsync();
+        }
 
-                // 切换 wide/slim 类型
-                if (clickedBorder == BorderSteve)
-                {
-                    _isWide = true;
-                    LoadSkinsAsync();
-                }
-                else if (clickedBorder == BorderAlex)
-                {
-                    _isWide = false;
-                    LoadSkinsAsync();
-                }
-                else if (clickedBorder == BorderUpload)
-                {
-                    // 打开上传弹窗
-                    OpenUploadWindow();
-                }
-            }
+        private void UploadOption_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_syncingOptions) return;
+
+            // 打开上传弹窗
+            OpenUploadWindow();
         }
 
         private void OpenUploadWindow()
@@ -216,28 +188,11 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
 
         private void UpdateOptionButtonState(bool isWide)
         {
-            // 根据类型更新选中状态
-            var selectedBorder = isWide ? BorderSteve : BorderAlex;
-            var selectedText = isWide ? TextSteve : TextAlex;
-
-            for (int i = 0; i < _optionBorders.Length; i++)
-            {
-                var border = _optionBorders[i];
-                var text = _optionTexts[i];
-
-                if (border == selectedBorder)
-                {
-                    border.Background = TryFindResource("AccentBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(0, 120, 215));
-                    text.Foreground = TryFindResource("TextPrimaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                    text.FontWeight = FontWeights.Medium;
-                }
-                else
-                {
-                    border.Background = Brushes.Transparent;
-                    text.Foreground = TryFindResource("TextSecondaryBrush") as SolidColorBrush ?? new SolidColorBrush(Color.FromRgb(150, 150, 150));
-                    text.FontWeight = FontWeights.Normal;
-                }
-            }
+            // 根据类型更新选中状态（同步标志避免程序化选中触发 Checked 回环）
+            _syncingOptions = true;
+            SteveOption.IsChecked = isWide;
+            AlexOption.IsChecked = !isWide;
+            _syncingOptions = false;
         }
 
         private void SkinItemControl_Loaded(object sender, RoutedEventArgs e)

@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ui:Button Grid.Column="1" Content="{DynamicResource RemoveSkinCancel}" Appearance="Secondary" Margin="0,0,8,0" Click="CancelButton_Click"/>
+            <ui:Button Grid.Column="1" Content="{DynamicResource RemoveSkinCancel}" Appearance="Secondary" IsCancel="True" Margin="0,0,8,0" Click="CancelButton_Click"/>
             <ui:Button Grid.Column="2" Content="{DynamicResource RemoveSkinConfirm}" Appearance="Danger" Click="ConfirmButton_Click"/>
         </Grid>
     </Grid>

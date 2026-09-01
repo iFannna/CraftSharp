@@ -32,10 +32,12 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Width="64" Height="64" Margin="8"
+                            <Button Width="64" Height="64" Margin="8"
+                                    Style="{StaticResource TransparentButtonStyle}"
                                     Background="{DynamicResource CardBackgroundBrush}"
                                     Cursor="Hand"
-                                    MouseLeftButtonDown="IconItem_Click"
+                                    Click="IconItem_Click"
+                                    AutomationProperties.Name="{Binding DisplayName}"
                                     ToolTip="{Binding DisplayName}"
                                     ToolTipService.InitialShowDelay="0"
                                     ToolTipService.ShowDuration="5000">
@@ -51,7 +53,7 @@
                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="{DynamicResource GlobalFontSize}"/>
                                 </Grid>
-                            </Border>
+                            </Button>
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IconStyle}" Value="">
                                     <Setter TargetName="IconImage" Property="Visibility" Value="Collapsed"/>
@@ -75,14 +77,15 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border x:Name="VerticalItemBorder"
-                                    Height="32" Margin="0,0,0,8"
+                            <Button Height="32" Margin="0,0,0,8"
                                     HorizontalAlignment="Stretch"
                                     MaxWidth="{Binding MaxWidth}"
+                                    Style="{StaticResource TransparentButtonStyle}"
                                     Background="{DynamicResource CardBackgroundBrush}"
                                     Padding="8,0"
                                     Cursor="Hand"
-                                    MouseLeftButtonDown="IconItem_Click"
+                                    Click="IconItem_Click"
+                                    AutomationProperties.Name="{Binding DisplayName}"
                                     ToolTip="{Binding DisplayName}"
                                     ToolTipService.InitialShowDelay="0"
                                     ToolTipService.ShowDuration="5000">
@@ -99,7 +102,7 @@
                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="{DynamicResource GlobalFontSize}"/>
                                 </Grid>
-                            </Border>
+                            </Button>
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IconStyle}" Value="">
                                     <Setter TargetName="VerticalIconImage" Property="Visibility" Value="Collapsed"/>

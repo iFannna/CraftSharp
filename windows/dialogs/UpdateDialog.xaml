@@ -45,11 +45,13 @@
             <ui:Button Grid.Column="1" x:Name="SkipButton"
                        Content="{DynamicResource UpdateDialogSkip}"
                        Appearance="Secondary"
+                       IsCancel="True"
                        Margin="0,0,8,0"
                        Click="SkipButton_Click"/>
             <ui:Button Grid.Column="2" x:Name="DownloadButton"
                        Content="{DynamicResource UpdateDialogDownload}"
                        Appearance="Primary"
+                       IsDefault="True"
                        Click="DownloadButton_Click"/>
         </Grid>
     </Grid>

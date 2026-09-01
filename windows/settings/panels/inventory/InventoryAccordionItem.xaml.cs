@@ -56,7 +56,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             _titleResourceKey = titleResourceKey;
 
             // 使用动态资源获取标题
-            TitleText.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, titleResourceKey);
+            HeaderToggle.SetResourceReference(System.Windows.Controls.ContentControl.ContentProperty, titleResourceKey);
 
             // 读取保存的展开状态（如果启用了记住卡片状态）
             if (_settings != null && _settings.System.RememberCardStates)
@@ -111,17 +111,9 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // 根据初始展开状态设置 UI（不执行动画）
-            if (_isExpanded)
-            {
-                ContentBorder.Height = double.NaN;
-                ArrowRotate.Angle = 0;
-            }
-            else
-            {
-                ContentBorder.Height = 0;
-                ArrowRotate.Angle = -90;
-            }
+            // 根据初始展开状态设置 UI（内容区不执行动画；箭头初始角度由样式 IsChecked 触发器处理）
+            ContentBorder.Height = _isExpanded ? double.NaN : 0;
+            HeaderToggle.IsChecked = _isExpanded;
         }
 
         private void AddCardContent(string titleResourceKey)
@@ -308,8 +300,15 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             grid.Children.Add(styleNameText);
             Grid.SetColumn(styleNameText, 1);
 
-            // 点击打开样式预览弹窗
-            grid.MouseLeftButtonDown += (_, e) =>
+            // 点击打开样式预览弹窗（整行 Button：键盘 Tab/回车可达）
+            var styleButton = new System.Windows.Controls.Button
+            {
+                Content = grid
+            };
+            styleButton.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "TransparentButtonStyle");
+            System.Windows.Automation.AutomationProperties.SetName(styleButton,
+                System.Windows.Application.Current.TryFindResource("InventoryStyleChangeName") as string ?? "InventoryStyleChangeName");
+            styleButton.Click += (_, _) =>
             {
                 var previewWindow = new StylePreviewWindow(_settings.Inventory.StylePath);
                 previewWindow.Owner = Window.GetWindow(this);
@@ -335,10 +334,9 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     }
                 };
                 previewWindow.ShowDialogQuiet();
-                e.Handled = true;
             };
 
-            ContentPanel.Children.Add(grid);
+            ContentPanel.Children.Add(styleButton);
         }
 
         /// <summary>
@@ -848,24 +846,21 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             }
         }
 
-        private void Header_Click(object sender, RoutedEventArgs e)
+        private void HeaderToggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_isAnimating) return;
+            if (_isAnimating)
+            {
+                // 动画期间忽略点击，回滚开关状态保持与实际一致
+                HeaderToggle.IsChecked = _isExpanded;
+                return;
+            }
 
-            _isExpanded = !_isExpanded;
+            _isExpanded = HeaderToggle.IsChecked == true;
 
             if (_isExpanded)
                 AnimateExpand();
             else
                 AnimateCollapse();
-
-            var arrowAnimation = new DoubleAnimation
-            {
-                To = _isExpanded ? 0 : -90,
-                Duration = TimeSpan.FromMilliseconds(_isExpanded ? 200 : 150),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
-            };
-            ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
 
             // 如果启用了记住卡片状态，保存到配置
             if (_settings != null && _settings.System.RememberCardStates)
@@ -934,6 +929,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             if (_isAnimating) return;
 
             _isExpanded = expanded;
+            HeaderToggle.IsChecked = expanded;
 
             if (animate)
             {
@@ -941,28 +937,11 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                     AnimateExpand();
                 else
                     AnimateCollapse();
-
-                var arrowAnimation = new DoubleAnimation
-                {
-                    To = _isExpanded ? 0 : -90,
-                    Duration = TimeSpan.FromMilliseconds(_isExpanded ? 200 : 150),
-                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
-                };
-                ArrowRotate.BeginAnimation(RotateTransform.AngleProperty, arrowAnimation);
             }
             else
             {
                 // 不执行动画，直接设置状态
-                if (_isExpanded)
-                {
-                    ContentBorder.Height = double.NaN;
-                    ArrowRotate.Angle = 0;
-                }
-                else
-                {
-                    ContentBorder.Height = 0;
-                    ArrowRotate.Angle = -90;
-                }
+                ContentBorder.Height = _isExpanded ? double.NaN : 0;
             }
         }
     }

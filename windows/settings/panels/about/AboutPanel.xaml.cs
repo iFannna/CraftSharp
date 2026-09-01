@@ -14,25 +14,25 @@ namespace CraftSharp.Windows.Settings.Panels.About
             Loaded += (_, _) => VersionText.Text = $"v{UpdateService.CurrentVersion}";
         }
 
-        private void GitHubLink_Click(object sender, MouseButtonEventArgs e)
+        private void GitHubLink_Click(object sender, RoutedEventArgs e)
         {
             try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/iFannna/CraftSharp", UseShellExecute = true }); }
             catch { }
         }
 
-        private void AuthorLink_Click(object sender, MouseButtonEventArgs e)
+        private void AuthorLink_Click(object sender, RoutedEventArgs e)
         {
             try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/iFannna", UseShellExecute = true }); }
             catch { }
         }
 
-        private void Terms_Click(object sender, MouseButtonEventArgs e)
+        private void Terms_Click(object sender, RoutedEventArgs e)
         {
             try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/iFannna/CraftSharp/blob/main/TERMS.md", UseShellExecute = true }); }
             catch { }
         }
 
-        private void Privacy_Click(object sender, MouseButtonEventArgs e)
+        private void Privacy_Click(object sender, RoutedEventArgs e)
         {
             try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/iFannna/CraftSharp/blob/main/PRIVACY.md", UseShellExecute = true }); }
             catch { }

@@ -27,30 +27,36 @@
             <!-- 元素图标预览 -->
             <TextBlock Text="{DynamicResource HudOptionElementIcon}" FontWeight="Medium" Margin="0,0,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <Border x:Name="IconPreviewBorder" Height="32" HorizontalAlignment="Stretch"
-                    Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8"
-                    Cursor="Hand" MouseLeftButtonDown="IconPreview_Click"
+            <Button x:Name="IconPreviewBorder" Height="32" HorizontalAlignment="Stretch"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    Cursor="Hand" Click="IconPreview_Click"
+                    AutomationProperties.Name="{DynamicResource HudOptionElementIcon}"
                     ToolTip="{DynamicResource HudOptionElementIconDesc}">
-                <Image x:Name="IconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            </Border>
+                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8">
+                    <Image x:Name="IconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                </Border>
+            </Button>
 
             <!-- 等级预览（元素图标+等级图标叠加） -->
             <TextBlock Text="{DynamicResource BossBarNotchLabel}" FontWeight="Medium" Margin="0,16,0,8"
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-            <Border x:Name="NotchPreviewBorder" Height="32" HorizontalAlignment="Stretch"
-                    Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8"
-                    Cursor="Hand" MouseLeftButtonDown="NotchPreview_Click"
+            <Button x:Name="NotchPreviewBorder" Height="32" HorizontalAlignment="Stretch"
+                    Style="{StaticResource TransparentButtonStyle}"
+                    Cursor="Hand" Click="NotchPreview_Click"
+                    AutomationProperties.Name="{DynamicResource BossBarNotchLabel}"
                     ToolTip="{DynamicResource BossBarNotchDesc}">
-                <Grid>
-                    <!-- 底层：元素图标 -->
-                    <Image x:Name="NotchIconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                    <!-- 上层：等级图标 -->
-                    <Image x:Name="NotchNotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                </Grid>
-            </Border>
+                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Padding="8">
+                    <Grid>
+                        <!-- 底层：元素图标 -->
+                        <Image x:Name="NotchIconPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                        <!-- 上层：等级图标 -->
+                        <Image x:Name="NotchNotchPreviewImage" Stretch="Uniform" HorizontalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    </Grid>
+                </Border>
+            </Button>
 
             <!-- 名称输入 -->
             <TextBlock Text="{DynamicResource BossBarNameLabel}" FontWeight="Medium" Margin="0,16,0,8"
@@ -97,11 +103,13 @@
             <ui:Button Grid.Column="1" x:Name="CancelButton"
                        Content="{DynamicResource TopMostConfirmCancel}"
                        Appearance="Secondary"
+                       IsCancel="True"
                        Margin="0,0,8,0"
                        Click="CancelButton_Click"/>
             <ui:Button Grid.Column="2" x:Name="SaveButton"
                        Content="{DynamicResource BossBarEditSave}"
                        Appearance="Primary"
+                       IsDefault="True"
                        Click="SaveButton_Click"/>
         </Grid>
     </Grid>

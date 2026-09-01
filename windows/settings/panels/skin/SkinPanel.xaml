@@ -5,6 +5,41 @@
              xmlns:components="clr-namespace:CraftSharp.Windows.Settings.Panels.Skin.Components"
              VerticalAlignment="Stretch">
 
+    <UserControl.Resources>
+        <!-- 皮肤类型选项卡样式：Steve/Alex 单选组，Upload 为动作型选项（选中态由代码按需复位） -->
+        <Style x:Key="SkinTabRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                <Setter TargetName="Bd" Property="TextElement.FontWeight" Value="Medium"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid x:Name="RootGrid" PreviewMouseLeftButtonDown="RootGrid_PreviewMouseLeftButtonDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,15 +56,18 @@
 
                 <!-- 左侧选项按钮 -->
                 <StackPanel Orientation="Horizontal">
-                    <Border x:Name="BorderSteve" Background="{DynamicResource AccentBrush}" CornerRadius="6" Padding="12,8" Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
-                        <TextBlock x:Name="TextSteve" Text="{DynamicResource SkinTabSteve}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Medium"/>
-                    </Border>
-                    <Border x:Name="BorderAlex" Background="Transparent" CornerRadius="6" Padding="12,8" Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
-                        <TextBlock x:Name="TextAlex" Text="{DynamicResource SkinTabAlex}" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    </Border>
-                    <Border x:Name="BorderUpload" Background="Transparent" CornerRadius="6" Padding="12,8" Cursor="Hand" MouseLeftButtonDown="OptionBorder_Click">
-                        <TextBlock x:Name="TextUpload" Text="{DynamicResource SkinTabUpload}" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    </Border>
+                    <RadioButton x:Name="SteveOption" GroupName="SkinType" Margin="0,0,8,0"
+                                 Style="{StaticResource SkinTabRadioButtonStyle}"
+                                 Content="{DynamicResource SkinTabSteve}"
+                                 Checked="SkinTypeOption_Checked"/>
+                    <RadioButton x:Name="AlexOption" GroupName="SkinType" Margin="0,0,8,0"
+                                 Style="{StaticResource SkinTabRadioButtonStyle}"
+                                 Content="{DynamicResource SkinTabAlex}"
+                                 Checked="SkinTypeOption_Checked"/>
+                    <RadioButton x:Name="UploadOption" GroupName="SkinType"
+                                 Style="{StaticResource SkinTabRadioButtonStyle}"
+                                 Content="{DynamicResource SkinTabUpload}"
+                                 Checked="UploadOption_Checked"/>
                 </StackPanel>
 
                 <!-- 右侧搜索框 -->

@@ -79,6 +79,14 @@ namespace CraftSharp
                     IconService.Instance.ApplyIconToWindow(window);
                 }));
 
+            // WPF-UI 标题栏窗口按钮（最小化/最大化/关闭）只有图标没有文本，补自动化名称供读屏朗读
+            TitleBarAutomation.Attach();
+
+            // 点击窗口空白/容器区域（无可聚焦元素）时把键盘焦点还给窗口，
+            // 消除 TAB 焦点描边在鼠标点击后残留（原生应用点击任意处即隐藏键盘提示）
+            EventManager.RegisterClassHandler(typeof(Window), UIElement.PreviewMouseLeftButtonDownEvent,
+                new MouseButtonEventHandler(OnWindowPreviewMouseLeftButtonDown));
+
             // 加载设置
             var configDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config");
             if (!System.IO.Directory.Exists(configDir))
@@ -309,6 +317,27 @@ namespace CraftSharp
 
                 _ = Services.Wallpaper.WallpaperService.Instance.ApplyLayoutAsync();
             }
+        }
+
+        /// <summary>
+        /// 从鼠标命中点向上找可聚焦控件：点到可交互控件时不干预；
+        /// 点到空白/容器时把键盘焦点还给窗口，原控件失去键盘焦点、焦点描边消失
+        /// </summary>
+        private static void OnWindowPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not Window window) return;
+
+            DependencyObject? current = e.OriginalSource as DependencyObject;
+            while (current is not null && !ReferenceEquals(current, window))
+            {
+                if (current is UIElement { Focusable: true })
+                    return;
+                current = current is Visual visual ? VisualTreeHelper.GetParent(visual)
+                    : LogicalTreeHelper.GetParent(current);
+            }
+
+            // 把焦点转给窗口元素会被 WPF-UI 拦截（实测焦点不动），直接清除键盘焦点
+            Keyboard.ClearFocus();
         }
 
         /// <summary>

@@ -114,7 +114,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             ContentPanel.Children.Add(grid);
         }
 
-        private System.Windows.Controls.Border? _iconPreviewBorder;
+        private System.Windows.Controls.Button? _iconPreviewButton;
 
         private void AddIconPreviewRow(string labelKey, string iconPath)
         {
@@ -139,14 +139,15 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             left.Children.Add(descLabel);
             grid.Children.Add(left);
 
-            _iconPreviewBorder = new System.Windows.Controls.Border
+            _iconPreviewButton = new System.Windows.Controls.Button
             {
                 Height = 32,
                 MaxWidth = 256,
-                CornerRadius = new CornerRadius(6),
                 Cursor = System.Windows.Input.Cursors.Hand,
                 ToolTip = GetResourceString("AppIconTooltip")
             };
+            _iconPreviewButton.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "TransparentButtonStyle");
+            System.Windows.Automation.AutomationProperties.SetName(_iconPreviewButton, GetResourceString("HudIconChangeName"));
 
             string? backgroundPath = GetBackgroundIconPath(_hudId);
             if (backgroundPath != null)
@@ -170,7 +171,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
                 iconGrid.Children.Add(iconImage);
 
-                _iconPreviewBorder.Child = iconGrid;
+                _iconPreviewButton.Content = iconGrid;
             }
             else
             {
@@ -181,12 +182,12 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                     Stretch = Stretch.Uniform
                 };
                 RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.NearestNeighbor);
-                _iconPreviewBorder.Child = iconImage;
+                _iconPreviewButton.Content = iconImage;
             }
 
-            _iconPreviewBorder.MouseLeftButtonDown += IconPreview_Click;
-            grid.Children.Add(_iconPreviewBorder);
-            Grid.SetColumn(_iconPreviewBorder, 1);
+            _iconPreviewButton.Click += IconPreview_Click;
+            grid.Children.Add(_iconPreviewButton);
+            Grid.SetColumn(_iconPreviewButton, 1);
 
             ContentPanel.Children.Add(grid);
         }
@@ -202,7 +203,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             };
         }
 
-        private void IconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void IconPreview_Click(object sender, RoutedEventArgs e)
         {
             string elementType = GetElementTypeFromHudId(_hudId);
 
@@ -222,14 +223,14 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                     SaveSettings();
                 }
 
-                if (_iconPreviewBorder != null)
+                if (_iconPreviewButton != null)
                 {
                     System.Windows.Controls.Image? iconImage = null;
-                    if (_iconPreviewBorder.Child is Grid iconGrid)
+                    if (_iconPreviewButton.Content is Grid iconGrid)
                     {
                         iconImage = iconGrid.Children.OfType<System.Windows.Controls.Image>().LastOrDefault();
                     }
-                    else if (_iconPreviewBorder.Child is System.Windows.Controls.Image directImage)
+                    else if (_iconPreviewButton.Content is System.Windows.Controls.Image directImage)
                     {
                         iconImage = directImage;
                     }

@@ -70,6 +70,16 @@ namespace CraftSharp.Windows.Dialogs
                 _nativeDropTarget = null;
             };
 
+            // 无障碍：Esc 关闭；方向键在图标间移动焦点；打开时聚焦第一个图标
+            PreviewKeyDown += (_, e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.Escape)
+                    Close();
+            };
+            DirectionalFocusHelper.Attach(IconGrid);
+            DirectionalFocusHelper.Attach(VerticalIconGrid);
+            Loaded += (_, _) => DirectionalFocusHelper.FocusFirst(_useVerticalLayout ? VerticalIconGrid : IconGrid);
+
             // 加载图标
             LoadIcons();
         }
@@ -310,9 +320,9 @@ namespace CraftSharp.Windows.Dialogs
             return System.Windows.Application.Current.TryFindResource(resourceKey) as string ?? resourceKey;
         }
 
-        private void IconItem_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void IconItem_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Border border && border.DataContext is HudIconItem icon)
+            if (sender is System.Windows.Controls.Button button && button.DataContext is HudIconItem icon)
             {
                 SelectedIconStyle = icon.IconStyle;
                 DialogResult = true;

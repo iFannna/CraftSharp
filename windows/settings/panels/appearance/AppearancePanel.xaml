@@ -20,13 +20,14 @@
                     <TextBlock Text="{DynamicResource AppIconDesc}" Margin="0,8,0,0"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-                <Border Grid.Column="1" Width="48" Height="48"
-                        Cursor="Hand" MouseLeftButtonDown="AppIconPreview_Click"
-                        x:Name="AppIconPreviewBorder"
+                <Button Grid.Column="1" Width="48" Height="48" x:Name="AppIconPreviewBorder"
+                        Style="{StaticResource TransparentButtonStyle}"
+                        Cursor="Hand" Click="AppIconPreview_Click"
+                        AutomationProperties.Name="{DynamicResource AppIconTooltip}"
                         ToolTip="{DynamicResource AppIconTooltip}">
                     <Image x:Name="AppIconPreview" Stretch="Uniform"
                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                </Border>
+                </Button>
             </Grid>
         </ui:Card>
 

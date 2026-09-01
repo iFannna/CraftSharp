@@ -123,7 +123,7 @@ namespace CraftSharp.Windows.Settings.Panels.Appearance
             }
         }
 
-        private void AppIconPreview_Click(object sender, global::System.Windows.Input.MouseButtonEventArgs e)
+        private void AppIconPreview_Click(object sender, RoutedEventArgs e)
         {
             var picker = new IconPickerWindow();
             picker.Owner = _parentWindow;

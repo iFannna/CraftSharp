@@ -9,6 +9,12 @@
     <sys:String x:Key="StatusBarWindowTitle">状态栏</sys:String>
     <sys:String x:Key="InventoryWindowTitle">物品栏</sys:String>
 
+    <!-- 窗口标题栏按钮（读屏朗读用） -->
+    <sys:String x:Key="WindowButtonMinimize">最小化</sys:String>
+    <sys:String x:Key="WindowButtonMaximize">最大化</sys:String>
+    <sys:String x:Key="WindowButtonRestore">还原</sys:String>
+    <sys:String x:Key="WindowButtonClose">关闭</sys:String>
+
     <!-- 导航菜单 -->
     <sys:String x:Key="NavSystem">系统</sys:String>
     <sys:String x:Key="NavAppearance">外观</sys:String>
@@ -49,6 +55,11 @@
     <sys:String x:Key="WallpaperPreviewTitle">壁纸预览</sys:String>
     <sys:String x:Key="WallpaperPreviewClose">关闭</sys:String>
     <sys:String x:Key="WallpaperPreviewFit">适应窗口</sys:String>
+    <sys:String x:Key="WallpaperPreviewPrev">上一张</sys:String>
+    <sys:String x:Key="WallpaperPreviewNext">下一张</sys:String>
+    <sys:String x:Key="WallpaperPreviewZoomIn">放大</sys:String>
+    <sys:String x:Key="WallpaperPreviewZoomOut">缩小</sys:String>
+    <sys:String x:Key="WallpaperPreviewDownload">下载壁纸</sys:String>
 
     <!-- 皮肤设置面板 -->
     <sys:String x:Key="SkinPanelTitle">皮肤设置</sys:String>
@@ -361,6 +372,10 @@
 
     <!-- 物品栏样式预览弹窗 -->
     <sys:String x:Key="StylePreviewTitle">选择物品栏样式</sys:String>
+    <sys:String x:Key="StylePreviewPrev">上一个样式</sys:String>
+    <sys:String x:Key="StylePreviewNext">下一个样式</sys:String>
+    <sys:String x:Key="InventoryStyleChangeName">更改样式</sys:String>
+    <sys:String x:Key="HudIconChangeName">更改图标</sys:String>
     <sys:String x:Key="InventoryStyleOption">物品栏样式</sys:String>
     <sys:String x:Key="InventoryStyleOptionDesc">点击选择物品栏的显示样式</sys:String>
     <!-- 样式名称 -->

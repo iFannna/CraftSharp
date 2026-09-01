@@ -2,6 +2,41 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <UserControl.Resources>
+        <!-- 底部小号链接按钮：默认次级色，hover/键盘焦点时变强调色 -->
+        <Style x:Key="FooterLinkStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize" Value="{DynamicResource GlobalFontSizeCaption}"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter>
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="TextDecorations" Value="Underline"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <StackPanel>
         <!-- 标题 -->
         <TextBlock Text="{DynamicResource AboutPanelTitle}" FontSize="{DynamicResource GlobalFontSizeTitle}" FontWeight="SemiBold" Margin="0,0,0,24"
@@ -24,10 +59,9 @@
                 <!-- Info Grid -->
                 <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutAuthor}" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Cursor="Hand"
-                                MouseLeftButtonDown="AuthorLink_Click">
-                        <TextBlock Text="iFannna" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Button Content="iFannna" HorizontalAlignment="Right"
+                            Style="{StaticResource LinkButtonStyle}"
+                            Click="AuthorLink_Click"/>
                 </Grid>
                 <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutLicense}" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -36,10 +70,9 @@
                 </Grid>
                 <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutProjectUrl}" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Cursor="Hand"
-                                MouseLeftButtonDown="GitHubLink_Click">
-                        <TextBlock Text="GitHub" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Button Content="GitHub" HorizontalAlignment="Right"
+                            Style="{StaticResource LinkButtonStyle}"
+                            Click="GitHubLink_Click"/>
                 </Grid>
                 <Grid Margin="0,0,0,16">
                     <TextBlock Text="{DynamicResource AboutCopyright}" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -58,36 +91,12 @@
         </ui:Card>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-            <TextBlock Text="{DynamicResource AboutTerms}"
-                       FontSize="{DynamicResource GlobalFontSizeCaption}" Cursor="Hand" Margin="0,0,16,0"
-                       TextDecorations="Underline"
-                       MouseLeftButtonDown="Terms_Click">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-            <TextBlock Text="{DynamicResource AboutPrivacy}"
-                       FontSize="{DynamicResource GlobalFontSizeCaption}" Cursor="Hand"
-                       TextDecorations="Underline"
-                       MouseLeftButtonDown="Privacy_Click">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+            <Button Content="{DynamicResource AboutTerms}" Margin="0,0,16,0"
+                    Style="{StaticResource FooterLinkStyle}"
+                    Click="Terms_Click"/>
+            <Button Content="{DynamicResource AboutPrivacy}"
+                    Style="{StaticResource FooterLinkStyle}"
+                    Click="Privacy_Click"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

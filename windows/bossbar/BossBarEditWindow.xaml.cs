@@ -186,7 +186,7 @@ namespace CraftSharp.Windows.BossBar
         }
 
         
-        private void IconPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void IconPreview_Click(object sender, RoutedEventArgs e)
         {
             var picker = new HudIconPickerWindow("boss_bar");
             picker.Owner = this;
@@ -197,7 +197,7 @@ namespace CraftSharp.Windows.BossBar
             }
         }
 
-        private void NotchPreview_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void NotchPreview_Click(object sender, RoutedEventArgs e)
         {
             var picker = new HudIconPickerWindow("boss_bar_notch");
             picker.Owner = this;

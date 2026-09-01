@@ -9,6 +9,12 @@
     <sys:String x:Key="StatusBarWindowTitle">Status Bar</sys:String>
     <sys:String x:Key="InventoryWindowTitle">Inventory</sys:String>
 
+    <!-- Window title bar buttons (for screen readers) -->
+    <sys:String x:Key="WindowButtonMinimize">Minimize</sys:String>
+    <sys:String x:Key="WindowButtonMaximize">Maximize</sys:String>
+    <sys:String x:Key="WindowButtonRestore">Restore</sys:String>
+    <sys:String x:Key="WindowButtonClose">Close</sys:String>
+
     <!-- Navigation Menu -->
     <sys:String x:Key="NavSystem">System</sys:String>
     <sys:String x:Key="NavAppearance">Appearance</sys:String>
@@ -49,6 +55,11 @@
     <sys:String x:Key="WallpaperPreviewTitle">Wallpaper Preview</sys:String>
     <sys:String x:Key="WallpaperPreviewClose">Close</sys:String>
     <sys:String x:Key="WallpaperPreviewFit">Fit to Window</sys:String>
+    <sys:String x:Key="WallpaperPreviewPrev">Previous</sys:String>
+    <sys:String x:Key="WallpaperPreviewNext">Next</sys:String>
+    <sys:String x:Key="WallpaperPreviewZoomIn">Zoom In</sys:String>
+    <sys:String x:Key="WallpaperPreviewZoomOut">Zoom Out</sys:String>
+    <sys:String x:Key="WallpaperPreviewDownload">Download Wallpaper</sys:String>
 
     <!-- Skin Settings Panel -->
     <sys:String x:Key="SkinPanelTitle">Skin Settings</sys:String>
@@ -361,6 +372,10 @@
 
     <!-- Inventory Style Preview Window -->
     <sys:String x:Key="StylePreviewTitle">Select Inventory Style</sys:String>
+    <sys:String x:Key="StylePreviewPrev">Previous Style</sys:String>
+    <sys:String x:Key="StylePreviewNext">Next Style</sys:String>
+    <sys:String x:Key="InventoryStyleChangeName">Change Style</sys:String>
+    <sys:String x:Key="HudIconChangeName">Change Icon</sys:String>
     <sys:String x:Key="InventoryStyleOption">Inventory Style</sys:String>
     <sys:String x:Key="InventoryStyleOptionDesc">Click to select inventory display style</sys:String>
     <!-- Style Names -->

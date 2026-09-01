@@ -51,11 +51,13 @@
             <ui:Button Grid.Column="1" x:Name="CancelButton"
                        Content="{DynamicResource RenameSlotCancel}"
                        Appearance="Secondary"
+                       IsCancel="True"
                        Margin="0,0,8,0"
                        Click="CancelButton_Click"/>
             <ui:Button Grid.Column="2" x:Name="ConfirmButton"
                        Content="{DynamicResource RenameSlotConfirm}"
                        Appearance="Primary"
+                       IsDefault="True"
                        Click="ConfirmButton_Click"/>
         </Grid>
     </Grid>

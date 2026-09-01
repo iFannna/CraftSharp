@@ -92,6 +92,9 @@
                                             <Trigger Property="IsSelected" Value="True">
                                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
                                             </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                            </Trigger>
                                             <!-- 绑定表头自身的 IsMouseOver 而非 TreeViewItem 的：
                                                  后者会沿可视树向上传导，hover/点击子项时父级表头也会被点亮 -->
                                             <DataTrigger Value="True">
@@ -194,17 +197,19 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="80" Height="80" Margin="4"
+                                <Button Width="80" Height="80" Margin="4"
+                                        Style="{StaticResource TransparentButtonStyle}"
                                         Background="{DynamicResource CardBackgroundBrush}"
-                                         Cursor="Hand"
-                                        MouseLeftButtonDown="IconItem_Click"
+                                        Cursor="Hand"
+                                        Click="IconItem_Click"
+                                        AutomationProperties.Name="{Binding Name}"
                                         ToolTip="{Binding Name}"
                                         ToolTipService.InitialShowDelay="0"
                                         ToolTipService.ShowDuration="5000">
                                     <Image Source="{Binding BitmapImage}"
                                            Stretch="Uniform"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                </Border>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

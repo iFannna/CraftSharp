@@ -31,6 +31,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="DesktopIconsClearBtn" Click="ClearHotkey_Click" Tag="DesktopIcons"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -56,6 +57,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="SettingsClearBtn" Click="ClearHotkey_Click" Tag="Settings"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -81,6 +83,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="InventoryClearBtn" Click="ClearHotkey_Click" Tag="Inventory"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -106,6 +109,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="StatusBarClearBtn" Click="ClearHotkey_Click" Tag="StatusBar"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -131,6 +135,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="CrosshairClearBtn" Click="ClearHotkey_Click" Tag="Crosshair"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -159,6 +164,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="DropItemClearBtn" Click="ClearHotkey_Click" Tag="DropItem"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -184,6 +190,7 @@
                     <ui:Button Appearance="Secondary" Padding="12,8" Margin="6,0,0,0"
                                x:Name="OpenInventoryClearBtn" Click="ClearHotkey_Click" Tag="OpenInventory"
                                Content="✕" ToolTip="{DynamicResource HotkeyClearTooltip}"
+                               AutomationProperties.Name="{DynamicResource HotkeyClearTooltip}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>

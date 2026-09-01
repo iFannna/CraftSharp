@@ -50,6 +50,34 @@ namespace CraftSharp.Windows.Dialogs
 
             // 显示当前样式
             UpdateDisplay();
+
+            // 无障碍：Esc 关闭、左右键翻页、回车选择当前样式
+            PreviewKeyDown += (_, e) =>
+            {
+                switch (e.Key)
+                {
+                    case Key.Escape:
+                        Close();
+                        break;
+                    case Key.Left:
+                        if (_currentIndex > 0)
+                        {
+                            _currentIndex--;
+                            UpdateDisplay();
+                        }
+                        break;
+                    case Key.Right:
+                        if (_currentIndex < _styleFiles.Count - 1)
+                        {
+                            _currentIndex++;
+                            UpdateDisplay();
+                        }
+                        break;
+                    case Key.Enter:
+                        StyleImage_Click(this, null!);
+                        break;
+                }
+            };
         }
 
         /// <summary>

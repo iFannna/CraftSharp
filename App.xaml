@@ -21,6 +21,109 @@
             <sys:Double x:Key="GlobalFontSizeCaption">12</sys:Double>
             <sys:Double x:Key="GlobalFontSizeTiny">11</sys:Double>
 
+            <!-- 全局容器焦点样式：容器类控件不获取键盘焦点、不绘制焦点描边（按 Alt/TAB 时不再出现大区域虚线框），
+                 具体交互控件（按钮/开关/输入框等）不受影响，保留无障碍焦点提示 -->
+            <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource {x:Type ListBox}}">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style TargetType="{x:Type TreeView}" BasedOn="{StaticResource {x:Type TreeView}}">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource {x:Type ScrollViewer}}">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style TargetType="{x:Type wpfui:DynamicScrollViewer}" BasedOn="{StaticResource {x:Type wpfui:DynamicScrollViewer}}">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+
+            <!-- 透明按钮样式：伪按钮（Border+鼠标事件）转真 Button 用，提供 hover/键盘焦点视觉 -->
+            <Style x:Key="TransparentButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                    Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 标题栏窗口按钮的键盘焦点视觉：WPF-UI 模板按钮无焦点指示，补虚线描边 -->
+            <Style x:Key="CaptionButtonFocusVisualStyle" TargetType="Control">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Control">
+                            <Rectangle Margin="2" RadiusX="4" RadiusY="4"
+                                       Stroke="{DynamicResource AccentBrush}"
+                                       StrokeDashArray="2 2" StrokeThickness="1"
+                                       SnapsToDevicePixels="True"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 仿链接按钮样式：伪超链接（TextBlock+鼠标事件）转真 Button 用 -->
+            <Style x:Key="LinkButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter>
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="TextDecorations" Value="Underline"/>
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <!-- 全局样式：将字体应用到所有 TextBlock -->
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="{DynamicResource GlobalFontFamily}"/>
@@ -95,6 +198,7 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Padding" Value="16"/>
                 <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
@@ -122,6 +226,9 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">

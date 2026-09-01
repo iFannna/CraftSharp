@@ -70,6 +70,14 @@ namespace CraftSharp.Windows.Dialogs
                 _nativeDropTarget = null;
             };
 
+            // 无障碍：Esc 关闭；方向键在图标间移动焦点
+            PreviewKeyDown += (_, e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.Escape)
+                    Close();
+            };
+            DirectionalFocusHelper.Attach(IconGrid);
+
             // 手动触发加载"全部方块"
             LoadIconsForTagAsync("block_all");
         }
@@ -332,9 +340,9 @@ namespace CraftSharp.Windows.Dialogs
             public string RelativePath { get; init; } = "";
         }
 
-        private void IconItem_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void IconItem_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Border border && border.DataContext is IconItem icon)
+            if (sender is System.Windows.Controls.Button button && button.DataContext is IconItem icon)
             {
                 SelectedIconPath = icon.RelativePath;
                 SelectedIconFullPath = icon.BitmapImage.UriSource.LocalPath;
