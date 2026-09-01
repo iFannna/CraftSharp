@@ -114,6 +114,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             // 根据初始展开状态设置 UI（内容区不执行动画；箭头初始角度由样式 IsChecked 触发器处理）
             ContentBorder.Height = _isExpanded ? double.NaN : 0;
             HeaderToggle.IsChecked = _isExpanded;
+            UpdateContentTabScope();
         }
 
         private void AddCardContent(string titleResourceKey)
@@ -255,7 +256,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
         /// </summary>
         private void AddStylePickerRow()
         {
-            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12), Cursor = System.Windows.Input.Cursors.Hand };
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
@@ -281,8 +282,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             // 当前样式名称显示
             var styleNameText = new System.Windows.Controls.TextBlock
             {
-                FontWeight = FontWeights.Medium,
-                VerticalAlignment = System.Windows.VerticalAlignment.Center
+                FontWeight = FontWeights.Medium
             };
             styleNameText.SetResourceReference(System.Windows.Controls.TextBlock.ForegroundProperty, "TextPrimaryBrush");
 
@@ -297,13 +297,11 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             }
             styleNameText.Text = styleName;
 
-            grid.Children.Add(styleNameText);
-            Grid.SetColumn(styleNameText, 1);
-
-            // 点击打开样式预览弹窗（整行 Button：键盘 Tab/回车可达）
+            // 点击打开样式预览弹窗（仅右侧样式名文本可点，键盘 Tab/回车可达）
             var styleButton = new System.Windows.Controls.Button
             {
-                Content = grid
+                Content = styleNameText,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
             };
             styleButton.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "TransparentButtonStyle");
             System.Windows.Automation.AutomationProperties.SetName(styleButton,
@@ -336,7 +334,10 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                 previewWindow.ShowDialogQuiet();
             };
 
-            ContentPanel.Children.Add(styleButton);
+            grid.Children.Add(styleButton);
+            Grid.SetColumn(styleButton, 1);
+
+            ContentPanel.Children.Add(grid);
         }
 
         /// <summary>
@@ -856,6 +857,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             }
 
             _isExpanded = HeaderToggle.IsChecked == true;
+            UpdateContentTabScope();
 
             if (_isExpanded)
                 AnimateExpand();
@@ -930,6 +932,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
             _isExpanded = expanded;
             HeaderToggle.IsChecked = expanded;
+            UpdateContentTabScope();
 
             if (animate)
             {
@@ -942,6 +945,32 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             {
                 // 不执行动画，直接设置状态
                 ContentBorder.Height = _isExpanded ? double.NaN : 0;
+            }
+        }
+
+        /// <summary>
+        /// 折叠态把内容子树排除出 TAB 序，避免键盘焦点钻进不可见内容
+        /// </summary>
+        private void UpdateContentTabScope()
+        {
+            System.Windows.Input.KeyboardNavigation.SetTabNavigation(ContentBorder,
+                _isExpanded ? System.Windows.Input.KeyboardNavigationMode.Continue
+                            : System.Windows.Input.KeyboardNavigationMode.None);
+
+            if (_isExpanded) return;
+            if (System.Windows.Input.Keyboard.FocusedElement is not DependencyObject focused) return;
+
+            var node = focused;
+            while (node != null)
+            {
+                if (ReferenceEquals(node, ContentBorder))
+                {
+                    System.Windows.Input.Keyboard.ClearFocus();
+                    break;
+                }
+                node = node is System.Windows.Media.Visual visual
+                    ? System.Windows.Media.VisualTreeHelper.GetParent(visual)
+                    : System.Windows.LogicalTreeHelper.GetParent(node);
             }
         }
     }

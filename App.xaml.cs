@@ -82,6 +82,9 @@ namespace CraftSharp
             // WPF-UI 标题栏窗口按钮（最小化/最大化/关闭）只有图标没有文本，补自动化名称供读屏朗读
             TitleBarAutomation.Attach();
 
+            // 键盘交互无障碍：ComboBox 聚焦 Enter/空格展开下拉；折叠头等 ToggleButton 聚焦 Enter 触发
+            KeyboardAccessibility.Attach();
+
             // 点击窗口空白/容器区域（无可聚焦元素）时把键盘焦点还给窗口，
             // 消除 TAB 焦点描边在鼠标点击后残留（原生应用点击任意处即隐藏键盘提示）
             EventManager.RegisterClassHandler(typeof(Window), UIElement.PreviewMouseLeftButtonDownEvent,

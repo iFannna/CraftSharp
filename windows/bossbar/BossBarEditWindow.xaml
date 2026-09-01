@@ -29,6 +29,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
             <Button x:Name="IconPreviewBorder" Height="32" HorizontalAlignment="Stretch"
                     Style="{StaticResource TransparentButtonStyle}"
+                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                     Cursor="Hand" Click="IconPreview_Click"
                     AutomationProperties.Name="{DynamicResource HudOptionElementIcon}"
                     ToolTip="{DynamicResource HudOptionElementIconDesc}">
@@ -43,6 +44,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}"/>
             <Button x:Name="NotchPreviewBorder" Height="32" HorizontalAlignment="Stretch"
                     Style="{StaticResource TransparentButtonStyle}"
+                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                     Cursor="Hand" Click="NotchPreview_Click"
                     AutomationProperties.Name="{DynamicResource BossBarNotchLabel}"
                     ToolTip="{DynamicResource BossBarNotchDesc}">

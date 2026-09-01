@@ -15,6 +15,20 @@ namespace CraftSharp.Helpers
     public static class TitleBarAutomation
     {
         private static readonly HashSet<TitleBar> _maximizeHooked = new();
+        private static readonly HashSet<System.Windows.Controls.Button> _focusVisualHooked = new();
+
+        /// <summary>FocusVisualStyle 无法在模板触发器里按条件绘制，改为每次获得键盘焦点时按输入来源切换。</summary>
+        private static void HookFocusVisual(System.Windows.Controls.Button button)
+        {
+            if (!_focusVisualHooked.Add(button)) return;
+
+            button.FocusVisualStyle = null;
+            button.GotKeyboardFocus += (_, _) =>
+                button.FocusVisualStyle = KeyboardAccessibility.LastInputWasKeyboard
+                    ? Application.Current.TryFindResource("CaptionButtonFocusVisualStyle") as Style
+                    : null;
+            button.Unloaded += (_, _) => _focusVisualHooked.Remove(button);
+        }
 
         public static void Attach()
         {
@@ -42,11 +56,11 @@ namespace CraftSharp.Helpers
                     else if (name.Contains("Close")) resourceKey = "WindowButtonClose";
                     if (resourceKey == null) continue;
 
-                    // WPF-UI 模板按钮默认不可键盘聚焦（TAB 不可达），重新启用并补焦点视觉
+                    // WPF-UI 模板按钮默认不可键盘聚焦（TAB 不可达），重新启用；
+                    // 虚线描边按输入来源门控：键盘流程才显示，鼠标点击/弹窗还原不残留
                     button.Focusable = true;
                     button.IsTabStop = true;
-                    button.SetResourceReference(
-                        FrameworkElement.FocusVisualStyleProperty, "CaptionButtonFocusVisualStyle");
+                    HookFocusVisual(button);
                     SetName(button, resourceKey);
                 }
             }

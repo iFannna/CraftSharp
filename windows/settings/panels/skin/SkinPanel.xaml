@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:components="clr-namespace:CraftSharp.Windows.Settings.Panels.Skin.Components"
+             xmlns:helpers="clr-namespace:CraftSharp.Helpers"
              VerticalAlignment="Stretch">
 
     <UserControl.Resources>
@@ -22,10 +23,8 @@
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
+                            <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留）；选项原版无鼠标 hover -->
+                            <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">

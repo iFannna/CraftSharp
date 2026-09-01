@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:CraftSharp.Helpers"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
@@ -65,10 +66,8 @@
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
-                                </Trigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留）；对应控件原版无鼠标 hover -->
+                                <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -115,10 +114,8 @@
                     </Setter.Value>
                 </Setter>
                 <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
-                    </Trigger>
-                    <Trigger Property="IsKeyboardFocused" Value="True">
+                    <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留）；作者/GitHub 链接原版无鼠标 hover -->
+                    <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                     </Trigger>
                 </Style.Triggers>
@@ -225,10 +222,8 @@
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
-                                </Trigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留）；折叠头原版无鼠标 hover -->
+                                <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">

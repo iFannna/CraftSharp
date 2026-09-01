@@ -88,6 +88,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             // 根据初始展开状态设置 UI（内容区不执行动画；箭头初始角度由样式 IsChecked 触发器处理）
             ContentBorder.Height = _isExpanded ? double.NaN : 0;
             HeaderToggle.IsChecked = _isExpanded;
+            UpdateContentTabScope();
         }
 
         private void OnLanguageChanged()
@@ -106,6 +107,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             }
 
             _isExpanded = HeaderToggle.IsChecked == true;
+            UpdateContentTabScope();
 
             if (_isExpanded)
                 AnimateExpand();
@@ -259,6 +261,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             _isExpanded = expanded;
             HeaderToggle.IsChecked = expanded;
+            UpdateContentTabScope();
 
             if (animate)
             {
@@ -271,6 +274,31 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             {
                 // 不执行动画，直接设置状态
                 ContentBorder.Height = _isExpanded ? double.NaN : 0;
+            }
+        }
+
+        /// <summary>
+        /// 折叠态把内容子树排除出 TAB 序，避免键盘焦点钻进不可见内容
+        /// </summary>
+        private void UpdateContentTabScope()
+        {
+            System.Windows.Input.KeyboardNavigation.SetTabNavigation(ContentBorder,
+                _isExpanded ? System.Windows.Input.KeyboardNavigationMode.Continue
+                            : System.Windows.Input.KeyboardNavigationMode.None);
+
+            if (_isExpanded) return;
+            if (System.Windows.Input.Keyboard.FocusedElement is not DependencyObject focused) return;
+
+            var node = focused;
+            while (node != null)
+            {
+                if (ReferenceEquals(node, ContentBorder))
+                {
+                    System.Windows.Input.Keyboard.ClearFocus();
+                    break;
+                }
+                node = node is Visual visual ? VisualTreeHelper.GetParent(visual)
+                    : System.Windows.LogicalTreeHelper.GetParent(node);
             }
         }
     }
