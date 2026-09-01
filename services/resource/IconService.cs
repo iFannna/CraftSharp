@@ -18,9 +18,11 @@ namespace CraftSharp.Services.Resource
         private TaskbarIcon? _taskbarIcon;
         private IntPtr _appliedIconHandle;
         private IntPtr _trayIconHandle;
+        private System.Drawing.Icon? _defaultSlotIcon;
         private const int WM_SETICON = 0x0080;
         private const int ICON_SMALL = 0;
         private const int ICON_BIG = 1;
+        private const int ICON_SMALL2 = 2;
 
         private string IcoPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "craftsharp.ico");
 
@@ -72,6 +74,8 @@ namespace CraftSharp.Services.Resource
                 if (hwnd == IntPtr.Zero) continue;
                 SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL, newHandle);
                 SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_BIG, newHandle);
+                // Win11 任务栏优先读取 ICON_SMALL2 槽位，未设置时回退到类图标（即默认 exe 图标）
+                SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL2, newHandle);
             }
 
             // 窗口不再引用旧句柄后销毁，避免 GDI 句柄泄漏
@@ -93,6 +97,7 @@ namespace CraftSharp.Services.Resource
             if (hwnd == IntPtr.Zero) return;
             SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL, _appliedIconHandle);
             SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_BIG, _appliedIconHandle);
+            SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL2, _appliedIconHandle);
         }
 
         /// <summary>
@@ -193,6 +198,22 @@ namespace CraftSharp.Services.Resource
             catch { return null; }
         }
 
+        /// <summary>
+        /// 按任务栏槽位尺寸从 craftsharp.ico 取帧：交给 GDI 标准选帧，
+        /// 与系统展示默认图标的行为一致，不走最近邻像素管线
+        /// </summary>
+        private System.Drawing.Icon? GetDefaultSlotIcon()
+        {
+            if (_defaultSlotIcon != null) return _defaultSlotIcon;
+            try
+            {
+                int size = GetTaskbarIconSize();
+                _defaultSlotIcon = new System.Drawing.Icon(IcoPath, size, size);
+                return _defaultSlotIcon;
+            }
+            catch { return null; }
+        }
+
         private static BitmapImage? LoadImageSource(string path)
         {
             try
@@ -252,9 +273,16 @@ namespace CraftSharp.Services.Resource
 
             if (source != null)
             {
+                var slotIcon = GetDefaultSlotIcon();
                 foreach (Window window in Application.Current.Windows)
                 {
                     window.Icon = source;
+                    // WPF 管线只刷新 SMALL/BIG 槽位；SMALL2 清空无效，必须写入实际图标任务栏才回退
+                    var hwnd = new WindowInteropHelper(window).Handle;
+                    if (hwnd != IntPtr.Zero && slotIcon != null)
+                    {
+                        SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL2, slotIcon.Handle);
+                    }
                 }
             }
             if (_appliedIconHandle != IntPtr.Zero)
