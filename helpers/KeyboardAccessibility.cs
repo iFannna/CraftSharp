@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace CraftSharp.Helpers
 {
@@ -30,6 +31,12 @@ namespace CraftSharp.Helpers
                 new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus));
             EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.LostKeyboardFocusEvent,
                 new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus));
+
+#if DEBUG
+            // 开发期治理：窗口加载时扫描伪按钮，新增功能写回 Border+鼠标事件 的旧模式会被立即暴露
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler((sender, _) => AuditPseudoButtons(sender as Window)));
+#endif
         }
 
         private static void OnComboBoxPreviewKeyDown(object sender, KeyEventArgs e)
@@ -84,6 +91,80 @@ namespace CraftSharp.Helpers
             if (e.OldFocus is DependencyObject oldFocus)
                 SetShowFocusVisual(oldFocus, false);
         }
+
+        /// <summary>
+        /// 折叠卡内容区的 TAB 域控制（各折叠卡控件共用）：
+        /// 展开时内容纳入 TAB 序，折叠时排除；折叠瞬间若焦点还在内容子树内则清除，
+        /// 避免键盘焦点滞留在不可见内容上。折叠卡展开/收起后调用一行即可。
+        /// </summary>
+        public static void SetContentTabScope(DependencyObject content, bool isExpanded)
+        {
+            KeyboardNavigation.SetTabNavigation(content,
+                isExpanded ? KeyboardNavigationMode.Continue
+                           : KeyboardNavigationMode.None);
+
+            if (isExpanded) return;
+            if (Keyboard.FocusedElement is not DependencyObject focused) return;
+
+            var node = focused;
+            while (node != null)
+            {
+                if (ReferenceEquals(node, content))
+                {
+                    Keyboard.ClearFocus();
+                    break;
+                }
+                node = node is Visual visual
+                    ? VisualTreeHelper.GetParent(visual)
+                    : LogicalTreeHelper.GetParent(node);
+            }
+        }
+
+#if DEBUG
+        /// <summary>
+        /// 扫描窗口可视树，找出"手型光标但不在任何按钮类控件内"的疑似伪按钮——
+        /// 这类元素仅鼠标可达、读屏不可见。命中即输出调试警告，供开发自查。
+        /// </summary>
+        private static void AuditPseudoButtons(Window? window)
+        {
+            if (window == null) return;
+            foreach (var element in FindDescendants<FrameworkElement>(window))
+            {
+                if (element.Cursor != Cursors.Hand) continue;
+                if (IsInsideInteractiveControl(element)) continue;
+                System.Diagnostics.Debug.WriteLine(
+                    $"[a11y] 疑似伪按钮（仅鼠标可达）: {element.GetType().Name}" +
+                    $" Name='{element.GetValue(FrameworkElement.NameProperty)}'" +
+                    $" 窗口={window.GetType().Name}，请改为 Button/ToggleButton 等真控件");
+            }
+        }
+
+        private static bool IsInsideInteractiveControl(DependencyObject element)
+        {
+            var node = element;
+            while (node != null)
+            {
+                if (node is ButtonBase or ListBoxItem or TreeViewItem or MenuItem)
+                    return true;
+                node = node is Visual visual
+                    ? VisualTreeHelper.GetParent(visual)
+                    : LogicalTreeHelper.GetParent(node);
+            }
+            return false;
+        }
+
+        private static IEnumerable<T> FindDescendants<T>(DependencyObject root) where T : DependencyObject
+        {
+            int count = VisualTreeHelper.GetChildrenCount(root);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is T matched) yield return matched;
+                foreach (var descendant in FindDescendants<T>(child))
+                    yield return descendant;
+            }
+        }
+#endif
 
         public static readonly DependencyProperty ShowFocusVisualProperty = DependencyProperty.RegisterAttached(
             "ShowFocusVisual", typeof(bool), typeof(KeyboardAccessibility), new PropertyMetadata(false));

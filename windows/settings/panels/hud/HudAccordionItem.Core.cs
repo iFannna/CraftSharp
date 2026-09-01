@@ -282,24 +282,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
         /// </summary>
         private void UpdateContentTabScope()
         {
-            System.Windows.Input.KeyboardNavigation.SetTabNavigation(ContentBorder,
-                _isExpanded ? System.Windows.Input.KeyboardNavigationMode.Continue
-                            : System.Windows.Input.KeyboardNavigationMode.None);
-
-            if (_isExpanded) return;
-            if (System.Windows.Input.Keyboard.FocusedElement is not DependencyObject focused) return;
-
-            var node = focused;
-            while (node != null)
-            {
-                if (ReferenceEquals(node, ContentBorder))
-                {
-                    System.Windows.Input.Keyboard.ClearFocus();
-                    break;
-                }
-                node = node is Visual visual ? VisualTreeHelper.GetParent(visual)
-                    : System.Windows.LogicalTreeHelper.GetParent(node);
-            }
+            KeyboardAccessibility.SetContentTabScope(ContentBorder, _isExpanded);
         }
     }
 }

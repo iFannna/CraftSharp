@@ -953,25 +953,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
         /// </summary>
         private void UpdateContentTabScope()
         {
-            System.Windows.Input.KeyboardNavigation.SetTabNavigation(ContentBorder,
-                _isExpanded ? System.Windows.Input.KeyboardNavigationMode.Continue
-                            : System.Windows.Input.KeyboardNavigationMode.None);
-
-            if (_isExpanded) return;
-            if (System.Windows.Input.Keyboard.FocusedElement is not DependencyObject focused) return;
-
-            var node = focused;
-            while (node != null)
-            {
-                if (ReferenceEquals(node, ContentBorder))
-                {
-                    System.Windows.Input.Keyboard.ClearFocus();
-                    break;
-                }
-                node = node is System.Windows.Media.Visual visual
-                    ? System.Windows.Media.VisualTreeHelper.GetParent(visual)
-                    : System.Windows.LogicalTreeHelper.GetParent(node);
-            }
+            CraftSharp.Helpers.KeyboardAccessibility.SetContentTabScope(ContentBorder, _isExpanded);
         }
     }
 }
