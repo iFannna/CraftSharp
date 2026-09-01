@@ -68,7 +68,6 @@
                                         <StackPanel>
                                             <Border x:Name="Bd" Background="Transparent" CornerRadius="4"
                                                     Padding="{TemplateBinding Padding}"
-                                                    Cursor="Hand"
                                                     MouseLeftButtonDown="TreeViewHeader_Click">
                                                 <DockPanel>
                                                     <ToggleButton x:Name="Expander" DockPanel.Dock="Left"

@@ -37,7 +37,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             {
                 Content = addIcon,
                 Height = 40,
-                Cursor = System.Windows.Input.Cursors.Hand,
                 Margin = new Thickness(0, 8, 0, 0),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
             };

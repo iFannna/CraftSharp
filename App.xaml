@@ -194,7 +194,6 @@
                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Padding" Value="16"/>
-                <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -222,7 +221,10 @@
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留）；折叠头原版无鼠标 hover -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                </Trigger>
+                                <!-- 仅键盘输入获得的焦点显示视觉（鼠标点击不残留） -->
                                 <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
                                 </Trigger>
