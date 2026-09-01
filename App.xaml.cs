@@ -191,10 +191,6 @@ namespace CraftSharp
 
             // 创建背包窗口（隐藏，按E键打开）
             _inventoryWindow = new InventoryWindow(_appSettings!);
-            _inventoryWindow.Hide();
-
-            // 从配置加载玩家皮肤
-            LoadPlayerSkinFromSettings();
 
             // 监听物品栏位置变化（即时保存到配置文件）
             _inventoryWindow.PositionChanged += (_, _) =>
@@ -207,7 +203,7 @@ namespace CraftSharp
                 }
             };
 
-            // 物品栏位置定位：在窗口第一次显示时定位
+            // 物品栏位置定位：必须在第一次 Show() 之前注册（Loaded 在 Show() 内同步触发）
             _inventoryWindow.Loaded += (_, _) =>
             {
                 if (_appSettings?.Inventory.RememberPosition ?? false)
@@ -245,6 +241,15 @@ namespace CraftSharp
                     _inventoryWindow.Top = (screenHeight - _inventoryWindow.Height) / 2;
                 }
             };
+
+            // 按配置决定物品栏初始显隐
+            if (_appSettings!.Inventory.Visible)
+                _inventoryWindow.ShowInventory();
+            else
+                _inventoryWindow.Hide();
+
+            // 从配置加载玩家皮肤
+            LoadPlayerSkinFromSettings();
 
             // 创建系统托盘图标（使用纯 WPF 实现）
             CreateTaskbarIcon();
@@ -512,10 +517,7 @@ namespace CraftSharp
             _statusBarItem.Click += (_, _) =>
             {
                 _trayContextMenu!.IsOpen = false;
-                if (_statusBarWindow?.IsVisible == true)
-                    _statusBarWindow.Hide();
-                else
-                    _statusBarWindow?.Show();
+                StatusBarService.Instance.Toggle();
             };
             _trayContextMenu!.Items.Add(_statusBarItem);
 
@@ -527,10 +529,7 @@ namespace CraftSharp
             _inventoryItem.Click += (_, _) =>
             {
                 _trayContextMenu!.IsOpen = false;
-                if (_inventoryWindow?.IsVisible == true)
-                    _inventoryWindow.Hide();
-                else
-                    _inventoryWindow?.Show();
+                _inventoryWindow?.Toggle();
             };
             _trayContextMenu!.Items.Add(_inventoryItem);
 
@@ -624,15 +623,11 @@ namespace CraftSharp
                     var hotkey = _appSettings?.Hotkeys.OpenInventory;
                     if (string.IsNullOrEmpty(hotkey) || !HotkeyService.MatchesHotkey(e, hotkey)) return;
 
-                    // 与全局打开背包热键一致：物品栏功能关闭时不响应
-                    if (_appSettings?.Inventory.Visible ?? true)
-                    {
-                        _inventoryWindow?.Toggle();
-                        // 打开后激活使物品栏获得焦点，此时再按快捷键即关闭
-                        if (_inventoryWindow?.IsVisible == true)
-                            _inventoryWindow.Activate();
-                        e.Handled = true;
-                    }
+                    _inventoryWindow?.Toggle();
+                    // 打开后激活使物品栏获得焦点，此时再按快捷键即关闭
+                    if (_inventoryWindow?.IsVisible == true)
+                        _inventoryWindow.Activate();
+                    e.Handled = true;
                 }));
 
             // Win32 全局快捷键（使用独立的隐藏窗口接收 WM_HOTKEY）
@@ -659,8 +654,7 @@ namespace CraftSharp
                 HotkeyService.Instance.RegisterHotkey("Inventory",
                     _appSettings?.Hotkeys.Inventory ?? "Ctrl+Alt+E", () =>
                     {
-                        if (_appSettings?.Inventory.Visible ?? true)
-                            _inventoryWindow?.Toggle();
+                        _inventoryWindow?.Toggle();
                     });
 
                 HotkeyService.Instance.RegisterHotkey("Settings",

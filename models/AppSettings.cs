@@ -193,9 +193,9 @@ namespace CraftSharp.Models
     public class InventorySettings
     {
         /// <summary>
-        /// 显示物品栏窗口
+        /// 显示物品栏窗口（记录上次退出时的实际显隐，下次启动按此恢复）
         /// </summary>
-        public bool Visible { get; set; } = true;
+        public bool Visible { get; set; } = false;
 
         /// <summary>
         /// 锁定物品栏窗口位置

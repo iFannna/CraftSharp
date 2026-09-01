@@ -44,9 +44,10 @@ namespace CraftSharp.Services.Hud
         }
 
         /// <summary>
-        /// 设置状态栏可见性
+        /// 设置状态栏可见性（单一入口：改窗口显隐、写配置、发事件）。
+        /// persist=false 用于物品栏 HideStatusBar 联动这类临时隐藏，只改实际状态不动配置
         /// </summary>
-        public void SetVisible(bool visible)
+        public void SetVisible(bool visible, bool persist = true)
         {
             if (_statusBarWindow == null) return;
 
@@ -54,6 +55,15 @@ namespace CraftSharp.Services.Hud
                 _statusBarWindow.Show();
             else
                 _statusBarWindow.Hide();
+
+            if (persist && _appSettings != null)
+            {
+                _appSettings.StatusBar.Visible = visible;
+                if (System.Windows.Application.Current is App app)
+                {
+                    app.SaveSettings();
+                }
+            }
 
             VisibilityChanged?.Invoke(visible);
         }

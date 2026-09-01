@@ -12,11 +12,22 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
     /// </summary>
     public partial class HudAccordionItem
     {
+        private ToggleSwitch? _statusBarShowToggle;
+        private bool _statusBarSubscribed;
+        private bool _syncingStatusBarToggle;
+
         private void AddStatusBarContent()
         {
             var showToggle = AddToggleRow("HudOptionShowStatusBar", "HudOptionShowStatusBarDesc", _settings.StatusBar.Visible);
-            showToggle.Checked += (s, e) => { _settings.StatusBar.Visible = true; StatusBarService.Instance.SetVisible(true); SaveSettings(); };
-            showToggle.Unchecked += (s, e) => { _settings.StatusBar.Visible = false; StatusBarService.Instance.SetVisible(false); SaveSettings(); };
+            _statusBarShowToggle = showToggle;
+            // 语言切换会重建内容，事件只订阅一次，处理器始终引用最新开关实例
+            if (!_statusBarSubscribed)
+            {
+                StatusBarService.Instance.VisibilityChanged += OnStatusBarVisibilityChanged;
+                _statusBarSubscribed = true;
+            }
+            showToggle.Checked += (s, e) => { if (_syncingStatusBarToggle) return; StatusBarService.Instance.SetVisible(true); };
+            showToggle.Unchecked += (s, e) => { if (_syncingStatusBarToggle) return; StatusBarService.Instance.SetVisible(false); };
 
             var lockToggle = AddToggleRow("HudOptionLockPosition", "HudOptionLockPositionDesc", _settings.StatusBar.Locked);
             lockToggle.Checked += (s, e) => { _settings.StatusBar.Locked = true; StatusBarService.Instance.SetLocked(true); SaveSettings(); };
@@ -32,6 +43,18 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
                 _settings.StatusBar.PositionY = 0;
                 SaveSettings();
             };
+        }
+
+        /// <summary>
+        /// 显隐变化事件同步开关 UI（托盘/热键等面板外路径触发）
+        /// </summary>
+        private void OnStatusBarVisibilityChanged(bool visible)
+        {
+            var toggle = _statusBarShowToggle;
+            if (toggle == null) return;
+            _syncingStatusBarToggle = true;
+            toggle.IsChecked = visible;
+            _syncingStatusBarToggle = false;
         }
     }
 }

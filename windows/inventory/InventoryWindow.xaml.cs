@@ -748,6 +748,9 @@ namespace CraftSharp.Windows.Inventory
         {
             if (_playerPreviewControl == null) return;
 
+            // 窗口首次显示期间 WM_MOVE 可能早于子控件连接 PresentationSource，此时无法换算屏幕坐标
+            if (PresentationSource.FromVisual(_playerPreviewControl) == null) return;
+
             // 获取预览控件在屏幕上的位置
             var previewPosition = _playerPreviewControl.PointToScreen(new Point(0, 0));
             _playerPreviewControl.UpdatePreviewPosition(previewPosition, _playerPreviewControl.ActualWidth, _playerPreviewControl.ActualHeight);
@@ -1624,6 +1627,11 @@ namespace CraftSharp.Windows.Inventory
         // ==================== 显示/隐藏 ====================
 
         /// <summary>
+        /// 物品栏可见性变化事件（静态：设置面板在窗口创建前即订阅）
+        /// </summary>
+        public static event Action<bool>? VisibilityChanged;
+
+        /// <summary>
         /// 切换显示/隐藏
         /// </summary>
         public void Toggle()
@@ -1650,9 +1658,9 @@ namespace CraftSharp.Windows.Inventory
         }
 
         /// <summary>
-        /// 显示物品栏
+        /// 显示物品栏（单一入口：改窗口显隐、写配置、发事件）
         /// </summary>
-        private void ShowInventory()
+        public void ShowInventory()
         {
             // 每次显示时重新读取点击模式配置（确保使用最新设置）
             _clickMode = _settings?.Inventory.ClickMode ?? "single";
@@ -1676,9 +1684,13 @@ namespace CraftSharp.Windows.Inventory
                 _statusBarWasVisible = StatusBarService.Instance.IsVisible();
                 if (_statusBarWasVisible)
                 {
-                    StatusBarService.Instance.SetVisible(false);
+                    // 联动属临时隐藏，只改实际状态不写配置
+                    StatusBarService.Instance.SetVisible(false, persist: false);
                 }
             }
+
+            PersistVisibility(true);
+            VisibilityChanged?.Invoke(true);
         }
 
         /// <summary>
@@ -1700,7 +1712,23 @@ namespace CraftSharp.Windows.Inventory
 
             if ((_settings?.Inventory.HideStatusBar ?? false) && _statusBarWasVisible)
             {
-                StatusBarService.Instance.SetVisible(true);
+                StatusBarService.Instance.SetVisible(true, persist: false);
+            }
+
+            PersistVisibility(false);
+            VisibilityChanged?.Invoke(false);
+        }
+
+        /// <summary>
+        /// 将当前显隐持久化到配置，下次启动按此恢复
+        /// </summary>
+        private void PersistVisibility(bool visible)
+        {
+            if (_settings == null) return;
+            _settings.Inventory.Visible = visible;
+            if (System.Windows.Application.Current is App app)
+            {
+                app.SaveSettings();
             }
         }
 

@@ -1,5 +1,6 @@
 using CraftSharp.Models;
 using CraftSharp.Windows.Dialogs;
+using CraftSharp.Windows.Inventory;
 using CraftSharp.Services.Core;
 using CraftSharp.Services.Hud;
 using CraftSharp.Services.Slot;
@@ -27,6 +28,10 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
         // 灰色蒙版透明度输入框容器
         private StackPanel? _grayOverlayOpacityContainer;
+
+        private ToggleSwitch? _inventoryVisibleToggle;
+        private bool _inventorySubscribed;
+        private bool _syncingInventoryToggle;
 
         /// <summary>
         /// 展开状态变化事件
@@ -92,6 +97,18 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             AddCardContent(_titleResourceKey);
         }
 
+        /// <summary>
+        /// 显隐变化事件同步开关 UI（热键/托盘等面板外路径触发）
+        /// </summary>
+        private void OnInventoryVisibilityChanged(bool visible)
+        {
+            var toggle = _inventoryVisibleToggle;
+            if (toggle == null) return;
+            _syncingInventoryToggle = true;
+            toggle.IsChecked = visible;
+            _syncingInventoryToggle = false;
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             // 根据初始展开状态设置 UI（不执行动画）
@@ -116,7 +133,20 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
                 // 打开动作（单击/双击）
                 AddClickModeComboBox();
                 // 物品栏卡片：添加显示物品栏、锁定位置、记住位置开关
-                AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.Inventory.Visible, v => _settings.Inventory.Visible = v);
+                _inventoryVisibleToggle = AddToggleRow("InventoryOptionVisible", "InventoryOptionVisibleDesc", _settings.Inventory.Visible, v =>
+                {
+                    if (_syncingInventoryToggle) return;
+                    var window = (System.Windows.Application.Current as App)?.GetInventoryWindow();
+                    if (window == null) return;
+                    if (v) window.ShowInventory();
+                    else window.HideInventory();
+                });
+                // 语言切换会重建内容，事件只订阅一次，处理器始终引用最新开关实例
+                if (!_inventorySubscribed)
+                {
+                    InventoryWindow.VisibilityChanged += OnInventoryVisibilityChanged;
+                    _inventorySubscribed = true;
+                }
                 AddToggleRow("InventoryOptionSharedData", "InventoryOptionSharedDataDesc", _settings.Inventory.SharedData, v => {
                     _settings.Inventory.SharedData = v;
                     // 切换共享数据开关后刷新物品栏和快捷栏图标
