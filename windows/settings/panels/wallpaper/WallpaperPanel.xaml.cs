@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
 
@@ -435,6 +436,19 @@ public partial class WallpaperPanel : UserControl
     private async void RetryButton_Click(object sender, RoutedEventArgs e)
     {
         await LoadWallpapersAsync(_currentPage);
+    }
+
+    private void WallpaperListBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        // 卡片本体聚焦时 Enter 打开预览（与悬浮层"查看图片"同入口）；
+        // 焦点在卡内按钮上时不拦，Enter 触发按钮自身
+        if (e.Key != Key.Enter) return;
+        if (Keyboard.FocusedElement is not ListBoxItem item) return;
+        if (item.Content is WallpaperItem wallpaper)
+        {
+            OpenPreview(wallpaper);
+            e.Handled = true;
+        }
     }
 
     private void ViewImage_Click(object sender, RoutedEventArgs e)

@@ -3,28 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:hx="clr-namespace:HelixToolkit.Wpf.SharpDX;assembly=HelixToolkit.Wpf.SharpDX"
              Width="150" Height="150">
-    <Border x:Name="ItemBorder" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
-            BorderThickness="2" BorderBrush="Transparent" Cursor="Hand"
-            MouseLeftButtonDown="ItemBorder_MouseLeftButtonDown"
-            ContextMenuOpening="ItemBorder_ContextMenuOpening">
-        <Border.ContextMenu>
+    <!-- 卡片为真 Button：键盘 Tab/Enter 可选中皮肤；3D 视口仅展示（不可聚焦，否则 TAB 会落进视口） -->
+    <Button x:Name="ItemButton"
+            Style="{StaticResource TransparentButtonStyle}"
+            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+            Background="{DynamicResource CardBackgroundBrush}"
+            Click="ItemButton_Click"
+            ContextMenuOpening="ItemButton_ContextMenuOpening">
+        <Button.ContextMenu>
             <ContextMenu x:Name="ItemContextMenu">
                 <MenuItem x:Name="MenuSetCurrent" Header="{DynamicResource ContextMenuSetCurrentSkin}" Click="MenuSetCurrent_Click"/>
                 <MenuItem x:Name="MenuRename" Header="{DynamicResource ContextMenuRename}" Click="MenuRename_Click" Visibility="Collapsed"/>
                 <MenuItem x:Name="MenuRemove" Header="{DynamicResource ContextMenuRemove}" Click="MenuRemove_Click" Visibility="Collapsed"/>
             </ContextMenu>
-        </Border.ContextMenu>
-        <hx:Viewport3DX x:Name="Viewport"
-                        Background="Transparent"
-                        ShowCoordinateSystem="False"
-                        ShowViewCube="False"
-                        IsPanEnabled="False"
-                        IsZoomEnabled="False"
-                        IsRotationEnabled="False"
-                        CameraRotationMode="Turntable"
-                        OITRenderMode="None">
-            <hx:AmbientLight3D Color="White"/>
-            <hx:GroupModel3D x:Name="ModelGroup"/>
-        </hx:Viewport3DX>
-    </Border>
+        </Button.ContextMenu>
+        <Border x:Name="ItemBorder" Background="Transparent" CornerRadius="8"
+                BorderThickness="2" BorderBrush="Transparent">
+            <hx:Viewport3DX x:Name="Viewport"
+                            Focusable="False"
+                            Background="Transparent"
+                            ShowCoordinateSystem="False"
+                            ShowViewCube="False"
+                            IsPanEnabled="False"
+                            IsZoomEnabled="False"
+                            IsRotationEnabled="False"
+                            CameraRotationMode="Turntable"
+                            OITRenderMode="None">
+                <hx:AmbientLight3D Color="White"/>
+                <hx:GroupModel3D x:Name="ModelGroup"/>
+            </hx:Viewport3DX>
+        </Border>
+    </Button>
 </UserControl>

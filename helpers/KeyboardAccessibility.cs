@@ -9,7 +9,8 @@ namespace CraftSharp.Helpers
     /// <summary>
     /// 键盘交互无障碍（全局类处理器）：
     /// - ComboBox 聚焦时 Enter/空格 展开下拉列表（WPF 原生仅 F4/Alt+下方向键，读屏用户无从得知选项）
-    /// - ToggleButton 聚焦时 Enter 触发切换（原生仅空格；RadioButton 除外，避免破坏单选语义）
+    /// - ToggleButton 聚焦时 Enter 触发切换（原生仅空格）；RadioButton 聚焦时 Enter 选中该选项，
+    ///   但所在窗口存在 IsDefault 确认按钮时让位——Enter 归确认键，保持对话框原生语义
     /// - 仿真 Win32 键盘提示状态：WPF 里鼠标点击也赋键盘焦点，且 IsKeyboardFocused 触发器无从区分来源，
     ///   导致纯鼠标操作残留键盘焦点视觉。此处跟踪最近输入设备，仅当焦点经由键盘获得时置 ShowFocusVisual，
     ///   样式触发器据此绘制高亮（弹窗关闭后的焦点还原同样按当时的输入来源判定）
@@ -54,14 +55,35 @@ namespace CraftSharp.Helpers
         private static void OnToggleButtonPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            if (sender is not ToggleButton toggle || toggle is RadioButton) return;
-            if (!toggle.IsKeyboardFocused) return;
+            if (sender is not ToggleButton toggle || !toggle.IsKeyboardFocused) return;
+
+            if (toggle is RadioButton radio)
+            {
+                if (HasDefaultButton(radio)) return;
+                // 单选钮只选不翻：IsChecked=true 经组内互斥自动取消同级选中，再补路由 Click 对齐原生空格
+                radio.IsChecked = true;
+                radio.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, radio));
+                e.Handled = true;
+                return;
+            }
 
             // 复刻原生空格的完整序列：先翻转 IsChecked（触发箭头等模板触发器），再路由 Click；
             // e.Handled 阻止后续原生处理，保证只触发一次
             toggle.IsChecked = !(toggle.IsChecked == true);
             toggle.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, toggle));
             e.Handled = true;
+        }
+
+        /// <summary>所在窗口内是否存在可用的默认按钮（IsDefault）——存在时 Enter 属于确认键。</summary>
+        private static bool HasDefaultButton(DependencyObject element)
+        {
+            var window = Window.GetWindow(element);
+            if (window == null) return false;
+            foreach (var button in FindDescendants<Button>(window))
+            {
+                if (button.IsDefault && button.IsEnabled && button.IsVisible) return true;
+            }
+            return false;
         }
 
         private static void OnPreProcessInput(object sender, PreProcessInputEventArgs e)
@@ -152,6 +174,7 @@ namespace CraftSharp.Helpers
             }
             return false;
         }
+#endif
 
         private static IEnumerable<T> FindDescendants<T>(DependencyObject root) where T : DependencyObject
         {
@@ -164,7 +187,6 @@ namespace CraftSharp.Helpers
                     yield return descendant;
             }
         }
-#endif
 
         public static readonly DependencyProperty ShowFocusVisualProperty = DependencyProperty.RegisterAttached(
             "ShowFocusVisual", typeof(bool), typeof(KeyboardAccessibility), new PropertyMetadata(false));

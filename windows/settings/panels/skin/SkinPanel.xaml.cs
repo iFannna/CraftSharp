@@ -64,8 +64,8 @@ namespace CraftSharp.Windows.Settings.Panels.Skin
                 if (container is System.Windows.FrameworkElement element)
                 {
                     var control = FindSkinItemControl(element);
-                    if (control?.ItemBorder.ContextMenu?.IsOpen == true)
-                        control.ItemBorder.ContextMenu.IsOpen = false;
+                    if (control?.ItemButton.ContextMenu?.IsOpen == true)
+                        control.ItemButton.ContextMenu.IsOpen = false;
                 }
             }
         }

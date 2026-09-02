@@ -23,7 +23,17 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
         public event EventHandler? RequestRemove;
 
         public string? SkinPath { get; private set; }
-        public string? SkinName { get; set; }
+
+        private string? _skinName;
+        public string? SkinName
+        {
+            get => _skinName;
+            set
+            {
+                _skinName = value;
+                System.Windows.Automation.AutomationProperties.SetName(ItemButton, value);
+            }
+        }
         public bool IsCustomSkin { get; set; }
 
         private bool _isCurrentSkin;
@@ -142,10 +152,9 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
             ItemBorder.BorderBrush = _isSelected ? (SolidColorBrush)FindResource("AccentBrush") : NormalBorderBrush;
         }
 
-        private void ItemBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void ItemButton_Click(object sender, RoutedEventArgs e)
         {
             Selected?.Invoke(this, EventArgs.Empty);
-            e.Handled = true;
         }
 
         private void ItemBorder_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -154,7 +163,7 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
             e.Handled = true;
         }
 
-        private void ItemBorder_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
+        private void ItemButton_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
         {
             MenuRename.Visibility = IsCustomSkin ? Visibility.Visible : Visibility.Collapsed;
             MenuRemove.Visibility = IsCustomSkin ? Visibility.Visible : Visibility.Collapsed;
@@ -164,11 +173,11 @@ namespace CraftSharp.Windows.Settings.Panels.Skin.Components
                 MenuRename.Visibility == Visibility.Collapsed &&
                 MenuRemove.Visibility == Visibility.Collapsed)
             {
-                ItemBorder.ContextMenu = null;
+                ItemButton.ContextMenu = null;
             }
             else
             {
-                ItemBorder.ContextMenu = ItemContextMenu;
+                ItemButton.ContextMenu = ItemContextMenu;
             }
         }
 

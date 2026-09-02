@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:helpers="clr-namespace:CraftSharp.Helpers"
              VerticalAlignment="Stretch">
 
     <Grid VerticalAlignment="Stretch">
@@ -63,7 +64,8 @@
             <ListBox x:Name="WallpaperListBox"
                      Background="Transparent" BorderThickness="0"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     SelectionMode="Single">
+                     SelectionMode="Single"
+                     PreviewKeyDown="WallpaperListBox_PreviewKeyDown">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid x:Name="WallpaperGrid" Columns="4"/>
@@ -75,12 +77,22 @@
                         <Setter Property="Margin" Value="0,0,8,8"/>
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
-                                    <ContentPresenter/>
+                                    <Grid>
+                                        <ContentPresenter/>
+                                        <!-- 键盘焦点描边（按输入来源门控）：覆盖式绘制，不影响布局与命中测试 -->
+                                        <Border x:Name="FocusBd" BorderThickness="2" BorderBrush="Transparent"
+                                                IsHitTestVisible="False"/>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="{x:Static helpers:KeyboardAccessibility.ShowFocusVisualProperty}" Value="True">
+                                            <Setter TargetName="FocusBd" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
@@ -88,7 +100,7 @@
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border x:Name="CardRoot" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8" Cursor="Hand">
+                        <Border x:Name="CardRoot" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8">
                             <Border CornerRadius="8" ClipToBounds="True" Background="{DynamicResource ApplicationBackgroundBrush}">
                                 <Grid>
                                     <ui:ProgressRing x:Name="LoadingRing" IsIndeterminate="True"
@@ -141,42 +153,51 @@
                             </Border>
                         </Border>
 
+                        <DataTemplate.Resources>
+                            <!-- 悬浮层显隐动画：鼠标 hover 与键盘焦点进入共用（TAB 到卡内按钮时悬浮层可见） -->
+                            <Storyboard x:Key="CardHoverIn">
+                                <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                 Storyboard.TargetProperty="ScaleX"
+                                                 To="1.06" Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                 Storyboard.TargetProperty="ScaleY"
+                                                 To="1.06" Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="HoverOverlay"
+                                                 Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                            </Storyboard>
+                            <Storyboard x:Key="CardHoverOut">
+                                <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                 Storyboard.TargetProperty="ScaleX"
+                                                 To="1.0" Duration="0:0:0.15"/>
+                                <DoubleAnimation Storyboard.TargetName="ImageScale"
+                                                 Storyboard.TargetProperty="ScaleY"
+                                                 To="1.0" Duration="0:0:0.15"/>
+                                <DoubleAnimation Storyboard.TargetName="HoverOverlay"
+                                                 Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                            </Storyboard>
+                        </DataTemplate.Resources>
                         <DataTemplate.Triggers>
                             <EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="CardRoot">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
-                                                         Storyboard.TargetProperty="ScaleX"
-                                                         To="1.06" Duration="0:0:0.2">
-                                            <DoubleAnimation.EasingFunction>
-                                                <CubicEase EasingMode="EaseOut"/>
-                                            </DoubleAnimation.EasingFunction>
-                                        </DoubleAnimation>
-                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
-                                                         Storyboard.TargetProperty="ScaleY"
-                                                         To="1.06" Duration="0:0:0.2">
-                                            <DoubleAnimation.EasingFunction>
-                                                <CubicEase EasingMode="EaseOut"/>
-                                            </DoubleAnimation.EasingFunction>
-                                        </DoubleAnimation>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay"
-                                                         Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
+                                <BeginStoryboard Storyboard="{StaticResource CardHoverIn}"/>
                             </EventTrigger>
                             <EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="CardRoot">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
-                                                         Storyboard.TargetProperty="ScaleX"
-                                                         To="1.0" Duration="0:0:0.15"/>
-                                        <DoubleAnimation Storyboard.TargetName="ImageScale"
-                                                         Storyboard.TargetProperty="ScaleY"
-                                                         To="1.0" Duration="0:0:0.15"/>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay"
-                                                         Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
+                                <BeginStoryboard Storyboard="{StaticResource CardHoverOut}"/>
+                            </EventTrigger>
+                            <!-- 悬浮层内任一元素获得键盘焦点即显示（否则 TAB 落在不可见按钮上）；
+                                 焦点移出（含移到卡片本体/其他卡片）再隐藏 -->
+                            <EventTrigger RoutedEvent="Keyboard.GotKeyboardFocus" SourceName="HoverOverlay">
+                                <BeginStoryboard Storyboard="{StaticResource CardHoverIn}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Keyboard.LostKeyboardFocus" SourceName="HoverOverlay">
+                                <BeginStoryboard Storyboard="{StaticResource CardHoverOut}"/>
                             </EventTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
