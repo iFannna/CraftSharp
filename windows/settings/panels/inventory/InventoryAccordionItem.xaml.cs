@@ -366,15 +366,12 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
             left.Children.Add(descLabel);
             grid.Children.Add(left);
 
-            // 预先计算所有选项的最大宽度
             string autoText = System.Windows.Application.Current.TryFindResource("HudOptionFileNameColorAuto") as string ?? "自动";
             string otherText = System.Windows.Application.Current.TryFindResource("HudOptionFileNameColorOther") as string ?? "其他...";
-            double maxWidth = ColorPickerHelper.CalculateMaxComboBoxWidth(autoText, otherText);
 
             var comboBox = new System.Windows.Controls.ComboBox
             {
-                Width = maxWidth,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                Width = 160,
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left
             };
 
@@ -610,8 +607,7 @@ namespace CraftSharp.Windows.Settings.Panels.Inventory
 
             var comboBox = new System.Windows.Controls.ComboBox
             {
-                Width = 100,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+                Width = 160
             };
 
             var singleItem = new System.Windows.Controls.ComboBoxItem

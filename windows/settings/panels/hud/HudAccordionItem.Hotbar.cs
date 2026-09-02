@@ -77,15 +77,9 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             left.Children.Add(descLabel);
             grid.Children.Add(left);
 
-            // 预先计算所有选项的最大宽度
-            double maxWidth = ColorPickerHelper.CalculateMaxComboBoxWidth(
-                GetResourceString("HudOptionFileNameColorAuto"),
-                GetResourceString("HudOptionFileNameColorOther"));
-
             var comboBox = new System.Windows.Controls.ComboBox
             {
-                Width = maxWidth,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                Width = 160,
                 HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left
             };
 

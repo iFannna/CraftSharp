@@ -75,8 +75,7 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
 
             var comboBox = new System.Windows.Controls.ComboBox
             {
-                Width = 100,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+                Width = 160
             };
 
             var singleItem = new System.Windows.Controls.ComboBoxItem

@@ -42,7 +42,6 @@ namespace CraftSharp.Windows.Settings.Panels.Hud
             {
                 Width = 160,
                 Margin = new Thickness(0, 0, 0, 12),
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                 Visibility = enabled ? Visibility.Visible : Visibility.Collapsed
             };
 
