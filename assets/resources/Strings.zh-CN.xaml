@@ -61,6 +61,27 @@
     <sys:String x:Key="WallpaperPreviewZoomOut">缩小</sys:String>
     <sys:String x:Key="WallpaperPreviewDownload">下载壁纸</sys:String>
 
+    <!-- 显示器设置弹窗 -->
+    <sys:String x:Key="DisplaySettingsTitle">显示器设置</sys:String>
+    <sys:String x:Key="DisplayIdentify">标识</sys:String>
+    <sys:String x:Key="DisplayModeExtend">扩展这些显示器</sys:String>
+    <sys:String x:Key="DisplayModeDuplicate">复制这些显示器</sys:String>
+    <sys:String x:Key="DisplayModeSingle">仅在此屏幕上显示</sys:String>
+    <sys:String x:Key="DisplayScaleLayoutSection">缩放和布局</sys:String>
+    <sys:String x:Key="DisplayScale">缩放</sys:String>
+    <sys:String x:Key="DisplayScaleDesc">更改文本、应用和其他项目的大小</sys:String>
+    <sys:String x:Key="DisplayResolution">显示器分辨率</sys:String>
+    <sys:String x:Key="DisplayResolutionDesc">调整分辨率以适合所连接的显示器</sys:String>
+    <sys:String x:Key="DisplayOrientation">显示方向</sys:String>
+    <sys:String x:Key="DisplayOrientationLandscape">横向</sys:String>
+    <sys:String x:Key="DisplayOrientationPortrait">纵向</sys:String>
+    <sys:String x:Key="DisplayOrientationLandscapeFlipped">横向（翻转）</sys:String>
+    <sys:String x:Key="DisplayOrientationPortraitFlipped">纵向（翻转）</sys:String>
+    <sys:String x:Key="DisplayApplySection">壁纸应用</sys:String>
+    <sys:String x:Key="DisplayApplyTargets">目标显示器</sys:String>
+    <sys:String x:Key="DisplayMonitorNameFallback">显示器 {0}</sys:String>
+    <sys:String x:Key="DisplayNoTarget">请至少选择一个显示器</sys:String>
+
     <!-- 皮肤设置面板 -->
     <sys:String x:Key="SkinPanelTitle">皮肤设置</sys:String>
     <sys:String x:Key="SkinTabUpload">上传材质</sys:String>

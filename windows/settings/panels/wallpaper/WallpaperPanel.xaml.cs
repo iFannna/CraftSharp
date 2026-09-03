@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
+using CraftSharp.Windows.Dialogs;
 
 namespace CraftSharp.Windows.Settings.Panels.Wallpaper;
 
@@ -18,9 +19,6 @@ public partial class WallpaperPanel : UserControl
     private bool _isLoading;
 
     private bool _isInitialized;
-
-    private List<MonitorInfo> _monitors = new();
-    private string? _selectedMonitorId;
 
     public WallpaperPanel()
     {
@@ -44,7 +42,6 @@ public partial class WallpaperPanel : UserControl
             InitializeAndLoad();
         else if ((bool)e.NewValue && _isInitialized && _wallpapers.Count > 0)
         {
-            RefreshMonitorBar();
             RefreshThumbnails();
         }
     }
@@ -53,101 +50,20 @@ public partial class WallpaperPanel : UserControl
     {
         if (_isInitialized) return;
         _isInitialized = true;
-        RefreshMonitorBar();
         await LoadWallpapersAsync(1);
     }
 
-    #region 多显示器选择
+    #region 壁纸应用入口
 
     private static WallpaperSettings? WallpaperConfig => (Application.Current as App)?.GetAppSettings()?.Wallpaper;
 
     private bool IsSpanMode => WallpaperConfig?.Mode == "span";
 
     /// <summary>
-    /// 刷新显示器选择栏（每次面板可见时调用，感知热插拔）
+    /// 单屏直接应用（多屏由 DisplaySettingsWindow 承接，不走到这里）。
+    /// 面板快速设置与预览窗口共用入口
     /// </summary>
-    private void RefreshMonitorBar()
-    {
-        _monitors = MonitorLayoutService.Instance.GetMonitors();
-        MonitorBar.Visibility = _monitors.Count >= 2 ? Visibility.Visible : Visibility.Collapsed;
-        if (_monitors.Count < 2) return;
-
-        if (_selectedMonitorId == null || _monitors.All(m => m.DevicePath != _selectedMonitorId))
-            _selectedMonitorId = _monitors[0].DevicePath;
-
-        UpdateModeButtons();
-        BuildMonitorChips();
-    }
-
-    private void UpdateModeButtons()
-    {
-        var span = IsSpanMode;
-        ModeIndependent.Appearance = span
-            ? Wpf.Ui.Controls.ControlAppearance.Secondary
-            : Wpf.Ui.Controls.ControlAppearance.Primary;
-        ModeSpan.Appearance = span
-            ? Wpf.Ui.Controls.ControlAppearance.Primary
-            : Wpf.Ui.Controls.ControlAppearance.Secondary;
-    }
-
-    private void BuildMonitorChips()
-    {
-        MonitorChipPanel.Items.Clear();
-        var spanMode = IsSpanMode;
-        var primaryMark = (string)Application.Current.FindResource("WallpaperMonitorPrimary");
-
-        foreach (var monitor in _monitors)
-        {
-            var label = $"{monitor.Index} · {monitor.Width}x{monitor.Height}";
-            if (monitor.IsPrimary)
-                label += $" ({primaryMark})";
-
-            var chip = new Wpf.Ui.Controls.Button
-            {
-                Content = label,
-                Tag = monitor.DevicePath,
-                Appearance = monitor.DevicePath == _selectedMonitorId
-                    ? Wpf.Ui.Controls.ControlAppearance.Primary
-                    : Wpf.Ui.Controls.ControlAppearance.Secondary,
-                Margin = new Thickness(0, 0, 4, 0),
-                Padding = new Thickness(16, 6, 16, 6),
-                FontSize = (double)FindResource("GlobalFontSizeSmall"),
-                IsEnabled = !spanMode
-            };
-            chip.Click += MonitorChip_Click;
-            MonitorChipPanel.Items.Add(chip);
-        }
-    }
-
-    private async void ModeButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Wpf.Ui.Controls.Button btn || btn.Tag is not string tag) return;
-
-        var settings = WallpaperConfig;
-        if (settings == null || settings.Mode == tag) return;
-
-        settings.Mode = tag;
-        (Application.Current as App)?.SaveSettings();
-
-        UpdateModeButtons();
-        BuildMonitorChips();
-
-        // 切模式立即应用该模式下的现有配置
-        await WallpaperService.Instance.ApplyLayoutAsync();
-    }
-
-    private void MonitorChip_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Wpf.Ui.Controls.Button btn || btn.Tag is not string devicePath) return;
-
-        _selectedMonitorId = devicePath;
-        BuildMonitorChips();
-    }
-
-    /// <summary>
-    /// 按当前模式与选中显示器应用壁纸（面板快速设置与预览窗口共用入口）
-    /// </summary>
-    private async Task ApplySelectedAsync(WallpaperItem wallpaper)
+    private async Task ApplyDirectAsync(WallpaperItem wallpaper)
     {
         if (IsSpanMode)
         {
@@ -155,7 +71,8 @@ public partial class WallpaperPanel : UserControl
             return;
         }
 
-        var target = _selectedMonitorId ?? _monitors.FirstOrDefault()?.DevicePath;
+        var monitors = MonitorLayoutService.Instance.GetMonitors();
+        var target = monitors.FirstOrDefault()?.DevicePath;
         if (string.IsNullOrEmpty(target)) return;
         await WallpaperService.Instance.ApplyToMonitorAsync(wallpaper, target);
     }
@@ -464,13 +381,16 @@ public partial class WallpaperPanel : UserControl
         var item = FindWallpaperItem(fe);
         if (item == null) return;
 
+        // 多屏：进入显示器设置弹窗选目标与方式；单屏：直接应用
+        if (DisplaySettingsWindow.OpenForWallpaper(item, Window.GetWindow(this))) return;
+
         var btn = (Wpf.Ui.Controls.Button)sender;
         btn.IsEnabled = false;
         btn.Content = Application.Current.FindResource("WallpaperSetting") ?? "...";
 
         try
         {
-            await ApplySelectedAsync(item);
+            await ApplyDirectAsync(item);
         }
         catch (Exception ex)
         {
@@ -498,7 +418,7 @@ public partial class WallpaperPanel : UserControl
     private void OpenPreview(WallpaperItem item)
     {
         var index = _wallpapers.IndexOf(item);
-        var window = new WallpaperPreviewWindow(_wallpapers, index, ApplySelectedAsync);
+        var window = new WallpaperPreviewWindow(_wallpapers, index, ApplyDirectAsync);
         window.Owner = Window.GetWindow(this);
         window.Show();
     }

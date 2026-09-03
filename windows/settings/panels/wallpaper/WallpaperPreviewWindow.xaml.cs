@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using CraftSharp.Models;
 using CraftSharp.Services.Wallpaper;
+using CraftSharp.Windows.Dialogs;
 using Microsoft.Win32;
 
 namespace CraftSharp.Windows.Settings.Panels.Wallpaper;
@@ -198,6 +199,10 @@ public partial class WallpaperPreviewWindow : Wpf.Ui.Controls.FluentWindow
     private async void SetWallpaperBtn_Click(object sender, RoutedEventArgs e)
     {
         var wallpaper = _wallpapers[_currentIndex];
+
+        // 多屏：进入显示器设置弹窗选目标与方式；单屏：直接应用
+        if (DisplaySettingsWindow.OpenForWallpaper(wallpaper, this)) return;
+
         SetWallpaperBtn.IsEnabled = false;
 
         try

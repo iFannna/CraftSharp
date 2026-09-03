@@ -61,6 +61,27 @@
     <sys:String x:Key="WallpaperPreviewZoomOut">Zoom Out</sys:String>
     <sys:String x:Key="WallpaperPreviewDownload">Download Wallpaper</sys:String>
 
+    <!-- Display settings dialog -->
+    <sys:String x:Key="DisplaySettingsTitle">Display Settings</sys:String>
+    <sys:String x:Key="DisplayIdentify">Identify</sys:String>
+    <sys:String x:Key="DisplayModeExtend">Extend these displays</sys:String>
+    <sys:String x:Key="DisplayModeDuplicate">Duplicate these displays</sys:String>
+    <sys:String x:Key="DisplayModeSingle">Show only on this display</sys:String>
+    <sys:String x:Key="DisplayScaleLayoutSection">Scale &amp; Layout</sys:String>
+    <sys:String x:Key="DisplayScale">Scale</sys:String>
+    <sys:String x:Key="DisplayScaleDesc">Change the size of text, apps, and other items</sys:String>
+    <sys:String x:Key="DisplayResolution">Display resolution</sys:String>
+    <sys:String x:Key="DisplayResolutionDesc">Adjust resolution to match your display</sys:String>
+    <sys:String x:Key="DisplayOrientation">Display orientation</sys:String>
+    <sys:String x:Key="DisplayOrientationLandscape">Landscape</sys:String>
+    <sys:String x:Key="DisplayOrientationPortrait">Portrait</sys:String>
+    <sys:String x:Key="DisplayOrientationLandscapeFlipped">Landscape (flipped)</sys:String>
+    <sys:String x:Key="DisplayOrientationPortraitFlipped">Portrait (flipped)</sys:String>
+    <sys:String x:Key="DisplayApplySection">Apply Wallpaper</sys:String>
+    <sys:String x:Key="DisplayApplyTargets">Target displays</sys:String>
+    <sys:String x:Key="DisplayMonitorNameFallback">Display {0}</sys:String>
+    <sys:String x:Key="DisplayNoTarget">Select at least one display</sys:String>
+
     <!-- Skin Settings Panel -->
     <sys:String x:Key="SkinPanelTitle">Skin Settings</sys:String>
     <sys:String x:Key="SkinTabUpload">Upload Skin</sys:String>
